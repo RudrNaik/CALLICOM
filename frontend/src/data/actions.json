@@ -1,0 +1,59 @@
+[
+    {
+      "name": "Shoot",
+      "color":"bg-neutral-800/80",
+      "type": "Full",
+      "icon": "/Full_Action.svg",
+      "description": "Shoot your selected weapon, reducing rounds from the magazine and your total ammo count.\n\nShooting is an opposed roll between an attacker's respective weapon roll + bonuses, and the defender's armor roll + bonuses.\n\nAbides by ranged combat rules."
+    },
+    {
+      "name": "Sprint",
+      "type": "Full",
+      "color":"bg-neutral-800/80",
+      "icon": "/Full_Action.svg",
+      "description": "Sprint up to two range bands (Medium Range) at a blistering pace.\n\nYou are unable to do any other actions while sprinting, and you arrive at cover immediately if you're sprinting for it.\n\nWhen sprinting for flanking cover, you specify a target and apply -2 to their defense and anyone around them once you arrive. This lasts until the target repositions."
+    },
+    {
+      "name": "Throw",
+      "type": "Full",
+      "color":"bg-neutral-800/80",
+      "icon": "/Full_Action.svg",
+      "description": "Throw a grenade or a throwable object/gadget at an enemy, reduces gadget/grenade count if throwing a grenade or gadget.\n\nThrowing at an individual is an opposed roll between an attacker's throw skill and a defender's acrobatics. Upon success, the defender is able to get out of the way, but is forced out of cover for the rest of the turn."
+    },
+    {
+      "name": "Close Combat",
+      "type": "Full",
+      "color":"bg-neutral-800/80",
+      "icon": "/Full_Action.svg",
+      "description": "Melee or CQC an enemy within striking distance (Point Blank).\n\nYou may do any special close combat action, and works off of the close combat rules. Roll your selected weapon (Melee for armed, CQC for unarmed) against an enemy's Defense to block, or Melee and CQC to parry."
+    },
+    {
+      "name": "Aim",
+      "type": "Full",
+      "color":"bg-neutral-800/80",
+      "icon": "/Full_Action.svg",
+      "description": "Aim and focus your shot.\n\nFor each turn spent aiming, increase the dice of your next attacking roll up to 3. You can target specific limbs, weakpoints, or inanimate objects while aiming. If you do any other action before you fire, your aiming bonuses are removed."
+    },
+    {
+      "name": "Ready",
+      "type": "Full",
+      "color":"bg-neutral-800/80",
+      "icon": "/Full_Action.svg",
+      "description": "Ready yourself for a trigger.\n\nWhen readying you can hold an action until a specified event occurs. Such as a door opening, an enemy becoming visible or stepping into place, etc. Once declared with a trigger, or the specified event, the character will remain readied until the trigger happens or they leave the readied state.\n\nWhen readied, you will enact the action even out of your own turn."
+    },
+    {
+      "name": "Reload",
+      "type": "Full",
+      "color":"bg-neutral-800/80",
+      "icon": "/Full_Action.svg",
+      "description": "Reload your selected weapon, restoring your magazine count to full.\n\nRequires a full action. When reloading from empty you can save the empty magazine into your inventory."
+    },
+    {
+      "name": "Brace",
+      "type": "Full",
+      "color":"bg-neutral-800/80",
+      "icon": "/Full_Action.svg",
+      "description": "Brace yourself against cover.\n\n When bracing, you get a +2 to your defense rolls, however cannot do anything other than brace for that turn. Flanking negates this, along with high power rifles and a ping."
+    }
+  ]
+  

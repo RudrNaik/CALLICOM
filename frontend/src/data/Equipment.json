@@ -1,0 +1,550 @@
+[
+    {
+        "id": "Rifleman",
+        "title": "Rifleman",
+        "class": "Rifleman"
+    },
+    {
+        "id": "ugl",
+        "title": "Underbarrel Grenade Launcher",
+        "parentId": "Rifleman",
+        "class": "Rifleman",
+        "cost": 0,
+        "description": "THOONK’",
+        "rulesText": "Range modifier: -3C | +1M | -1L | -2ELR\nAmmo: 6\nCapacity: 1"
+    },
+    {
+        "id": "rgl",
+        "title": "Rotary Grenade Launcher",
+        "parentId": "Rifleman",
+        "class": "Rifleman",
+        "cost": 8000,
+        "description": "THOONK, THOONK, THOONK, THOONK, THOONK’ GET ROTARIED",
+        "rulesText": "Range modifier: -3C | +1M | -1L | -2ELR\nAmmo: 12\nCapacity: 6\nCannot use special ammo."
+    },
+    {
+        "id": "40mm-he",
+        "title": "40mm HE Grenade",
+        "parentId": "Rifleman",
+        "class": "Rifleman",
+        "cost": 0,
+        "description": "Frag grenade in a 40mm can. Detonates on impact.",
+        "rulesText": "8 DMG\nM-Weapons attacker check, Acrobatics defender check"
+    },
+    {
+        "id": "40mm-smk",
+        "title": "40mm SMK Grenade",
+        "parentId": "Rifleman",
+        "class": "Rifleman",
+        "cost": 400,
+        "description": "Smoke grenades in a 40mm can",
+        "rulesText": "No DMG\nApplies ‘very dimly lit’ effect to an area (-2 attack for all parties to and through the area of the smoke screen.)\nPings from visual sources such as drones and cameras will be erased if a target is no longer visible with smoke."
+    },
+    {
+        "id": "40mm-star",
+        "title": "40mm Star Grenade",
+        "parentId": "Rifleman",
+        "class": "Rifleman",
+        "cost": 450,
+        "description": "Apparently it’s the sun, in a 40mm can. Blinds anyone looking at it.",
+        "rulesText": "M-Weapons attacker check, Acrobatics defender check\nApplies a -1 modifier to attack for target after deployment if they fail a defense check in combat, or an alertness check out of combat.\nAlso interrupts the target’s action if it succeeds.\nWill guarantee Initiative when used as an opener into a fight."
+    },
+    {
+        "id": "40mm-snap",
+        "title": "40mm Snapshot Grenade",
+        "parentId": "Rifleman",
+        "class": "Rifleman",
+        "cost": 0,
+        "description": "Spotter grenades, and you won't believe it, in a 40mm can.",
+        "rulesText": "M-Weapons attacker check, Acrobatics defender check\nPings all enemies in an area and provides a live outline of them. (+2 spotted bonus)\nLasts for 1 turn.\nUpon fail or fumble, the snapshot will tag no targets."
+    },
+    {
+        "id": "40mm-lbv",
+        "title": "40mm LBV HE Grenade",
+        "parentId": "Rifleman",
+        "class": "Rifleman",
+        "cost": 550,
+        "description": "Bounceable 40mm HE",
+        "rulesText": "M-Weapons attacker check, Acrobatics defender check\n8 DMG\nAllows you to bounce 40mm grenades around corners or doorframes."
+    },
+    {
+        "id": "m26-mass",
+        "title": "Masterkey M26 MASS",
+        "parentId": "Rifleman",
+        "class": "Rifleman",
+        "cost": 0,
+        "description": "For when you want a shotgun on hand, but can’t be bothered to carry one yourself.",
+        "rulesText": "M-Weapons attacker check, Acrobatics defender check\nRange Modifier: +1C | -3M -> ELR"
+    },
+    {
+        "id": "Raider",
+        "title": "Radier",
+        "class": "Raider"
+    },
+    {
+        "id": "lockpicks",
+        "title": "Lockpicking Set",
+        "parentId": "Raider",
+        "class": "Raider",
+        "cost": 0,
+        "description": "A lockpick.",
+        "rulesText": "Tinker Check\nOpens all non-digitally locked doors.\nUpon fumble, pick breaks. Silent in all cases, even when a pick breaks."
+    },
+    {
+        "id": "halligan",
+        "title": "Halligan Bar",
+        "parentId": "Raider",
+        "class": "Raider",
+        "cost": 0,
+        "description": "A Halligan bar",
+        "rulesText": "Athletics Check\nOpens most hinged doors (cannot open bulkheads and heavily reinforced doors)\nMakes minimal noise, however it breaks the door."
+    },
+    {
+        "id": "breachpen",
+        "title": "Breach Pen",
+        "parentId": "Raider",
+        "class": "Raider",
+        "cost": 1500,
+        "description": "A concoction of metal oxide, metal powders, and god knows what else that superheats to over 2,000 degrees celsius and burns through almost everything. Steel, Concrete, or locks. All in the form of a stick.",
+        "rulesText": "Tinker check\nOpens all doors up to heavily reinforced ones.\nCan create shootable holes in any wall.\nMakes a light hissing noise that can be masked by other noises. Will melt through the door’s lock or hinges. Provides a bright light that can attract attention."
+    },
+    {
+        "id": "breachcharge",
+        "title": "Breaching Charge",
+        "parentId": "Raider",
+        "class": "Raider",
+        "cost": 1000,
+        "description": "'clack clack' - BOOM\n♪♫I'm coming down on the stereo, put me on the radio-♪♬",
+        "rulesText": "Opens all doors up to ones heavily reinforced, blows through soft walls.\nCauses a loud explosion, gives guaranteed initiative to the team upon entry."
+    },
+    {
+        "id": "quickiesaw",
+        "title": "Quickie Saw",
+        "parentId": "Raider",
+        "class": "Raider",
+        "cost": 2000,
+        "description": "vRRRRRrrrrrrRRRRRRRRRRRrrrrRRRRRRRRRRR\nEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEeeeeeeeeEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE\nClang\nDoor open.",
+        "rulesText": "H-Weapons Check\nTakes one turn to open most doors. Heavily reinforced doors require accumulated successes (2).\nCan cut through most walls easily, and make new doorways or angles to shoot at enemies from.\nMakes less noise than a breaching charge. However, it is louder than a halligan.\nUpon fumble, the blade can break."
+    },
+    {
+        "id": "thermite",
+        "title": "Thermite Charge",
+        "parentId": "Raider",
+        "class": "Raider",
+        "cost": 5000,
+        "description": "The breach pen's bigger brother, now with genetics of the breaching charge.\nA really big fucking hole. Coming right up.",
+        "rulesText": "Opens all doors and walls, without exception.\nCauses a loud explosion, gives guaranteed initiative to the team upon entry."
+    },
+    {
+        "id": "snapshot",
+        "title": "Snapshot Grenades",
+        "parentId": "Raider",
+        "class": "Raider",
+        "cost": 1500,
+        "description": "Spotters, stupid fucking box grenades, wallhacks, they go by many names but do the same thing. You throw them into an area or room, everyone gets pinged.\nFollow ups vary.",
+        "rulesText": "Opposed Throw Check\nPings all enemies in an area and provides a live outline of them. (+2 spotted bonus)\nLasts for 1 turn.\nUpon fail or fumble, the snapshot will tag no targets."
+    },
+    {
+        "id": "9bangs",
+        "title": "9-bangs",
+        "parentId": "Raider",
+        "class": "Raider",
+        "cost": 0,
+        "description": "For when compliance wasn't a request. Channels the power of chemistry to dissuade targets from considering shooting back. And also blinds them. And gives them hearing problems.",
+        "rulesText": "Opposed Throw Check\nCauses an extremely brightly lit effect for any enemies caught by the flashbang (-2 on attacking actions) for the turn.\nUpon fail the flashbang misses.\nUpon fumble, the user and anyone around them are affected."
+    },
+    {
+        "id": "emp",
+        "title": "Portable EMP",
+        "parentId": "Raider",
+        "class": "Raider",
+        "cost": 5000,
+        "description": "Eskola built this in a CAVE. with SCRAPS.",
+        "rulesText": "Disables all electronics and lights around the user.\nIf indoors with no natural lighting, it applies a pitch black effect to the room and any adjacent. If there is natural lighting, it will apply a very dimly lit or poorly lit effect.\nElectronics will return in 3 turns."
+    },
+    {
+        "id": "stalker",
+        "title": "STALKER Digital Presence Reducer",
+        "parentId": "Raider",
+        "class": "Raider",
+        "cost": 12000,
+        "description": "Erases the user from all cameras and drones while in use by looping an image without them in it. Reduces ambient noise with an active noise control unit.",
+        "rulesText": "+1 dice to stealth rolls while in use. Invisible to all cameras and drones while active. Erases enemy spotting when in combat.\nLasts 4 turns."
+    },
+    {
+        "id": "octo",
+        "title": "OCTO Optical Camouflage",
+        "parentId": "Raider",
+        "class": "Raider",
+        "cost": 15000,
+        "description": "Renders the user Invisible via an advanced particle refraction display simulating light flowing around them. Makes their silhouette very faint, and almost invisible in low light conditions.",
+        "rulesText": "When in light, the user is translucent, and their silhouette can be seen. Cloak breaks when moving rapidly (Sprinting/Moving) and creates an afterimage trail behind the user.\nAll attacking rolls have to flip a coin. Heads is success. Upon success, they can attack. When active, provides an extra dice to all defense and stealth rolls.\nLasts 3 turns.\nRequires 2 rapid movement turns to recharge, or 4 normal movement turns.\nCan also use a half action to wiggle in place to charge for a normal movement turn."
+    },
+    {
+        "id": "C-ENG",
+        "title": "Combat Engineer",
+        "class": "Combat Engineer"
+    },
+    {
+        "id": "rocket-launcher",
+        "title": "Rocket Launcher",
+        "parentId": "C-ENG",
+        "class": "Combat Engineer",
+        "cost": 0,
+        "description": "A staple of Green Berets, Rangers, and other Special Forces units who don’t need to clear rooms like Delta. AT launchers are shoulder fired munitions that can blow up vehicles, destroy walls, and take down buildings if aimed right.",
+        "rulesText": "Range Modifiers: -1NS | -100C | +1M | -1ELR\nCapacity: 1\nAmmo: 3\nPen: 3\nDamage: 10"
+    },
+    {
+        "id": "guided-launcher",
+        "title": "Guided Rocket Launcher",
+        "parentId": "C-ENG",
+        "class": "Combat Engineer",
+        "cost": 17000,
+        "description": "Top attack, wire-guided, and others. Guided rocket launchers are able to be much better controlled for the expense of not being reloadable and much more expensive. However, they hit harder, and will take out most vehicles easily.",
+        "rulesText": "Range Modifiers: Guaranteed hit if target is locked and no countermeasures deployed\nCapacity: 1\nAmmo: 2\nPen: 3\nDamage: 10"
+    },
+    {
+        "id": "aa-launcher",
+        "title": "Anti-Air Rocket Launcher",
+        "parentId": "C-ENG",
+        "class": "Combat Engineer",
+        "cost": 13000,
+        "description": "The missile knows where it is because it knows where it isn’t. AA rockets lock onto targets and fire rockets that seek them out to high success. Useful against helicopters and drones, but not so much actual fast movers.",
+        "rulesText": "Range Modifiers: Guaranteed hit if target is locked and no countermeasures deployed\nCapacity: 1\nAmmo: 2\nPen: 3\nDamage: 10"
+    },
+    {
+        "id": "aw50",
+        "title": "AW50 Anti-Material Rifle",
+        "parentId": "C-ENG",
+        "class": "Combat Engineer",
+        "cost": 0,
+        "description": "British .50 Caliber anti-material rifle, Bolt action.",
+        "rulesText": "Range Modifiers: -1NS | -2C | +1L | +2ELR\nCapacity: 5\nAmmo: 10\nPen: 3\nDamage: 9"
+    },
+    {
+        "id": "m107",
+        "title": "M107 Anti-Material Rifle",
+        "parentId": "C-ENG",
+        "class": "Combat Engineer",
+        "cost": 12000,
+        "description": "American .50 Caliber anti-material rifle, Semi-auto.",
+        "rulesText": "Range Modifiers: -1NS | -1C | +1L\nCapacity: 5\nAmmo: 10\nPen: 3\nDamage: 10"
+    },
+    {
+        "id": "semenov-railgun",
+        "title": "Semenov HVAM Railgun",
+        "parentId": "C-ENG",
+        "class": "Combat Engineer",
+        "cost": 30000,
+        "description": "Advanced, experimental Railgun design from Gold Coast. Utilizes electromagnetics to accelerate a 14.5 Anti-Material round from 0 to Mach 3 in under a second. We are not liable for hearing damage caused by extensive use.",
+        "rulesText": "Range Modifiers: -1NS | -2C | +1L\nCapacity: 5\nAmmo: 10\nPen: 4\nDamage: 12\n\nRequires a turn of charge-up before firing.\nWill cause characters within the room or round path to become Suppressed."
+    },
+    {
+        "id": "F-SUP",
+        "title": "Fire Support",
+        "class": "Fire Support"
+    },
+    {
+        "id": "x89-ams",
+        "title": "X-89 AMS (Auto-Mortar)",
+        "parentId": "F-SUP",
+        "class": "Fire Support",
+        "cost": 0,
+        "description": "Simplifies the math of indirect fire into a 'point and click' adventure game. Allows the user to set up a remote mortar, designate targets, and then deliver ordnance from anywhere within an AO accurately.",
+        "rulesText": "H-Weapons attacking roll vs Acrobatics defender roll\nRequires a line of sight to the sky, along with minimal obstruction. One turn setup.\nCannot hit targets inside of buildings or with strong overhead cover.\n8 DMG\nPen: 1\nCap: 1\nAmmo: 8"
+    },
+    {
+        "id": "x89-acerm",
+        "title": "X-89 ACERM rounds (Guided)",
+        "parentId": "F-SUP",
+        "class": "Fire Support",
+        "cost": 1500,
+        "description": "Guided rounds that change trajectory mid air to strike a target accurately.",
+        "rulesText": "Adds an extra dice to your attacking roll, increases Pen to 2."
+    },
+    {
+        "id": "x89-smk",
+        "title": "X-89 SMK rounds (Smoke)",
+        "parentId": "F-SUP",
+        "class": "Fire Support",
+        "cost": 800,
+        "description": "Creates a plume of smoke around a designated location.",
+        "rulesText": "No DMG\nApplies ‘very dimly lit’ effect to an area (-2 attack for all parties to and through the area of the smoke screen.)\nPings from visual sources such as drones and cameras will be erased if a target is no longer visible with smoke."
+    },
+    {
+        "id": "x89-srn",
+        "title": "X-89 SRN rounds (Sauron)",
+        "parentId": "F-SUP",
+        "class": "Fire Support",
+        "cost": 1200,
+        "description": "Hangs in the sky via a parachute and pings targets, sadly— it also is very easy to spot and can be shot down.",
+        "rulesText": "H-Weapons attacker check vs Notice and Weapon Defender Check\nNo DMG\nPings all enemies in an area and provides a live outline of them. (+1 spotted bonus)\nLasts for 2 turns.\nUpon fumble, the Sauron will tag no targets."
+    },
+    {
+        "id": "x89-emp",
+        "title": "X-89 EMP rounds",
+        "parentId": "F-SUP",
+        "class": "Fire Support",
+        "cost": 1500,
+        "description": "Starshell rounds’ bigger brother. No longer are you just jamming comms, but now you're full on cutting all power to devices in an area.",
+        "rulesText": "No DMG\nDisables all electronics and lights around the user.\nIf indoors with no natural lighting, it applies a pitch black effect to the room and any adjacent. If there is natural lighting, it will apply a very dimly lit or poorly lit effect.\nElectronics will return in 3 turns."
+    },
+    {
+        "id": "x89-ilm",
+        "title": "X-89 ILM rounds (Illumination)",
+        "parentId": "F-SUP",
+        "class": "Fire Support",
+        "cost": 700,
+        "description": "Hangs in the sky and illuminates a wide area, also rings the dinnerbell to where the fight is.",
+        "rulesText": "No DMG\nRemoves all lighting conditions in an area.\nBlinds Thermal and Night vision."
+    },
+    {
+        "id": "resupply-bag",
+        "title": "Resupply Bag",
+        "parentId": "F-SUP",
+        "class": "Fire Support",
+        "cost": 0,
+        "description": "A bag of assorted ammo types. Includes auto-feeders to rapidly refill magazines with them.",
+        "rulesText": "Resupplies all ammo and grenades.\nCan only be deployed once."
+    },
+    {
+        "id": "spitfire-feeder",
+        "title": "Spitfire Feeder System",
+        "parentId": "F-SUP",
+        "class": "Fire Support",
+        "cost": 10000,
+        "description": "Utilizing a backpack feeder and a gyroscopic camera mount, the spitfire allows you to put down an unmatched amount of firepower at the expense of melting barrels and making the logistics officer incredibly angry at you.",
+        "rulesText": "The system has 50 HP (MoS x Weapon Damage) for the camera mount. Shots that strike it will reduce its health.\nWhen it reaches zero health, then the camera mount is disabled and recoil bonuses are removed.\nThe stabilizer removes the ability to aim in exchange for longer suppression to a max of 3 turns. If suppression isn’t stopped before 3 turns, then the barrel overheats and you need a turn to replace it.\nScorpion feeder can be shot, and requires a turn to fix it."
+    },
+    {
+        "id": "juggernaut-suit",
+        "title": "Juggernaut Suit",
+        "parentId": "F-SUP",
+        "class": "Fire Support",
+        "cost": 25000,
+        "description": "Repurposed EOD suit equipped with a half exo to assist with movement. Provides a two stage armor system, where the outer layer of armor ‘soaks’ wounds before it begins to strip and fall apart with further impacts, leaving the user with AC1 armor once it’s shredded.",
+        "rulesText": "The suit can soak up to 200 HP (MoS x weapon damage) from enemies.\nWhen shot at, instead of rounds missing when a check is failed, the armor soaks the base damage of the weapon (MoS of 1) and it’s deducted from the health pool.\nWhen this health pool reaches zero, the user will drop down to AC1."
+    },
+    {
+        "id": "Medic",
+        "title": "Medic",
+        "class": "Medic"
+    },
+    {
+        "id": "medic-bag",
+        "title": "Medic Bag",
+        "parentId": "Medic",
+        "class": "Medic",
+        "cost": 0,
+        "description": "One cannot carry all the medicine they need on them at all times. However, the revolutionary idea of ‘stuff everything else into another bag and carry it as well’ was invented, which the Medic Bag utilizes.",
+        "rulesText": "Restocks medical supplies up to 2FAKs and an AFAK when interacted with.\nAlso can restock Injectors and stimulants for other Medics when interacted with, but only up to half of the amount they started with.\nUses a deploy action, does not end turn."
+    },
+    {
+        "id": "rnk",
+        "title": "Regen Nanite Kit (RNK)",
+        "parentId": "Medic",
+        "class": "Medic",
+        "cost": 0,
+        "description": "Advanced nanomachines automatically help stop bleeding, apply painkillers, and make getting shot a little less un-fun.",
+        "rulesText": "Heal a wound and deep wound every turn\nLasts for 1d6 turns + medical skill level turns"
+    },
+    {
+        "id": "snk",
+        "title": "Shock Nanite Kit (SNK)",
+        "parentId": "Medic",
+        "class": "Medic",
+        "cost": 2500,
+        "description": "Retooled for giving one final hurrah, Shock Nanites make the user a bit more hardy for a short while, and stops them from going into system shock.",
+        "rulesText": "Increase System Shock threshold by 5\nLasts for 1d6 + medical skill level turns"
+    },
+    {
+        "id": "tnk",
+        "title": "Traumadol Nanite Kit (TNK)",
+        "parentId": "Medic",
+        "class": "Medic",
+        "cost": 2000,
+        "description": "Retooled for killing any and all pain, Truamadol Nanites make the user feel nothing, other than emotion — we didn't disable that just yet.",
+        "rulesText": "Temporarily removes all wounds\nLasts for 2 + 1d6 + medical skill level turns"
+    },
+    {
+        "id": "adrenal-dtnk",
+        "title": "Adrenal Nanite Kit (DTNK)",
+        "parentId": "Medic",
+        "class": "Medic",
+        "cost": 2000,
+        "description": "Created to simulate a release of adrenaline via nanites, the Adrenal Nanites give you a kick of energy in the moment.",
+        "rulesText": "Adds another half action for the user\nLasts for the turn"
+    },
+    {
+        "id": "hank",
+        "title": "Nootropic Nanite Kit (HANK)",
+        "parentId": "Medic",
+        "class": "Medic",
+        "cost": 2000,
+        "description": "Utilizing the power of nootropics and nicknamed 'high alert', these nanites give you a much more powerful boost of energy as they also mix in adrenaline. Leading to a single use but highly effective combat stimulant.",
+        "rulesText": "Adds another full action for the user once. Further uses can cause a system shock.\nLasts for the turn."
+    },
+    {
+        "id": "Recon",
+        "title": "Sharpshooter",
+        "class": "Sharpshooter"
+    },
+    {
+        "id": "hummingbird-drone",
+        "title": "Hummingbird Reconaissance Drone",
+        "parentId": "Recon",
+        "class": "Sharpshooter",
+        "cost": 0,
+        "description": "Built off the chassis of the PD-105 Black Hornet, Hummingbird reconnaissance drones are Gold Coast's home brewed modification, also tying in BUDDI spotting software and hardened Datalinks.",
+        "rulesText": "User carried, 2x\nSpots for 2 turns\n2 notice | 1 stealth | 1 investigation"
+    },
+    {
+        "id": "silverbird-uav",
+        "title": "Silver Bird UAV (SUAV)",
+        "parentId": "Recon",
+        "class": "Sharpshooter",
+        "cost": 8000,
+        "description": "Built off of the Marine's SUAV, the Silver Bird is an autonomous drone that orbits the user at a high altitude to mark targets. Has only NV. Provides standard pings.",
+        "rulesText": "User Carried, 1x\nSpots for 3 turns\n2 notice | 1 acrobatics | 2 investigation"
+    },
+    {
+        "id": "bumblebee-echolocator",
+        "title": "Bumblebee Echolocator Micro UAV",
+        "parentId": "Recon",
+        "class": "Sharpshooter",
+        "cost": 12000,
+        "description": "Survey drone utilizing echolocation to mark moving enemies. Shakes the ground when activated, but will always provide a ping. Can be shot down easily once noticed, and is kinda fat.",
+        "rulesText": "Pre-Deployed\nSpots for 2 turns\n3 Notice"
+    },
+    {
+        "id": "grappling-hook",
+        "title": "Grappling Hook",
+        "parentId": "Recon",
+        "class": "Sharpshooter",
+        "cost": 0,
+        "description": "Intended to help scale vertical walls and buildings. Can be daisy chained up to three times and 75 meters total.",
+        "rulesText": "1 turn deployment on vertical surfaces. This allows players to climb up any building as if on a makeshift ladder.\nRequires a throw check for if the target is hooked. Upon failure, charge is returned to the player.\n3 uses.\nCan be used by teammates."
+    },
+    {
+        "id": "zipline",
+        "title": "Zipline",
+        "parentId": "Recon",
+        "class": "Sharpshooter",
+        "cost": 3000,
+        "description": "Intended to help traverse large gaps between buildings. Cannot be daisy chained, however can also be used to scale vertically if given enough distance. Very fun to ride, but make sure to hook in.",
+        "rulesText": "1 turn deployment across large gaps. This allows players to create a zipline between adjacent buildings.\nRequires an M-weapons check to see if the target is hit. Upon failure, charge is expended.\n2 uses.\nCan be used by teammates."
+    },
+    {
+        "id": "hydraulic-hook",
+        "title": "Hydraulic Hook",
+        "parentId": "Recon",
+        "class": "Sharpshooter",
+        "cost": 7000,
+        "description": "Intended for snipers to be able to scale and move between buildings and walls quickly with a universal tool. However, only the operator can move, and only to adjacent buildings or vertically up to 25 meters.",
+        "rulesText": "1 turn deployment up vertical walls, horizontal gaps, and even into windows.\nRequires an M-weapons check to see if the target is hit. Upon failure the charge is expended.\nWhen used on a vertical surface, shifts the operator into a rappel, allowing them to fire from a suspended position.\nUpon success, the hook needs to recharge, which takes three turns.\n3 uses.\nCannot be used by teammates."
+    },
+    {
+        "id": "lre-round",
+        "title": "LRE (Lure) Round",
+        "parentId": "Recon",
+        "class": "Sharpshooter",
+        "cost": 0,
+        "description": "Lures an enemy towards a specific location. Has a lower drop, and a lower lethality, and makes a cute chirping sound.",
+        "rulesText": "10x\nReduces damage by 3"
+    },
+    {
+        "id": "ap-round",
+        "title": "AP Round",
+        "parentId": "Recon",
+        "class": "Sharpshooter",
+        "cost": 7000,
+        "description": "High penetration bullets that improve the penetration value of a weapon by 1.",
+        "rulesText": "3x\nCan penetrate Juggernaut suits and disable certain armored vehicles with well-aimed shots."
+    },
+    {
+        "id": "smrt-round",
+        "title": "SMRT (Smart) Round",
+        "parentId": "Recon",
+        "class": "Sharpshooter",
+        "cost": 8000,
+        "description": "Locks onto a ping and adjusts for bullet drop and windage automatically. Effectively removes the math from shooting, beyond gauging travel time.",
+        "rulesText": "3x\nCan only be used on marked targets and will increase the dice rolled by 2."
+    },
+    {
+        "id": "emp-round",
+        "title": "EMP Round",
+        "parentId": "Recon",
+        "class": "Sharpshooter",
+        "cost": 6000,
+        "description": "Creates a small electromagnetic pulse around the impact point.",
+        "rulesText": "5x\nDisables electronics for 2 turns, reduces damage by 4"
+    },
+    {
+        "id": "Trapper",
+        "title": "Trapper",
+        "class": "Trapper"
+    },
+    {
+        "id": "shock-sticks",
+        "title": "Shock Sticks",
+        "parentId": "Trapper",
+        "class": "Trapper",
+        "cost": 0,
+        "description": "Shock Sticks are quiet, non-lethal traps which can be used to stealthily dispatch guards or patrols, bar the noise of them being tazed.",
+        "rulesText": "\nAttacker Throw vs Defender Acrobatics [thrown]\nor\nAttacker Disguise/Throw vs Defender Notice [mine]\nUser carried, 3x\nCan be thrown to be deployed in a hard-to-reach place or without breaking the player's concealment."
+      },
+      {
+        "id": "claymores",
+        "title": "Claymores",
+        "parentId": "Trapper",
+        "class": "Trapper",
+        "cost": 3500,
+        "description": "Shotgun in a tin. Riddles a target with ball bearings when triggered, and will auto-detonate by itself whenever something passes by. Don't worry, it won't fire if friendlies are near.",
+        "rulesText": "Attacker Disguise vs Defender Notice\nUser carried, 3x\n8 DMG\nWhen a Claymore’s laser tripwire is activated, it detonates and riddles the target with a combination of shrapnel and ball bearings."
+      },
+      {
+        "id": "lil-mac",
+        "title": "Lil Mac'",
+        "parentId": "Trapper",
+        "class": "Trapper",
+        "cost": 2500,
+        "description": "KNOCKOUT! When activated, the Lil Mac springs up from the ground and smacks into the enemy’s face, knocking them down.",
+        "rulesText": "Attacker Disguise vs Defender Notice\nUser carried, 2x\nWhen triggered, mine props up and knocks investigator out for a total of 4 turns."
+      },
+      {
+        "id": "ankle-busters",
+        "title": "Ankle Busters",
+        "parentId": "Trapper",
+        "class": "Trapper",
+        "cost": 3000,
+        "description": "When activated, enemy movement is disabled as their legs and feet are riddled with shrapnel.\n\n... Somehow this isn't much better than claymores.",
+        "rulesText": "Attacker Disguise vs Defender Notice\nUser carried, simple action to deploy. 2x\nWhen activated the enemy cannot move until they bandage themselves or receive treatment from a medic.\nAttacker Disguise vs Defender Notice"
+      },
+      {
+        "id": "c4",
+        "title": "C4",
+        "parentId": "Trapper",
+        "class": "Trapper",
+        "cost": 4000,
+        "description": "Better known as 'jeep stuff', C4 is a malleable material that when introduced to an electric charge—detonates spectacularly. There are a lot of use cases. Get creative.",
+        "rulesText": "Attacker Throw/Disguise vs Defender Acrobatics/Notice\nUser carried, simple action to deploy. x4\nWhen detonated, the C4 creates a massive explosion, capable of wiping out entire groups or a vehicle if they are attached or right on top of the explosive."
+      },
+      {
+        "id": "m5-slam",
+        "title": "M5 SLAM",
+        "parentId": "Trapper",
+        "class": "Trapper",
+        "cost": 6000,
+        "description": "Jeep stuff's younger, more tech-savvy cousin, M5 SLAMs are AT/Demo charges that can be set to detonate under a variety of circumstances. Easy to program, easy to detonate, and even float in water to act as aquatic mines.",
+        "rulesText": "Can be deployed on any surface with either:\n- Timed detonation (turn count)\n- Attack detonation (automatic)\n- Remote detonation (manual)\n\nHas more firepower than C4, and will take out most tanks from a bottom attack if run over."
+      },
+      {
+        "id": "thinkpad",
+        "title": "Thinkpad",
+        "parentId": "Trapper",
+        "class": "Trapper",
+        "cost": 0,
+        "description": "It’s a ThinkPad. You’re not leaving this job for a while brother, and this thing isn’t breaking unless you shoot it with a tank.",
+        "rulesText": "Provides access to the cyberwarfare suite."
+      }
+]

@@ -1,0 +1,154 @@
+[
+    {
+        "id": "Initiative",
+        "title": "Initiative",
+        "mechanic": "Core",
+        "parentId": "",
+        "description": "Initiative determines who acts first in a combat round. To determine who gains initiative, all combatants roll an opposed Combat Sense test. No Margin of Success is determined; instead the combatant with the highest result will act first. The next highest will act second and so on for the remaining combatants in decreasing order. Those with tied results act simultaneously. \n\n Any character who fumbles the test is confused for a moment by the panic and chaos of the situation and cannot begin to perform any action except duck or running for cover — but he may continue any action that began in a previous round and requires more than a round (e.g. treating a wounded buddy). Characters that have rolled 6+ on their Initiative test may perform two actions. \n\n In an ambush, or from stealth, only attackers roll initiative as they will fire first no matter what. When conducting a sync-shot, players who roll 6+ on their initiative test can also aim for another target if they wish because of their increased focus."
+    },
+    {
+        "id": "Movement",
+        "title": "Movement",
+        "mechanic": "Core",
+        "description": "There are three standard types of movement: crawling, walking, and sprinting. Other types of movement, such as climbing and swimming, are covered elsewhere. \n\n Crawling means the character lies flat on the ground. It is not a very fast way to move, but it offers excellent protection in ranged combat and stealth (though it places one in a bad position in CQC). If you are crawling or prone, you may not sprint next round. \n\n Walking/Normal movement means that the character is moving at a somewhat hurried pace, able to rapidly change direction and otherwise react to the environment. \n\n Sprinting is an all-out run, with the character giving everything he’s got. Nothing except moving can be attempted while sprinting and sudden changes of direction are next to impossible."
+    },
+    {
+        "id": "Climbing",
+        "title": "Climbing",
+        "mechanic": "Movement",
+        "parentId": "Movement",
+        "description": "Climbing is a special movement case, since gravity and skill come into play. In order to move up, down or across a wall or slope, a character must make a successful Climbing skill test. Failure means the character makes no progress that round and stays where he is. \n\n A failure with a MoF of 4 or greater, or a Fumble, indicates the character has begun to lose his grip and must spend the next round regaining it (with a successful Climbing test). Once the grip is lost, each additional failed test gives a -1 modifier to further tests (cumulative). When the character can no longer pass the test (i.e., the Threshold cannot be met in any way), he falls."
+    },
+    {
+        "id": "Falling",
+        "title": "Falling",
+        "mechanic": "Movement",
+        "parentId": "Movement",
+        "description": "Falling is very damaging to the body. A number of damage equal to the number of meters fallen is gained. This is compared to the Wound Thresholds, like any other attack. \n\n For example, falling one meter causes 1 point of damage; falling two meters causes 2 points of damage, and so on. For example, a four-meter fall would cause, using the 4 points of damage. This is a Flesh wound for most people — a badly sprained ankle, or a broken wrist perhaps."
+    },
+    {
+        "id": "Jumping",
+        "title": "Jumping",
+        "mechanic": "Movement",
+        "parentId": "Movement",
+        "description": "To jump, a character must make a Jump test, modified by Body and your movement speed (+1 for normal; +2 for sprinting). The basic Threshold is 2; this is modified by the condition(s) of the terrain (+3 if rough; +6 if slippery; +9 if crumbling; etc.). You cannot jump from prone."
+    },
+    {
+        "id": "Cover2Cover",
+        "title": "Cover to Cover",
+        "mechanic": "Movement",
+        "parentId": "Movement",
+        "description": "When moving from cover to cover when in combat, you can choose to sprint to cover, or move to cover. Sprinting to cover consumes a full action. Moving to cover consumes only half an action.\n\n When flanking, you move to an adjacent cover if it exists, and negate the cover bonus of an individual. If multiple enemies are around them, it negates the bonus for all the enemies. You can also choose to ‘swing’ cover when flanking, where you shoot while moving to the flanking cover and receive a +1 bonus to your attack roll. However you remain out of cover for the turn."
+    },
+    {
+        "id": "Ranged",
+        "title": "Ranged",
+        "mechanic": "Core",
+        "description": "To arrack a wary target within sight and range, the attacker must defeat the defender in an Opposed Skill test. The attacker rolls his skill in the attack form being used (Pistols, Rifles or Throwing). The defender rolls their armor value. Both should apply modifiers as they've tracked them. Range and Pings for attackers, and cover and concealment for defenders. \n\n Attacking unwary targets requires the attacker to pass an Opposed Notice test against the attacker’s Stealth test (minus modifiers for range, conditions, etc). Failure  means the target notices the attacker and can take defensive actions; this can sometimes happen long before the attacker is ready to fire. To attack an inanimate object requires a Skill test with a Threshold equal to 1 plus any applicable modifier.\n\n If the attacker wins the test, the attack hits. If the defender wins or the result is a tie, the attack misses or the action fails. If the attacker Fumbles, he jams his weapon (one half action is required to clear it)."
+    },
+    {
+        "id": "Aiming",
+        "title": "Aiming",
+        "mechanic": "Ranged",
+        "parentId": "Ranged",
+        "description": "A character can spend a few combat rounds steadying his aim to improve his odds to hit. Add one die to the attacker’s roll per combat round spent aiming, up to a maximum of +3. The character may not move while aiming. A character can aim at a specific small target or body part (e.g. chest, arm or leg, abdomen). \n\n Aiming at a torso-sized target removes one die from the skill test. Aiming at a limb-sized target removes two dice from the skill test. Aiming at a head-sized target removes three dice from the skill test. The victim’s normal Wound Thresholds are halved (round up) for all shots aimed at vital locations, such as the head. Shots aimed at specific limbs are useful as non-fatal attacks — they cannot cause Instant Death, unless through system shock."
+    },
+    {
+        "id": "Burst",
+        "title": "Bursting",
+        "mechanic": "Ranged",
+        "parentId": "Ranged",
+        "description": "Some weapons are capable of burst fire. Burst attacks usually consist of firing a tight burst towards a single opponent. The attacker may decrease a number of his dice, up to a maximum of -2. \n\nIf the attack succeeds, the amount of dice decreased is added to the attack’s Margin of Success, thus increasing the damage."
+    },
+    {
+        "id": "Spray",
+        "title": "Spraying",
+        "mechanic": "Ranged",
+        "parentId": "Ranged",
+        "description": "Weapons capable of burst fire can be used to attack multiple targets in a single action by spraying the burst across the targets. Thus, people or objects between the targets can be hit as well. A player must declare that he is spraying fire before any attacks are made. The player then chooses the targets of his attack. \n\n Maximum number of targets that possibly can be attacked is three. All targets must be no more than one meter apart (if they are, count each empty one-meter space as a target). Each attack is rolled separately, and each individual target may not be attacked more than once per round by the same weapon. This attack consumes the same amount of ammo as a normal firing action, multiplied by the targets."
+    },
+    {
+        "id": "Supression",
+        "title": "Supressing",
+        "mechanic": "Ranged",
+        "parentId": "Ranged",
+        "description": "Suppression fire is a military term for putting lots of lead in the air, to make others keep their head down. The attacker chooses an area (up to 5-meters wide or specifically suppressing a piece of cover), then rolls their attack normally. Record the result and add 2 to it: that’s the Saturation Fire Threshold.\n\n Anyone or anything which enters that saturated zone later during the combat round must beat the Saturation Threshold or take damage. If the defender fails, the Margin of Failure is multiplied by the Damage Multiplier of the weapon and the resulting damage is treated as usual. \n\nIf the defender is already in the suppressed zone before the attack and under cover, they cannot move this round unless they first pass a Spirit Attribute test against a Threshold of 4.\n\n Attackers can augment the size of the area affected by spreading the projectiles around or splitting between various pieces of cover. This doubles the width of the area affected, but divides the Saturation Fire Threshold in half (rounded up). \n\n There are two limitations to Saturation fire: the saturation zone must be within the medium range or closer and the weapon will consume twice the amount of ammo per turn until it's stopped. Any damage will stop supression."
+    },
+    {
+        "id": "CQC",
+        "title": "Hand to hand",
+        "mechanic": "Core",
+        "parentId": "",
+        "description": "To affect a wary target, the attacker must defeat the defender in an opposed test. For combat, the attacker rolls his skill in the attack form being used (Melee or Brawl). The defender either uses his Defense value (to avoid being hit), Melee Skill (to parry with a weapon) or CQC Skill (for unarmed blocks). \n\n Attackers should add the appropriate modifier from the modifier list to their roll depending upon environmental and other circumstances. Attacking unwary targets requires the attacker to pass a standard (not opposed) skill test with a Threshold number of 1 plus the defender’s modifiers (like movement and cover). However, unlike a normal attack, the attacker must roll the lower of two skills: either his chosen attack skill or his Stealth skill. Untrained individuals tend to be noisy or otherwise mess up surprise attacks by alerting the victim at the last moment. \n\n To attack an inanimate object requires a skill test with a Threshold equal to 1 plus any applicable modifier. This assumes that the target is man-sized or larger; if not, refer to the Aiming rule. If the attacker wins the test, the attack hits or, If the defender wins or the result is a tie, the attack misses or the action fails. If the attacker Fumbles, he overshoots or otherwise finds himself open and is subject to a Free Strike. If the defender Fumbles, he slips or otherwise finds himself in a bad defensive position and is subject to a Free Strike. If both fumble, ineffective blows are exchanged and nothing happens.\n\nIf you are successful, you may either deal damage normally, or attempt one of the following maneuvers:"
+    },
+    {
+        "id": "Grapple",
+        "title": "Grappling",
+        "mechanic": "Hand to Hand",
+        "parentId": "CQC",
+        "description": "Grappling attempts are always made with Brawl skill. If successful, instead of dealing damage you may choose to start a grapple. The grappling characters cannot move normally, and can’t make attacks against anyone else. On each grappler's turn, an Opposed Brawl test is made. The winner can deal normal unarmed damage, move the opponent up to his crawling speed, or end the grapple. Grappled characters count as being unaware against other attacks made against them."
+    },
+    {
+        "id": "Disarm",
+        "title": "Disarming",
+        "mechanic": "Hand to Hand",
+        "parentId": "CQC",
+        "description": "Disarm attempts are more difficult to pull off. You must have at least 2 Margins of Success, and the opponent may try to instantly rectify the situation with a successful Alertness test with a Threshold equal to your original attack. If the opponent succeeds, nothing happens. If he fails, his weapon leaves his grasp. If you were using Brawl skill in disarming your opponent, you now hold his weapon. If not, the weapon is on the ground. If you feel that it is important to determine where the weapon is exactly, you may use some random method for this."
+    },
+    {
+        "id": "Trip",
+        "title": "Tripping",
+        "mechanic": "Hand to Hand",
+        "parentId": "CQC",
+        "description": "If you decide to attempt tripping your opponent, he is entitled to make an Alertness or Body test (opponent’s choice) with a Threshold equal to your original attack to resist it. If he succeeds nothing happens, but if he fails he is knocked down, and thus has a -3 defense modifier until he gets up, and may not sprint on his next turn."
+    },
+    {
+        "id": "Shove",
+        "title": "Shoving",
+        "mechanic": "Hand to Hand",
+        "parentId": "CQC",
+        "description": "If you decide to attempt shoving your opponent, he is entitled to make an Alertness or Body test (opponent’s choice) with a Threshold equal to your original attack to resist it. If he succeeds nothing happens, but if he fails you may shove him backward up to your Body+1  in meters. You may do a follow-up move, but it is not necessary."
+    },
+    {
+        "id": "Medical",
+        "title": "Wounds and Medicine",
+        "mechanic": "Core",
+        "parentId": "",
+        "description": "Getting shot hurts. As you collect wounds and near a system shock, you become less and less combat effective, making even the action of shooting back become a struggle. However, you can always heal these wounds with all sorts of medical equipment, and the help of a handy-dandy medic nearby. Just don’t get a painkiller addiction.\n\n Flesh wound is a catch-all term for painful but generally non-life- threatening injuries such as minor gunshot wounds, deep cuts or minor concussions. These apply a -1 modifier that stacks for each wound. Depending on the wound, the character can no longer sprint or run.\n\n Deep wounds are more severe injuries: compound fractures, punctured organs, damage to major blood vessels, bad gunshot wounds etc. Characters with a Deep wound can move no faster than a walk. Deep wounds apply a -2 modifier that stacks with each wound.\n\n System Shock is how many wounds you can get before tapping out. For Calamari, you will have to do saving throws with a coin toss every turn until stabilized. Three failed tosses, the character dies.\n\n When using medical kits, you cannot fumble an action."
+    },
+    {
+        "id": "Armor",
+        "title": "Armor and Plates",
+        "mechanic": "Core",
+        "parentId": "",
+        "description": "The human body is a fragile thing, one bullet in the right place can do enough damage to maim someone for life. Which is why armor is always important. \n\n Armor in gameplay mainly focuses on the coverage provided. Where AC0 has no armor at all, just a chest rig at best, and AC3 is a full on juggernaut or EOD suit. Your armor value is the number you roll with when in ranged combat with someone else, and only when you hit AC3 is when movement penalties start to get factored in by just how heavy the equipment is."
+    },
+    {
+        "id": "Penetration",
+        "title": "Penetration",
+        "mechanic": "Core",
+        "parentId": "",
+        "description": "Penetration values are weapon stats that help determine just how much a gun can punch through. For the sake of gameplay, Body armor can tank most rounds within ‘reason’ and are equivalent to Level IV. Someone is obviously not surviving being hit by a tank or a .50 BMG to the chest very easily.\n\n Penetration can be used to hit targets behind cover and walls. If they are marked and the weapon will penetrate, it negates the cover bonus.\n\n Penetration Values are as follows: \n\n PEN 1: Penetrates everything up to but excluding thick cover. Includes soft walls.\n PEN 2: Penetrates thick cover up to hard walls and metal.\n PEN 3: Penetrates up to thick-well reinforced materials and vehicle armor. \n PEN 4: Penetrates everything up to structures, consecutive walls, and terrain."
+    },
+    {
+        "id": "Stealth",
+        "title": "Stealth",
+        "mechanic": "Core",
+        "parentId": "",
+        "description": "Stealth checks are done by rolling an attacker’s Stealth against a defender's alertness as an opposed roll. Success provides the attacker a cover defense bonus until they fire their weapon. Stealth checks can also be rolled with disguise if using camouflage or masking, like hiding in a bush or covering yourself in mud or snow to blend in with it. Lighting can also affect stealth, as poor lighting conditions is a +1 to your roll, very poor lighting is +2, and perfect darkness is +3. Stance and cover also affects your stealth, as crawling (while utilizing camo) and using cover can increase your bonus by +1 each.\n\n If attempting to sneak past, or enter an area surreptitiously, you only need to roll stealth once against a defender's alertness for them not to notice you as you move for subsequent turns. However, when interacting with locks, computers, or anything else in that vein, the attacker must re-roll their stealth value against the defender’s alertness for that action. Fumbles while in stealth will cause guards to get suspicious and come investigate."
+    },
+    {
+        "id": "Squad",
+        "title": "Squad Systems",
+        "mechanic": "Core",
+        "parentId": "",
+        "description": "Some checks can be completed with multiple people, for example: opening a bulkhead, boosting another player to a location, carrying heavy things together. When an action is done in tandem with someone else, The highest skilled player will roll, and the skill being checked for the others is added as a flat bonus. If carrying a body for example, and someone has 2 in athletics, and the other has 1, then it will be a 2d6 +1.\n\n As well, Squads can conduct ‘sync shots’. Where every member of a squad finds a target, and fires on a mark. An Initiative check will be started to first determine the initiative queue, and then each player will roll for their shot with a +1 for being aimed.If someone’s initiative check is 5+, then they can pick another target to shoot at that turn as well."
+    },
+    {
+        "id": "Example",
+        "title": "Example",
+        "mechanic": "Example",
+        "parentId": "",
+        "description": "Flavor Text"
+    }
+]

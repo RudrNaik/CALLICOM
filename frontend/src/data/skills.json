@@ -1,0 +1,39 @@
+{
+    "Expertise": [
+      "Drive",
+      "L-Weapons",
+      "M-Weapons",
+      "H-Weapons",
+      "Stealth",
+      "Throw",
+      "Tinker"
+    ],
+    "Body": [
+      "Acrobatics",
+      "Athletics",
+      "Endurance",
+      "Climb",
+      "Jump",
+      "Melee",
+      "CQC"
+    ],
+    "Intelligence": [
+      "Politics",
+      "Tech",
+      "Forgery",
+      "Investigation",
+      "Medicine",
+      "Navigate",
+      "Trivia"
+    ],
+    "Spirit": [
+      "Disguise",
+      "Etiquette",
+      "Intimidate",
+      "Leadership",
+      "Persuasion",
+      "Connections",
+      "Notice"
+    ]
+  }
+  

@@ -1,0 +1,138 @@
+{
+  "Rifleman": {
+    "level2": [
+      "M-Weapons",
+      "Throw",
+      "Endurance",
+      "Notice"
+    ],
+    "level1": [
+      "L-Weapons",
+      "Melee",
+      "Athletics",
+      "Navigate",
+      "Leadership"
+    ],
+    "rulesText": "Rifleman is your go-to all-arms expert, being effective at medium-engagement distances using a mixture of assault rifles, battle rifles, and grenades. The Rifleman is arguably the most versatile class but also the most simple.",
+    "description": "We do crowd control. With grenades. Is is not subtle. But is very effective."
+  },
+  "Raider": {
+    "level2": [
+      "L-Weapons",
+      "Melee",
+      "Athletics",
+      "Intimidate"
+    ],
+    "level1": [
+      "Throw",
+      "CQC",
+      "Notice",
+      "Stealth",
+      "Tinker"
+    ],
+    "rulesText": "Raider is an expert at getting into anywhere, loud or quiet and being the tip of the spear with SMGs, Shotguns, breaching charges, and Ninebangs. The Raider is a stealthy class, but also the most useful in room clearing when things go loud.",
+    "description": "Are we rushing in? Or are we going sneaky-beaky like?"
+  },
+  "Combat Engineer": {
+    "level2": [
+      "H-Weapons",
+      "Tinker",
+      "Endurance",
+      "Throw"
+    ],
+    "level1": [
+      "M-Weapons",
+      "Notice",
+      "Tech",
+      "Athletics",
+      "Disguise"
+    ],
+    "rulesText": "Combat engineers are specialists in destroying emplacements, vehicles, and more with launchers and mines. This is the only class with access to Rocket Launchers and Anti-Material rifles such as the Carl Gustav Recoilless Rifle and the M82A1 Anti Materiel Rifle.",
+    "description": "I am heavy weapons guy, and THIS [drops Carl Gustaf onto table] is my weapon."
+  },
+  "Technical Engineer": {
+    "level2": [
+      "L-Weapons",
+      "Tech",
+      "Tinker",
+      "Investigation"
+    ],
+    "level1": [
+      "M-Weapons",
+      "Athletics",
+      "Drive",
+      "Notice",
+      "Trivia"
+    ],
+    "rulesText": "Standoff munitions is the name, drones are the game. Technical Engineers are experts in both cyber warfare and using drones to attack, distract, or blow up targets. Drone Technicians are experts in tinkering and tech, and can utilize drones such as the DD-01 ‘Jackal’ and DD-02 ‘Fire Hornet’ proficiently.",
+    "description": "The drones... They speak to me."
+  },
+  "Fire Support": {
+    "level2": [
+      "H-Weapons",
+      "CQC",
+      "Endurance",
+      "Navigate"
+    ],
+    "level1": [
+      "L-Weapons",
+      "Intimidate",
+      "Tinker",
+      "Throw",
+      "Athletics"
+    ],
+    "rulesText": "Experts in putting lead downrange and mortar arcs, Fire Support focuses on suppression and indirect fire. Supports get exclusive access to LMGs, Automatic Shotguns and the X-90 remote mortar system but know that they both require setup before they can fire.",
+    "description": "Statistically, on average, I shoot all of you about nine times- no twenty-er... Enough to make swiss soldiers."
+  },
+  "Medic": {
+    "level2": [
+      "Medicine",
+      "M-Weapons",
+      "Tech",
+      "Persuasion"
+    ],
+    "level1": [
+      "L-Weapons",
+      "Notice",
+      "Athletics",
+      "Acrobatics",
+      "Melee"
+    ],
+    "rulesText": "Medics are the backbone of any good fire team and are the only class focused on keeping others in the fight and buffing them as much as they can. Medics get access to the surgical kit and specialized stims to heal wounds, increase focus, or generally provide buffs in a pinch.",
+    "description": "With one hand I save life, with the other hand I take it, Actually it's the same hand, but that don't sound as good."
+  },
+  "Sharpshooter": {
+    "level2": [
+      "M-Weapons",
+      "Climb",
+      "Disguise",
+      "Stealth"
+    ],
+    "level1": [
+      "L-Weapons",
+      "Acrobatics",
+      "Notice",
+      "Jump",
+      "Melee"
+    ],
+    "rulesText": "Expert marksman, the Sharpshooter Class focuses on eliminating targets of opportunity or high-threat enemies with DMRs and Sniper Rifles. Sharpshooters get exclusive access to sniper rifles and equipment such as BUDDI HUD integrations, SOFLAMs, and EXACTO rounds for extreme distances.",
+    "description": "Boom. Headshot."
+  },
+  "Trapper": {
+    "level2": [
+      "L-Weapons",
+      "Notice",
+      "Disguise",
+      "Stealth"
+    ],
+    "level1": [
+      "Athletics",
+      "Investigation",
+      "Tech",
+      "Tinker",
+      "CQC"
+    ],
+    "rulesText": "Unlike their close Sharpshooter cousins, Trappers focus on surveillance and ambushes with traps and some ingenuity. Trappers also get SOFLAMs, but also access Claymores, anti-tank mines and more.",
+    "description": "A gift for you, no charge... oh wait, explosive charge!"
+  }
+}

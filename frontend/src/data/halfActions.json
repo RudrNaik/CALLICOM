@@ -1,0 +1,52 @@
+[
+    {
+      "name": "Speed Reload",
+      "color":"bg-neutral-800/80",
+      "type": "Half",
+      "icon": "/Half_Action.svg",
+      "description": "Speed Reload your selected weapon, discarding any ammo in the magazine.\n\nUnused rounds are lost, and removed from your total ammo count."
+    },
+    {
+      "name": "Move",
+      "color":"bg-neutral-800/80",
+      "type": "Half",
+      "icon": "/Half_Action.svg",
+      "description": "Move within one range band (Close Range).\n\nYou can do other half actions while moving, but can only get into cover within the same turn if it's in one range band.\n\nWhen moving for flanking cover, you specify a target and apply -2 to their defense for them and anyone around them once you arrive. This negation lasts until the target repositions."
+    },
+    {
+      "name": "Deploy",
+      "color":"bg-neutral-800/80",
+      "type": "Half",
+      "icon": "/Half_Action.svg",
+      "description": "Deploy a bipod or use a gadget.\n\nCertain gadgets may end your turn immediately, such as Controlling Drones, Re-Pinging, or Hacking."
+    },
+    {
+      "name": "Disengage",
+      "color":"bg-neutral-800/80",
+      "type": "Half",
+      "icon": "/Half_Action.svg",
+      "description": "Disengage from a fight and slip away.\n\nWhen disengaging, you do an opposed stealth roll against an enemy's notice. Upon success, you are disengaged from an encounter. Enemies will search your last known position, but it allows you to sneak around.\n\nWhen moving while disengaged, you will roll stealth checks against an enemy's notice to remain disengaged. Upon firing on an enemy or failing a check, you re-engage with them and are back in the fight at the end of the initiative queue."
+    },
+    {
+      "name": "Patch up",
+      "type": "Half",
+      "color":"bg-neutral-800/80",
+      "icon": "/Half_Action.svg",
+      "description": "Patch yourself up and remove wounds.\n\nPatching yourself up requires having 1 FAK for a flesh wound, and 2 FAKs or an AFAK for deep wounds. When consumed, these items are removed from your inventory.\n\nYou remove 1 + [Medical skill roll] worth of wounds when consumed."
+    },
+    {
+      "name": "Rally",
+      "type": "Half",
+      "color":"bg-neutral-800/80",
+      "icon": "/Half_Action.svg",
+      "description": "Rally your team and other allies.\n\nOnce per encounter one team member can rally, using your leadership skill to bolster the morale of friendlies and add your leadership roll/2 to friendly actions for two turns. This effect can be negated if the rallier is hit or an intimidate beats the rally bonus."
+    },
+    {
+      "name": "Intimidate",
+      "type": "Half",
+      "color":"bg-neutral-800/80",
+      "icon": "/Half_Action.svg",
+      "description": "Intimidate your foes and others for compliance.\n\nOnce per encounter, when Intimidating, you roll your intimidation stat against an enemy's spirit. If you win the opposed roll, you apply your margin of success as a debuff to their actions against you for a turn. If you lose, you get the enemy's ire, and they will focus on you."
+    }
+  ]
+  
