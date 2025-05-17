@@ -9,5 +9,6 @@ export default defineConfig({
     proxy: {
       '/api': 'http://localhost:8080',
     }
-  }
+  },
+  base: process.env.VITE_BASE_PATH || "CALLICOM/tree/main/frontend"
 })
