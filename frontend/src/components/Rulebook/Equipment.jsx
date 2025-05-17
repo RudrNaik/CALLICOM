@@ -1,17 +1,11 @@
 import GearCard from "./EquipmentCard";
 import SidebarRules from "./SidebarNav";
 import { useState, useEffect } from "react";
+import equipment from "../../data/Equipment.json"
 
 const Equipment = () => {
-  const [equipment, setEquipment] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
 
-  useEffect(() => {
-    fetch("http://localhost:8080/api/equipment")
-      .then((res) => res.json())
-      .then((data) => setEquipment(data))
-      .catch((err) => console.error("Error fetching equipment:", err));
-  }, []);
+  const [searchTerm, setSearchTerm] = useState("");
 
   return (
     <div className="flex min-h-screen text-white font-[Geist_Mono] top-20">

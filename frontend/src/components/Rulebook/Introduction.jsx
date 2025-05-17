@@ -1,18 +1,10 @@
 import SidebarRules from "./SidebarNav";
 import RuleCard from "./ruleCard";
 import { useState, useEffect } from "react";
-
+import rules from "../../data/rules.json";
 
 const Rules = () => {
-  const [rules, setRules] = useState([]);
-    const [searchTerm, setSearchTerm] = useState("");
-  
-    useEffect(() => {
-      fetch("http://localhost:8080/api/rules")
-        .then((res) => res.json())
-        .then((data) => setRules(data))
-        .catch((err) => console.error("Error fetching equipment:", err));
-    }, []);
+  const [searchTerm, setSearchTerm] = useState("");
 
   return (
     <div className="flex min-h-screen text-white font-[Geist_Mono]">
