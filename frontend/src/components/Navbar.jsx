@@ -41,11 +41,11 @@ const Navbar = ({}) => {
 
   return (
     <nav
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-200 text-white font-geist
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-200 text-white
         ${scrolled ? "bg-neutral-900 shadow-md" : "bg-transparent"}
       `}
     >
-      <div className="flex items-center relative w-full">
+      <div className="flex items-center relative w-full font-[Geist_Mono]">
         <img src={SpinyLogo} alt="Logo" className="h-20" />
         <div className="text-xl px-2">SpinyNA Studios</div>
 
