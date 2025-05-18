@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import "../../assets/css/Geist.css"
+
 
 const SidebarNav = ({ rules }) => {
   const topLevel = rules.filter(rule => !rule.parentId);

@@ -44,7 +44,7 @@ const Navbar = ({}) => {
         ${scrolled ? "bg-neutral-900 shadow-md" : "bg-transparent"}
       `}
     >
-      <div className="flex items-center relative w-full font-mono">
+      <div className="flex items-center relative w-full" style={{ fontFamily: 'Geist_Mono' }}>
         <img src={SpinyLogo} alt="Logo" className="h-20" />
         <div className="text-xl px-2">SpinyNA Studios</div>
 
@@ -101,13 +101,13 @@ const Navbar = ({}) => {
               ) : (
                 <>
                   <Link
-                    //to="/login"
+                    to="/login"
                     className="block px-4 py-2 hover:bg-orange-400"
                   >
                     Log In
                   </Link>
                   <Link
-                    //to="/signup"
+                    to="/signup"
                     className="block px-4 py-2 hover:bg-orange-400"
                   >
                     Sign Up

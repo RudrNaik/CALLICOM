@@ -4,7 +4,7 @@ import { AuthContext } from "./AuthContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import background from "./assets/Images/4060492.jpg";
-import "./assets/css/Geist.css";
+
 
 function Login() {
   const { isLoggedIn, login } = useContext(AuthContext);
@@ -51,7 +51,7 @@ function Login() {
         onSubmit={handleSubmit}
         className="text-white flex flex-col p-6 max-w-md mx-auto"
       >
-        <div className="border border-orange-500 border-l-4 p-6 w-full bg-neutral-950/80  font-[Geist_Mono]">
+        <div className="border border-orange-500 border-l-4 p-6 w-full bg-neutral-950/80" style={{ fontFamily: 'Geist_Mono' }}>
           <h1 className="text-4xl font-bold p-2 bg-orange-500">
             LOGIN ::/
           </h1>

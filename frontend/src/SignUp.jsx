@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import background from "./assets/Images/4060492.jpg";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import "./assets/css/Geist.css";
+
 
 
 function SignUp({ setIsLoggedIn }) {
@@ -63,7 +63,7 @@ function SignUp({ setIsLoggedIn }) {
 
   return (
     <div
-      className="bg-repeat bg-[length:1920px_1080px] w-screen min-h-screen font-[Geist_Mono]"
+      className="bg-repeat bg-[length:1920px_1080px] w-screen min-h-screen"
       style={{ backgroundImage: `url(${background})` }}
     >
       <Navbar />
@@ -73,7 +73,7 @@ function SignUp({ setIsLoggedIn }) {
         onSubmit={handleSubmit}
         className="text-white flex flex-col p-6 max-w-md mx-auto"
       >
-        <div className="border border-gray-400 p-6 w-full rounded-none bg-black">
+        <div className="border border-gray-400 p-6 w-full rounded-none bg-black" style= {{ fontFamily: 'Geist_Mono' }}>
           <h1 className="text-4xl font-bold p-2 bg-orange-500">
             SIGNUP ::/
           </h1>
@@ -88,7 +88,7 @@ function SignUp({ setIsLoggedIn }) {
             Sign up to access the character creator and manage characters.
           </p>
 
-          <h3 className="text-lg text-white font-geist text-center">
+          <h3 className="text-lg text-white text-center">
             Sign Up
           </h3>
 

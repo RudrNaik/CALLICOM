@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 const TerminalPanel = ({ title, subtitle, icon, onHover, link }) => {
   return (
     <div>
+      <Link to={link}>
       <div
         onMouseEnter={() =>
           onHover(
@@ -24,13 +25,13 @@ const TerminalPanel = ({ title, subtitle, icon, onHover, link }) => {
           group cursor-pointer
         `}
       >
-        <Link to={link}>
           <h1 className="text-3xl font-bold tracking-wider flex items-center gap-3 p-2">
             <span>{icon}</span> {title}
           </h1>
-        </Link>
+        
         <p className="text-md text-gray-300 mt-2 tracking-wider flex items-center gap-3">&gt; {subtitle}</p>
       </div>
+      </Link>
     </div>
   );
 };
