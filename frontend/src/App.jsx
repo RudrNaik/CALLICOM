@@ -3,7 +3,7 @@ import { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import About from "./About";
 import TerminalPage from "./CALLICOM";
-import ActionEconomyPage from "./ActionEconomy.JSX";
+import ActionEconomyPage from "./ActionEconomy";
 import Rulebook from "./Rulebook";
 import Armory from "./Armory";
 import CharManager from "./CharacterManager";
