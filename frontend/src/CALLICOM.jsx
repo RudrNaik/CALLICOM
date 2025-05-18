@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { AuthContext } from "./AuthContext";
 import TerminalPanel from "./components/Terminal/TerminalPanel";
 import TerminalFeed from "./components/Terminal/TerminalFeed";
 import background from "./assets/Images/4060492.jpg";
@@ -31,6 +32,7 @@ const bootLines = [
 const TerminalPage = () => {
   const [logs, setLogs] = useState([]);
   const [isBooting, setIsBooting] = useState(true);
+  const { isLoggedIn }  = useContext(AuthContext)
 
   useEffect(() => {
     let index = 0;
@@ -87,13 +89,23 @@ const TerminalPage = () => {
             onHover={handleHover}
             link={"/CALLICOM/ActionEcon"}
           />
-          <TerminalPanel
-            title="Character Manager"
-            subtitle="Employee Data"
-            icon="📦"
-            onHover={handleHover}
-            link={"/CALLICOM/CharacterManager"}
-          />
+          {isLoggedIn ? (
+            <TerminalPanel
+              title="Character Manager"
+              subtitle="Employee Data"
+              icon="📦"
+              onHover={handleHover}
+              link={"/CALLICOM/CharacterManager"}
+            />
+          ) : (
+            <TerminalPanel
+              title="Character Manager [Requires login]"
+              subtitle="[WARNING: UNCC IDENT NOT FOUND]"
+              icon="⚠️"
+              onHover={handleHover}
+              link={"/CALLICOM"}
+            />
+          )}
         </div>
 
         <div className="h-full">
