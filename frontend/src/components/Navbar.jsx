@@ -1,7 +1,6 @@
 // src/components/Navbar.jsx
 import { useContext, useEffect, useState, useRef } from "react";
 import SpinyLogo from "../assets/Images/SpinyNAStudiosLogo_.png";
-import "../assets/css/Geist.css";
 import { Link } from "react-router-dom";
 import UserIcon from "../assets/Images/UserIcon.png";
 import { AuthContext } from "../AuthContext"; 
@@ -45,7 +44,7 @@ const Navbar = ({}) => {
         ${scrolled ? "bg-neutral-900 shadow-md" : "bg-transparent"}
       `}
     >
-      <div className="flex items-center relative w-full font-geist">
+      <div className="flex items-center relative w-full font-mono">
         <img src={SpinyLogo} alt="Logo" className="h-20" />
         <div className="text-xl px-2">SpinyNA Studios</div>
 

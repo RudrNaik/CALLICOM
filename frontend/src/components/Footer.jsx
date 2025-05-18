@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
-import "../assets/css/Geist.css";
+
 import calamariLogo from "../assets/Images/Calamari_Logo.png";
 
 const Footer = () => {
   return (
-    <footer className="bg-black text-white py-4 font-[Geist_Mono]">
+    <footer className="bg-black text-white py-4 font-mono">
       <div className="max-w-screen mx-auto text-center">
         
         {/* Logo */}
@@ -43,7 +43,7 @@ const Footer = () => {
         </div>
 
         {/* Navigation Links */}
-        <div className="flex flex-wrap justify-center gap-4 mb-6 uppercase text-sm font-[Geist_Mono]">
+        <div className="flex flex-wrap justify-center gap-4 mb-6 uppercase text-sm">
           <Link to="/" className="hover:underline">CALAMARI</Link>
           <Link to="/news" className="hover:underline">News</Link>
           <Link to="/about" className="hover:underline">About</Link>

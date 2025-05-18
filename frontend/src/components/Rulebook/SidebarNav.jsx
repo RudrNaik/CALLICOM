@@ -24,7 +24,7 @@ const SidebarNav = ({ rules }) => {
   };
 
   return (
-    <aside className="w-full sm:w-64 h-screen top-20 sticky p-4 bg-orange-900/50 text-white font-[Geist_Mono] overflow-y-auto border-r">
+    <aside className="w-full sm:w-64 h-screen top-20 sticky p-4 bg-orange-900/50 text-white font-mono overflow-y-auto border-r">
       <h2 className="text-xl font-bold mb-4 uppercase">Index</h2>
       <ul className="space-y-2">
         {topLevel.map(rule => {

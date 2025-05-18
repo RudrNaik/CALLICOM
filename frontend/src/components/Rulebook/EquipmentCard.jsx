@@ -1,11 +1,11 @@
 import React from "react";
-import "../../assets/css/Geist.css";
+
 
 const GearCard = ({ gear }) => {
   return (
     <section
       id={gear.id}
-      className="bg-neutral-800/80 border-l-8 border-orange-400 p-6 rounded shadow font-[Geist_Mono]"
+      className="bg-neutral-800/80 border-l-8 border-orange-400 p-6 rounded shadow font-mono"
     >
       <div className="flex justify-between items-center mb-2">
         <h2 className="text-xl font-bold">{gear.title}</h2>
