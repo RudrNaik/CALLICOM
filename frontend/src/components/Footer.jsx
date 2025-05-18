@@ -4,7 +4,7 @@ import calamariLogo from "../assets/Images/Calamari_Logo.png";
 
 const Footer = () => {
   return (
-    <footer className="bg-black text-white py-4 font-mono">
+    <footer className="bg-black text-white py-4 style={{ fontFamily: 'Geist_Mono' }}">
       <div className="max-w-screen mx-auto text-center">
         
         {/* Logo */}
