@@ -4,7 +4,6 @@ import SpinyLogo from "../assets/Images/SpinyNAStudiosLogo_.png";
 import { Link } from "react-router-dom";
 import UserIcon from "../assets/Images/UserIcon.png";
 import { AuthContext } from "../AuthContext"; 
-import "../assets/css/geist_mono.css"
 
 const Navbar = ({}) => {
   const [scrolled, setScrolled] = useState(false);
