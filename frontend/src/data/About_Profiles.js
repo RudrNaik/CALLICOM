@@ -1,5 +1,4 @@
-import RudraImg from "../assets/images/Rudra Naik.jpg";
-import KobeImg from "../assets/images/Kobe Laws.jpg";
+
 
 
 const profiles = [
