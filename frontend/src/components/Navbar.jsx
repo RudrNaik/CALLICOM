@@ -1,6 +1,5 @@
 // src/components/Navbar.jsx
 import { useContext, useEffect, useState, useRef } from "react";
-import "../assets/css/Geist.css";
 import SpinyLogo from "../assets/Images/SpinyNAStudiosLogo_.png";
 import { Link } from "react-router-dom";
 import UserIcon from "../assets/Images/UserIcon.png";
