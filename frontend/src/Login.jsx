@@ -4,7 +4,7 @@ import { AuthContext } from "./AuthContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import background from "./assets/Images/4060492.jpg";
-import "./assets/css/Geist.css";
+
 
 function Login() {
   const { isLoggedIn, login } = useContext(AuthContext);

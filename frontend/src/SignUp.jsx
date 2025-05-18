@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import background from "./assets/Images/4060492.jpg";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import "./assets/css/Geist.css";
+
 
 
 function SignUp({ setIsLoggedIn }) {

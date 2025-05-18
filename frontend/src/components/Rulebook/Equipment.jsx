@@ -2,7 +2,7 @@ import GearCard from "./EquipmentCard";
 import SidebarRules from "./SidebarNav";
 import { useState, useEffect } from "react";
 import equipment from "../../data/Equipment.json"
-import "../../assets/css/Geist.css";
+
 
 const Equipment = () => {
 
