@@ -44,7 +44,7 @@ const Navbar = ({}) => {
         ${scrolled ? "bg-neutral-900 shadow-md" : "bg-transparent"}
       `}
     >
-      <div className="flex items-center relative w-full font-geist">
+      <div className="flex items-center relative w-full font-geistMono">
         <img src={SpinyLogo} alt="Logo" className="h-20" />
         <div className="text-xl px-2">SpinyNA Studios</div>
 
