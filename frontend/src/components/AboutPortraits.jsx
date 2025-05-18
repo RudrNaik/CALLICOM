@@ -6,10 +6,10 @@ const AboutPortraits = () => {
       <div>
         <section className="py-20 px-6 text-white font-mono max-w-screen-lg mx-auto">
       <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
-        Meet the Developers
+        Meet the creators
       </h2>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
+      <div className="grid grid-cols-2 gap-10">
         {profiles.map((dev, index) => (
           <div
             key={index}

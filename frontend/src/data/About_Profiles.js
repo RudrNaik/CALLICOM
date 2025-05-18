@@ -4,18 +4,16 @@ import KobeImg from "../assets/images/Kobe Laws.jpg";
 
 const profiles = [
     {
-        "name": "Rudra Naik",
-        "title": "Calamari Founder, Web Developer",
-        "image": RudraImg,
-        "alt": "Picture of Rudra Naik",
-        "bio": "Rudra Naik is a Computer Science Student at Iowa State University. Under his alias SpinyNA, Rudra founded the Tabletop RPG known as Calamari."
+        "name": "Spinypine",
+        "title": "Calamari Founder, Developer, Artist",
+        "alt": "Picture of Spiny",
+        "bio": "Spiny is a Computer Science Student at Iowa State University. he is the current creator of the Calamari website along with the world and lore alongside esteemed artist- That Guy Gooders, and a few others."
     },
     {
-        "name": "Kobe Laws",
-        "title": "Web Developer",
-        "image": KobeImg,
-        "alt": "Picture of Kobe Laws",
-        "bio": "Kobe Laws is a Civil Engineering Student at Iowa State University with an interest in Computer Science applications in Hydrology software for drainage in site design."
+        "name": "That Guy Gooders",
+        "title": "Black Lotus Founder, Artist",
+        "alt": "Picture of Gooders",
+        "bio": "[To be unveiled later]"
     }
 ];
 
