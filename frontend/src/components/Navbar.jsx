@@ -41,7 +41,7 @@ const Navbar = ({}) => {
 
   return (
     <nav
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-200 text-white font-[Geist_Mono]
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-200 text-white font-geist
         ${scrolled ? "bg-neutral-900 shadow-md" : "bg-transparent"}
       `}
     >
