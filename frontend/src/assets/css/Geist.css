@@ -1,12 +1,9 @@
 @font-face {
   font-family: 'Geist_Mono';
   src: url('/fonts/GeistMono-Regular.eot');
-  src: local('Geist Mono Regular'), local('GeistMono-Regular'),
-       url('/fonts/GeistMono-Regular.eot') format('embedded-opentype'),
-       url('/fonts/GeistMono-Regular.woff2') format('woff2'),
+  src: url('/fonts/GeistMono-Regular.woff2') format('woff2'),
        url('/fonts/GeistMono-Regular.woff') format('woff'),
        url('/fonts/GeistMono-Regular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
-  font-display: swap;
 }
