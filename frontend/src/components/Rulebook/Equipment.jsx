@@ -9,7 +9,7 @@ const Equipment = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   return (
-    <div className="flex min-h-screen text-white font-mono top-20">
+    <div className="flex min-h-screen text-white top-20" style = {{ fontFamily: 'Geist_Mono' }}>
       <SidebarRules rules={equipment} />
 
       <main className="flex-1 p-8 space-y-8 overflow-y-auto scroll-smooth">
