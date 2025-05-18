@@ -43,7 +43,7 @@ const Footer = () => {
         </div>
 
         {/* Navigation Links */}
-        <div className="flex flex-wrap justify-center gap-4 mb-6 uppercase text-sm">
+        <div className="flex flex-wrap justify-center gap-4 mb-6 uppercase text-sm font-[Geist_Mono]">
           <Link to="/" className="hover:underline">CALAMARI</Link>
           <Link to="/news" className="hover:underline">News</Link>
           <Link to="/about" className="hover:underline">About</Link>
