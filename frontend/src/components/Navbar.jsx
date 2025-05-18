@@ -102,13 +102,13 @@ const Navbar = ({}) => {
               ) : (
                 <>
                   <Link
-                    to="/login"
+                    //to="/login"
                     className="block px-4 py-2 hover:bg-orange-400"
                   >
                     Log In
                   </Link>
                   <Link
-                    to="/signup"
+                    //to="/signup"
                     className="block px-4 py-2 hover:bg-orange-400"
                   >
                     Sign Up
