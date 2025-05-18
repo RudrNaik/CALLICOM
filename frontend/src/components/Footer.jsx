@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
-import "../assets/css/Geist.css";
+
 import calamariLogo from "../assets/Images/Calamari_Logo.png";
 
 const Footer = () => {
   return (
-    <footer className="bg-black text-white py-4 font-geist">
+    <footer className="bg-black text-white py-4 font-mono">
       <div className="max-w-screen mx-auto text-center">
         
         {/* Logo */}

@@ -1,6 +1,5 @@
 // src/components/Navbar.jsx
 import { useContext, useEffect, useState, useRef } from "react";
-import "../assets/css/Geist.css";
 import SpinyLogo from "../assets/Images/SpinyNAStudiosLogo_.png";
 import { Link } from "react-router-dom";
 import UserIcon from "../assets/Images/UserIcon.png";
@@ -41,11 +40,11 @@ const Navbar = ({}) => {
 
   return (
     <nav
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-200 text-white font-[Geist_Mono]
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-200 text-white
         ${scrolled ? "bg-neutral-900 shadow-md" : "bg-transparent"}
       `}
     >
-      <div className="flex items-center relative w-full">
+      <div className="flex items-center relative w-full font-mono">
         <img src={SpinyLogo} alt="Logo" className="h-20" />
         <div className="text-xl px-2">SpinyNA Studios</div>
 
