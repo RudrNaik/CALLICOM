@@ -20,28 +20,29 @@ function DerivedStats({ character, userId, refreshCharacter }) {
   }, [character]);
 
   useEffect(() => {
-    const patchWoundsToDB = async () => {
-      try {
-        await fetch(
-          `http://localhost:8080/api/characters/${userId}/${character.callsign}`,
-          {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ fleshWounds, deepWounds }),
-          }
-        );
-        prevWounds.current = { fleshWounds, deepWounds };
-        refreshCharacter?.();
-      } catch (error) {
-        console.error("Failed to update wounds:", error);
-      }
-    };
-
+    // Only patch if the wounds have changed (i.e., state != previous)
     const woundsChanged =
       fleshWounds !== prevWounds.current.fleshWounds ||
       deepWounds !== prevWounds.current.deepWounds;
 
     if (woundsChanged) {
+      const patchWoundsToDB = async () => {
+        try {
+          await fetch(
+            `http://localhost:8080/api/characters/${userId}/${character.callsign}`,
+            {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ fleshWounds, deepWounds }),
+            }
+          );
+          prevWounds.current = { fleshWounds, deepWounds }; // Update the previous state after successful patch
+          refreshCharacter?.();
+        } catch (error) {
+          console.error("Failed to update wounds:", error);
+        }
+      };
+
       patchWoundsToDB();
     }
   }, [fleshWounds, deepWounds, userId, character.callsign, refreshCharacter]);
