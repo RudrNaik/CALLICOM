@@ -1,12 +1,53 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
+import { debounce } from "lodash";
+
 
 function DerivedStats({ character, userId, refreshCharacter }) {
   const [fleshWounds, setFleshWounds] = useState(0);
   const [deepWounds, setDeepWounds] = useState(0);
   const prevWounds = useRef({ fleshWounds: 0, deepWounds: 0 });
+  const [isSaving, setIsSaving] = useState(false);  // Flag to prevent multiple API calls
+  const [updateTimer, setUpdateTimer] = useState(null); // Track the timer
 
   const { attributes = {}, skills = {} } = character;
   const armorClass = character.equipment?.armorClass || 0;
+
+  // Timer function to handle update when user stops editing
+  const delayedUpdate = () => {
+    const timer = setTimeout(async () => {
+      // Only proceed if there are changes and we're not already saving
+      if (fleshWounds !== prevWounds.current.fleshWounds || deepWounds !== prevWounds.current.deepWounds) {
+        setIsSaving(true); // Set flag to prevent repeated calls
+        try {
+          await fetch(
+            `http://localhost:8080/api/characters/${userId}/${character.callsign}`,
+            {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ fleshWounds, deepWounds }),
+            }
+          );
+          prevWounds.current = { fleshWounds, deepWounds }; // Update previous state after successful patch
+          refreshCharacter?.();
+        } catch (error) {
+          console.error("Failed to update wounds:", error);
+        } finally {
+          setIsSaving(false); // Reset saving flag after the request is completed
+        }
+      }
+    }, 500); // 500ms delay to wait for the user to stop editing
+
+    setUpdateTimer(timer); // Store the timer so we can clear it if necessary
+  };
+
+  useEffect(() => {
+    // Clear previous timeout if there is a new change before the previous one finishes
+    if (updateTimer) {
+      clearTimeout(updateTimer);
+    }
+    // Call the delayed update function
+    delayedUpdate();
+  }, [fleshWounds, deepWounds, updateTimer]);
 
   useEffect(() => {
     if (character) {
@@ -18,34 +59,6 @@ function DerivedStats({ character, userId, refreshCharacter }) {
       };
     }
   }, [character]);
-
-  useEffect(() => {
-    // Only patch if the wounds have changed (i.e., state != previous)
-    const woundsChanged =
-      fleshWounds !== prevWounds.current.fleshWounds ||
-      deepWounds !== prevWounds.current.deepWounds;
-
-    if (woundsChanged) {
-      const patchWoundsToDB = async () => {
-        try {
-          await fetch(
-            `http://localhost:8080/api/characters/${userId}/${character.callsign}`,
-            {
-              method: "PATCH",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ fleshWounds, deepWounds }),
-            }
-          );
-          prevWounds.current = { fleshWounds, deepWounds }; // Update the previous state after successful patch
-          refreshCharacter?.();
-        } catch (error) {
-          console.error("Failed to update wounds:", error);
-        }
-      };
-
-      patchWoundsToDB();
-    }
-  }, [fleshWounds, deepWounds, userId, character.callsign, refreshCharacter]);
 
   const Alertness = attributes.Expertise || 0;
   const Body = attributes.Body || 0;
@@ -120,3 +133,4 @@ function DerivedStats({ character, userId, refreshCharacter }) {
 }
 
 export default DerivedStats;
+
