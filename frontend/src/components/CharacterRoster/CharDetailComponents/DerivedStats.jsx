@@ -55,18 +55,15 @@ function DerivedStats({ character, userId, refreshCharacter }) {
 
   useEffect(() => {
     if (character) {
-      // Avoid overwriting local changes with data from the backend if we're still editing
-      if (fleshWounds === 0 && deepWounds === 0) {
-        // Only set the initial values if they have not been modified by the user yet
-        setFleshWounds(character.fleshWounds || 0);
-        setDeepWounds(character.deepWounds || 0);
-        prevWounds.current = {
-          fleshWounds: character.fleshWounds || 0,
-          deepWounds: character.deepWounds || 0,
-        };
-      }
+      // Ensure the wounds are updated when a new character is selected
+      setFleshWounds(character.fleshWounds || 0);
+      setDeepWounds(character.deepWounds || 0);
+      prevWounds.current = {
+        fleshWounds: character.fleshWounds || 0,
+        deepWounds: character.deepWounds || 0,
+      };
     }
-  }, [character]); // Prevent overwriting on refresh
+  }, [character]); // This ensures wounds are updated when the character changes
 
   const handleDecreaseFleshWounds = () => {
     setFleshWounds(Math.max(fleshWounds - 1, 0));
@@ -84,7 +81,7 @@ function DerivedStats({ character, userId, refreshCharacter }) {
     setDeepWounds(deepWounds + 1);
   };
 
-    // Derived stats calculations based on character attributes and skills
+  // Derived stats calculations based on character attributes and skills
   const Alertness = character.attributes?.Expertise || 0;
   const Body = character.attributes?.Body || 0;
   const Intelligence = character.attributes?.Intelligence || 0;
@@ -100,8 +97,8 @@ function DerivedStats({ character, userId, refreshCharacter }) {
   const FleshWoundThreshold = Math.ceil(Stamina / 2) + character.equipment?.armorClass || 0;
   const DeepWoundThreshold = Stamina + character.equipment?.armorClass || 0;
   const InstantDeath = Stamina * 2;
-  const UnarmedDamage = Math.ceil(3 + Body + Brawl);
-  const ArmedDamage = Math.ceil(3 + Body + Melee);
+  const UnarmedDamage = (3 + Body + Brawl);
+  const ArmedDamage = (3 + Body + Melee);
   const woundMod = fleshWounds + deepWounds * 2;
 
   return (
@@ -130,9 +127,9 @@ function DerivedStats({ character, userId, refreshCharacter }) {
         <div className="bg-neutral-800 py-2">{ArmedDamage}</div>
 
         {/* Third Row */}
-        <div className="bg-neutral-900 font-bold py-2">Instant Death</div>
-        <div className="bg-neutral-900 font-bold py-2">System Shock</div>
-        <div className="bg-neutral-900 font-bold py-2 col-span-2">
+        <div className="bg-neutral-900 font-bold py-2 text-red-800">Instant Death</div>
+        <div className="bg-neutral-900 font-bold py-2 text-orange-800">System Shock</div>
+        <div className="bg-neutral-900 font-bold py-2 col-span-2 text-red-500">
           -{woundMod}
         </div>
 
@@ -142,19 +139,19 @@ function DerivedStats({ character, userId, refreshCharacter }) {
         <div className="bg-neutral-800 py-2">
           <span className="font-semibold text-orange-400">Flesh Wounds</span>
           <br></br>
-          <button onClick={() => setFleshWounds(Math.max(fleshWounds - 1, 0))} className="text-red-500">−</button>
+          <button onClick={handleDecreaseFleshWounds} className="text-red-500">−</button>
           <span className="mx-2">{fleshWounds}</span>
-          <button onClick={() => setFleshWounds(fleshWounds + 1)} className="text-red-500">+</button>
+          <button onClick={handleIncreaseFleshWounds} className="text-red-500">+</button>
         </div>
 
         <div className="bg-neutral-800 py-2">
           <span className="font-semibold text-orange-400">Deep Wounds</span>
           <br></br>
-          <button onClick={() => setDeepWounds(Math.max(deepWounds - 1, 0))} className="text-red-500">−</button>
+          <button onClick={handleDecreaseDeepWounds} className="text-red-500">−</button>
           <span className="mx-2">{deepWounds}</span>
-          <button onClick={() => setDeepWounds(deepWounds + 1)} className="text-red-500">+</button>
+          <button onClick={handleIncreaseDeepWounds} className="text-red-500">+</button>
         </div>
-        </div>
+      </div>
     </div>
   );
 }
