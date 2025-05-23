@@ -12,8 +12,8 @@ app.use(bodyParser.json());
 const port = "8080";
 const host = "localhost";
 
-const url = "mongodb://localhost:27017";
-const dbName = "SE-COMS-3190";
+const url = "mongodb+srv://rudramnaik:KzkgClpw78%4020040812@callicom.jhksjpl.mongodb.net/?retryWrites=true&w=majority&appName=CALLICOM";
+const dbName = "CALLICOM";
 
 app.listen(port, () => {
   console.log("App listening at http://%s:%s", host, port);

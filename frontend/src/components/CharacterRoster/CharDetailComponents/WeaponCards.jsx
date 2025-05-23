@@ -61,6 +61,9 @@ const WeaponSlot = ({
             <p className="text-xs text-gray-400 mt-1">
               DMG {categoryData.damage} | PEN {categoryData.penetration} | Range:{" "}
               {categoryData.range}
+              <hr></hr>
+              CAP: {categoryData.capacity} /
+              RPT: {categoryData.ammoPerAction}
             </p>
           )}
         </>

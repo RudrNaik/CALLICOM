@@ -18,7 +18,7 @@
       "color":"bg-neutral-800/80",
       "type": "Half",
       "icon": "/Half_Action.svg",
-      "description": "Deploy a bipod or use a gadget.\n\nCertain gadgets may end your turn immediately, such as Controlling Drones, Re-Pinging, or Hacking."
+      "description": "Deploy a bipod or use a gadget.\n\nCertain gadgets may end your turn immediately, such as Controlling Drones, Pinging, or Hacking."
     },
     {
       "name": "Disengage",
@@ -39,14 +39,14 @@
       "type": "Half",
       "color":"bg-neutral-800/80",
       "icon": "/Half_Action.svg",
-      "description": "Rally your team and other allies.\n\nOnce per encounter one team member can rally, using your leadership skill to bolster the morale of friendlies and add your leadership roll/2 to friendly actions for two turns. This effect can be negated if the rallier is hit or an intimidate beats the rally bonus."
+      "description": "Rally your team and other allies.\n\nOnce per turn one team member can rally, using your leadership skill to bolster the morale of friendlies and add a +1 to friendly actions until your next turn. This effect can be negated if the rallier is hit or an intimidate beats the rally bonus. \n\n You can also single out targets using Rally, and apply a +1 for others when shooting at them."
     },
     {
       "name": "Intimidate",
       "type": "Half",
       "color":"bg-neutral-800/80",
       "icon": "/Half_Action.svg",
-      "description": "Intimidate your foes and others for compliance.\n\nOnce per encounter, when Intimidating, you roll your intimidation stat against an enemy's spirit. If you win the opposed roll, you apply your margin of success as a debuff to their actions against you for a turn. If you lose, you get the enemy's ire, and they will focus on you."
+      "description": "Intimidate your foes and others for compliance.\n\nWhen Intimidating, you roll your intimidation stat against an enemy's spirit. If you win the opposed roll, you apply your margin of success as a debuff to their actions against you for a turn. If you lose, you get the enemy's ire, and they will focus on you."
     }
   ]
   
