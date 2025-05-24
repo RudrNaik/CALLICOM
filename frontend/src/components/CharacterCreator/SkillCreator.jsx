@@ -110,7 +110,7 @@ const SkillCreator = ({ formData, setFormData, onNext, onBack }) => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-6 bg-neutral-900/80">
+    <div className="max-w-6xl mx-auto p-6 space-y-6 bg-neutral-900/80" style={{ fontFamily: 'Geist_Mono' }}>
       {/* Attribute points. */}
       <h2 className="text-2xl font-bold mt-8 text-orange-400 border-l-4 border-orange-400 px-3">
         Allocate Attribute Points

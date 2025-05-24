@@ -141,7 +141,7 @@ function CharacterDetail({ character, onUpdate, user }) {
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-6 space-y-6 text-white font-[Geist_Mono]">
+    <div className="max-w-5xl mx-auto p-6 space-y-6 text-white" style={{ fontFamily: 'Geist_Mono' }}>
       <h1 className="text-3xl font-bold text-orange-400">
         {character.name} [{character.callsign}]
       </h1>

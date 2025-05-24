@@ -15,7 +15,7 @@ const FinalReview = ({ formData, onBack, onSubmit }) => {
   } = formData || {};
 
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-6 text-white font-[Geist_Mono] bg-neutral-900/80">
+    <div className="max-w-6xl mx-auto p-6 space-y-6 text-white bg-neutral-900/80" style={{ fontFamily: 'Geist_Mono' }}>
       <h1 className="text-2xl font-bold text-orange-400">
         Review Your Character
       </h1>

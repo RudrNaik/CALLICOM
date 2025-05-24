@@ -20,7 +20,7 @@ const CharCreator = ({ formData, setFormData, onNext }) => {
     }`;
 
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-6 bg-neutral-900/80">
+    <div className="max-w-6xl mx-auto p-6 space-y-6 bg-neutral-900/80" style={{ fontFamily: 'Geist_Mono' }}>
       <div className="bg-neutral-800/60 border-l-8 border-orange-500 p-6 rounded shadow">
         <h1 className="text-4xl font-bold p-2 bg-orange-500">
           New Employee Registration ::/

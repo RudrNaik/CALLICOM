@@ -98,9 +98,9 @@ function DerivedStats({ character, userId, refreshCharacter }) {
   const Stamina = 5 + Body + Spirit;
   const SystemShock = 5 + Health;
   const FleshWoundThreshold =
-    Math.ceil(Stamina / 2) + character.equipment?.armorClass || 0;
-  const DeepWoundThreshold = Stamina + character.equipment?.armorClass || 0;
-  const InstantDeath = Stamina * 2;
+    Math.ceil(Stamina / 2) + character.equipment?.armorClass;
+  const DeepWoundThreshold = Stamina + character.equipment?.armorClass;
+  const InstantDeath = Stamina * 2
   const UnarmedDamage = 3 + Body + Brawl;
   const ArmedDamage = 3 + Body + Melee;
   const woundMod = fleshWounds + deepWounds * 2;
