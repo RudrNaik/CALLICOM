@@ -4,9 +4,8 @@ import background from "./assets/Images/4060492.jpg";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
-
-
 function SignUp({ setIsLoggedIn }) {
+  const [isLoading, setIsLoading] = useState(false);
   const [userInfo, setUserInfo] = useState({
     email: "",
     userName: "",
@@ -25,25 +24,28 @@ function SignUp({ setIsLoggedIn }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true); // Show loading indicator
 
     const { email, userName, password, confirmPassword } = userInfo;
 
     if (!email || !userName || !password || !confirmPassword) {
-    alert("All fields are required");
-    return;
-    }
-    if (password !== confirmPassword) {
-     alert("Passwords do not match");
+      alert("All fields are required");
+      setIsLoading(false);
       return;
     }
-    console.log("try fetch method");
+    if (password !== confirmPassword) {
+      alert("Passwords do not match");
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const response = await fetch("https://callicom.onrender.com/api/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({email, userName, password}),
+        body: JSON.stringify({ email, userName, password }),
       });
 
       const data = await response.json();
@@ -53,11 +55,13 @@ function SignUp({ setIsLoggedIn }) {
         setIsLoggedIn(true);
         navigate("/");
       } else {
-        alert("Signup failed");
+        alert("Signup failed: " + (data.message || "Unknown error"));
       }
     } catch (err) {
-      console.error("Login error:", err);
-      alert("An error occurred during login");
+      console.error("Signup error:", err);
+      alert("An error occurred during signup: " + err.message);
+    } finally {
+      setIsLoading(false); // Hide loading indicator
     }
   };
 
@@ -73,10 +77,11 @@ function SignUp({ setIsLoggedIn }) {
         onSubmit={handleSubmit}
         className="text-white flex flex-col p-6 max-w-md mx-auto"
       >
-        <div className="border border-gray-400 p-6 w-full rounded-none bg-black" style= {{ fontFamily: 'Geist_Mono' }}>
-          <h1 className="text-4xl font-bold p-2 bg-orange-500">
-            SIGNUP ::/
-          </h1>
+        <div
+          className="border border-gray-400 p-6 w-full rounded-none bg-black"
+          style={{ fontFamily: "Geist_Mono" }}
+        >
+          <h1 className="text-4xl font-bold p-2 bg-orange-500">SIGNUP ::/</h1>
           <h2 class="text-sm">
             <span className="text-orange-500 ">CALLI/COM</span> UNCC IDENT
             SERVICE // SIGNUP
@@ -88,9 +93,17 @@ function SignUp({ setIsLoggedIn }) {
             Sign up to access the character creator and manage characters.
           </p>
 
-          <h3 className="text-lg text-white text-center">
-            Sign Up
-          </h3>
+          {/* Saving Indicator */}
+          {isSaving ? (
+            <div className="flex items-center text-orange-400 font-bold py-2">
+              <div className="w-4 h-4 border-t-3 border-solid border-orange-500 rounded-3xl animate-spin mr-2"></div>
+              Saving...
+            </div>
+          ) : (
+            <div className="text-orange-400 font-bold py-2">" "</div>
+          )}
+
+          <h3 className="text-lg text-white text-center">Sign Up</h3>
 
           <label>Email:</label>
           <input
