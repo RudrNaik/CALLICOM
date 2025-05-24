@@ -4,7 +4,7 @@ import background from "./assets/Images/4060492.jpg";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
-function SignUp({ setIsLoggedIn }) {
+function SignUp() {
   const [isLoading, setIsLoading] = useState(false);
   const [userInfo, setUserInfo] = useState({
     email: "",
@@ -13,6 +13,7 @@ function SignUp({ setIsLoggedIn }) {
     confirmPassword: "",
   });
 
+  const { setIsLoggedIn } = useContext(AuthContext); // Make sure this is valid
   const navigate = useNavigate();
 
   const handleChange = (e) => {
