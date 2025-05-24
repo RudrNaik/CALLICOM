@@ -55,7 +55,6 @@ function SignUp() {
       if (response.ok && data.success) {
         alert("Account created!");
         setIsLoggedIn(true);
-        navigate("/login");
       } else {
         alert("Signup failed: " + (data.message || "Unknown error"));
       }
