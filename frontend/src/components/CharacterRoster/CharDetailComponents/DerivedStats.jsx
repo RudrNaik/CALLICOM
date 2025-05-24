@@ -4,16 +4,19 @@ function DerivedStats({ character, userId, refreshCharacter }) {
   const [fleshWounds, setFleshWounds] = useState(character.fleshWounds || 0);
   const [deepWounds, setDeepWounds] = useState(character.deepWounds || 0);
   const prevWounds = useRef({ fleshWounds: 0, deepWounds: 0 });
-  const [isSaving, setIsSaving] = useState(false);  // Flag to prevent multiple API calls
+  const [isSaving, setIsSaving] = useState(false); // Flag to prevent multiple API calls
   const [updateTimer, setUpdateTimer] = useState(null); // Track the timer
 
   // Function to handle the actual server update after debounce
   const updateWoundsToServer = async () => {
-    if (fleshWounds !== prevWounds.current.fleshWounds || deepWounds !== prevWounds.current.deepWounds) {
+    if (
+      fleshWounds !== prevWounds.current.fleshWounds ||
+      deepWounds !== prevWounds.current.deepWounds
+    ) {
       setIsSaving(true); // Set flag to prevent repeated calls
       try {
         const res = await fetch(
-          `http://localhost:8080/api/characters/${userId}/${character.callsign}`,
+          `https://callicom.onrender.com/api/characters/${userId}/${character.callsign}`,
           {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
@@ -40,10 +43,10 @@ function DerivedStats({ character, userId, refreshCharacter }) {
       clearTimeout(updateTimer);
     }
 
-    // Set a new timer to call the update function after 500ms of inactivity
+    // Set a new timer to call the update function after 700ms of inactivity
     const timer = setTimeout(() => {
-      updateWoundsToServer(); // Call the backend after 500ms of inactivity
-    }, 500);
+      updateWoundsToServer(); // Call the backend after 700ms of inactivity
+    }, 700);
 
     setUpdateTimer(timer); // Store the timer ID so we can clear it if necessary
 
@@ -94,15 +97,26 @@ function DerivedStats({ character, userId, refreshCharacter }) {
   const Health = Math.ceil((Body + Spirit) / 2);
   const Stamina = 5 + Body + Spirit;
   const SystemShock = 5 + Health;
-  const FleshWoundThreshold = Math.ceil(Stamina / 2) + character.equipment?.armorClass || 0;
+  const FleshWoundThreshold =
+    Math.ceil(Stamina / 2) + character.equipment?.armorClass || 0;
   const DeepWoundThreshold = Stamina + character.equipment?.armorClass || 0;
   const InstantDeath = Stamina * 2;
-  const UnarmedDamage = (3 + Body + Brawl);
-  const ArmedDamage = (3 + Body + Melee);
+  const UnarmedDamage = 3 + Body + Brawl;
+  const ArmedDamage = 3 + Body + Melee;
   const woundMod = fleshWounds + deepWounds * 2;
 
   return (
     <div className="mt-8 text-white font-geist">
+      {/* Saving Indicator */}
+      {isSaving ? (
+        <div className="flex items-center text-orange-400 font-bold py-2">
+          <div className="w-4 h-4 border-t-3 border-solid border-orange-500 rounded-3xl animate-spin mr-2"></div>
+          Saving...
+        </div>
+      ) : (
+        <div className="text-orange-400 font-bold py-2">Saved</div>
+      )}
+
       <div className="grid grid-cols-4 gap-px bg-neutral-600 text-sm text-center border border-neutral-700">
         {/* Header Row */}
         <div className="bg-neutral-900 font-bold py-2">Health</div>
@@ -127,8 +141,12 @@ function DerivedStats({ character, userId, refreshCharacter }) {
         <div className="bg-neutral-800 py-2">{ArmedDamage}</div>
 
         {/* Third Row */}
-        <div className="bg-neutral-900 font-bold py-2 text-red-800">Instant Death</div>
-        <div className="bg-neutral-900 font-bold py-2 text-orange-800">System Shock</div>
+        <div className="bg-neutral-900 font-bold py-2 text-red-800">
+          Instant Death
+        </div>
+        <div className="bg-neutral-900 font-bold py-2 text-orange-800">
+          System Shock
+        </div>
         <div className="bg-neutral-900 font-bold py-2 col-span-2 text-red-500">
           -{woundMod}
         </div>
@@ -139,17 +157,41 @@ function DerivedStats({ character, userId, refreshCharacter }) {
         <div className="bg-neutral-800 py-2">
           <span className="font-semibold text-orange-400">Flesh Wounds</span>
           <br></br>
-          <button onClick={handleDecreaseFleshWounds} className="text-red-500">−</button>
+          <button
+            onClick={handleDecreaseFleshWounds}
+            className="text-red-500"
+            disabled={isSaving}
+          >
+            −
+          </button>
           <span className="mx-2">{fleshWounds}</span>
-          <button onClick={handleIncreaseFleshWounds} className="text-red-500">+</button>
+          <button
+            onClick={handleIncreaseFleshWounds}
+            className="text-red-500"
+            disabled={isSaving}
+          >
+            +
+          </button>
         </div>
 
         <div className="bg-neutral-800 py-2">
           <span className="font-semibold text-orange-400">Deep Wounds</span>
           <br></br>
-          <button onClick={handleDecreaseDeepWounds} className="text-red-500">−</button>
+          <button
+            onClick={handleDecreaseDeepWounds}
+            className="text-red-500"
+            disabled={isSaving}
+          >
+            −
+          </button>
           <span className="mx-2">{deepWounds}</span>
-          <button onClick={handleIncreaseDeepWounds} className="text-red-500">+</button>
+          <button
+            onClick={handleIncreaseDeepWounds}
+            className="text-red-500"
+            disabled={isSaving}
+          >
+            +
+          </button>
         </div>
       </div>
     </div>

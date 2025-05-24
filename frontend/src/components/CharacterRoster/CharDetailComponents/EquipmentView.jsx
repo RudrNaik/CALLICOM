@@ -62,7 +62,7 @@ function EquipmentSelection({
   const saveToDatabase = async () => {
     try {
       const res = await fetch(
-        `http://localhost:8080/api/characters/${userId}/${character.callsign}`,
+        `https://callicom.onrender.com/api/characters/${userId}/${character.callsign}`,
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },

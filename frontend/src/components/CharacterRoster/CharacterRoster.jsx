@@ -8,7 +8,11 @@ function CharacterRoster({ userId }) {
   const [refreshFlag, setRefreshFlag] = useState(false);
 
   useEffect(() => {
-    fetch(`http://localhost:8080/api/characters/${userId}`)
+    triggerRefresh();  // Fetch the latest data when the view appears
+  }, []);
+  
+  useEffect(() => {
+    fetch(`https://callicom.onrender.com/api/characters/${userId}`)
       .then((res) => res.json())
       .then((data) => {
         setCharacters(data);
@@ -27,7 +31,7 @@ function CharacterRoster({ userId }) {
 
   const handleDeleteCharacter = async (id) => {
     const res = await fetch(
-      `http://localhost:8080/api/characters/${userId}/${id}`,
+      `https://callicom.onrender.com/api/characters/${userId}/${id}`,
       {
         method: "DELETE",
       }
@@ -35,6 +39,7 @@ function CharacterRoster({ userId }) {
 
     if (res.ok) {
       setCharacters((prev) => prev.filter((char) => char._id !== id));
+      setSelectedCharacter(false);
       triggerRefresh();
     } else {
       alert("Failed to delete character.");

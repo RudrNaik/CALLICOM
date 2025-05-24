@@ -96,7 +96,7 @@ function CharacterDetail({ character, onUpdate, user }) {
     };
 
     const res = await fetch(
-      `http://localhost:8080/api/characters/${user}/${character.callsign}`,
+      `https://callicom.onrender.com/api/characters/${user}/${character.callsign}`,
       {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -123,7 +123,7 @@ function CharacterDetail({ character, onUpdate, user }) {
     };
 
     const res = await fetch(
-      `http://localhost:8080/api/characters/${user}/${character.callsign}`,
+      `https://callicom.onrender.com/api/characters/${user}/${character.callsign}`,
       {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },

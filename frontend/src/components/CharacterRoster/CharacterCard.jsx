@@ -12,7 +12,7 @@ function CharCard({ character, onSelect, onDelete }) {
               `Are you sure you want to delete ${character.callsign}?`
             )
           ) {
-            onDelete(character.callsign);
+            onDelete(character.callsign); // Pass character _id instead of callsign
           }
         }}
         className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-sm"
