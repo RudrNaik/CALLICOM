@@ -94,7 +94,7 @@ function SignUp({ setIsLoggedIn }) {
           </p>
 
           {/* Saving Indicator */}
-          {isSaving ? (
+          {isLoading ? (
             <div className="flex items-center text-orange-400 font-bold py-2">
               <div className="w-4 h-4 border-t-3 border-solid border-orange-500 rounded-3xl animate-spin mr-2"></div>
               Saving...
