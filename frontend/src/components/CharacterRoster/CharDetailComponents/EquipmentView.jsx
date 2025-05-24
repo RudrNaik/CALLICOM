@@ -81,7 +81,7 @@ function EquipmentSelection({
   };
 
   return (
-    <div className="mt-8 text-white font-[Geist_Mono]">
+    <div className="mt-8 text-white" style={{ fontFamily: 'Geist_Mono' }}>
       <h2 className="text-xl font-bold text-orange-400 mb-2">Equipment</h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
