@@ -9,10 +9,11 @@ const { MongoClient } = require("mongodb");
 app.use(cors());
 app.use(bodyParser.json());
 
-const port = "8080";
+const port = process.env.PORT || 8080
 const host = "localhost";
 
-const url = "mongodb+srv://rudramnaik:KzkgClpw78%4020040812@callicom.jhksjpl.mongodb.net/?retryWrites=true&w=majority&appName=CALLICOM";
+//mongodb+srv://rudramnaik:KzkgClpw78%4020040812@callicom.jhksjpl.mongodb.net/?retryWrites=true&w=majority&appName=CALLICOM
+const url = "process.env.MONGO_URI";
 const dbName = "CALLICOM";
 
 app.listen(port, () => {
