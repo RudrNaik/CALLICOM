@@ -35,6 +35,7 @@ function CharacterRoster({ userId }) {
 
     if (res.ok) {
       setCharacters((prev) => prev.filter((char) => char._id !== id));
+      setSelectedCharacter(false);
       triggerRefresh();
     } else {
       alert("Failed to delete character.");
