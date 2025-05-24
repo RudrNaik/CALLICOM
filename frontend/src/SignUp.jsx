@@ -101,7 +101,7 @@ function SignUp() {
               Saving...
             </div>
           ) : (
-            <div className="text-orange-400 font-bold py-2">" "</div>
+            <div className="text-orange-400 font-bold py-2"></div>
           )}
 
           <h3 className="text-lg text-white text-center">Sign Up</h3>
