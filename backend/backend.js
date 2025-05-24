@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 const port = process.env.PORT || 8080
 const host = "localhost";
 
-const url = process.env.MONGO_URI;
+const url = process.env.MONGO_URI || "mongodb+srv://rudramnaik:KzkgClpw78%4020040812@callicom.jhksjpl.mongodb.net/?retryWrites=true&w=majority&appName=CALLICOM";
 const dbName = "CALLICOM";
 
 app.listen(port, () => {
