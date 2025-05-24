@@ -14,7 +14,7 @@ function SignUp() {
     confirmPassword: "",
   });
 
-  const { setIsLoggedIn } = useContext(AuthContext); // Make sure this is valid
+  const { login } = useContext(AuthContext); // Make sure this is valid
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -54,7 +54,8 @@ function SignUp() {
 
       if (response.ok && data.success) {
         alert("Account created!");
-        setIsLoggedIn(true);
+        login();
+        navigate("/login");
       } else {
         alert("Signup failed: " + (data.message || "Unknown error"));
       }
@@ -101,7 +102,7 @@ function SignUp() {
               Saving...
             </div>
           ) : (
-            <div className="text-orange-400 font-bold py-2"></div>
+            <div className="text-orange-400 font-bold py-2"> </div>
           )}
 
           <h3 className="text-lg text-white text-center">Sign Up</h3>
