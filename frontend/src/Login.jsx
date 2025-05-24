@@ -5,7 +5,6 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import background from "./assets/Images/4060492.jpg";
 
-
 function Login() {
   const { isLoggedIn, login } = useContext(AuthContext);
   const [userInfo, setUserInfo] = useState({ userName: "", password: "" });
@@ -51,10 +50,11 @@ function Login() {
         onSubmit={handleSubmit}
         className="text-white flex flex-col p-6 max-w-md mx-auto"
       >
-        <div className="border border-orange-500 border-l-4 p-6 w-full bg-neutral-950/80" style={{ fontFamily: 'Geist_Mono' }}>
-          <h1 className="text-4xl font-bold p-2 bg-orange-500">
-            LOGIN ::/
-          </h1>
+        <div
+          className="border border-orange-500 border-l-4 p-6 w-full bg-neutral-950/80"
+          style={{ fontFamily: "Geist_Mono" }}
+        >
+          <h1 className="text-4xl font-bold p-2 bg-orange-500">LOGIN ::/</h1>
           <h2 class="text-sm">
             <span className="text-orange-500 ">CALLI/COM</span> UNCC IDENT
             SERVICE // LOGIN
@@ -89,6 +89,10 @@ function Login() {
             placeholder="------"
             className="border border-orange-400 border-l-4 p-2 w-full mb-4 rounded-none bg-neutral-950/80 text-white"
           />
+          <p className="text-xs py-2 text-neutral-400/80">
+            //[⚠]:: Please be patient as occasionally login will require the
+            backend to spool up. Usually this takes 20-30 seconds.
+          </p>
 
           <button
             type="submit"
@@ -96,7 +100,6 @@ function Login() {
           >
             Log In
           </button>
-
           <button
             type="button"
             className="border border-orange-500 hover:bg-orange-500 text-white py-2 w-full cursor-pointer"
