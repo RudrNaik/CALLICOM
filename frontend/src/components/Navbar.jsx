@@ -104,13 +104,13 @@ const Navbar = ({}) => {
                   to="/login"
                     className="block px-4 py-2 hover:bg-orange-400"
                   >
-                    Log In [Disabled]
+                    Log In
                   </Link>
                   <Link
                     to="/signup"
                     className="block px-4 py-2 hover:bg-orange-400"
                   >
-                    Sign Up [Disabled]
+                    Sign Up
                   </Link>
                 </>
               )}
