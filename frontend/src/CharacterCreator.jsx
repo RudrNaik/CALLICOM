@@ -30,7 +30,7 @@ const CharacterCreator = () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(fullCharacter),
-      });
+      }); 
 
       if (!response.ok) throw new Error("Failed to create character");
     } catch (err) {
