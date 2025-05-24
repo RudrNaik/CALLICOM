@@ -8,6 +8,10 @@ function CharacterRoster({ userId }) {
   const [refreshFlag, setRefreshFlag] = useState(false);
 
   useEffect(() => {
+    triggerRefresh();  // Fetch the latest data when the view appears
+  }, []);
+  
+  useEffect(() => {
     fetch(`https://callicom.onrender.com/api/characters/${userId}`)
       .then((res) => res.json())
       .then((data) => {
