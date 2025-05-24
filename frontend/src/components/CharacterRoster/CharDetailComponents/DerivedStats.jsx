@@ -16,7 +16,7 @@ function DerivedStats({ character, userId, refreshCharacter }) {
       setIsSaving(true); // Set flag to prevent repeated calls
       try {
         const res = await fetch(
-          `http://localhost:8080/api/characters/${userId}/${character.callsign}`,
+          `https://callicom.onrender.com/api/characters/${userId}/${character.callsign}`,
           {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },

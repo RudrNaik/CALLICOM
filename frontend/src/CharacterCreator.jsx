@@ -26,7 +26,7 @@ const CharacterCreator = () => {
     };
 
     try {
-      const response = await fetch("http://localhost:8080/api/characters", {
+      const response = await fetch("https://callicom.onrender.com/api/characters", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(fullCharacter),
