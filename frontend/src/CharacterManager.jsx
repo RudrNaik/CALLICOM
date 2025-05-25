@@ -13,7 +13,10 @@ const CharManager = () => {
       style={{ backgroundImage: `url(${background})` }}
     >
       <div className="py-10"></div>
-      <div className="grid grid-cols-1 gap-6 p-6">
+      <div
+        className="grid grid-cols-1 gap-6 p-6"
+        style={{ fontFamily: "Geist_Mono" }}
+      >
         <div className="flex flex-col space-y-10">
           <TerminalPanel
             title="Character Creator"
@@ -23,7 +26,10 @@ const CharManager = () => {
         </div>
       </div>
       {isLoggedIn && (
-        <div className="text-center text-orange-400">
+        <div
+          className="text-center text-orange-400"
+          style={{ fontFamily: "Geist_Mono" }}
+        >
           Logged in as: {user.userName}
         </div>
       )}

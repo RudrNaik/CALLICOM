@@ -4,14 +4,19 @@ export const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState(null); 
-
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const stored = localStorage.getItem("user");
     if (stored) {
-      setIsLoggedIn(true);
-      setUser(JSON.parse(stored));
+      try {
+        setUser(JSON.parse(stored)); // Safely parse JSON
+        setIsLoggedIn(true);
+      } catch (err) {
+        console.error("Failed to parse user data from localStorage:", err);
+        // Optionally, clear the invalid data from localStorage
+        localStorage.removeItem("user");
+      }
     }
   }, []);
 

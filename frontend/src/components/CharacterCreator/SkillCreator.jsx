@@ -114,10 +114,10 @@ const SkillCreator = ({ formData, setFormData, onNext, onBack }) => {
       {/* Attribute points. */}
       <h2 className="text-2xl font-bold mt-8 text-orange-400 border-l-4 border-orange-400 px-3">
         Allocate Attribute Points
-        <h3 class="text-sm text-white">
+        <h2 class="text-sm text-white">
           <span className="text-orange-400 ">CALLI/COM</span> UNCC IDENT SERVICE
           // LC-218-D1 Overarching Skills Assessment
-        </h3>
+        </h2>
         <p className="text-xs text-neutral-500">
           Attributes are your ‘core’ skills and are divided into 4
           categories. <br></br> <br></br>Each character starts with their attributes at zero. Zero

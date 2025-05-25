@@ -19,6 +19,9 @@ function CharacterDetail({ character, onUpdate, user }) {
   const [emergencyDice, setEmergencyDice] = useState(
     character.emergencyDice || 0
   );
+  const [originalEmergencyDice, setOriginalEmergencyDice] = useState(
+    character.emergencyDice || 0
+  );
   const [specializations, setSpecializations] = useState([
     ...character.specializations,
   ]);
@@ -32,6 +35,7 @@ function CharacterDetail({ character, onUpdate, user }) {
       setEditedSkills({ ...character.skills });
       setXpRemaining(character.XP || 0);
       setEmergencyDice(character.emergencyDice || 0);
+      setOriginalEmergencyDice(character.emergencyDice || 0); // Initialize original emergency dice
     }
   }, [character]);
 
@@ -66,17 +70,52 @@ function CharacterDetail({ character, onUpdate, user }) {
 
   const addEmergencyDie = () => {
     if (emergencyDice < 4 && xpRemaining >= 1) {
-      setEmergencyDice(emergencyDice + 1);
-      setXpRemaining(xpRemaining - 1);
+      setEmergencyDice((prev) => prev + 1); // Update the state directly
+      setXpRemaining((prev) => prev - 1);
     }
   };
 
   const removeEmergencyDie = () => {
+    if (isEditing && emergencyDice <= originalEmergencyDice) {
+      alert("You can't remove more emergency dice than you originally had.");
+      return;
+    }
+
     if (emergencyDice > 0) {
-      setEmergencyDice(emergencyDice - 1);
+      setEmergencyDice(emergencyDice - 1); // Update the state first
+
       if (isEditing) {
-        setXpRemaining(xpRemaining + 1);
+        setXpRemaining(xpRemaining + 1); // Refund XP during editing
+      } else {
+        // Patch to the backend after state is updated
+        patchRemoveEDice(1); // Send the update to backend
       }
+    }
+  };
+
+  const patchRemoveEDice = async (amount) => {
+    const updates = {
+      emergencyDice: emergencyDice - amount, // Send updated state to backend
+    };
+
+    try {
+      const res = await fetch(
+        `https://callicom.onrender.com/api/characters/${user}/${character.callsign}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updates),
+        }
+      );
+
+      if (res.ok) {
+        onUpdate();
+      } else {
+        alert("Failed to update emergency dice.");
+      }
+    } catch (err) {
+      console.error("Error updating emergency dice:", err);
+      alert("Error updating emergency dice.");
     }
   };
 
@@ -141,7 +180,10 @@ function CharacterDetail({ character, onUpdate, user }) {
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-6 space-y-6 text-white" style={{ fontFamily: 'Geist_Mono' }}>
+    <div
+      className="max-w-5xl mx-auto p-6 space-y-6 text-white"
+      style={{ fontFamily: "Geist_Mono" }}
+    >
       <h1 className="text-3xl font-bold text-orange-400">
         {character.name} [{character.callsign}]
       </h1>
