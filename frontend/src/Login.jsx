@@ -7,6 +7,7 @@ import background from "./assets/Images/4060492.jpg";
 
 function Login() {
   const { isLoggedIn, login } = useContext(AuthContext);
+  const [isLoading, setIsLoading] = useState(false);
   const [userInfo, setUserInfo] = useState({ userName: "", password: "" });
   const navigate = useNavigate();
 
@@ -16,6 +17,7 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
       const response = await fetch("https://callicom.onrender.com/api/login", {
         method: "POST",
@@ -28,12 +30,15 @@ function Login() {
       if (response.ok && data.success) {
         login({ userName: userInfo.userName });
         alert("Login successful!");
+        setIsLoading(false);
         navigate("/");
       } else {
         alert("Invalid username or password");
+        setIsLoading(false);
       }
     } catch (err) {
       console.error("Login error:", err);
+      setIsLoading(false);
       alert("An error occurred during login");
     }
   };
@@ -65,6 +70,16 @@ function Login() {
           <p class="text-sm py-3 px-3 text-orange-400/80 border-l-4 border-orange-400">
             Log in to access registered characters and the character manager.
           </p>
+
+          {/* Saving Indicator */}
+          {isLoading ? (
+            <div className="flex items-center text-orange-400 font-bold py-2">
+              <div className="w-4 h-4 border-t-3 border-solid border-orange-500 rounded-3xl animate-spin mr-2"></div>
+              logging in...
+            </div>
+          ) : (
+            <div className="text-orange-400 font-bold py-2"> </div>
+          )}
 
           <h3 className="text-lg text-white font-semibold text-center">
             Log In

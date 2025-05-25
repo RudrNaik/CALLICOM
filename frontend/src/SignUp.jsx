@@ -147,6 +147,11 @@ function SignUp() {
             className="border border-gray-400 p-2 w-full mb-4 rounded-none bg-white text-black"
           />
 
+          <p className="text-xs py-2 text-neutral-400/80">
+            //[⚠]:: Please be patient as occasionally sign up will require the
+            backend to spool up. Usually this takes 20-30 seconds.
+          </p>
+
           <button
             type="submit"
             className="border border-orange-500 hover:bg-orange-500 text-white py-2 w-full mb-4 mt-4 cursor-pointer"
