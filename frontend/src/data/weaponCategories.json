@@ -3,7 +3,7 @@
     "class": "L-Weapons",
     "damage": 4,
     "penetration": 1,
-    "range": "+2 C | — M | -2 L | -3 ELR",
+    "range": "+2 C | -2 L | -3 ELR",
     "capacity": 12,
     "ammoPerAction": 3
   },
@@ -19,7 +19,7 @@
     "class": "L-Weapons",
     "damage": 3,
     "penetration": 1,
-    "range": "+1 C | —1 M | -1 L | -2 ELR",
+    "range": "+1 C | -1 L | -2 ELR",
     "capacity": 30,
     "ammoPerAction": 5
   },
