@@ -27,7 +27,7 @@ function CharacterRoster({ userId }) {
       return;
     }
 
-    fetch(`https://callicom-test.onrender.com/api/characters/${userId}`, {
+    fetch(`https://callicom.onrender.com/api/characters/${userId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -62,7 +62,7 @@ function CharacterRoster({ userId }) {
     }
 
     const res = await fetch(
-      `https://callicom-test.onrender.com/api/characters/${userId}/${id}`,
+      `https://callicom.onrender.com/api/characters/${userId}/${id}`,
       {
         method: "DELETE",
         headers: {

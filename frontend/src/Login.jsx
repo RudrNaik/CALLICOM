@@ -19,7 +19,7 @@ function Login() {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const response = await fetch("https://callicom-test.onrender.com/api/login", {
+      const response = await fetch("https://callicom.onrender.com/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userInfo),

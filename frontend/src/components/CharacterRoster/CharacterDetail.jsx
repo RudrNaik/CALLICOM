@@ -108,7 +108,7 @@ function CharacterDetail({ character, onUpdate, user }) {
 
     try {
       const res = await fetch(
-        `https://callicom-test.onrender.com/api/characters/${user}/${character.callsign}`,
+        `https://callicom.onrender.com/api/characters/${user}/${character.callsign}`,
         {
           method: "PATCH",
           headers: {
@@ -154,7 +154,7 @@ function CharacterDetail({ character, onUpdate, user }) {
     }
 
     const res = await fetch(
-      `https://callicom-test.onrender.com/api/characters/${user}/${character.callsign}`,
+      `https://callicom.onrender.com/api/characters/${user}/${character.callsign}`,
       {
         method: "PATCH",
         headers: {
@@ -192,7 +192,7 @@ function CharacterDetail({ character, onUpdate, user }) {
     }
 
     const res = await fetch(
-      `https://callicom-test.onrender.com/api/characters/${user}/${character.callsign}`,
+      `https://callicom.onrender.com/api/characters/${user}/${character.callsign}`,
       {
         method: "PATCH",
         headers: {
