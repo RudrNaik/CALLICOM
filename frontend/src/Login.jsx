@@ -19,7 +19,7 @@ function Login() {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const response = await fetch("https://callicom.onrender.com/api/login", {
+      const response = await fetch("https://callicom-test.onrender.com/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userInfo),
@@ -31,6 +31,7 @@ function Login() {
         login({ userName: userInfo.userName });
         alert("Login successful!");
         setIsLoading(false);
+        localStorage.setItem('token', data.token); // Store JWT in localStorage
         navigate("/");
       } else {
         alert("Invalid username or password");

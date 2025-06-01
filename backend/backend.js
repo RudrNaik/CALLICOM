@@ -1,3 +1,5 @@
+require("dotenv").config(); // Load environment variables from .env
+
 var express = require("express");
 var cors = require("cors");
 var app = express();
@@ -5,53 +7,118 @@ var fs = require("fs");
 var bcrypt = require("bcrypt");
 var bodyParser = require("body-parser");
 const { MongoClient } = require("mongodb");
+const jwt = require("jsonwebtoken");
 
 app.use(cors());
 app.use(bodyParser.json());
 
-const port = process.env.PORT || 8080
+const port = process.env.PORT
 const host = "localhost";
 
-const url = process.env.MONGO_URI || "mongodb+srv://rudramnaik:KzkgClpw78%4020040812@callicom.jhksjpl.mongodb.net/?retryWrites=true&w=majority&appName=CALLICOM";
+const url =
+  process.env.MONGO_URI;
 const dbName = "CALLICOM";
 
 app.listen(port, () => {
   console.log("App listening at http://%s:%s", host, port);
 });
 
-app.get("/api/equipment", async (req, res) => {
+const authenticateJWT = (req, res, next) => {
+  const token = req.header("Authorization")?.split(" ")[1]; // Extract the token from 'Authorization: Bearer <token>'
+
+  if (!token) {
+    return res.status(401).json({ message: "No token provided" });
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(403).json({ message: "Invalid or expired token" });
+    }
+    req.user = decoded; // Attach decoded user info to the request object
+    next();
+  });
+};
+
+app.post("/api/login", async (req, res) => {
+  const { userName, password } = req.body;
+
+  try {
+    // Connect to the database
+    const client = new MongoClient(url);
+    await client.connect();
+    const db = client.db(dbName);
+    const users = db.collection("users"); // Correct collection reference
+
+    const user = await users.findOne({ userName }); // Use the correct collection
+
+    if (!user) {
+      return res.status(401).json({ message: "Invalid username or password" });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.hashedPass);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid username or password" });
+    }
+
+    // Create JWT token
+    const token = jwt.sign(
+      { userId: user._id, userName: user.userName },
+      process.env.JWT_SECRET, // This should now correctly pull the secret from .env
+      { expiresIn: "20h" }
+    );
+
+    res.json({
+      success: true,
+      message: "Login successful",
+      token, // Send the JWT token to the frontend
+    });
+  } catch (err) {
+    console.error("Login error:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// User Signup route
+app.post("/api/signup", async (req, res) => {
   const client = new MongoClient(url);
   try {
     await client.connect();
     const db = client.db(dbName);
-    const collection = db.collection("equipment");
+    const users = db.collection("users");
 
-    const equipment = await collection.find({}).toArray();
-    res.status(200).json(equipment);
+    const { email, userName, password } = req.body;
+
+    if (!email || !userName || !password) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Missing required fields" });
+    }
+
+    const existingUser = await users.findOne({ userName });
+    if (existingUser) {
+      return res
+        .status(409)
+        .json({ success: false, message: "Username already taken" });
+    }
+
+    const hashedPass = await bcrypt.hash(password, 10);
+
+    const newUser = { email, userName, hashedPass };
+    await users.insertOne(newUser);
+
+    res.status(201).json({
+      success: true,
+      message: "Account created successfully",
+    });
   } catch (err) {
-    console.error("Failed to fetch equipment:", err);
-    res.status(500).json({ error: "Failed to fetch equipment" });
+    console.error("Signup error:", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
   } finally {
     await client.close();
   }
 });
 
-app.get("/api/rules", async (req, res) => {
-  const client = new MongoClient(url);
-  try {
-    await client.connect();
-    const db = client.db(dbName);
-    const collection = db.collection("rules");
-
-    const equipment = await collection.find({}).toArray();
-    res.status(200).json(equipment);
-  } catch (err) {
-    console.error("Failed to fetch equipment:", err);
-    res.status(500).json({ error: "Failed to fetch equipment" });
-  } finally {
-    await client.close();
-  }
-});
+app.use(authenticateJWT); // All routes after this will require authentication
 
 app.post("/api/characters", async (req, res) => {
   const client = new MongoClient(url);
@@ -171,78 +238,6 @@ app.delete("/api/characters/:userId/:cs", async (req, res) => {
   } catch (err) {
     console.error("Delete error:", err);
     res.status(500).json({ error: "Internal server error" });
-  } finally {
-    await client.close();
-  }
-});
-
-app.post("/api/login", async (req, res) => {
-  const client = new MongoClient(url);
-  try {
-    await client.connect();
-    const db = client.db(dbName);
-    const users = db.collection("users");
-
-    const { userName, password } = req.body;
-    const user = await users.findOne({ userName });
-
-    if (!user) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Invalid username or password" });
-    }
-
-    const isMatch = await bcrypt.compare(password, user.hashedPass);
-    if (isMatch) {
-      res.status(200).json({ success: true, message: "Login successful" });
-    } else {
-      res
-        .status(401)
-        .json({ success: false, message: "Invalid username or password" });
-    }
-  } catch (err) {
-    console.error("Login error:", err);
-    res.status(500).json({ success: false, message: "Internal server error" });
-  } finally {
-    await client.close();
-  }
-});
-
-app.post("/api/signup", async (req, res) => {
-  const client = new MongoClient(url);
-  try {
-    await client.connect();
-    const db = client.db(dbName);
-    const users = db.collection("users");
-
-    const { email, userName, password } = req.body;
-
-    if (!email || !userName || !password) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Missing required fields" });
-    }
-
-    const existingUser = await users.findOne({ userName });
-    if (existingUser) {
-      return res
-        .status(409)
-        .json({ success: false, message: "Username already taken" });
-    }
-
-    const hashedPass = await bcrypt.hash(req.body.password, 10);
-
-    const newUser = { email, userName, hashedPass };
-    await users.insertOne(newUser);
-
-    res.status(201).json({
-      success: true,
-      message: "Account created successfully",
-      hashedPass: hashedPass,
-    });
-  } catch (err) {
-    console.error("Signup error:", err);
-    res.status(500).json({ success: false, message: "Internal server error" });
   } finally {
     await client.close();
   }
