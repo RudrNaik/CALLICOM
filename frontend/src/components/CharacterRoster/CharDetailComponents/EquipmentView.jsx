@@ -8,7 +8,7 @@ function EquipmentSelection({
   isEditing,
   userId,
   refreshCharacter,
-  setIsEditing
+  setIsEditing,
 }) {
   const defaultGear = {
     primaryWeapon: { name: "", category: "" },
@@ -60,12 +60,24 @@ function EquipmentSelection({
   };
 
   const saveToDatabase = async () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      console.log("No token found, redirecting to login.");
+      navigate("/login");
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const res = await fetch(
-        `https://callicom.onrender.com/api/characters/${userId}/${character.callsign}`,
+        `https://callicom-test.onrender.com/api/characters/${userId}/${character.callsign}`,
         {
           method: "PATCH",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
           body: JSON.stringify({ equipment: gear }),
         }
       );
@@ -81,7 +93,7 @@ function EquipmentSelection({
   };
 
   return (
-    <div className="mt-8 text-white" style={{ fontFamily: 'Geist_Mono' }}>
+    <div className="mt-8 text-white" style={{ fontFamily: "Geist_Mono" }}>
       <h2 className="text-xl font-bold text-orange-400 mb-2">Equipment</h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -156,18 +168,24 @@ function EquipmentSelection({
             </select>
           ) : (
             <p className="font-semibold text-white">
-              {classGadgets.find((gadget) => gadget.id === gear.gadget)?.title ||
-                "None Selected"}
+              {classGadgets.find((gadget) => gadget.id === gear.gadget)
+                ?.title || "None Selected"}
             </p>
           )}
 
           {gear.gadget && (
             <div className="text-sm text-gray-300 space-y-2 mt-2">
               <p className="whitespace-pre-line">
-                {classGadgets.find((gadget) => gadget.id === gear.gadget)?.rulesText}
+                {
+                  classGadgets.find((gadget) => gadget.id === gear.gadget)
+                    ?.rulesText
+                }
               </p>
               <p className="italic">
-                {classGadgets.find((gadget) => gadget.id === gear.gadget)?.description}
+                {
+                  classGadgets.find((gadget) => gadget.id === gear.gadget)
+                    ?.description
+                }
               </p>
             </div>
           )}

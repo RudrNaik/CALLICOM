@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import CharacterCard from "./CharacterCard";
 import CharacterDetail from "./CharacterDetail";
+import { useNavigate } from "react-router-dom";
 
 function CharacterRoster({ userId }) {
   const [characters, setCharacters] = useState([]);
@@ -51,10 +52,23 @@ function CharacterRoster({ userId }) {
   const triggerRefresh = () => setRefreshFlag((prev) => !prev);
 
   const handleDeleteCharacter = async (id) => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      console.log("No token found, redirecting to login.");
+      navigate("/login"); 
+      setIsLoading(false);
+      return;
+    }
+
     const res = await fetch(
-      `https://callicom.onrender.com/api/characters/${userId}/${id}`,
+      `https://callicom-test.onrender.com/api/characters/${userId}/${id}`,
       {
         method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
 

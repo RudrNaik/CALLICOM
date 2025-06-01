@@ -9,6 +9,15 @@ function DerivedStats({ character, userId, refreshCharacter }) {
 
   // Function to handle the actual server update after debounce
   const updateWoundsToServer = async () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      console.log("No token found, redirecting to login.");
+      navigate("/login");
+      setIsLoading(false);
+      return;
+    }
+
     if (
       fleshWounds !== prevWounds.current.fleshWounds ||
       deepWounds !== prevWounds.current.deepWounds
@@ -16,10 +25,13 @@ function DerivedStats({ character, userId, refreshCharacter }) {
       setIsSaving(true); // Set flag to prevent repeated calls
       try {
         const res = await fetch(
-          `https://callicom.onrender.com/api/characters/${userId}/${character.callsign}`,
+          `https://callicom-test.onrender.com/api/characters/${userId}/${character.callsign}`,
           {
             method: "PATCH",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
             body: JSON.stringify({ fleshWounds, deepWounds }),
           }
         );
@@ -98,9 +110,11 @@ function DerivedStats({ character, userId, refreshCharacter }) {
   const Stamina = 5 + Body + Spirit;
   const SystemShock = 5 + Health;
   const FleshWoundThreshold =
-    Math.ceil(Stamina / 2) + character.equipment?.armorClass || Math.ceil(Stamina / 2);
-  const DeepWoundThreshold = Stamina + character.equipment?.armorClass || Stamina;
-  const InstantDeath = Stamina * 2
+    Math.ceil(Stamina / 2) + character.equipment?.armorClass ||
+    Math.ceil(Stamina / 2);
+  const DeepWoundThreshold =
+    Stamina + character.equipment?.armorClass || Stamina;
+  const InstantDeath = Stamina * 2;
   const UnarmedDamage = 3 + Body + Brawl;
   const ArmedDamage = 3 + Body + Melee;
   const woundMod = fleshWounds + deepWounds * 2;
