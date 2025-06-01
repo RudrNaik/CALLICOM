@@ -25,12 +25,27 @@ const CharacterCreator = () => {
       createdAt: new Date().toISOString(),
     };
 
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      console.log("No token found, redirecting to login.");
+      navigate("/login");
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      const response = await fetch("https://callicom.onrender.com/api/characters", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(fullCharacter),
-      }); 
+      const response = await fetch(
+        "https://callicom-test.onrender.com/api/characters",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(fullCharacter),
+        }
+      );
 
       if (!response.ok) throw new Error("Failed to create character");
     } catch (err) {

@@ -98,12 +98,23 @@ function CharacterDetail({ character, onUpdate, user }) {
       emergencyDice: emergencyDice - amount, // Send updated state to backend
     };
 
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      console.log("No token found, redirecting to login.");
+      navigate("/login");
+      return;
+    }
+
     try {
       const res = await fetch(
-        `https://callicom.onrender.com/api/characters/${user}/${character.callsign}`,
+        `https://callicom-test.onrender.com/api/characters/${user}/${character.callsign}`,
         {
           method: "PATCH",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
           body: JSON.stringify(updates),
         }
       );
@@ -134,11 +145,22 @@ function CharacterDetail({ character, onUpdate, user }) {
       XP: xpRemaining + amount,
     };
 
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      console.log("No token found, redirecting to login.");
+      navigate("/login");
+      return;
+    }
+
     const res = await fetch(
-      `https://callicom.onrender.com/api/characters/${user}/${character.callsign}`,
+      `https://callicom-test.onrender.com/api/characters/${user}/${character.callsign}`,
       {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify(updates),
       }
     );
@@ -161,11 +183,22 @@ function CharacterDetail({ character, onUpdate, user }) {
       emergencyDice,
     };
 
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      console.log("No token found, redirecting to login.");
+      navigate("/login");
+      return;
+    }
+
     const res = await fetch(
-      `https://callicom.onrender.com/api/characters/${user}/${character.callsign}`,
+      `https://callicom-test.onrender.com/api/characters/${user}/${character.callsign}`,
       {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify(updates),
       }
     );

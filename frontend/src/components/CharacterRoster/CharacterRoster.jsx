@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import CharacterCard from "./CharacterCard";
 import CharacterDetail from "./CharacterDetail";
+import { useNavigate } from "react-router-dom";
 
 function CharacterRoster({ userId }) {
   const [characters, setCharacters] = useState([]);
@@ -9,12 +10,30 @@ function CharacterRoster({ userId }) {
   const [refreshFlag, setRefreshFlag] = useState(false);
 
   useEffect(() => {
-      triggerRefresh(); 
+    triggerRefresh();
   }, []);
 
   useEffect(() => {
     setIsLoading(true);
-    fetch(`https://callicom.onrender.com/api/characters/${userId}`)
+
+    const token = localStorage.getItem("token");
+
+    // If there is no token, you may want to handle that scenario (e.g., redirect to login)
+    if (!token) {
+      console.log("No token found, redirecting to login.");
+      // Navigate to login page if token is not found
+      navigate("/login"); // You may need to import `navigate` from `react-router-dom`
+      setIsLoading(false);
+      return;
+    }
+
+    fetch(`https://callicom-test.onrender.com/api/characters/${userId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // Add the token to the Authorization header
+      },
+    })
       .then((res) => res.json())
       .then((data) => {
         setCharacters(data);
@@ -33,10 +52,23 @@ function CharacterRoster({ userId }) {
   const triggerRefresh = () => setRefreshFlag((prev) => !prev);
 
   const handleDeleteCharacter = async (id) => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      console.log("No token found, redirecting to login.");
+      navigate("/login"); 
+      setIsLoading(false);
+      return;
+    }
+
     const res = await fetch(
-      `https://callicom.onrender.com/api/characters/${userId}/${id}`,
+      `https://callicom-test.onrender.com/api/characters/${userId}/${id}`,
       {
         method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
 
@@ -62,7 +94,10 @@ function CharacterRoster({ userId }) {
           Fetching Operators...
         </div>
       ) : (
-        <div className="text-orange-400 font-bold py-2"> Operators Updated.</div>
+        <div className="text-orange-400 font-bold py-2">
+          {" "}
+          Operators Updated.
+        </div>
       )}
       <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-4">
         {characters.map((char) => (
