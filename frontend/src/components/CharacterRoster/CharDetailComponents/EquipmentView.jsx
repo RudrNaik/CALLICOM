@@ -71,7 +71,7 @@ function EquipmentSelection({
 
     try {
       const res = await fetch(
-        `https://callicom-test.onrender.com/api/characters/${userId}/${character.callsign}`,
+        `https://callicom.onrender.com/api/characters/${userId}/${character.callsign}`,
         {
           method: "PATCH",
           headers: {
