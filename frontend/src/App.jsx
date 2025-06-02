@@ -10,6 +10,7 @@ import CharManager from "./CharacterManager";
 import CharacterCreator from "./CharacterCreator";
 import Login from "./Login";
 import Home from "./Home";
+import Campaigns from "./Campaign";
 import SignUp from "./SignUp";
 import Navbar from "./components/Navbar";
 import { AuthProvider } from "./AuthContext";
@@ -36,6 +37,7 @@ export default function App() {
           <Route path="/CALLICOM/Rulebook" element={<Rulebook />} />
           <Route path="/CALLICOM/Armory" element={<Armory />} />
           <Route path="/CALLICOM/CharacterManager" element={<CharManager />} />
+          <Route path="/CALLICOM/Campaigns" element={<Campaigns />} />
           <Route
             path="/CALLICOM/CharacterCreator"
             element={<CharacterCreator />}
