@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import campaignsData from "./data/campaigns.json";
 import missionsData from "./data/missions.json";
 import Roster from "./components/Briefings/CharRoster";
+import Footer from "./components/Footer";
 import MissionView from "./components/Briefings/MissionView";
 import CampaignView from "./components/Briefings/CampaignView";
 import "./assets/css/terminal.css";
@@ -70,7 +71,7 @@ function Campaigns() {
 
   return (
     <div
-      className="bg-repeat bg-[length:1920px_1080px] w-screen min-h-screen text-white scanlines crt-overlay"
+      className="bg-repeat bg-[length:1920px_1080px] w-screen min-h-screen text-white crt-overlay"
       style={{
         backgroundImage: `url(${background})`,
         fontFamily: "Geist_Mono",
@@ -117,6 +118,7 @@ function Campaigns() {
             </motion.div>
           </div>
         </div>
+        <Footer></Footer>
       </div>
     </div>
   );
