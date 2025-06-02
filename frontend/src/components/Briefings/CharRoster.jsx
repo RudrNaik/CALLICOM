@@ -1,8 +1,8 @@
 import React from "react";
 
-function Roster({ characters, isLoading}) {
+function Roster({ characters, isLoading }) {
   return (
-    <div className="bg-neutral-800/90 border border-orange-500 rounded-xl p-6 shadow-lg max-w-md">
+    <div className="bg-neutral-800/90 border border-orange-500 rounded-xl p-6 shadow-lg max-w-md min-h-[700px] max-h-[700px] overflow-y-auto scrollbar-thin scrollbar-thumb-orange-400 scrollbar-track-neutral-700">
       <h2 className="uppercase text-sm text-orange-400">Operator Roster</h2>
       {isLoading ? (
         <div className="flex items-center textr-xs text-orange-400 py-2 mb-2">
@@ -30,4 +30,4 @@ function Roster({ characters, isLoading}) {
   );
 }
 
-export default Roster
+export default Roster;

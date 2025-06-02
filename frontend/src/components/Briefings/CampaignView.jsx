@@ -1,11 +1,18 @@
 import React from "react";
 
-function CampaignView({currentCampaign, currentCampaignId, setCurrentCampaignId, setCurrentMissionId, filteredMissions, campaigns}) {
-  return(
+function CampaignView({
+  currentCampaign,
+  currentCampaignId,
+  setCurrentCampaignId,
+  setCurrentMissionId,
+  filteredMissions,
+  campaigns,
+}) {
+  return (
     <div>
       {/* Campaign Overview */}
       {currentCampaign && (
-        <div className="bg-neutral-800/90 border border-orange-500 rounded-xl p-6 shadow-lg max-w-md min-h-screen">
+        <div className="bg-neutral-800/90 border border-orange-500 rounded-xl p-6 shadow-lg max-w-md min-h-[700px] max-h-[700px] overflow-y-auto scrollbar-thin scrollbar-thumb-orange-400 scrollbar-track-neutral-700">
           <div className="bg-orange-500 p-2 rounded text-neutral-900 font-bold">
             <select
               value={currentCampaignId}
@@ -55,4 +62,4 @@ function CampaignView({currentCampaign, currentCampaignId, setCurrentCampaignId,
   );
 }
 
-export default CampaignView
+export default CampaignView;

@@ -1,0 +1,7 @@
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: #fb923c; /* orange-400 */
+  border-radius: 3px;
+}

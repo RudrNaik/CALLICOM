@@ -14,6 +14,7 @@ import Campaigns from "./Campaign";
 import SignUp from "./SignUp";
 import Navbar from "./components/Navbar";
 import { AuthProvider } from "./AuthContext";
+import "./App.css"
 
 
 export default function App() {

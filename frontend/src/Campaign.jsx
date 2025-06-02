@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import background from "./assets/Images/4060492.jpg";
 import { useNavigate } from "react-router-dom";
 import campaignsData from "./data/campaigns.json";
@@ -6,6 +7,7 @@ import missionsData from "./data/missions.json";
 import Roster from "./components/Briefings/CharRoster";
 import MissionView from "./components/Briefings/MissionView";
 import CampaignView from "./components/Briefings/CampaignView";
+import "./assets/css/terminal.css";
 
 function Campaigns() {
   const [campaigns, setCampaigns] = useState([]);
@@ -68,29 +70,52 @@ function Campaigns() {
 
   return (
     <div
-      className="bg-repeat bg-[length:1920px_1080px] w-screen min-h-screen text-white"
+      className="bg-repeat bg-[length:1920px_1080px] w-screen min-h-screen text-white scanlines crt-overlay"
       style={{
         backgroundImage: `url(${background})`,
         fontFamily: "Geist_Mono",
       }}
     >
-      <div className="py-20 px-10">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Campaign Overview */}
-          <CampaignView
-            currentCampaign={currentCampaign}
-            currentCampaignId={currentCampaignId}
-            setCurrentCampaignId={setCurrentCampaignId}
-            setCurrentMissionId={setCurrentMissionId}
-            campaigns={campaigns}
-            filteredMissions={filteredMissions}
-          />
+      <div className="">
+        <div className="py-20 px-10">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="flicker"
+            >
+              {/* Campaign Overview */}
+              <CampaignView
+                currentCampaign={currentCampaign}
+                currentCampaignId={currentCampaignId}
+                setCurrentCampaignId={setCurrentCampaignId}
+                setCurrentMissionId={setCurrentMissionId}
+                campaigns={campaigns}
+                filteredMissions={filteredMissions}
+              />
+            </motion.div>
 
-          {/* mission View */}
-          <MissionView currentMission={currentMission} />
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+              className="flicker"
+            >
+              {/* mission View */}
+              <MissionView currentMission={currentMission} />
+            </motion.div>
 
-          {/* Operator Roster */}
-          <Roster characters={characters} isLoading={isLoading} />
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 1.0 }}
+              className="flicker"
+            >
+              {/* Operator Roster */}
+              <Roster characters={characters} isLoading={isLoading} />
+            </motion.div>
+          </div>
         </div>
       </div>
     </div>
