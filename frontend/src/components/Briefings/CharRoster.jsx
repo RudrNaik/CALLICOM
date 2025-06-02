@@ -38,22 +38,22 @@ function Roster({ characters, isLoading }) {
             <p className="text-xs text-neutral-300">{char.class}</p>
 
             {hoveredChar === char._id && (
-              <div className="fixed left-47/80 top-1/2 transform -translate-x-1/2 -translate-y-[110%] bg-neutral-900/95 border border-orange-400 text-xs text-orange-100 p-4 rounded-lg shadow-xl z-50 animate-flicker w-72">
+              <div className="fixed left-47/80 top-1/2 transform -translate-x-1/2 -translate-y-[110%] bg-neutral-900/95 border border-orange-400 text-xs text-neutral-100 p-4 rounded-lg shadow-xl z-50 animate-flicker w-72">
                 <p>
                   <span className="font-bold text-orange-400">Class:</span>{" "}
-                  {char.class || "Unknown"}
+                  {char?.class || "Unknown"}
                 </p>
                 <p>
                   <span className="font-bold text-orange-400">Armor:</span>{" "}
-                  {char.equipment.armorClass || "None"}
+                  {char?.equipment.armorClass || "None"}
                 </p>
                 <p>
                   <span className="font-bold text-orange-400">Primary:</span>{" "}
-                  {char.equipment.primaryWeapon?.name || "None"}
+                  {char?.equipment.primaryWeapon?.name || "None"}
                 </p>
                 <p>
                   <span className="font-bold text-orange-400">Secondary:</span>{" "}
-                  {char.equipment.secondaryWeapon?.name || "None"}
+                  {char?.equipment.secondaryWeapon?.name || "None"}
                 </p>
                 <p>
                   <span className="font-bold text-orange-400">Gadget:</span>{" "}
@@ -61,8 +61,8 @@ function Roster({ characters, isLoading }) {
                 </p>
                 <p>
                   <span className="font-bold text-orange-400">Grenades:</span>{" "}
-                  {char.equipment.grenades[0] || "-"} |{" "}
-                  {char.equipment.grenades[1] || "-"}
+                  {char?.equipment.grenades[0] || "-"} |{" "}
+                  {char?.equipment.grenades[1] || "-"}
                 </p>
               </div>
             )}
