@@ -1,7 +1,7 @@
 [
     {
         "id": "mission0",
-        "campaignId": "campaign0",
+        "campaignId": "Chile2018",
         "Name": "Orientation",
         "Type": "Main Mission",
         "Objectives": {
@@ -17,7 +17,7 @@
     },
     {
         "id": "mission1",
-        "campaignId": "campaign0",
+        "campaignId": "Chile2018",
         "Name": "Golden Goose",
         "Type": "Main Mission",
         "Objectives": {
@@ -33,7 +33,7 @@
     },
     {
         "id": "mission2",
-        "campaignId": "campaign0",
+        "campaignId": "Chile2018",
         "Name": "High Rollers",
         "Type": "Side Mission",
         "Objectives": {
@@ -50,7 +50,7 @@
     },
     {
         "id": "mission3",
-        "campaignId": "campaign0",
+        "campaignId": "Chile2018",
         "Name": "The Big Con",
         "Type": "Main Mission",
         "Objectives": {
@@ -67,7 +67,7 @@
     },
     {
         "id": "mission4",
-        "campaignId": "campaign0",
+        "campaignId": "Chile2018",
         "Name": "Force Amplifier",
         "Type": "Side Mission",
         "Objectives": {
@@ -83,7 +83,7 @@
     },
     {
         "id": "mission5",
-        "campaignId": "campaign0",
+        "campaignId": "Chile2018",
         "Name": "A Thief's Beginning",
         "Type": "Side Mission",
         "Objectives": {

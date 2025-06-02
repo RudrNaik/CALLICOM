@@ -28,6 +28,9 @@ function CharacterDetail({ character, onUpdate, user }) {
   const [showSpecModal, setShowSpecModal] = useState(false);
   const [showXpInput, setShowXpInput] = useState(false);
   const [xpToAdd, setXpToAdd] = useState("");
+  const [campaignInput, setCampaignInput] = useState(
+    character.campaignId || ""
+  );
 
   useEffect(() => {
     if (character) {
@@ -36,6 +39,7 @@ function CharacterDetail({ character, onUpdate, user }) {
       setXpRemaining(character.XP || 0);
       setEmergencyDice(character.emergencyDice || 0);
       setOriginalEmergencyDice(character.emergencyDice || 0); // Initialize original emergency dice
+      setCampaignInput(character.campaignId || "");
     }
   }, [character]);
 
@@ -310,6 +314,53 @@ function CharacterDetail({ character, onUpdate, user }) {
         removeEmergencyDie={removeEmergencyDie}
         addEmergencyDie={addEmergencyDie}
       />
+
+      <div className="mt-6">
+        <h2 className="text-xl font-bold text-orange-400 mb-2">
+          Assign to Campaign
+        </h2>
+        <div className="flex space-x-2">
+          <input
+            type="text"
+            placeholder="Enter campaign ID (e.g., campaign0)"
+            className="bg-neutral-800 border border-gray-500 rounded px-3 py-1 text-white w-full"
+            value={campaignInput}
+            onChange={(e) => setCampaignInput(e.target.value)}
+          />
+          <button
+            className="bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded"
+            onClick={async () => {
+              const token = localStorage.getItem("token");
+              if (!token) {
+                console.log("No token found, redirecting to login.");
+                navigate("/login");
+                return;
+              }
+
+              const res = await fetch(
+                `https://callicom.onrender.com/api/characters/${user}/${character.callsign}`,
+                {
+                  method: "PATCH",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                  },
+                  body: JSON.stringify({ campaignId: campaignInput }),
+                }
+              );
+
+              if (res.ok) {
+                alert("Campaign assigned.");
+                onUpdate();
+              } else {
+                alert("Failed to assign campaign.");
+              }
+            }}
+          >
+            Assign
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
