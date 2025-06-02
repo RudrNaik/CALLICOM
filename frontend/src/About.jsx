@@ -1,8 +1,8 @@
 import React from "react";
 import background from "./assets/Images/4060492.jpg";
-import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import AboutPortraits from "./components/AboutPortraits";
+
 
 function About() {
   return (
