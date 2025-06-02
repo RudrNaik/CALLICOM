@@ -1,5 +1,5 @@
-import Gooders from "../assets/images/Gooders.jpg";
-import Spiny from "../assets/images/Spiny.jpg";
+import Gooders from "../assets/Images/Gooders.jpg"
+import Spiny from "../assets/Images/Spiny.jpg";
 
 
 const profiles = [
