@@ -15,6 +15,19 @@ import SignUp from "./SignUp";
 import Navbar from "./components/Navbar";
 import { AuthProvider } from "./AuthContext";
 import "./App.css"
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
+
+// Scroll to top on route change
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 10, left: 0, behavior: "smooth" }); // or "smooth"
+  }, [pathname]);
+
+  return null;
+}
 
 
 export default function App() {
@@ -25,6 +38,7 @@ export default function App() {
     <Router>
       <div className="min-h-screen bg-gray-100 text-gray-900">
         <Navbar isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route

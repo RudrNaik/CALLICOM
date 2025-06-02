@@ -13,7 +13,7 @@ const TerminalPanel = ({ title, subtitle, icon, onHover, link }) => {
         }
         className={`
           relative
-          p-6 pl-8 pr-10
+          p-5 pl-8 pr-10
           border border-orange-500/80
           rounded-md
           bg-neutral-900
@@ -25,11 +25,11 @@ const TerminalPanel = ({ title, subtitle, icon, onHover, link }) => {
           group cursor-pointer
         `}
       >
-          <h1 className="text-3xl font-bold tracking-wider flex items-center gap-3 p-2">
+          <h1 className="text-2xl font-bold tracking-wider flex items-center gap-3 p-2">
             <span>{icon}</span> {title}
           </h1>
         
-        <p className="text-md text-gray-300 mt-2 tracking-wider flex items-center gap-3">&gt; {subtitle}</p>
+        <p className="text-md text-gray-300 mt-2 tracking-wider flex items-center">&gt; {subtitle}</p>
       </div>
       </Link>
     </div>

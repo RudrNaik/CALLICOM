@@ -64,7 +64,7 @@ const TerminalPage = () => {
       <div className="py-10"> </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
-        <div className="flex flex-col space-y-10">
+        <div className="flex flex-col space-y-3">
           <TerminalPanel
             title="Armory"
             subtitle="Equipment Database"
@@ -78,6 +78,13 @@ const TerminalPage = () => {
             icon="👤"
             onHover={handleHover}
             link={"/CALLICOM/Rulebook"}
+          />
+          <TerminalPanel
+            title="Briefings"
+            subtitle="CALLICOM Proprietary briefing software"
+            icon="🦑"
+            onHover={handleHover}
+            link={"/CALLICOM/campaigns"}
           />
           <TerminalPanel
             title="Action Economy"
