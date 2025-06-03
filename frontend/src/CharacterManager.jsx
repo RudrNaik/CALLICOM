@@ -2,11 +2,24 @@ import Footer from "./components/Footer";
 import background from "./assets/Images/4060492.jpg";
 import TerminalPanel from "./components/Terminal/TerminalPanel";
 import CharacterRoster from "./components/CharacterRoster/CharacterRoster";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "./AuthContext";
 
 const CharManager = () => {
   const { isLoggedIn, user } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isLoggedIn || !user?.userName) {
+      navigate("/login");
+    }
+  }, [isLoggedIn, user, navigate]);
+
+  if (!isLoggedIn || !user?.userName) {
+    return null;
+  }
+
   return (
     <div
       className="font-[Geist_Mono] bg-repeat bg-[length:1920px_1080px] w-screen min-h-screen text-white justify-center"
@@ -25,14 +38,13 @@ const CharManager = () => {
           />
         </div>
       </div>
-      {isLoggedIn && (
-        <div
-          className="text-center text-orange-400"
-          style={{ fontFamily: "Geist_Mono" }}
-        >
-          Logged in as: {user.userName}
-        </div>
-      )}
+
+      <div
+        className="text-center text-orange-400"
+        style={{ fontFamily: "Geist_Mono" }}
+      >
+        Logged in as: {user.userName}
+      </div>
 
       <CharacterRoster userId={user.userName} />
 

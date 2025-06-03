@@ -8,9 +8,8 @@ const WeaponSlot = ({
   weaponCategories,
   handleWeaponChange,
   characterCallsign,
-  charActive
+  charActive,
 }) => {
-
   const categoryData = weaponCategories[weapon?.category];
 
   const [firedThisMag, setFiredThisMag] = useState(0);
@@ -60,7 +59,10 @@ const WeaponSlot = ({
           const step = prev > pseudoAmmo ? -1 : 1;
           return prev + step;
         });
-      }, 40); // adjust speed here
+      }, 40);
+
+      // ✅ Clean up the interval on unmount or pseudoAmmo change
+      return () => clearInterval(interval);
     }
   }, [pseudoAmmo]);
 
@@ -71,23 +73,27 @@ const WeaponSlot = ({
   const magTurnsLeft = Math.max(0, magazineSize - firedThisMag);
 
   const handleFire = () => {
+    if (isAnimating) return;
+
     if (turnsRemaining > 0 && magTurnsLeft > 0) {
       setFiredThisMag((prev) => prev + 1);
       setTotalFired((prev) => prev + 1);
 
-      // Subtract pseudo rounds if they exist
       if (pseudoAmmo !== null) {
-        const expectedPerTurn =
-          (pseudoMagSizes[weapon?.category] || 1) / magazineSize;
-        const variance = Math.max(1, Math.floor(expectedPerTurn * 0.5));
-        const randomReduction = Math.floor(
-          expectedPerTurn + (Math.random() * variance - variance / 2)
-        );
+        const fullRounds = pseudoMagSizes[weapon?.category] || 1;
+
+        let reduction = 1; // Default to 1 per shot
+
+        if (magazineSize > 5) {
+          const expectedPerTurn = fullRounds / magazineSize;
+          const variance = Math.max(1, Math.floor(expectedPerTurn * 0.5));
+          reduction = Math.floor(
+            expectedPerTurn + (Math.random() * variance - variance / 2)
+          );
+        }
 
         setPseudoAmmo((prev) =>
-          firedThisMag + 1 >= magazineSize
-            ? 0 // last turn in mag
-            : Math.max(0, prev - randomReduction)
+          firedThisMag + 1 >= magazineSize ? 0 : Math.max(0, prev - reduction)
         );
       }
     }
@@ -195,14 +201,22 @@ const WeaponSlot = ({
                     <div className="flex gap-1 mt-2">
                       <button
                         onClick={handleFire}
-                        disabled={turnsRemaining === 0 || magTurnsLeft === 0}
+                        disabled={
+                          isAnimating ||
+                          turnsRemaining === 0 ||
+                          magTurnsLeft === 0
+                        }
                         className="bg-orange-600 hover:bg-orange-700 text-white px-2 py-1 rounded disabled:opacity-40"
                       >
                         Fire
                       </button>
                       <button
                         onClick={handleReload}
-                        disabled={firedThisMag === 0 || turnsRemaining === 0}
+                        disabled={
+                          firedThisMag === 0 ||
+                          turnsRemaining === 0 ||
+                          turnsRemaining === magTurnsLeft
+                        }
                         className="bg-neutral-700 hover:bg-neutral-600 text-white px-2 py-1 rounded disabled:opacity-40"
                       >
                         Reload
