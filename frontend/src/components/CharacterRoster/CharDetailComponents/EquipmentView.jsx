@@ -141,8 +141,8 @@ function EquipmentSelection({
                     </p>
                     {charActive && (
                       <div>
-                        <p className="text-yellow-400 font-mono">
-                          {grenadeCounts[i]} / 3 remaining
+                        <p className="px-2 py-1 rounded bg-neutral-900 mb-2">
+                          <span className="text-yellow-400">{grenadeCounts[i]} / 3</span> <span className="text-gray-400 italic">remaining</span>
                         </p>
                         <div className="flex gap-1">
                           <button

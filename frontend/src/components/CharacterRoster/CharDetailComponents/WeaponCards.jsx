@@ -25,7 +25,7 @@ const WeaponSlot = ({
     SMGs: 30,
     Carbines: 30,
     "Assault Rifles": 30,
-    "Marksman Rifles": 20,
+    "Marksman Rifles": 10,
     Shotguns: 8,
     "Drum Shotguns": 20,
     "Sniper Rifles": 5,
