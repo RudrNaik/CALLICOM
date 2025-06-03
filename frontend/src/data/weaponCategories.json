@@ -4,79 +4,79 @@
     "damage": 4,
     "penetration": 1,
     "range": "+2 C | -2 L | -3 ELR",
-    "capacity": 12,
-    "ammoPerAction": 3
+    "totalTurns": 6,
+    "magazineSize": 2
   },
   "Heavy Pistols": {
     "class": "L-Weapons",
     "damage": 6,
     "penetration": 2,
     "range": "-1 M | -1 L | -2 ELR",
-    "capacity": 6,
-    "ammoPerAction": 1
+    "totalTurns": 6,
+    "magazineSize": 2
   },
   "SMGs": {
     "class": "L-Weapons",
     "damage": 3,
     "penetration": 1,
     "range": "+1 C | -1 L | -2 ELR",
-    "capacity": 30,
-    "ammoPerAction": 5
+    "totalTurns": 12,
+    "magazineSize": 3
   },
   "Carbines": {
     "class": "L-Weapons",
     "damage": 4,
     "penetration": 1,
     "range": "+1 M | -1 ELR",
-    "capacity": 30,
-    "ammoPerAction": 5
+    "totalTurns": 12,
+    "magazineSize": 3
   },
   "Assault Rifles": {
     "class": "M-Weapons",
     "damage": 5,
     "penetration": 1,
     "range": "-1 C | +1 M | -1 ELR",
-    "capacity": 30,
-    "ammoPerAction": 5
+    "totalTurns": 12,
+    "magazineSize": 3
   },
   "Marksman Rifles": {
     "class": "M-Weapons",
     "damage": 6,
     "penetration": 2,
     "range": "-1 C | +1 L | -1 ELR",
-    "capacity": 20,
-    "ammoPerAction": 5
+    "totalTurns": 10,
+    "magazineSize": 2
   },
   "Shotguns": {
     "class": "M-Weapons",
     "damage": 6,
     "penetration": 1,
     "range": "+1 C | -1 M | -3 L | -4 ELR",
-    "capacity": 8,
-    "ammoPerAction": 1
+    "totalTurns": 12,
+    "magazineSize": 3
   },
   "Sniper Rifles": {
     "class": "M-Weapons",
     "damage": 7,
     "penetration": 2,
     "range": "-2 C | +1 L | +2 ELR",
-    "capacity": 5,
-    "ammoPerAction": 1
+    "totalTurns": 10,
+    "magazineSize": 5
   },
   "Machine Guns": {
     "class": "H-Weapons",
     "damage": 5,
     "penetration": 2,
-    "range": "+1 Bipod | +1 M | —1 L | -1 ELR",
-    "capacity": 100,
-    "ammoPerAction": 20
+    "range": "+1 Bipod | +1 M | -1 L | -1 ELR",
+    "totalTurns": 12,
+    "magazineSize": 6
   },
   "Drum Shotguns": {
     "class": "H-Weapons",
     "damage": 6,
     "penetration": 1,
     "range": "+1 C | -1 M | -3 L | -4 ELR",
-    "capacity": 20,
-    "ammoPerAction": 5
+    "totalTurns": 12,
+    "magazineSize": 6
   }
 }

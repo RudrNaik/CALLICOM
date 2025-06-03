@@ -1,0 +1,6 @@
+.motion-blur-vertical {
+  display: inline-block;
+  filter: blur(1px);
+  transform: skewY(3deg);
+  transition: filter 0.2s ease, transform 0.2s ease;
+}
