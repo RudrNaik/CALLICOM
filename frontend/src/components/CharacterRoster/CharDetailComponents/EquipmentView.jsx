@@ -9,6 +9,7 @@ function EquipmentSelection({
   userId,
   refreshCharacter,
   setIsEditing,
+  charActive,
 }) {
   const defaultGear = {
     primaryWeapon: { name: "", category: "" },
@@ -20,6 +21,7 @@ function EquipmentSelection({
 
   const [gear, setGear] = useState(defaultGear);
   const [classGadgets, setClassGadgets] = useState([]);
+  const [grenadeCounts, setGrenadeCounts] = useState([3, 3]);
 
   useEffect(() => {
     if (!character) return;
@@ -38,6 +40,7 @@ function EquipmentSelection({
       (item) => item.class === character.class
     );
     setClassGadgets(filtered);
+    setGrenadeCounts([3, 3]);
   }, [character]);
 
   const handleChange = (field, value) => {
@@ -107,14 +110,16 @@ function EquipmentSelection({
             weaponCategories={weaponCategories}
             handleWeaponChange={handleWeaponChange}
             characterCallsign={character.callsign}
+            charActive={charActive}
           />
         ))}
         {/* Grenades */}
         <div className="bg-neutral-800/80 border-l-8 border-orange-400 p-6 rounded shadow">
           <h3 className="font-semibold text-orange-300">Grenades</h3>
-          <div className="grid grid-cols-2 gap-2">
-            {gear.grenades.map((grenade, i) =>
-              isEditing ? (
+
+          {isEditing ? (
+            <div className="grid grid-cols-2 gap-2">
+              {gear.grenades.map((grenade, i) => (
                 <input
                   key={i}
                   className="w-full bg-neutral-900 text-white py-2 px-2 rounded"
@@ -122,13 +127,57 @@ function EquipmentSelection({
                   value={grenade}
                   onChange={(e) => handleGrenadeChange(i, e.target.value)}
                 />
-              ) : (
-                <p key={i} className="w-full text-white py-2 px-2 rounded">
-                  {grenade}
-                </p>
-              )
-            )}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-2 gap-4 mt-2">
+                {gear.grenades.map((grenade, i) => (
+                  <div key={i} className="text-sm text-white space-y-1">
+                    <p>
+                      <span className="font-semibold text-orange-300">
+                        {grenade || `Grenade ${i + 1}`}
+                      </span>
+                    </p>
+                    {charActive && (
+                      <div>
+                        <p className="text-yellow-400 font-mono">
+                          {grenadeCounts[i]} / 3 remaining
+                        </p>
+                        <div className="flex gap-1">
+                          <button
+                            onClick={() =>
+                              setGrenadeCounts((prev) => {
+                                const updated = [...prev];
+                                updated[i] = Math.max(0, updated[i] - 1);
+                                return updated;
+                              })
+                            }
+                            disabled={grenadeCounts[i] === 0}
+                            className="bg-orange-600 hover:bg-orange-700 text-white px-2 py-1 rounded disabled:opacity-40 text-xs"
+                          >
+                            Throw
+                          </button>
+                          <button
+                            onClick={() =>
+                              setGrenadeCounts((prev) => {
+                                const updated = [...prev];
+                                updated[i] = 3;
+                                return updated;
+                              })
+                            }
+                            className="bg-green-700 hover:bg-green-800 text-white px-2 py-1 rounded text-xs"
+                          >
+                            Resupply
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
         </div>
 
         {/* Armor Class */}

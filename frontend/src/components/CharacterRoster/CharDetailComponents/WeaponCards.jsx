@@ -8,8 +8,8 @@ const WeaponSlot = ({
   weaponCategories,
   handleWeaponChange,
   characterCallsign,
+  charActive
 }) => {
-  const charActive = true;
 
   const categoryData = weaponCategories[weapon?.category];
 
