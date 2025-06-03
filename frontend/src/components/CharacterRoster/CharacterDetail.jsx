@@ -31,6 +31,7 @@ function CharacterDetail({ character, onUpdate, user }) {
   const [campaignInput, setCampaignInput] = useState(
     character.campaignId || ""
   );
+  const [charActive, setCharActive] = useState(false);
 
   useEffect(() => {
     if (character) {
@@ -40,6 +41,7 @@ function CharacterDetail({ character, onUpdate, user }) {
       setEmergencyDice(character.emergencyDice || 0);
       setOriginalEmergencyDice(character.emergencyDice || 0); // Initialize original emergency dice
       setCampaignInput(character.campaignId || "");
+      setCharActive(false);
     }
   }, [character]);
 
@@ -240,6 +242,7 @@ function CharacterDetail({ character, onUpdate, user }) {
         userId={user}
         refreshCharacter={onUpdate}
         setIsEditing={setIsEditingEquipment}
+        charActive={charActive}
       />
 
       {!isEditingEquipment && (
@@ -250,6 +253,17 @@ function CharacterDetail({ character, onUpdate, user }) {
           Edit Equipment
         </button>
       )}
+
+      <button
+        onClick={() => setCharActive((prev) => !prev)}
+        className={`px-4 py-2 rounded ml-2 ${
+          charActive
+            ? "bg-red-700 hover:bg-red-800"
+            : "bg-green-700 hover:bg-green-800"
+        }`}
+      >
+        {charActive ? "Set Inactive" : "Set Active"}
+      </button>
 
       <h2 className="text-xl font-bold text-orange-400 mt-4">Skills</h2>
 
