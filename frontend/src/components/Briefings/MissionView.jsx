@@ -2,9 +2,9 @@ import React from "react";
 
 function MissionView({ currentMission }) {
   return (
-    <div>
+    <div className="bg-neutral-800/90 border border-orange-500 rounded-xl p-6 shadow-lg max-w-md min-h-[700px] max-h-[700px] overflow-y-auto scrollbar-thin scrollbar-thumb-orange-400 scrollbar-track-neutral-700">
       {currentMission && (
-        <div className="bg-neutral-800/90 border border-orange-500 rounded-xl p-6 shadow-lg max-w-md min-h-[700px] max-h-[700px] overflow-y-auto scrollbar-thin scrollbar-thumb-orange-400 scrollbar-track-neutral-700">
+        <div>
           <h2 className="uppercase text-lg font-bold text-neutral-200 bg-orange-500 p-2">
             [{currentMission.Name}]
           </h2>

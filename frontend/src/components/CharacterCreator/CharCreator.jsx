@@ -82,7 +82,7 @@ const CharCreator = ({ formData, setFormData, onNext }) => {
           <div>
             <p class="text-sm text-orange-400/80">
               {" "}
-              LC-218-C // Prior Affiliation
+              LC-218-C // Current Affiliation
             </p>
             <input
               type="text"

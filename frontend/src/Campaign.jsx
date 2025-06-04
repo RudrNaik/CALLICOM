@@ -8,6 +8,7 @@ import Roster from "./components/Briefings/CharRoster";
 import Footer from "./components/Footer";
 import MissionView from "./components/Briefings/MissionView";
 import CampaignView from "./components/Briefings/CampaignView";
+import TopDeploymentBanner from "./components/Briefings/TopDeploymentBanner";
 import "./assets/css/terminal.css";
 
 function Campaigns() {
@@ -79,6 +80,21 @@ function Campaigns() {
     >
       <div className="">
         <div className="py-20 px-10">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3, delay: 0 }}
+            className="flicker"
+          >
+            <TopDeploymentBanner
+              unit={
+                currentCampaign?.unit || "CALAMARI OPERATIONAL SUPPORT GROUP"
+              }
+              callsign={currentCampaign?.callsign || "UNASSIGNED"}
+              client={currentCampaign?.client || "Unknown"}
+              payout={currentCampaign?.payout || "???"}
+            ></TopDeploymentBanner>
+          </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <motion.div
               initial={{ opacity: 0 }}
@@ -92,6 +108,7 @@ function Campaigns() {
                 currentCampaignId={currentCampaignId}
                 setCurrentCampaignId={setCurrentCampaignId}
                 setCurrentMissionId={setCurrentMissionId}
+                currentMissionId={currentMissionId}
                 campaigns={campaigns}
                 filteredMissions={filteredMissions}
               />

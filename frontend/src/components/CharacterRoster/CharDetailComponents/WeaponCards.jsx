@@ -59,7 +59,7 @@ const WeaponSlot = ({
           const step = prev > pseudoAmmo ? -1 : 1;
           return prev + step;
         });
-      }, 40);
+      }, 20);
 
       // ✅ Clean up the interval on unmount or pseudoAmmo change
       return () => clearInterval(interval);
