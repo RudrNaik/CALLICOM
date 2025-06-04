@@ -82,9 +82,10 @@ const WeaponSlot = ({
       if (pseudoAmmo !== null) {
         const fullRounds = pseudoMagSizes[weapon?.category] || 1;
 
-        let reduction = 1; // Default to 1 per shot
+        let reduction = 1;
 
-        if (magazineSize > 5) {
+        // ✅ ONLY Snipers (5 rounds per mag) get fixed -1
+        if (fullRounds !== 5) {
           const expectedPerTurn = fullRounds / magazineSize;
           const variance = Math.max(1, Math.floor(expectedPerTurn * 0.5));
           reduction = Math.floor(
