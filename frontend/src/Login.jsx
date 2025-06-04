@@ -29,10 +29,9 @@ function Login() {
 
       if (response.ok && data.success) {
         login({ userName: userInfo.userName });
-        alert("Login successful!");
         setIsLoading(false);
         localStorage.setItem('token', data.token); // Store JWT in localStorage
-        navigate("/");
+        navigate("/CALLICOM");
       } else {
         alert("Invalid username or password");
         setIsLoading(false);

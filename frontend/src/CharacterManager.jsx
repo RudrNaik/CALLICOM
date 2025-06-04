@@ -5,6 +5,7 @@ import CharacterRoster from "./components/CharacterRoster/CharacterRoster";
 import { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "./AuthContext";
+import { motion } from "framer-motion";
 
 const CharManager = () => {
   const { isLoggedIn, user } = useContext(AuthContext);
@@ -30,13 +31,20 @@ const CharManager = () => {
         className="grid grid-cols-1 gap-6 p-6"
         style={{ fontFamily: "Geist_Mono" }}
       >
-        <div className="flex flex-col space-y-10">
-          <TerminalPanel
-            title="Character Creator"
-            subtitle="Hiring Portal"
-            link={"/CALLICOM/CharacterCreator"}
-          />
-        </div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="flicker"
+        >
+          <div className="flex flex-col space-y-10">
+            <TerminalPanel
+              title="Character Creator"
+              subtitle="Hiring Portal"
+              link={"/CALLICOM/CharacterCreator"}
+            />
+          </div>
+        </motion.div>
       </div>
 
       <div

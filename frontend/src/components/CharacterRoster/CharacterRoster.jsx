@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import CharacterCard from "./CharacterCard";
 import CharacterDetail from "./CharacterDetail";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 function CharacterRoster({ userId }) {
   const [characters, setCharacters] = useState([]);
@@ -56,7 +57,7 @@ function CharacterRoster({ userId }) {
 
     if (!token) {
       console.log("No token found, redirecting to login.");
-      navigate("/login"); 
+      navigate("/login");
       setIsLoading(false);
       return;
     }
@@ -88,25 +89,40 @@ function CharacterRoster({ userId }) {
     >
       <h1 className="text-2xl font-bold text-orange-400">Your Characters</h1>
       {/* Saving Indicator */}
-      {isLoading ? (
-        <div className="flex items-center text-orange-400 font-bold py-2">
-          <div className="w-4 h-4 border-t-3 border-solid border-orange-500 rounded-3xl animate-spin mr-2"></div>
-          Fetching Operators...
-        </div>
-      ) : (
-        <div className="text-orange-400 font-bold py-2">
-          {" "}
-          Operators Updated.
-        </div>
-      )}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.2, delay: 0.2 }}
+        className="flicker"
+      >
+        {isLoading ? (
+          <div className="flex items-center text-orange-400 font-bold py-2">
+            <div className="w-4 h-4 border-t-3 border-solid border-orange-500 rounded-3xl animate-spin mr-2"></div>
+            Fetching Operators...
+          </div>
+        ) : (
+          <div className="text-orange-400 font-bold py-2">
+            {" "}
+            Operators Updated.
+          </div>
+        )}
+      </motion.div>
+
       <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-4">
         {characters.map((char) => (
-          <CharacterCard
-            key={char._id}
-            character={char}
-            onSelect={setSelectedCharacter}
-            onDelete={handleDeleteCharacter}
-          />
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.2, delay: 0.2 }}
+            className="flicker"
+          >
+            <CharacterCard
+              key={char._id}
+              character={char}
+              onSelect={setSelectedCharacter}
+              onDelete={handleDeleteCharacter}
+            />
+          </motion.div>
         ))}
       </div>
       <div>
@@ -120,11 +136,19 @@ function CharacterRoster({ userId }) {
               <div className="flex-grow border-t border-gray-100"></div>
             </div>
             <div className="mt-8">
-              <CharacterDetail
-                character={selectedCharacter}
-                user={userId}
-                onUpdate={triggerRefresh}
-              />
+              <motion.div
+                key={selectedCharacter?._id}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.2, delay: 0.2 }}
+                className="flicker"
+              >
+                <CharacterDetail
+                  character={selectedCharacter}
+                  user={userId}
+                  onUpdate={triggerRefresh}
+                />
+              </motion.div>
             </div>
           </div>
         )}

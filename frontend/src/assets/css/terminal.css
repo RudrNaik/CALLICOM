@@ -24,7 +24,7 @@
 @keyframes flickerOn {
   0% {
     opacity: 0;
-    filter: brightness(2.5) contrast(1.2);
+    filter: brightness(2.5) contrast(1);
   }
   10% {
     opacity: 1;
@@ -32,7 +32,7 @@
   }
   20% {
     opacity: 0;
-    filter: brightness(2.5) contrast(1.2);
+    filter: brightness(2.5) contrast(1);
   }
   30% {
     opacity: 1;

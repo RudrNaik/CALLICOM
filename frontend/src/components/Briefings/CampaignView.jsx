@@ -5,6 +5,7 @@ function CampaignView({
   currentCampaignId,
   setCurrentCampaignId,
   setCurrentMissionId,
+  currentMissionId,
   filteredMissions,
   campaigns,
 }) {
@@ -44,18 +45,62 @@ function CampaignView({
           <p className="text-orange-300 text-xs font-bold mb-1">
             Operations List
           </p>
-          <ul className="text-sm space-y-1">
-            {filteredMissions.map((mission, i) => (
-              <li
-                key={mission.id}
-                onClick={() => setCurrentMissionId(mission.id)}
-                className="cursor-pointer hover:text-orange-300"
-              >
-                - [{mission.Name}] | {mission.status || "Unknown"}
-                {mission.who ? `, ${mission.who}` : ""}
-              </li>
-            ))}
-          </ul>
+          <div className="space-y-2">
+            {filteredMissions.map((mission, i) => {
+              const isActive = mission.status?.toLowerCase() === "active";
+
+              return (
+                <div
+                  key={mission.id}
+                  onClick={() => setCurrentMissionId(mission.id)}
+                  className={`relative cursor-pointer p-4 border border-l-8 rounded flex justify-between items-center group transition-all duration-200 ${
+                    isActive
+                      ? "bg-orange-900/30 border-orange-400"
+                      : "bg-neutral-800 border-neutral-700 hover:border-orange-600"
+                  }
+                  ${ currentMissionId === mission.id ? "border-orange-600" : ""}`}
+                >
+                  {/* Left Side */}
+                  <div>
+                    <p className="text-xs text-gray-400 tracking-widest uppercase">
+                      MISSION // {String(i + 1).padStart(3, "0")}
+                    </p>
+                    <h3 className="text-lg font-bold text-white tracking-wide">
+                      {mission.Name}
+                    </h3>
+                    <p className="text-sm text-gray-400">
+                      {mission.status || "Unknown"}
+                      {mission.who ? `, ${mission.who}` : ""}
+                    </p>
+                  </div>
+
+                  {/* Right Tab */}
+                  <div
+                    className={`relative px-4 py-2 text-xs font-semibold tracking-wide uppercase skew-x-[-20deg] ${
+                      isActive
+                        ? "bg-orange-500 text-white"
+                        : "bg-neutral-600 text-white"
+                    }`}
+                  >
+                    <div className="skew-x-[20deg] flex items-center gap-2">
+                      <span>
+                        {isActive ? "ACTIVE" : "View Briefing"}
+                      </span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="w-4 h-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path d="M12 2l9 4v12l-9 4-9-4V6l9-4z" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
     </div>

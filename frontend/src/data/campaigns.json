@@ -3,13 +3,21 @@
     "id": "Chile2018",
     "Name": "Operation Silent Arrow",
     "Location": "Summer 2018, Chile, SAPP territory",
-    "SITREP": "Following the unexpected fault of Crew 2 during Joint European-American Satellite restoration missions, the crew landed safely off the coast of Chile. However, what was going to be a routine pick up turned into a kidnapping, as all thirteen members of crew 2 are now missing with clear evidence of them being taken hostgae. Due to the fragility of the situation, and the lack of resources, NATO has opted to create a covert multinational task force, TF: Gold, with the objective of entering into chile discreetly and bringing all thirteen astronauts home."
+    "SITREP": "Following the unexpected fault of Crew 2 during Joint European-American Satellite restoration missions, the crew landed safely off the coast of Chile. However, what was going to be a routine pick up turned into a kidnapping, as all thirteen members of crew 2 are now missing with clear evidence of them being taken hostgae. Due to the fragility of the situation, and the lack of resources, NATO has opted to create a covert multinational task force, TF: Gold, with the objective of entering into chile discreetly and bringing all thirteen astronauts home.",
+    "unit" : "NATO SOFCOM",
+    "callsign" : "TF: GOLD",
+    "client" : "MI6, DGSE, CIA",
+    "payout" : "[N/A]"
   }, 
   {
     "id": "Siberia2022",
     "Name": "Siberian Suns",
-    "Code": "Siberia2021",
     "Location": "December 2021, Ural Mountains, (USR) United Siberian Republics",
-    "SITREP": "[To be unveiled later]"
+    "SITREP": "[To be unveiled later]",
+    "unit" : "CALAMARI OPERATIONAL SUPPORT GROUP",
+    "callsign" : "GAMBLER // MOBSTER",
+    "client" : "USR, MI6, CIA",
+    "payout" : "3.2 Million [USD]"
+
   }
 ]

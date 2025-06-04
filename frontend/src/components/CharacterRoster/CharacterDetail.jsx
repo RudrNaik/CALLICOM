@@ -227,6 +227,7 @@ function CharacterDetail({ character, onUpdate, user }) {
         {character.name} [{character.callsign}]
       </h1>
 
+      
       <h2 className="text-xl font-bold text-orange-400 mt-4">Attributes</h2>
       <AttributeView character={character} />
 
