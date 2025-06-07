@@ -120,13 +120,23 @@ const TerminalPage = () => {
             transition={{ duration: 0.3, delay: 0.8 }}
             className="flicker"
           >
-            <TerminalPanel
-              title="Briefings"
-              subtitle="CALLICOM Proprietary briefing software"
-              icon="🦑"
-              onHover={handleHover}
-              link={"/CALLICOM/campaigns"}
-            />
+            {isLoggedIn ? (
+              <TerminalPanel
+                title="Briefings"
+                subtitle="CALLICOM Proprietary briefing software"
+                icon="🦑"
+                onHover={handleHover}
+                link={"/CALLICOM/campaigns"}
+              />
+            ) : (
+              <TerminalPanel
+                title="Briefings [Requires login]"
+                subtitle="[WARNING: UNCC IDENT NOT FOUND]"
+                icon="⚠️"
+                onHover={handleHover}
+                link={"/login"}
+              />
+            )}
           </motion.div>
 
           <motion.div
@@ -149,7 +159,7 @@ const TerminalPage = () => {
                 subtitle="[WARNING: UNCC IDENT NOT FOUND]"
                 icon="⚠️"
                 onHover={handleHover}
-                link={"/CALLICOM"}
+                link={"/login"}
               />
             )}
           </motion.div>

@@ -228,7 +228,16 @@ function CharacterDetail({ character, onUpdate, user }) {
       </h1>
 
       
-      <h2 className="text-xl font-bold text-orange-400 mt-4">Attributes</h2>
+      <div className="relative inline-block group">
+        <h2 className="text-xl font-bold text-orange-400 mt-4">Attributes</h2>
+
+        {/* Tooltip modal */}
+        <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-1">
+          <p>
+            Attributes determine your  <span className="text-orange-500 font-bold">wound thresholds, system shock,</span> and other critical attributes of your character via <span className="text-orange-500 font-bold">derived attributes</span>.
+          </p>
+        </div>
+      </div>
       <AttributeView character={character} />
 
       <DerivedStats
@@ -266,7 +275,21 @@ function CharacterDetail({ character, onUpdate, user }) {
         {charActive ? "Set Inactive" : "Set Active"}
       </button>
 
-      <h2 className="text-xl font-bold text-orange-400 mt-4">Skills</h2>
+      <h2 className=""></h2>
+
+      <div className="relative inline-block group">
+        <h2 className="text-xl font-bold text-orange-400 mt-4">Skills</h2>
+
+        {/* Tooltip modal */}
+        <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-1">
+          <p>
+            Skills determine the amount of dice you <span className="text-orange-500 font-bold">roll</span> during a <span className="text-orange-500 font-bold">check</span>. the higher the level, the more dice you roll.
+          </p>
+          <p className="text-neutral-500 text-xs">
+            IE: 0 in a skill is 2d6l, 1 in a skill is 1d6, 2 is 2d6l and so on for a max of 4 levels in a skill.
+          </p>
+        </div>
+      </div>
 
       {!isEditing ? (
         <XpControls
