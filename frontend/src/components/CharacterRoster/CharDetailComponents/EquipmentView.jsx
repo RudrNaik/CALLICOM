@@ -97,7 +97,16 @@ function EquipmentSelection({
 
   return (
     <div className="mt-8 text-white" style={{ fontFamily: "Geist_Mono" }}>
-      <h2 className="text-xl font-bold text-orange-400 mb-2">Equipment</h2>
+      <div className="relative inline-block group">
+        <h2 className="text-xl font-bold text-orange-400 mt-4 mb-4">Equipment</h2>
+
+        {/* Tooltip modal */}
+        <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-1">
+          <p>
+            Your equipment determines the gear that you bring into a mission. You can choose a <span className="text-orange-500 font-bold">primary</span>, a <span className="text-orange-500 font-bold">secondary</span>, 2 types of <span className="text-orange-500 font-bold">grenades</span>, and then your <span className="text-orange-500 font-bold">armor</span> and <span className="text-orange-500 font-bold">gadget</span>.
+          </p>
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {/* Weapons */}
@@ -142,7 +151,12 @@ function EquipmentSelection({
                     {charActive && (
                       <div>
                         <p className="px-2 py-1 rounded bg-neutral-900 mb-2">
-                          <span className="text-yellow-400">{grenadeCounts[i]} / 3</span> <span className="text-gray-400 italic">remaining</span>
+                          <span className="text-yellow-400">
+                            {grenadeCounts[i]} / 3
+                          </span>{" "}
+                          <span className="text-gray-400 italic">
+                            remaining
+                          </span>
                         </p>
                         <div className="flex gap-1">
                           <button
