@@ -58,12 +58,15 @@ function CampaignView({
                       ? "bg-orange-900/30 border-orange-400"
                       : "bg-neutral-800 border-neutral-700 hover:border-orange-600"
                   }
-                  ${ currentMissionId === mission.id ? "border-orange-600" : ""}`}
+                  ${
+                    currentMissionId === mission.id ? "border-orange-600" : ""
+                  }`}
                 >
                   {/* Left Side */}
                   <div>
                     <p className="text-xs text-gray-400 tracking-widest uppercase">
-                      MISSION // {String(i + 1).padStart(3, "0")}
+                      MISSION //{" "}
+                      {String(filteredMissions.length - i).padStart(3, "0")}
                     </p>
                     <h3 className="text-lg font-bold text-white tracking-wide">
                       {mission.Name}
@@ -83,9 +86,7 @@ function CampaignView({
                     }`}
                   >
                     <div className="skew-x-[20deg] flex items-center gap-2">
-                      <span>
-                        {isActive ? "ACTIVE" : "View Briefing"}
-                      </span>
+                      <span>{isActive ? "ACTIVE" : "View Briefing"}</span>
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         className="w-4 h-4"

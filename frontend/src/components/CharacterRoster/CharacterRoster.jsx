@@ -9,6 +9,7 @@ function CharacterRoster({ userId }) {
   const [selectedCharacter, setSelectedCharacter] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [refreshFlag, setRefreshFlag] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     triggerRefresh();
@@ -19,11 +20,9 @@ function CharacterRoster({ userId }) {
 
     const token = localStorage.getItem("token");
 
-    // If there is no token, you may want to handle that scenario (e.g., redirect to login)
     if (!token) {
       console.log("No token found, redirecting to login.");
-      // Navigate to login page if token is not found
-      navigate("/login"); // You may need to import `navigate` from `react-router-dom`
+      navigate("/login");
       setIsLoading(false);
       return;
     }
@@ -32,11 +31,43 @@ function CharacterRoster({ userId }) {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // Add the token to the Authorization header
+        Authorization: `Bearer ${token}`,
       },
     })
-      .then((res) => res.json())
-      .then((data) => {
+      .then(async (res) => {
+        const text = await res.text();
+
+        if (res.status === 401 || res.status === 403) {
+          if (
+            text.toLowerCase().includes("token expired") ||
+            text.toLowerCase().includes("jwt expired") ||
+            text.toLowerCase().includes("tokenexpirederror")
+          ) {
+            console.warn("Token expired. Redirecting to login.");
+          } else {
+            console.warn("Access denied. Redirecting to login.");
+          }
+
+          localStorage.removeItem("token");
+          navigate("/login");
+          return;
+        }
+
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch (err) {
+          console.error("Invalid JSON response:", text);
+          setIsLoading(false);
+          return;
+        }
+
+        if (!Array.isArray(data)) {
+          console.error("Unexpected data format:", data);
+          setIsLoading(false);
+          return;
+        }
+
         setCharacters(data);
 
         if (selectedCharacter) {
@@ -45,9 +76,13 @@ function CharacterRoster({ userId }) {
           );
           if (updated) setSelectedCharacter(updated);
         }
+
         setIsLoading(false);
       })
-      .catch(console.error);
+      .catch((err) => {
+        console.error("Error fetching characters:", err);
+        setIsLoading(false);
+      });
   }, [userId, refreshFlag]);
 
   const triggerRefresh = () => setRefreshFlag((prev) => !prev);

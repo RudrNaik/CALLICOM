@@ -19,6 +19,7 @@ function Campaigns() {
   const [currentMissionId, setCurrentMissionId] = useState(null);
   const [characters, setCharacters] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setCampaigns(campaignsData);
@@ -26,22 +27,28 @@ function Campaigns() {
   }, []);
 
   useEffect(() => {
-    const campaignMissions = missionsData.filter(
-      (m) => m.campaignId === currentCampaignId
-    );
+    const campaignMissions = missions
+      .filter((m) => m.campaignId === currentCampaignId)
+      .sort((a, b) => {
+        // Assuming mission IDs are like "Mission1", "Mission6", etc.
+        const numA = parseInt(a.id.replace(/\D/g, ""));
+        const numB = parseInt(b.id.replace(/\D/g, ""));
+        return numB - numA; // Descending order
+      });
+
     setFilteredMissions(campaignMissions);
-    setCurrentMissionId(
-      campaignMissions.find((m) => m.status === "CURRENT")?.id ||
-        campaignMissions[0]?.id ||
-        null
-    );
-  }, [currentCampaignId]);
+
+    const current = campaignMissions.find((m) => m.status === "CURRENT");
+    const fallback = campaignMissions[0];
+
+    setCurrentMissionId(current?.id || fallback?.id || null);
+  }, [currentCampaignId, missions]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
       console.log("No token found, redirecting to login.");
-      return;
+      navigate("/login");
     }
 
     setIsLoading(true);
@@ -53,8 +60,18 @@ function Campaigns() {
         Authorization: `Bearer ${token}`,
       },
     })
-      .then((res) => res.json())
-      .then((data) => {
+      .then(async (res) => {
+        if (res.status === 403) {
+          console.warn("Access denied, redirecting to login.");
+          navigate("/login");
+          return;
+        }
+
+        const data = await res.json();
+        if (!Array.isArray(data)) {
+          throw new Error("Invalid data format");
+        }
+
         const filtered = data.filter(
           (char) => char.campaignId === currentCampaignId
         );
