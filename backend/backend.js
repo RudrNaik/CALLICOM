@@ -118,6 +118,40 @@ app.post("/api/signup", async (req, res) => {
   }
 });
 
+app.get("/api/campaigns", async (req, res) => {
+  const client = new MongoClient(url);
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const collection = db.collection("campaigns");
+
+    const characters = await collection.find().toArray();
+    res.status(200).json(characters);
+  } catch (err) {
+    console.error("Error fetching campaigns:", err.message);
+    res.status(500).json({ error: "Failed to fetch characters" });
+  } finally {
+    await client.close();
+  }
+});
+
+app.get("/api/missions", async (req, res) => {
+  const client = new MongoClient(url);
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const collection = db.collection("missions");
+
+    const characters = await collection.find().toArray();
+    res.status(200).json(characters);
+  } catch (err) {
+    console.error("Error fetching missions:", err.message);
+    res.status(500).json({ error: "Failed to fetch characters" });
+  } finally {
+    await client.close();
+  }
+});
+
 app.use(authenticateJWT); // All routes after this will require authentication
 
 app.post("/api/characters", async (req, res) => {
