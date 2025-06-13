@@ -41,7 +41,7 @@ function CampaignView({
 
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:8080/api/campaigns", {
+      const res = await fetch("https://callicom.onrender.com/api/campaigns", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
