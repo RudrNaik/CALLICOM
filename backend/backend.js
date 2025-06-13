@@ -282,6 +282,29 @@ app.post("/api/missions", async (req, res) => {
   }
 });
 
+app.delete("/api/missions/:id", async (req, res) => {
+  const client = new MongoClient(url);
+
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const collection = db.collection("missions");
+
+    const result = await collection.deleteOne({ id: req.params.id });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: "Mission not found" });
+    }
+
+    res.status(200).json({ message: "Mission deleted" });
+  } catch (err) {
+    console.error("Error deleting mission:", err.message);
+    res.status(500).json({ error: "Failed to delete mission" });
+  } finally {
+    await client.close();
+  }
+});
+
 app.post("/api/characters", async (req, res) => {
   const client = new MongoClient(url);
 

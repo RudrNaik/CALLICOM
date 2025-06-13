@@ -5,8 +5,10 @@ function MissionView({
   isAdmin,
   refreshMissions,
   currentCampaignId,
+  handleDeleteMission,
 }) {
   const [editing, setEditing] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [missionData, setMissionData] = useState(null);
 
   useEffect(() => {
@@ -80,6 +82,8 @@ function MissionView({
     const updatedMission = { ...missionData, campaignId: currentCampaignId };
     delete updatedMission._id;
 
+    setSubmitting(true);
+
     try {
       await fetch(
         `https://callicom.onrender.com/api/missions/${missionData.id}`,
@@ -92,21 +96,24 @@ function MissionView({
           body: JSON.stringify(updatedMission),
         }
       );
-      refreshMissions();
+      await refreshMissions();
       setEditing(false);
     } catch (error) {
       console.error("Error saving mission:", error);
+    } finally {
+      setSubmitting(false);
     }
   };
 
   if (!missionData) return null;
 
   return (
-    <div className="bg-neutral-800/90 border border-orange-500 rounded-xl p-6 shadow-lg max-w-md min-h-[700px] max-h-[700px] overflow-y-auto">
+    <div className="bg-neutral-800/90 border border-orange-500 rounded-xl p-6 shadow-lg max-w-md min-h-[700px] max-h-[700px] overflow-y-auto whitespace-pre-line scrollbar-thin scrollbar-thumb-orange-400 scrollbar-track-neutral-700">
       {editing ? (
         <div className="space-y-4">
           <p className="text-orange-300 text-xs font-bold">Mission ID</p>
           <input
+            disabled={submitting}
             className="w-full p-2 bg-neutral-900 border border-orange-400 rounded"
             value={missionData.id}
             onChange={(e) => handleChange("id", e.target.value)}
@@ -114,6 +121,7 @@ function MissionView({
 
           <p className="text-orange-300 text-xs font-bold">Name</p>
           <input
+            disabled={submitting}
             className="w-full p-2 bg-neutral-900 border border-orange-400 rounded"
             value={missionData.Name}
             onChange={(e) => handleChange("Name", e.target.value)}
@@ -121,6 +129,7 @@ function MissionView({
 
           <p className="text-orange-300 text-xs font-bold">Type</p>
           <input
+            disabled={submitting}
             className="w-full p-2 bg-neutral-900 border border-orange-400 rounded"
             value={missionData.Type}
             onChange={(e) => handleChange("Type", e.target.value)}
@@ -128,6 +137,7 @@ function MissionView({
 
           <p className="text-orange-300 text-xs font-bold">Status</p>
           <select
+            disabled={submitting}
             className="w-full p-2 bg-neutral-900 border border-orange-400 rounded"
             value={missionData.status}
             onChange={(e) => handleChange("status", e.target.value)}
@@ -146,6 +156,7 @@ function MissionView({
                   : field}
               </p>
               <textarea
+                disabled={submitting}
                 className="w-full p-2 bg-neutral-900 border border-orange-400 rounded whitespace-pre-wrap"
                 rows={3}
                 value={missionData[field] || ""}
@@ -159,11 +170,13 @@ function MissionView({
           {Object.entries(missionData.Objectives || {}).map(([key, val]) => (
             <div key={key} className="flex gap-2 mb-1">
               <input
+                disabled={submitting}
                 className="flex-1 p-2 bg-neutral-900 border border-orange-400 rounded"
                 value={val}
                 onChange={(e) => handleObjectiveChange(key, e.target.value)}
               />
               <button
+                disabled={submitting}
                 onClick={() => removeObjective(key)}
                 className="text-red-500"
               >
@@ -175,7 +188,7 @@ function MissionView({
             + Add Objective
           </button>
 
-          {missionData.status === "Completed" && (
+          {missionData.status === "COMPLETED" && (
             <div>
               <p className="text-orange-300 text-sm font-bold mt-4 mb-1">
                 Debrief
@@ -197,6 +210,7 @@ function MissionView({
               {(missionData.Debrief?.Score?.Achievements || []).map((a, i) => (
                 <div key={i} className="mb-2 space-y-1">
                   <input
+                    disabled={submitting}
                     className="w-full p-1 bg-neutral-900 border border-orange-400 rounded"
                     value={a.name}
                     onChange={(e) =>
@@ -205,6 +219,7 @@ function MissionView({
                     placeholder="Achievement Name"
                   />
                   <input
+                    disabled={submitting}
                     className="w-full p-1 bg-neutral-900 border border-orange-400 rounded"
                     value={a.description}
                     onChange={(e) =>
@@ -213,6 +228,7 @@ function MissionView({
                     placeholder="Description"
                   />
                   <input
+                    disabled={submitting}
                     className="w-full p-1 bg-neutral-900 border border-orange-400 rounded"
                     value={a.unlocks}
                     onChange={(e) =>
@@ -222,6 +238,7 @@ function MissionView({
                   />
                   <label className="text-xs text-orange-200">
                     <input
+                      disabled={submitting}
                       type="checkbox"
                       checked={a.completed}
                       onChange={(e) =>
@@ -237,22 +254,115 @@ function MissionView({
                   <button
                     onClick={() => removeAchievement(i)}
                     className="text-red-400 text-xs"
+                    disabled={submitting}
                   >
                     ✕ Remove
                   </button>
                 </div>
               ))}
-              <button onClick={addAchievement} className="text-orange-400 mt-2">
+              <button
+                disabled={submitting}
+                onClick={addAchievement}
+                className="text-orange-400 mt-2"
+              >
                 + Add Achievement
               </button>
+
+              <p className="text-orange-300 text-xs font-bold mt-4 mb-1">
+                Debriefing Score
+              </p>
+
+              <input
+                disabled={submitting}
+                className="w-full p-1 bg-neutral-900 border border-orange-400 rounded mb-1"
+                placeholder="Final Score"
+                value={missionData.Debrief?.Score?.FinalScore || ""}
+                onChange={(e) =>
+                  setMissionData((prev) => ({
+                    ...prev,
+                    Debrief: {
+                      ...prev.Debrief,
+                      Score: {
+                        ...prev.Debrief?.Score,
+                        FinalScore: e.target.value,
+                      },
+                    },
+                  }))
+                }
+              />
+
+              <input
+                disabled={submitting}
+                className="w-full p-1 bg-neutral-900 border border-orange-400 rounded mb-1"
+                placeholder="EXP"
+                value={missionData.Debrief?.Score?.EXP || ""}
+                onChange={(e) =>
+                  setMissionData((prev) => ({
+                    ...prev,
+                    Debrief: {
+                      ...prev.Debrief,
+                      Score: {
+                        ...prev.Debrief?.Score,
+                        EXP: e.target.value,
+                      },
+                    },
+                  }))
+                }
+              />
+
+              <input
+                disabled={submitting}
+                className="w-full p-1 bg-neutral-900 border border-orange-400 rounded"
+                placeholder="Rank"
+                value={missionData.Debrief?.Score?.Rank || ""}
+                onChange={(e) =>
+                  setMissionData((prev) => ({
+                    ...prev,
+                    Debrief: {
+                      ...prev.Debrief,
+                      Score: {
+                        ...prev.Debrief?.Score,
+                        Rank: e.target.value,
+                      },
+                    },
+                  }))
+                }
+              />
             </div>
           )}
 
           <button
+            disabled={submitting}
             onClick={saveMission}
-            className="mt-4 w-full bg-orange-500 text-black py-2 rounded font-bold hover:bg-orange-600"
+            className={`mt-4 w-full py-2 rounded font-bold ${
+              submitting
+                ? "bg-orange-300 cursor-not-allowed"
+                : "bg-orange-500 hover:bg-orange-600"
+            }`}
           >
-            Save
+            {submitting && (
+              <svg
+                className="animate-spin h-4 w-4 inline-block mr-2 text-black"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                ></path>
+              </svg>
+            )}
+            {submitting ? "Saving..." : "Save"}
           </button>
         </div>
       ) : (
@@ -286,7 +396,7 @@ function MissionView({
             </div>
           ))}
 
-          {missionData.status === "Completed" && (
+          {missionData.status === "COMPLETED" && (
             <div className="mt-4">
               <p className="text-orange-300 text-sm font-bold mb-1">Debrief</p>
               <p className="text-sm whitespace-pre-line mb-2">
@@ -327,9 +437,19 @@ function MissionView({
           {isAdmin && (
             <button
               onClick={() => setEditing(true)}
-              className="mt-4 w-full bg-orange-500 text-black py-2 rounded font-bold hover:bg-orange-600"
+              className="mt-4 w-full bg-orange-500 py-2 rounded font-bold hover:bg-orange-600"
             >
               Edit Mission
+            </button>
+          )}
+
+          {isAdmin && (
+            <button
+              onClick={handleDeleteMission}
+              className="mt-2 w-full py-2 bg-orange-500 text-white font-bold rounded hover:bg-red-700"
+              disabled={submitting}
+            >
+              Abort Mission
             </button>
           )}
         </div>
