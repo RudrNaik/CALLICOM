@@ -19,6 +19,8 @@ function Campaigns() {
   const [currentMissionId, setCurrentMissionId] = useState(null);
   const [characters, setCharacters] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isCreatingMission, setIsCreatingMission] = useState(false);
+  const [isSubmittingEdits, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
   const { isAdmin } = useContext(AuthContext);
 
@@ -151,9 +153,88 @@ function Campaigns() {
       .catch((err) => console.error("Failed to refresh missions:", err));
   };
 
-  console.log(currentCampaignId);
-  console.log(missions);
-  console.log(filteredMissions);
+  const handleAddMission = async () => {
+    if (isCreatingMission) return;
+    setIsCreatingMission(true);
+
+    const token = localStorage.getItem("token");
+    const newMission = {
+      id: `mission${missions.length}`,
+      campaignId: currentCampaign,
+      Name: "New Mission",
+      Type: "Side Mission",
+      status: "ACTIVE",
+      Objectives: { 0: "First objective" },
+      Brief: "[To be written]",
+      Execution: "[To be written]",
+      FA: "[TBD]",
+      Support: "[TBD]",
+      CnC: "[TBD]",
+      Debrief: {
+        Debriefing: "",
+        Score: {
+          FinalScore: "",
+          EXP: "",
+          Rank: "",
+          Achievements: [],
+        },
+      },
+    };
+
+    try {
+      const res = await fetch("https://callicom.onrender.com/api/missions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(newMission),
+      });
+
+      if (!res.ok) throw new Error("Failed to create mission");
+
+      await refreshMissions();
+      setCurrentMissionId(newMission.id);
+    } catch (err) {
+      console.error("Error adding mission:", err);
+    } finally {
+      setIsCreatingMission(false);
+    }
+  };
+
+  const handleDeleteMission = async () => {
+    if (
+      !currentMissionId ||
+      !window.confirm("Are you sure you want to delete this mission?")
+    )
+      return;
+
+    const token = localStorage.getItem("token");
+
+    try {
+      const res = await fetch(
+        `https://callicom.onrender.com/api/missions/${currentMissionId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!res.ok) throw new Error("Failed to delete mission");
+
+      await refreshMissions();
+
+      // Pick a fallback mission to show (if any remain)
+      const remaining = missions.filter((m) => m.id !== currentMissionId);
+      const fallback = remaining[0]?.id || null;
+      setCurrentMissionId(fallback);
+    } catch (err) {
+      console.error("Error deleting mission:", err);
+    }
+  };
 
   // 🔄 Fullscreen Spinner Overlay
   if (isInitialLoading) {
@@ -214,6 +295,8 @@ function Campaigns() {
               filteredMissions={filteredMissions}
               refreshCampaigns={refreshCampaigns}
               isAdmin={isAdmin}
+              handleAddMission={handleAddMission}
+              isCreatingMission={isCreatingMission}
             />
           </motion.div>
 
@@ -229,6 +312,7 @@ function Campaigns() {
               isAdmin={isAdmin}
               refreshMissions={refreshMissions}
               currentCampaignId={currentCampaign}
+              handleDeleteMission={handleDeleteMission}
             />
           </motion.div>
 
