@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 function CampaignView({
   currentCampaign,
@@ -8,31 +8,191 @@ function CampaignView({
   currentMissionId,
   filteredMissions,
   campaigns,
+  refreshCampaigns,
+  isAdmin,
 }) {
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newCampaign, setNewCampaign] = useState({
+    Name: "",
+    id: "",
+    Location: "",
+    SITREP: "",
+    callsign: "",
+    client: "",
+    payout: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewCampaign((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+
+    if (campaigns.some((c) => c.id === newCampaign.id)) {
+      alert(
+        "A campaign with this ID already exists. Please choose a unique ID."
+      );
+      setIsSubmitting(false);
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch("https://callicom.onrender.com/api/campaigns", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(newCampaign),
+      });
+
+      if (!res.ok) throw new Error("Failed to create campaign");
+
+      await res.json();
+      refreshCampaigns();
+      setNewCampaign({
+        Name: "",
+        id: "",
+        Location: "",
+        SITREP: "",
+        callsign: "",
+        client: "",
+        payout: "",
+        unit: "",
+      });
+      setShowAddForm(false);
+    } catch (err) {
+      setIsSubmitting(false);
+      console.error("Error posting campaign data:", err);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  console.log(filteredMissions);
+
   return (
     <div>
-      {/* Campaign Overview */}
       {currentCampaign && (
-        <div className="bg-neutral-800/90 border border-orange-500 rounded-xl p-6 shadow-lg max-w-md min-h-[700px] max-h-[700px] overflow-y-auto scrollbar-thin scrollbar-thumb-orange-400 scrollbar-track-neutral-700">
-          <div className="bg-orange-500 p-2 rounded text-neutral-900 font-bold">
-            <select
-              value={currentCampaignId}
-              onChange={(e) => setCurrentCampaignId(e.target.value)}
-              className="bg-transparent text-neutral-100 font-bold text-xl uppercase w-full appearance-none"
-            >
-              {campaigns.map((campaign) => (
-                <option
-                  key={campaign.id}
-                  value={campaign.id}
-                  className="text-white bg-orange-500"
-                >
-                  {campaign.Name}
-                </option>
-              ))}
-            </select>
+        <div className="bg-neutral-800/90 border border-orange-500 rounded-xl p-6 shadow-lg max-w-md min-h-[700px] max-h-[700px] overflow-y-auto whitespace-pre-line scrollbar-thin scrollbar-thumb-orange-400 scrollbar-track-neutral-700">
+          {/* Campaign Selector */}
+          <div className="relative">
+            <div className="bg-orange-500 p-2 rounded text-neutral-900 font-bold">
+              <select
+                value={currentCampaignId}
+                onChange={(e) => {
+                  if (e.target.value === "__add") {
+                    setShowAddForm(true);
+                    return;
+                  }
+                  setCurrentCampaignId(e.target.value);
+                }}
+                className="bg-transparent text-neutral-100 font-bold text-xl uppercase w-full appearance-none"
+              >
+                {campaigns.map((campaign) => (
+                  <option
+                    key={campaign.id}
+                    value={campaign.id}
+                    className="text-white bg-orange-500"
+                  >
+                    {campaign.Name}
+                  </option>
+                ))}
+                {isAdmin && (
+                  <option value="__add" className="text-white bg-orange-600">
+                    [ + ] Add New Campaign
+                  </option>
+                )}
+              </select>
+            </div>
           </div>
 
-          <h2 className="uppercase text-sm text-neutral-400 mb-4 mt-2">
+          {/* Add Campaign Form */}
+          {showAddForm && isAdmin && (
+            <div className="mt-4 text-sm space-y-2">
+              <div className="grid grid-cols-1 gap-2">
+                <input
+                  name="Name"
+                  placeholder="Campaign Name"
+                  className="w-full p-2 bg-neutral-900 border border-orange-500 rounded"
+                  value={newCampaign.Name}
+                  onChange={handleInputChange}
+                />
+                <input
+                  name="id"
+                  placeholder="Unique ID (e.g., Chile2018)"
+                  className="w-full p-2 bg-neutral-900 border border-orange-500 rounded"
+                  value={newCampaign.id}
+                  onChange={handleInputChange}
+                />
+                <input
+                  name="Location"
+                  placeholder="Location"
+                  className="w-full p-2 bg-neutral-900 border border-orange-500 rounded"
+                  value={newCampaign.Location}
+                  onChange={handleInputChange}
+                />
+                <textarea
+                  name="SITREP"
+                  placeholder="SITREP / Overview"
+                  rows={3}
+                  className="w-full p-2 bg-neutral-900 border border-orange-500 rounded resize-none"
+                  value={newCampaign.SITREP}
+                  onChange={handleInputChange}
+                />
+                <input
+                  name="unit"
+                  placeholder="Unit (e.g., Calamari Operational Group)"
+                  className="w-full p-2 bg-neutral-900 border border-orange-500 rounded"
+                  value={newCampaign.unit || ""}
+                  onChange={handleInputChange}
+                />
+                <input
+                  name="callsign"
+                  placeholder="Callsign"
+                  className="w-full p-2 bg-neutral-900 border border-orange-500 rounded"
+                  value={newCampaign.callsign}
+                  onChange={handleInputChange}
+                />
+                <input
+                  name="client"
+                  placeholder="Client(s)"
+                  className="w-full p-2 bg-neutral-900 border border-orange-500 rounded"
+                  value={newCampaign.client}
+                  onChange={handleInputChange}
+                />
+                <input
+                  name="payout"
+                  placeholder="Payout"
+                  className="w-full p-2 bg-neutral-900 border border-orange-500 rounded"
+                  value={newCampaign.payout}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="flex justify-between gap-2 mt-2">
+                <button
+                  onClick={() => setShowAddForm(false)}
+                  className="flex-1 border border-orange-400 text-orange-400 font-semibold py-2 rounded hover:bg-orange-600/10"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSubmit}
+                  disabled={isSubmitting}
+                  className="flex-1 bg-orange-500 text-black font-bold py-2 rounded hover:bg-orange-600 transition"
+                >
+                  {isSubmitting ? "Submitting..." : "Submit"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Campaign Details */}
+          <h2 className="uppercase text-sm text-neutral-400 mb-4 mt-4">
             {currentCampaign.Location}
           </h2>
 
@@ -57,12 +217,10 @@ function CampaignView({
                     isActive
                       ? "bg-orange-900/30 border-orange-400"
                       : "bg-neutral-800 border-neutral-700 hover:border-orange-600"
-                  }
-                  ${
+                  } ${
                     currentMissionId === mission.id ? "border-orange-600" : ""
                   }`}
                 >
-                  {/* Left Side */}
                   <div>
                     <p className="text-xs text-gray-400 tracking-widest uppercase">
                       MISSION //{" "}
@@ -76,8 +234,6 @@ function CampaignView({
                       {mission.who ? `, ${mission.who}` : ""}
                     </p>
                   </div>
-
-                  {/* Right Tab */}
                   <div
                     className={`relative px-4 py-2 text-xs font-semibold tracking-wide uppercase skew-x-[-20deg] ${
                       isActive
