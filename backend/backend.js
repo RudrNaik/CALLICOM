@@ -12,12 +12,32 @@ const jwt = require("jsonwebtoken");
 app.use(cors());
 app.use(bodyParser.json());
 
-const port = process.env.PORT
+const port = process.env.PORT;
 const host = "localhost";
 
-const url =
-  process.env.MONGO_URI;
+const url = process.env.MONGO_URI;
 const dbName = "CALLICOM";
+
+function verifyAdmin(req, res, next) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) return res.status(401).json({ error: "No token provided" });
+
+  const token = authHeader.split(" ")[1];
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Replace with your actual admin username
+    if (decoded.userName !== "Spinypine") {
+      return res.status(403).json({ error: "Not authorized" });
+    }
+
+    req.user = decoded;
+    next();
+  } catch (err) {
+    return res.status(401).json({ error: "Invalid token" });
+  }
+}
 
 app.listen(port, () => {
   console.log("App listening at http://%s:%s", host, port);
@@ -64,7 +84,7 @@ app.post("/api/login", async (req, res) => {
     const token = jwt.sign(
       { userId: user._id, userName: user.userName },
       process.env.JWT_SECRET, // This should now correctly pull the secret from .env
-      { expiresIn: "20h" }
+      { expiresIn: "8h" }
     );
 
     res.json({
@@ -153,6 +173,114 @@ app.get("/api/missions", async (req, res) => {
 });
 
 app.use(authenticateJWT); // All routes after this will require authentication
+
+// 🔹 Create new campaign
+app.post("/api/campaigns", verifyAdmin, async (req, res) => {
+  const client = new MongoClient(url);
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const collection = db.collection("campaigns");
+
+    const result = await collection.insertOne(req.body);
+    res.status(201).json({ _id: result.insertedId });
+  } catch (err) {
+    console.error("Error adding campaign:", err.message);
+    res.status(500).json({ error: "Failed to add campaign" });
+  } finally {
+    await client.close();
+  }
+});
+
+// 🔹 Edit existing campaign
+app.put("/api/campaigns/:id", async (req, res) => {
+  const client = new MongoClient(url);
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const collection = db.collection("campaigns");
+
+    const result = await collection.updateOne(
+      { id: new ObjectId(req.params.id) },
+      { $set: req.body }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ error: "Campaign not found" });
+    }
+
+    res.status(200).json({ message: "Campaign updated" });
+  } catch (err) {
+    console.error("Error updating campaign:", err.message);
+    res.status(500).json({ error: "Failed to update campaign" });
+  } finally {
+    await client.close();
+  }
+});
+
+// 🔹 Create new mission
+app.post("/api/missions", async (req, res) => {
+  const client = new MongoClient(url);
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const collection = db.collection("missions");
+
+    const result = await collection.insertOne(req.body);
+    res.status(201).json({ _id: result.insertedId });
+  } catch (err) {
+    console.error("Error adding mission:", err.message);
+    res.status(500).json({ error: "Failed to add mission" });
+  } finally {
+    await client.close();
+  }
+});
+
+// 🔹 Edit existing mission
+app.put("/api/missions/:id", async (req, res) => {
+  const client = new MongoClient(url);
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const collection = db.collection("missions");
+
+    const result = await collection.updateOne(
+      { id: req.params.id }, // ← custom ID match, not _id
+      { $set: req.body }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ error: "Mission not found" });
+    }
+
+    res.status(200).json({ message: "Mission updated" });
+  } catch (err) {
+    console.error("Error updating mission:", err.message);
+    res.status(500).json({ error: "Failed to update mission" });
+  } finally {
+    await client.close();
+  }
+});
+
+app.post("/api/missions", async (req, res) => {
+  const client = new MongoClient(url);
+
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+
+    const mission = req.body;
+    if (!mission.campaignId.id) {
+      return res.status(400).send({ error: "Missing campaign info." });
+    }
+
+    const result = await db.collection("missions").insertOne(mission);
+    res.status(201).send(result);
+  } catch (err) {
+    console.error("Error saving character:", err.message);
+    res.status(500).send({ error: err.message });
+  }
+});
 
 app.post("/api/characters", async (req, res) => {
   const client = new MongoClient(url);

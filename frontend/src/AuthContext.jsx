@@ -5,16 +5,18 @@ export const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem("user");
     if (stored) {
       try {
-        setUser(JSON.parse(stored)); // Safely parse JSON
+        const parsedUser = JSON.parse(stored);
+        setUser(parsedUser);
         setIsLoggedIn(true);
+        setIsAdmin(parsedUser?.userName === "Spinypine"); 
       } catch (err) {
         console.error("Failed to parse user data from localStorage:", err);
-        // Optionally, clear the invalid data from localStorage
         localStorage.removeItem("user");
       }
     }
@@ -23,17 +25,19 @@ export function AuthProvider({ children }) {
   const login = (userData) => {
     setIsLoggedIn(true);
     setUser(userData);
+    setIsAdmin(userData?.userName === "Spinypine");
     localStorage.setItem("user", JSON.stringify(userData));
   };
 
   const logout = () => {
     setIsLoggedIn(false);
     setUser(null);
+    setIsAdmin(false);
     localStorage.removeItem("user");
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, user, login, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, user, isAdmin, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
