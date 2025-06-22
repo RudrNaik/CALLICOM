@@ -26,6 +26,7 @@ const CharacterCreator = () => {
     };
 
     const token = localStorage.getItem("token");
+    console.log(token)
 
     if (!token) {
       console.log("No token found, redirecting to login.");
@@ -36,7 +37,7 @@ const CharacterCreator = () => {
 
     try {
       const response = await fetch(
-        "https://callicom-test.onrender.com/api/characters",
+        "https://callicom.onrender.com/api/characters",
         {
           method: "POST",
           headers: {
