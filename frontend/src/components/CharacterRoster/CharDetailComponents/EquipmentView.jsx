@@ -22,6 +22,7 @@ function EquipmentSelection({
   const [gear, setGear] = useState(defaultGear);
   const [classGadgets, setClassGadgets] = useState([]);
   const [grenadeCounts, setGrenadeCounts] = useState([3, 3]);
+  const [medCounts, setMedCounts] = useState([2, 1, 1]); // [AFAK, IFAK, Painkiller]
 
   useEffect(() => {
     if (!character) return;
@@ -98,17 +99,26 @@ function EquipmentSelection({
   return (
     <div className="mt-8 text-white" style={{ fontFamily: "Geist_Mono" }}>
       <div className="relative inline-block group">
-        <h2 className="text-xl font-bold text-orange-400 mt-4 mb-4">Equipment</h2>
+        <h2 className="text-xl font-bold text-orange-400 mt-4 mb-4">
+          Equipment
+        </h2>
 
         {/* Tooltip modal */}
         <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-1">
           <p>
-            Your equipment determines the gear that you bring into a mission. You can choose a <span className="text-orange-500 font-bold">primary</span>, a <span className="text-orange-500 font-bold">secondary</span>, 2 types of <span className="text-orange-500 font-bold">grenades</span>, and then your <span className="text-orange-500 font-bold">armor</span> and <span className="text-orange-500 font-bold">gadget</span>.
+            Your equipment determines the gear that you bring into a mission.
+            You can choose a{" "}
+            <span className="text-orange-500 font-bold">primary</span>, a{" "}
+            <span className="text-orange-500 font-bold">secondary</span>, 2
+            types of <span className="text-orange-500 font-bold">grenades</span>
+            , and then your{" "}
+            <span className="text-orange-500 font-bold">armor</span> and{" "}
+            <span className="text-orange-500 font-bold">gadget</span>.
           </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Weapons */}
         {["primaryWeapon", "secondaryWeapon"].map((slot) => (
           <WeaponSlot
@@ -127,7 +137,7 @@ function EquipmentSelection({
           <h3 className="font-semibold text-orange-300">Grenades</h3>
 
           {isEditing ? (
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {gear.grenades.map((grenade, i) => (
                 <input
                   key={i}
@@ -140,7 +150,7 @@ function EquipmentSelection({
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-2 gap-4 mt-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {gear.grenades.map((grenade, i) => (
                   <div key={i} className="text-sm text-white space-y-1">
                     <p>
@@ -210,6 +220,53 @@ function EquipmentSelection({
             />
           ) : (
             <p>AC{gear.armorClass}</p>
+          )}
+
+          {charActive ? (
+            <div className="grid sm:grid-cols-1 md:grid-cols-3 gap-4 mt-2">
+              {["AFAK", "IFAK", "Painkiller"].map((med, i) => (
+                <div key={med} className="text-sm text-white space-y-1">
+                  <p>
+                    <span className="font-semibold text-orange-300">{med}</span>
+                  </p>
+                  <p className="px-2 py-1 rounded bg-neutral-900 mb-2">
+                    <span className="text-yellow-400">{medCounts[i]}</span>{" "}
+                    <span className="text-gray-400 italic">remaining</span>
+                  </p>
+                  <div className="flex gap-1">
+                    <button
+                      onClick={() =>
+                        setMedCounts((prev) => {
+                          const updated = [...prev];
+                          updated[i] = Math.max(0, updated[i] - 1);
+                          return updated;
+                        })
+                      }
+                      disabled={medCounts[i] === 0}
+                      className="bg-orange-600 hover:bg-orange-700 text-white px-2 py-1 rounded disabled:opacity-40 text-xs"
+                    >
+                      Use
+                    </button>
+                    <button
+                      onClick={() =>
+                        setMedCounts((prev) => {
+                          const updated = [...prev];
+                          updated[i] = i === 0 ? 2 : 1; // default: AFAK = 2, others = 1
+                          return updated;
+                        })
+                      }
+                      className="bg-green-700 hover:bg-green-800 text-white px-2 py-1 rounded text-xs"
+                    >
+                      Resupply
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-400 italic">
+              No meds shown unless on a mission.
+            </p>
           )}
         </div>
 
