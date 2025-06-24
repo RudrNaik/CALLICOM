@@ -22,7 +22,7 @@ function EquipmentSelection({
   const [gear, setGear] = useState(defaultGear);
   const [classGadgets, setClassGadgets] = useState([]);
   const [grenadeCounts, setGrenadeCounts] = useState([3, 3]);
-  const [medCounts, setMedCounts] = useState([2, 1, 1]); // [AFAK, IFAK, Painkiller]
+  const [medCounts, setMedCounts] = useState([1, 2, 1]); // [AFAK, IFAK, Painkiller]
 
   useEffect(() => {
     if (!character) return;
