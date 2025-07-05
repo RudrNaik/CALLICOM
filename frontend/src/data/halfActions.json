@@ -1,19 +1,5 @@
 [
     {
-      "name": "Speed Reload",
-      "color":"bg-neutral-800/80",
-      "type": "Half",
-      "icon": "/Half_Action.svg",
-      "description": "Speed Reload your selected weapon, discarding any ammo in the magazine.\n\nUnused rounds are lost, and removed from your total ammo count."
-    },
-    {
-      "name": "Move",
-      "color":"bg-neutral-800/80",
-      "type": "Half",
-      "icon": "/Half_Action.svg",
-      "description": "Move within one range band (Close Range).\n\nYou can do other half actions while moving, but can only get into cover within the same turn if it's in one range band.\n\nWhen moving for flanking cover, you specify a target and apply -2 to their defense for them and anyone around them once you arrive. This negation lasts until the target repositions."
-    },
-    {
       "name": "Deploy",
       "color":"bg-neutral-800/80",
       "type": "Half",
@@ -21,25 +7,18 @@
       "description": "Deploy a bipod or use a gadget.\n\nCertain gadgets may end your turn immediately, such as Controlling Drones, Pinging, or Hacking."
     },
     {
-      "name": "Disengage",
-      "color":"bg-neutral-800/80",
-      "type": "Half",
-      "icon": "/Half_Action.svg",
-      "description": "Disengage from a fight and slip away.\n\nWhen disengaging, you do an opposed stealth roll against an enemy's notice. Upon success, you are disengaged from an encounter. Enemies will search your last known position, but it allows you to sneak around.\n\nWhen moving while disengaged, you will roll stealth checks against an enemy's notice to remain disengaged. Upon firing on an enemy or failing a check, you re-engage with them and are back in the fight at the end of the initiative queue."
-    },
-    {
       "name": "Patch up",
       "type": "Half",
       "color":"bg-neutral-800/80",
       "icon": "/Half_Action.svg",
-      "description": "Patch yourself up and remove wounds.\n\nPatching yourself up requires having 1 FAK for a flesh wound, and 2 FAKs or an AFAK for deep wounds. When consumed, these items are removed from your inventory.\n\nYou remove 1 + [Medical skill roll] worth of wounds when consumed."
+      "description": "Patch yourself up and remove wounds.\n\nPatching yourself up requires having 1 FAK for a flesh wound, and 2 FAKs or an AFAK for deep wounds. When consumed, these items are removed from your inventory.\n\nYou remove 1 + [Medical skill roll] worth of wounds when consumed. \n\n Alternatively, painkillers do exist, and can be used by rolling your medical skill to nullify wounds for 1+[medical roll] turns."
     },
     {
       "name": "Rally",
       "type": "Half",
       "color":"bg-neutral-800/80",
       "icon": "/Half_Action.svg",
-      "description": "Rally your team and other allies.\n\nOnce per turn one team member can rally, using your leadership skill to bolster the morale of friendlies and add a +1 to friendly actions until your next turn. This effect can be negated if the rallier is hit or an intimidate beats the rally bonus. \n\n You can also single out targets using Rally, and apply a +1 for others when shooting at them."
+      "description": "Rally your team and other allies.\n\nOnce per turn one team member can rally, using your leadership skill to bolster the morale of friendlies and add a +1 to friendly actions until your next turn. This effect can be negated if the rallier is hit or an intimidate beats the rally bonus. The check requires beating a threshold of 3 \n\n You can also single out targets using Rally, and apply a +1 for others when shooting at them. This is against a threshold of 2."
     },
     {
       "name": "Intimidate",

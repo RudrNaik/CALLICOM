@@ -1,0 +1,31 @@
+[
+    {
+      "name": "Move",
+      "color":"bg-neutral-800/80",
+      "type": "Movement",
+      "icon": "/Half_Action.svg",
+      "description": "Move within one range band (Close Range).\n\nWhile moving, if you do any actions you will take a -1 to all rolls because of it."
+    },
+    {
+      "name": "Sprint",
+      "type": "Movement",
+      "color":"bg-neutral-800/80",
+      "icon": "/Half_Action.svg",
+      "description": "Sprint up to two range bands (Medium Range) at a blistering pace.\n\nYou can do actions while sprinting, but not too well. you suffer a -2 to all actions while sprinting with some exceptions"
+    },
+    {
+      "name": "Flank",
+      "type": "Movement",
+      "color":"bg-neutral-800/80",
+      "icon": "/Half_Action.svg",
+      "description": "Move within one range band to flank someone. \n\n When flanking, it needs to be declared in advance, and counts as normal movement. As such, you suffer a -1 to all actions done while flanking. However- when flanking a target or a piece of cover, you negate any cover bonuses they may have and apply a -1 to their defense roll."
+    },
+    {
+      "name": "Disengage",
+      "color":"bg-neutral-800/80",
+      "type": "Half",
+      "icon": "/Half_Action.svg",
+      "description": "Disengage from a fight and slip away.\n\nWhen disengaging, you do an opposed stealth roll against an enemy's notice. Upon success, you are disengaged from an encounter. Enemies will search your last known position, but it allows you to sneak around.\n\nWhen moving while disengaged, you will roll stealth checks against an enemy's notice to remain disengaged. Upon firing on an enemy or failing a check, you re-engage with them and are back in the fight at the end of the initiative queue."
+    }
+  ]
+  

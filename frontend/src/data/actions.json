@@ -7,13 +7,6 @@
       "description": "Shoot your selected weapon, reducing rounds from the magazine and your total ammo count.\n\nShooting is an opposed roll between an attacker's respective weapon roll + bonuses, and the defender's armor roll + bonuses.\n\nAbides by ranged combat rules."
     },
     {
-      "name": "Sprint",
-      "type": "Full",
-      "color":"bg-neutral-800/80",
-      "icon": "/Full_Action.svg",
-      "description": "Sprint up to two range bands (Medium Range) at a blistering pace.\n\nYou are unable to do any other actions while sprinting, and you arrive at cover immediately if you're sprinting for it.\n\nWhen sprinting for flanking cover, you specify a target and apply -2 to their defense and anyone around them once you arrive. This lasts until the target repositions."
-    },
-    {
       "name": "Throw",
       "type": "Full",
       "color":"bg-neutral-800/80",
@@ -32,7 +25,7 @@
       "type": "Full",
       "color":"bg-neutral-800/80",
       "icon": "/Full_Action.svg",
-      "description": "Aim and focus your shot.\n\nFor each turn spent aiming, increase the dice of your next attacking roll up to 3. You can target specific limbs, weakpoints, or inanimate objects while aiming. If you do any other action before you fire, your aiming bonuses are removed."
+      "description": "Aim and focus your shot.\n\nFor each turn spent aiming, increase the dice of your next attacking roll up to 3. You can target specific limbs, weakpoints, or inanimate objects while aiming. If you do any other action before you fire, your aiming bonuses are removed.\n\n -Aiming at a torso-sized target removes one die from the skill test.\n -Aiming at a limb-sized target removes two dice from the skill test.\n -Aiming at a head-sized target removes three dice from the skill test.\n\n The victim’s normal Wound Thresholds are halved (round up) for all shots aimed at vital locations, such as the head. Shots aimed at specific limbs are useful as non-fatal attacks — they cannot cause Instant Death, unless through system shock and can also stop a character from moving."
     },
     {
       "name": "Ready",

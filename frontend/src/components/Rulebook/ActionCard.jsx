@@ -6,7 +6,7 @@ const ActionCard = ({ action }) => {
       <img src={action.icon} className="w-10 h-10"></img>{" "}
       {action.name.toUpperCase()}
     </h3>
-    <p className="text-sm mt-2 whitespace-pre-line">{action.description}</p>
+    <p className="text-xs mt-2 whitespace-pre-line">{action.description}</p>
   </div>
 );
 };
