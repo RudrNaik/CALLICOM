@@ -11,6 +11,7 @@ const WeaponSlot = ({
   charActive,
 }) => {
   const categoryData = weaponCategories[weapon?.category];
+  const localStorageKey = `ammo_${characterCallsign}_${slot}`;
 
   const [firedThisMag, setFiredThisMag] = useState(0);
   const [totalFired, setTotalFired] = useState(0);
@@ -31,23 +32,42 @@ const WeaponSlot = ({
     "Machine Guns": 100,
   };
 
+  // Load from localStorage on weapon load
   useEffect(() => {
-    setFiredThisMag(0);
-    setTotalFired(0);
     const initial = pseudoMagSizes[weapon?.category] || null;
     setPseudoAmmo(initial);
     setDisplayedAmmo(initial);
-  }, [weapon?.category]);
+
+    const saved = localStorage.getItem(localStorageKey);
+    if (saved) {
+      try {
+        const { firedThisMag, totalFired, pseudoAmmo } = JSON.parse(saved);
+        setFiredThisMag(firedThisMag ?? 0);
+        setTotalFired(totalFired ?? 0);
+        setPseudoAmmo(pseudoAmmo ?? initial);
+        setDisplayedAmmo(pseudoAmmo ?? initial);
+      } catch (e) {
+        console.error("Ammo state parse error:", e);
+      }
+    } else {
+      setFiredThisMag(0);
+      setTotalFired(0);
+    }
+  }, [weapon?.category, localStorageKey]);
+
+  // Persist to localStorage
+  useEffect(() => {
+    if (!charActive) return;
+
+    const ammoState = { firedThisMag, totalFired, pseudoAmmo };
+    localStorage.setItem(localStorageKey, JSON.stringify(ammoState));
+  }, [firedThisMag, totalFired, pseudoAmmo, charActive]);
 
   useEffect(() => {
-    if (pseudoAmmo === null || displayedAmmo === null) {
-      setDisplayedAmmo(pseudoAmmo);
-      return;
-    }
+    if (pseudoAmmo === null || displayedAmmo === null) return;
 
     if (pseudoAmmo !== displayedAmmo) {
       setIsAnimating(true);
-
       const interval = setInterval(() => {
         setDisplayedAmmo((prev) => {
           if (prev === pseudoAmmo) {
@@ -55,20 +75,17 @@ const WeaponSlot = ({
             setIsAnimating(false);
             return prev;
           }
-
           const step = prev > pseudoAmmo ? -1 : 1;
           return prev + step;
         });
       }, 20);
 
-      // ✅ Clean up the interval on unmount or pseudoAmmo change
       return () => clearInterval(interval);
     }
   }, [pseudoAmmo]);
 
   const totalTurns = categoryData?.totalTurns || 0;
   const magazineSize = categoryData?.magazineSize || 1;
-
   const turnsRemaining = totalTurns - totalFired;
   const magTurnsLeft = Math.max(0, magazineSize - firedThisMag);
 
@@ -81,10 +98,7 @@ const WeaponSlot = ({
 
       if (pseudoAmmo !== null) {
         const fullRounds = pseudoMagSizes[weapon?.category] || 1;
-
         let reduction = 1;
-
-        // ✅ ONLY Snipers (5 rounds per mag) get fixed -1
         if (fullRounds !== 5) {
           const expectedPerTurn = fullRounds / magazineSize;
           const variance = Math.max(1, Math.floor(expectedPerTurn * 0.5));
@@ -104,6 +118,7 @@ const WeaponSlot = ({
     setFiredThisMag(0);
     setTotalFired(0);
     setPseudoAmmo(pseudoMagSizes[weapon?.category] || null);
+    localStorage.removeItem(localStorageKey); // optional
   };
 
   const handleReload = () => {
@@ -111,23 +126,18 @@ const WeaponSlot = ({
     setFiredThisMag(magazineSize - refillTurns);
 
     const fullRounds = pseudoMagSizes[weapon?.category] || 0;
-
     if (refillTurns === magazineSize) {
-      // Full refill: reset to full ammo count
       setPseudoAmmo(fullRounds);
     } else {
-      // Partial refill: randomize around proportional fill
       const ratio = refillTurns / magazineSize;
       const estimatedRounds = Math.floor(fullRounds * ratio);
-
-      const variance = Math.floor(estimatedRounds * 0.1); // ±10%
+      const variance = Math.floor(estimatedRounds * 0.1);
       const randomized = Math.max(
         0,
         estimatedRounds +
           Math.floor(Math.random() * (2 * variance + 1)) -
           variance
       );
-
       setPseudoAmmo(randomized);
     }
   };
@@ -185,7 +195,8 @@ const WeaponSlot = ({
             <>
               <p className="text-xs text-gray-400 mt-1">
                 DMG {categoryData.damage} | PEN {categoryData.penetration} |
-                Range: {categoryData.range}
+                Range: {categoryData.range} | <br></br> Class:{" "}
+                <strong>{categoryData.class}</strong>
                 <hr />
                 TOTAL: {totalTurns} turns | MAG: {magazineSize} turns
               </p>

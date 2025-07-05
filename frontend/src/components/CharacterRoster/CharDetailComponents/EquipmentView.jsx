@@ -17,6 +17,7 @@ function EquipmentSelection({
     grenades: ["", ""],
     gadget: "",
     armorClass: 0,
+    miscGear: "",
   };
 
   const [gear, setGear] = useState(defaultGear);
@@ -34,6 +35,7 @@ function EquipmentSelection({
         grenades: ["", ""],
         gadget: "",
         armorClass: 0,
+        miscGear: "",
       }
     );
 
@@ -308,6 +310,21 @@ function EquipmentSelection({
                 }
               </p>
             </div>
+          )}
+        </div>
+
+        {/* inventory */}
+        <div className="bg-neutral-800/80 border-l-8 border-orange-400 p-6 rounded shadow col-span-2">
+          <h3 className="font-semibold text-orange-300">Inventory</h3>
+          {isEditing ? (
+            <textarea
+              className="w-full bg-neutral-900 text-white p-2 rounded resize-y min-h-[100px]"
+              placeholder="Extra mission items, RP gear, etc..."
+              value={gear.miscGear}
+              onChange={(e) => handleChange("miscGear", e.target.value)}
+            />
+          ) : (
+            <p className="whitespace-pre-wrap text-xs mt-1">{gear.miscGear || "—"}</p>
           )}
         </div>
       </div>
