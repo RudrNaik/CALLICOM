@@ -82,15 +82,6 @@
         "class": "Raider"
     },
     {
-        "id": "lockpicks",
-        "title": "Lockpicking Set",
-        "parentId": "Raider",
-        "class": "Raider",
-        "cost": 0,
-        "description": "A lockpick.",
-        "rulesText": "Tinker Check\nOpens all non-digitally locked doors.\nUpon fumble, pick breaks. Silent in all cases, even when a pick breaks."
-    },
-    {
         "id": "halligan",
         "title": "Halligan Bar",
         "parentId": "Raider",
