@@ -3,13 +3,14 @@ import { useContext, useEffect, useState, useRef } from "react";
 import SpinyLogo from "../assets/Images/SpinyNAStudiosLogo_.png";
 import { Link } from "react-router-dom";
 import UserIcon from "../assets/Images/UserIcon.png";
-import { AuthContext } from "../AuthContext"; 
+import { AuthContext } from "../AuthContext";
+import Pinger from "./CharacterRoster/Pinger";
 
 const Navbar = ({}) => {
   const [scrolled, setScrolled] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
-  const { isLoggedIn, logout} = useContext(AuthContext);
+  const { isLoggedIn, logout, isAdmin } = useContext(AuthContext);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -44,7 +45,10 @@ const Navbar = ({}) => {
         ${scrolled ? "bg-neutral-900 shadow-md" : "bg-transparent"}
       `}
     >
-      <div className="flex items-center relative w-full" style={{ fontFamily: 'Geist_Mono' }}>
+      <div
+        className="flex items-center relative w-full"
+        style={{ fontFamily: "Geist_Mono" }}
+      >
         <img src={SpinyLogo} alt="Logo" className="h-20" />
         <div className="text-xl px-2">SpinyNA Studios</div>
 
@@ -65,11 +69,13 @@ const Navbar = ({}) => {
               [↳] CALLI/COM
             </Link>
           </li>
+          <li>{isAdmin && <Pinger></Pinger>}</li>
         </ul>
 
         {/* Right Side Icon + Dropdown */}
-        <div className="absolute right-4 top-1/2 -translate-y-1/2"
-            ref={dropdownRef}
+        <div
+          className="absolute right-4 top-1/2 -translate-y-1/2"
+          ref={dropdownRef}
         >
           <button
             onClick={toggleDropdown}
@@ -90,18 +96,18 @@ const Navbar = ({}) => {
                     Characters
                   </Link>
                   <Link to="/Login">
-                  <button
-                    onClick={() => logout()}
-                    className="w-full text-left px-4 py-2 hover:bg-orange-400"
-                  >
-                    Log Out
-                  </button>
+                    <button
+                      onClick={() => logout()}
+                      className="w-full text-left px-4 py-2 hover:bg-orange-400"
+                    >
+                      Log Out
+                    </button>
                   </Link>
                 </>
               ) : (
                 <>
                   <Link
-                  to="/login"
+                    to="/login"
                     className="block px-4 py-2 hover:bg-orange-400"
                   >
                     Log In

@@ -10,6 +10,7 @@ import TopDeploymentBanner from "./components/Briefings/TopDeploymentBanner";
 import "./assets/css/terminal.css";
 import { useContext } from "react";
 import { AuthContext } from "./AuthContext";
+import EnemyView from "./components/Briefings/EnemyRoster";
 
 function Campaigns() {
   const [campaigns, setCampaigns] = useState([]);
@@ -326,6 +327,11 @@ function Campaigns() {
             <Roster characters={characters} isLoading={isLoading} />
           </motion.div>
         </div>
+        {isAdmin && (
+          <div>
+            <EnemyView></EnemyView>
+          </div>
+        )}
       </div>
 
       <Footer />
