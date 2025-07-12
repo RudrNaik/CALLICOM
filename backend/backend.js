@@ -138,6 +138,10 @@ app.post("/api/signup", async (req, res) => {
   }
 });
 
+app.get("/api/ping", async (req, res) => {
+  res.send("[lawnmower noises]");
+});
+
 app.get("/api/campaigns", async (req, res) => {
   const client = new MongoClient(url);
   try {
