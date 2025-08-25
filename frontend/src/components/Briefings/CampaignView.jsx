@@ -106,7 +106,7 @@ function CampaignView({
       await res.json();
       await refreshCampaigns();
       setShowAddForm(false);
-      setCurrentCampaignId(newCampaign.id); // optional: jump to the new one
+      setCurrentCampaignId(newCampaign.id); // jump to the new one (optional)
     } catch (err) {
       console.error("Error posting campaign data:", err);
       alert("Failed to create campaign.");
@@ -121,20 +121,11 @@ function CampaignView({
     setEditCampaign((prev) => ({ ...prev, [name]: value }));
   };
 
-  const isValidObjectIdHex = (s) => /^[a-f\d]{24}$/i.test(s || "");
-
   const handleUpdate = async () => {
     if (!editCampaign || !currentCampaign) return;
 
-    // With your backend as-is, this will 500 unless `currentCampaign.id` is a 24-hex string.
+    // Route uses the human string id per Option A
     const routeId = currentCampaign.id;
-    if (!isValidObjectIdHex(routeId)) {
-      alert(
-        "Cannot update this campaign with the current server code.\n" +
-        "Your backend expects a Mongo ObjectId in the URL, but this campaign's id is not a 24-hex string."
-      );
-      return;
-    }
 
     // Never try to change identifiers in the body
     const { _id, id, ...update } = editCampaign;
@@ -142,22 +133,20 @@ function CampaignView({
     setIsSubmitting(true);
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(
-        `https://callicom.onrender.com/api/campaigns/${routeId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(update),
-        }
-      );
+      const res = await fetch(`https://callicom.onrender.com/api/campaigns/${routeId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(update),
+      });
       if (!res.ok) throw new Error("Failed to update campaign");
       await res.json();
       await refreshCampaigns();
       setShowEditForm(false);
       setEditCampaign(null);
+      // keep selection on same campaign id
     } catch (err) {
       console.error("Error updating campaign:", err);
       alert("Failed to update campaign.");
