@@ -254,7 +254,7 @@ function MissionView({
                   </label>
                   <button
                     onClick={() => removeAchievement(i)}
-                    className="text-red-400 text-xs"
+                    className="text-red-400 text-xs p-2"
                     disabled={submitting}
                   >
                     ✕ Remove
