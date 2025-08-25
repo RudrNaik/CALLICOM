@@ -196,31 +196,31 @@ app.post("/api/campaigns", verifyAdmin, async (req, res) => {
   }
 });
 
-// 🔹 Edit existing campaign
-app.put("/api/campaigns/:id", async (req, res) => {
+
+app.put("/api/campaigns/:id", verifyAdmin, async (req, res) => {
   const client = new MongoClient(url);
   try {
     await client.connect();
     const db = client.db(dbName);
     const collection = db.collection("campaigns");
 
+    const { _id, id, ...update } = req.body; // don’t allow changing identifiers
+
     const result = await collection.updateOne(
-      { id: new ObjectId(req.params.id) },
-      { $set: req.body }
+      { id: req.params.id },         // ← plain string compare
+      { $set: update }
     );
 
-    if (result.matchedCount === 0) {
-      return res.status(404).json({ error: "Campaign not found" });
-    }
-
+    if (result.matchedCount === 0) return res.status(404).json({ error: "Campaign not found" });
     res.status(200).json({ message: "Campaign updated" });
   } catch (err) {
-    console.error("Error updating campaign:", err.message);
+    console.error("Error updating campaign:", err);
     res.status(500).json({ error: "Failed to update campaign" });
   } finally {
     await client.close();
   }
 });
+
 
 // 🔹 Create new mission
 app.post("/api/missions", async (req, res) => {

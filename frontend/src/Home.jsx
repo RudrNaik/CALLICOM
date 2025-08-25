@@ -14,7 +14,7 @@ function Calamari() {
     >
       <section className="flex w-screen h-[700px]">
         <Sidebar />
-        <Carousel /> 
+        <Carousel />
       </section>
 
       {/* News and Media Links */}
@@ -253,6 +253,55 @@ function Calamari() {
                 See The Armory ↗
               </button>
             </Link>
+          </div>
+        </section>
+      </section>
+
+      <section>
+        <section className="w-full min-h-[200px] bg-transparent text-white grid grid-cols-1 md:grid-cols-2">
+          {/* Left Side */}
+          <div className="p-10 flex flex-col justify-center gap-6">
+            <p className="text-xs font-mono tracking-widest text-orange-400">
+              SYNC ON MY MARK.
+            </p>
+            <h1 className="text-6xl font-extrabold">CALLICOM AND YOU</h1>
+            <p className="text-lg text-gray-100">
+              Taking notes from games like Lancer- Calamari offers simple to use
+              GM and player tools through CALLICOM (Combined Arms Large Language
+              Interface-Command), an out of character and in character command
+              and control system. With CALLICOM, GM's have less work with almost
+              all major bookeeping being done in CALLICOM itself, from enemy
+              managment, player health, and skills. While in character,
+              contractors get access to datalink from land sea and air, leaving
+              no angle unseen and every friendly an asset to call on.
+            </p>
+            <p className="text-lg text-gray-100">
+              In addition, map interfaces are in the works for easier play even
+              online. Using free software such as GIMP or Adobe Photoshop if
+              that's your style- you can quickly mock up environments per the
+              map rules for your players and just as easily move them and
+              enemies around. We are also working on a realtime application for
+              sessions so GMs can coordinate easier with their players.
+            </p>
+            <span classname="text-xs font-thin text-neutral-600">
+              {" "}
+              Note: these systems were built for hex tiles and playing in a
+              Discord VC. You may have to put in more effort for playing under
+              different circumstancess.
+            </span>
+
+            <Link to="/CALLICOM">
+              <button className="w-fit bg-black text-white px-6 py-3 uppercase font-mono text-sm tracking-widest hover:bg-orange-400 hover:text-black transition">
+                Check out CALLICOM ↗
+              </button>
+            </Link>
+          </div>
+
+          <div className="h-fit ml-auto">
+            <img
+              src="/ARD_info.png"
+              className="w-full h-full object-cover"
+            ></img>
           </div>
         </section>
       </section>

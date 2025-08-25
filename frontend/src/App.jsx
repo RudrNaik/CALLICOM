@@ -29,6 +29,7 @@ function ScrollToTop() {
   return null;
 }
 
+// what the fuck is going on lmao
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);

@@ -1,21 +1,27 @@
 [
     {
+      "title": "Siberian Suns",
+      "subtitle": "Here comes the snow...",
+      "image": "/ShowOfForce.jpg",
+      "alt": "Siberia Splash Art"
+    },
+    {
+      "title": "A Glimpse To The Future",
+      "subtitle": "Some notes from SpinyNA studios on our sister title to Calamari- Calamari 2088.",
+      "image": "/NikkiShowcase.jpg",
+      "alt": "Nikki Showcase"
+    },
+    {
+      "title": "Devblog 28",
+      "subtitle": "Paradox Larping, maps, rebalancing, and the end of Task Force Gold.",
+      "image": "/Amber_Crysis_Clean_Mesh.png",
+      "alt": "Amber Crysis"
+    },
+    {
       "title": "Pre-Order Bonuses",
       "subtitle": "Early access to Task Force Gold, two new Contractors, and a few more goodies.",
       "image": "/Kailey_Powerthrough.png",
       "alt": "Kailey Swamp"
-    },
-    {
-      "title": "Task Force Gold",
-      "subtitle": "The world holds its breath, and waits...",
-      "image": "/Task_Force_Gold_Splash.png",
-      "alt": "TFG Splash"
-    },
-    {
-      "title": "Devblog 15",
-      "subtitle": "The one where we get to MIGHT FOOT ENGAGED",
-      "image": "/Amber_Crysis_Clean_Mesh.png",
-      "alt": "Amber Crysis"
     }
     
   ]

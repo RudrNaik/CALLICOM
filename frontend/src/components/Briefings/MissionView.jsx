@@ -144,6 +144,7 @@ function MissionView({
           >
             <option>ACTIVE</option>
             <option>COMPLETED</option>
+            <option>UPCOMING</option>
           </select>
 
           {"Brief,Execution,FA,Support,CnC".split(",").map((field) => (
@@ -253,7 +254,7 @@ function MissionView({
                   </label>
                   <button
                     onClick={() => removeAchievement(i)}
-                    className="text-red-400 text-xs"
+                    className="text-red-400 text-xs p-2"
                     disabled={submitting}
                   >
                     ✕ Remove
