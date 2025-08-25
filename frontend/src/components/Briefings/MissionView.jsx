@@ -144,6 +144,7 @@ function MissionView({
           >
             <option>ACTIVE</option>
             <option>COMPLETED</option>
+            <option>UPCOMING</option>
           </select>
 
           {"Brief,Execution,FA,Support,CnC".split(",").map((field) => (

@@ -208,6 +208,7 @@ function CampaignView({
           <div className="space-y-2">
             {filteredMissions.map((mission, i) => {
               const isActive = mission.status?.toLowerCase() === "active";
+              const isUpcoming = mission.status.toLowerCase() === "upcoming";
 
               return (
                 <div
@@ -217,7 +218,14 @@ function CampaignView({
                     isActive
                       ? "bg-orange-900/30 border-orange-400"
                       : "bg-neutral-800 border-neutral-700 hover:border-orange-600"
-                  } ${
+                  }
+                  ${
+                    isUpcoming
+                      ? "bg-neutral-800/30 border-orange-500"
+                      : "bg-neutral-800 border-neutral-700 hover:border-orange-600"
+                  }
+
+                  ${
                     currentMissionId === mission.id ? "border-orange-600" : ""
                   }`}
                 >
@@ -238,6 +246,10 @@ function CampaignView({
                     className={`relative px-4 py-2 text-xs font-semibold tracking-wide uppercase skew-x-[-20deg] ${
                       isActive
                         ? "bg-orange-500 text-white"
+                        : "bg-neutral-600 text-white"
+                    } ${
+                      isUpcoming
+                        ? "bg-orange-600 text-white"
                         : "bg-neutral-600 text-white"
                     }`}
                   >
