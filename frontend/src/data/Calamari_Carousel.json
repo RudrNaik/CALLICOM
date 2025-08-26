@@ -3,25 +3,29 @@
       "title": "Siberian Suns",
       "subtitle": "Here comes the snow...",
       "image": "/ShowOfForce.jpg",
-      "alt": "Siberia Splash Art"
+      "alt": "Siberia Splash Art",
+      "fluff": "With Task Force Gold and the early access playtests finally coming to a close- SpinyNA is excited to reveal our next campaign set in the snowy tundras of Siberia. Where relics of old animosities mix with the fire of modern conflict."
     },
     {
       "title": "A Glimpse To The Future",
       "subtitle": "Some notes from SpinyNA studios on our sister title to Calamari- Calamari 2088.",
       "image": "/NikkiShowcase.jpg",
-      "alt": "Nikki Showcase"
+      "alt": "Nikki Showcase",
+      "fluff": "While our focus is mainly on the modern day Calamari titles and DLC- we've been expiremnting to fill a gap we've felt for a long time. Guardsman deploying planetside on 7.25.2026"
     },
     {
       "title": "Devblog 28",
       "subtitle": "Paradox Larping, maps, rebalancing, and the end of Task Force Gold.",
       "image": "/Amber_Crysis_Clean_Mesh.png",
-      "alt": "Amber Crysis"
+      "alt": "Amber Crysis",
+      "fluff": ""
     },
     {
       "title": "Pre-Order Bonuses",
       "subtitle": "Early access to Task Force Gold, two new Contractors, and a few more goodies.",
       "image": "/Kailey_Powerthrough.png",
-      "alt": "Kailey Swamp"
+      "alt": "Kailey Swamp",
+      "fluff": ""
     }
     
   ]
