@@ -82,7 +82,7 @@
       "Notice",
       "Trivia"
     ],
-    "rulesText": "Standoff munitions is the name, drones are the game. Technical Engineers are experts in both cyber warfare and using drones to attack, distract, or blow up targets. Drone Technicians are experts in tinkering and tech, and can utilize drones such as the DD-01 ‘Jackal’ and DD-02 ‘Fire Hornet’ proficiently.",
+    "rulesText": "Standoff munitions is the name, drones are the game. Technical Engineers are experts in both vehicular warfare and using drones to attack, distract, or blow up targets. Drone Technicians are experts in tinkering and tech, and can utilize drones such as the DD-01 ‘Jackal’ and DD-02 ‘Fire Hornet’ proficiently.",
     "description": "The drones... They speak to me.",
     "classGadget": {
       "id": "Repair Tool",
