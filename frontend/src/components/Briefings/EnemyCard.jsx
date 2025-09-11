@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import weaponCategories from "../../data/weaponCategories.json";
 import gadgetCategories from "../../data/Equipment.json";
+import classes from "../../data/classSkills.json";
 
 function EnemyCard({ id, onDelete }) {
   const defaultStats = {
@@ -14,13 +15,14 @@ function EnemyCard({ id, onDelete }) {
     Weapons: 0,
     Melee: 0,
     Primary: "N/A",
-    Gadget: "N/A"
+    Gadget: "N/A",
   };
 
   const [stats, setStats] = useState(defaultStats);
   const [FW, setFW] = useState(0);
   const [DW, setDW] = useState(0);
   const [loaded, setLoaded] = useState(false); // tracks load status
+  const [filteredGadgets, setFiltered] = useState([]);
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -48,6 +50,14 @@ function EnemyCard({ id, onDelete }) {
     localStorage.setItem(`enemy-data-${id}`, JSON.stringify(data));
     // console.log(`Saved enemy-data-${id}`, data);
   }, [stats, FW, DW, id, loaded]);
+
+  useEffect(() => {
+    if (stats.Class != null) {
+      setFiltered(
+        gadgetCategories.filter((item) => item.class === stats.Class)
+      );
+    }
+  });
 
   const handleWeaponChange = (value) => {
     setStats((prev) => ({
@@ -85,8 +95,7 @@ function EnemyCard({ id, onDelete }) {
   };
 
   // Derived stats
-  const { Primary, Body, Intelligence, Spirit, Melee, AC, gadget } =
-    stats;
+  const { Primary, Body, Intelligence, Spirit, Melee, AC, gadget } = stats;
 
   const categoryData = weaponCategories[Primary];
   const gadgetData = gadgetCategories[gadget];
@@ -115,12 +124,20 @@ function EnemyCard({ id, onDelete }) {
         value={stats.Name}
         onChange={(e) => handleChange("Name", e.target.value)}
       />
-      <input
-        type="text"
-        className="font-bold text-sm col-span-4 mb-2 max-w-full text-neutral-500"
-        value={stats.Class}
+      <select
+        className="w-full bg-neutral-900 text-neutral-400 text-xs p-2 rounded mb-2"
+        value={stats.Class ?? ""} // make sure it’s a string
         onChange={(e) => handleChange("Class", e.target.value)}
-      />
+      >
+        <option value="" disabled>
+          Select Class
+        </option>
+        {Object.keys(classes).map((cat) => (
+          <option key={cat} value={cat}>
+            {cat}
+          </option>
+        ))}
+      </select>
       {/* Major Stats */}
 
       <div className="grid grid-cols-4 mb-2 ">
@@ -280,16 +297,18 @@ function EnemyCard({ id, onDelete }) {
             onChange={(e) => handleGadgetChange(e.target.value)}
           >
             <option value="">Select Gadget</option>
-            {Object.keys(gadgetCategories).map((cat) => (
-              <option key={cat} value={cat}>
-                {gadgetCategories[cat].title}
+            {Object.keys(filteredGadgets).map((id) => (
+              <option key={id} value={id}>
+                {filteredGadgets[id].title}
               </option>
             ))}
           </select>
 
-          {gadgetData && (
+          {gadget && filteredGadgets[gadget] && (
             <div className="text-xs text-gray-400 p-2 rounded">
-              <div className="whitespace-pre-wrap">{gadgetData.rulesText}</div>
+              <div className="whitespace-pre-wrap">
+                {filteredGadgets[gadget].rulesText}
+              </div>
             </div>
           )}
         </div>
