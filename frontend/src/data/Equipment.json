@@ -322,15 +322,6 @@
         "class": ""
     },
     {
-        "id": "medic-bag",
-        "title": "Medic Bag",
-        "parentId": "Medic",
-        "class": "Medic",
-        "cost": 0,
-        "description": "One cannot carry all the medicine they need on them at all times. However, the revolutionary idea of ‘stuff everything else into another bag and carry it as well’ was invented, which the Medic Bag utilizes.",
-        "rulesText": "Restocks medical supplies up to 2FAKs and an AFAK when interacted with.\nAlso can restock Injectors and stimulants for other Medics when interacted with, but only up to half of the amount they started with.\nUses a deploy action, does not end turn."
-    },
-    {
         "id": "rnk",
         "title": "Regen Nanite Kit (RNK)",
         "parentId": "Medic",

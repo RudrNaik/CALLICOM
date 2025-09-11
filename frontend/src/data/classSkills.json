@@ -14,7 +14,13 @@
       "Leadership"
     ],
     "rulesText": "Rifleman is your go-to all-arms expert, being effective at medium-engagement distances using a mixture of assault rifles, battle rifles, and grenades. The Rifleman is arguably the most versatile class but also the most simple.",
-    "description": "We do crowd control. With grenades. Is is not subtle. But is very effective."
+    "description": "We do crowd control. With grenades. It is not subtle. But is very effective.",
+    "classGadget": {
+      "id": "SOFLAM",
+      "description": "Equipped with a laser desginator, laser mic, rangefinder, and an integrated datalink module to stream information directly to CAS and Indirect Fire systems, the SOFLAM allows Riflemen to observe, designate, and destroy targets with fast air or artillery.",
+      "fluff": "Hunker down or bugger off- here comes the thunder.",
+      "gameplay":"Lased targets are both pinged and designated. Fire support munitions are guaranteed hits against vehicles unless countermeasures are deployed. Uses a full action to desginate."
+    }
   },
   "Raider": {
     "level2": [
@@ -31,7 +37,13 @@
       "Tinker"
     ],
     "rulesText": "Raider is an expert at getting into anywhere, loud or quiet and being the tip of the spear with SMGs, Shotguns, breaching charges, and Ninebangs. The Raider is a stealthy class, but also the most useful in room clearing when things go loud.",
-    "description": "Are we rushing in? Or are we going sneaky-beaky like?"
+    "description": "Are we rushing in? Or are we going sneaky-beaky like?",
+    "classGadget": {
+      "id": "AutoPick",
+      "description": "Bringing a quieter entry tool, The AutoPick allows raiders to auto-pick locks, safes, and more in the blink of an eye. ",
+      "fluff": "'click', open sesame.",
+      "gameplay":"Auto-Picks can be deployed on locked doors to automatically open them within the same turn. Some heavier or more complex doorswill require a turn, but there are always some doors you just cant pick."
+    }
   },
   "Combat Engineer": {
     "level2": [
@@ -48,7 +60,13 @@
       "Disguise"
     ],
     "rulesText": "Combat engineers are specialists in destroying emplacements, vehicles, and more with launchers and mines. This is the only class with access to Rocket Launchers and Anti-Material rifles such as the Carl Gustav Recoilless Rifle and the M82A1 Anti Materiel Rifle.",
-    "description": "I am heavy weapons guy, and THIS [drops Carl Gustaf onto table] is my weapon."
+    "description": "I am heavy weapons guy, and THIS [drops Carl Gustaf onto table] is my weapon.",
+    "classGadget": {
+      "id": "Extra Rounds",
+      "description": "Combat engineers pack more ammo for their AT and AA rockets. Allowing them to carry double the normal amount.",
+      "fluff": "CLEAR BACKBLAST!",
+      "gameplay":"2x to rocket reserve capacity."
+    }
   },
   "Technical Engineer": {
     "level2": [
@@ -65,7 +83,13 @@
       "Trivia"
     ],
     "rulesText": "Standoff munitions is the name, drones are the game. Technical Engineers are experts in both cyber warfare and using drones to attack, distract, or blow up targets. Drone Technicians are experts in tinkering and tech, and can utilize drones such as the DD-01 ‘Jackal’ and DD-02 ‘Fire Hornet’ proficiently.",
-    "description": "The drones... They speak to me."
+    "description": "The drones... They speak to me.",
+    "classGadget": {
+      "id": "Repair Tool",
+      "description": "Wrenches, Impact Drills, Blowtorches and more. Repair tools let Technical Engineers to fix up drones and vehicles, or more creatively seal off doors and destroy enemy infrastructure.",
+      "fluff": "Enginearing my fuckin' LIMIT",
+      "gameplay":"Vehicle equivalent of an AFAK, uses a tinker roll to fix vehicle critical damage and minor damage. Can be used to damage or sabotage enemy vehicles or infrastructure."
+    }
   },
   "Fire Support": {
     "level2": [
@@ -82,7 +106,13 @@
       "Athletics"
     ],
     "rulesText": "Experts in putting lead downrange and mortar arcs, Fire Support focuses on suppression and indirect fire. Supports get exclusive access to LMGs, Automatic Shotguns and the X-90 remote mortar system but know that they both require setup before they can fire.",
-    "description": "Statistically, on average, I shoot all of you about nine times- no twenty-er... Enough to make swiss soldiers."
+    "description": "Statistically, on average, I shoot all of you about nine times- no twenty-er... Enough to make swiss soldiers.",
+    "classGadget": {
+      "id": "Deployable Shield",
+      "description": "Deployable shields create instant cover wherever, whenever. perfect for when you just dont have a fortified position, or are too lazy to get into one.",
+      "fluff": "Enginearing my fuckin' LIMIT",
+      "gameplay":"Creates deployable cover adjacent to the contractor. can be picked back up for re-use. Will be destroyed with rocket launchers and above."
+    }
   },
   "Medic": {
     "level2": [
@@ -99,7 +129,13 @@
       "Melee"
     ],
     "rulesText": "Medics are the backbone of any good fire team and are the only class focused on keeping others in the fight and buffing them as much as they can. Medics get access to the surgical kit and specialized stims to heal wounds, increase focus, or generally provide buffs in a pinch.",
-    "description": "With one hand I save life, with the other hand I take it, Actually it's the same hand, but that don't sound as good."
+    "description": "With one hand I save life, with the other hand I take it, Actually it's the same hand, but that don't sound as good.",
+    "classGadget": {
+      "id": "Medic Bag",
+      "description": "One cannot carry all the medicine they need on them at all times. However, the revolutionary idea of ‘stuff everything else into another bag and carry it too was invented, which the Medic Bag utilizes.",
+      "fluff": "AUGH- IM DYING. I NEEEED A MEDIC BAG",
+      "gameplay":"Single charge medic bag that restocks all medical supplies. Can only be used once by every player. Can be picked back up or thrown."
+    }
   },
   "Sharpshooter": {
     "level2": [
@@ -116,7 +152,13 @@
       "Melee"
     ],
     "rulesText": "Expert marksman, the Sharpshooter Class focuses on eliminating targets of opportunity or high-threat enemies with DMRs and Sniper Rifles. Sharpshooters get exclusive access to sniper rifles and equipment such as BUDDI HUD integrations, SOFLAMs, and EXACTO rounds for extreme distances.",
-    "description": "Boom. Headshot."
+    "description": "Boom. Headshot.",
+    "classGadget": {
+      "id": "BUDDI HUD integration",
+      "description": "The 'Ballistic Universal Distance Demarcation Indicator' HUD integration is a nifty piece of software Gold Coast developed to give snipers an edge in long range engagements. Namely by giving them a lead and drop indicator on pinged targets.",
+      "fluff": "I see you.",
+      "gameplay":"Provides user with an extra +1 on all pinged targets in LR-ELR range bands."
+    }
   },
   "Trapper": {
     "level2": [
@@ -132,7 +174,13 @@
       "Tinker",
       "CQC"
     ],
-    "rulesText": "Unlike their close Sharpshooter cousins, Trappers focus on surveillance and ambushes with traps and some ingenuity. Trappers also get SOFLAMs, but also access Claymores, anti-tank mines and more.",
-    "description": "A gift for you, no charge... oh wait, explosive charge!"
+    "rulesText": "Unlike their close Sharpshooter cousins, Trappers focus on ambushes with traps and some ingenuity. Trappers also get access to the Cyberwarfare Suite, but also access Claymores, anti-tank mines and more.",
+    "description": "A gift for you, no charge... oh wait, explosive charge!",
+    "classGadget": {
+      "id": "'Counterspell' Infiltration Device'",
+      "description": "Developed from the STALKER PRD, the X-55 'Counterspell' infiltration device is a specialized signal jammer to deny the enemy a 'ping' or mark on where you are.",
+      "fluff": "You cant see me, my time is now",
+      "gameplay":"Cannot trigger digitally triggered traps, and cannot be digitally pinged by drones."
+    }
   }
 }

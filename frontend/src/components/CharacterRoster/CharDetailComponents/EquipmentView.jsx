@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import equipmentData from "../../../data/Equipment.json";
 import weaponCategories from "../../../data/weaponCategories.json";
+import secondaryGadgets from "../../../data/classSkills.json";
 import WeaponSlot from "./WeaponCards";
 
 function EquipmentSelection({
@@ -22,6 +23,7 @@ function EquipmentSelection({
 
   const [gear, setGear] = useState(defaultGear);
   const [classGadgets, setClassGadgets] = useState([]);
+  const [secondaryGadget, setSecGadget] = useState([]);
   const [grenadeCounts, setGrenadeCounts] = useState([3, 3]);
   const [medCounts, setMedCounts] = useState([1, 2, 1]); // [AFAK, IFAK, Painkiller]
 
@@ -43,6 +45,14 @@ function EquipmentSelection({
       (item) => item.class === character.class
     );
     setClassGadgets(filtered);
+
+    //console.log(secondaryGadgets[character.class].classGadget);
+
+    if (secondaryGadgets[character.class]) {
+    setSecGadget(secondaryGadgets[character.class].classGadget);
+    } else {
+     setSecGadget(null);
+    }
     setGrenadeCounts([3, 3]);
   }, [character]);
 
@@ -308,6 +318,18 @@ function EquipmentSelection({
                   classGadgets.find((gadget) => gadget.id === gear.gadget)
                     ?.description
                 }
+              </p>
+            </div>
+          )}
+
+          {secondaryGadget && (
+            <div className="text-sm text-gray-300 space-y-2 mt-2">
+              <p className="text-xs text-gray-200 whitespace-pre-line bg-orange-900/20 px-2 py-1 mt-2 rounded">
+                <span className="text-orange-300 text-sm font-semibold">
+                      Secondary Gadget: {secondaryGadget.id} {"\n"}
+                </span>
+                <span className="text-xs">{secondaryGadget.gameplay}{"\n"}</span>
+                <span className="text-[0.625rem] text-gray-400 italic">{secondaryGadget.description}</span>
               </p>
             </div>
           )}
