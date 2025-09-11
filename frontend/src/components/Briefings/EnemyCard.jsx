@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import weaponCategories from "../../data/weaponCategories.json";
+import gadgetCategories from "../../data/Equipment.json";
 
 function EnemyCard({ id, onDelete }) {
   const defaultStats = {
@@ -13,15 +14,15 @@ function EnemyCard({ id, onDelete }) {
     Weapons: 0,
     Melee: 0,
     Primary: "N/A",
+    Gadget: "N/A"
   };
 
-  // ✅ Always initialize these BEFORE any logic
   const [stats, setStats] = useState(defaultStats);
   const [FW, setFW] = useState(0);
   const [DW, setDW] = useState(0);
-  const [loaded, setLoaded] = useState(false); // ⬅ track load status
+  const [loaded, setLoaded] = useState(false); // tracks load status
 
-  // ✅ Load from localStorage on mount
+  // Load from localStorage on mount
   useEffect(() => {
     try {
       const saved = localStorage.getItem(`enemy-data-${id}`);
@@ -40,7 +41,7 @@ function EnemyCard({ id, onDelete }) {
     setLoaded(true);
   }, [id]);
 
-  // ✅ Save when state changes *after* initial load
+  // Save when state changes following initial load
   useEffect(() => {
     if (!loaded) return; // avoid saving default values on first render
     const data = { stats, FW, DW };
@@ -52,6 +53,13 @@ function EnemyCard({ id, onDelete }) {
     setStats((prev) => ({
       ...prev,
       Primary: value,
+    }));
+  };
+
+  const handleGadgetChange = (value) => {
+    setStats((prev) => ({
+      ...prev,
+      gadget: value,
     }));
   };
 
@@ -76,11 +84,12 @@ function EnemyCard({ id, onDelete }) {
     onDelete(id);
   };
 
-  // 🧠 Derived values
-  const { Primary, Alertness, Body, Intelligence, Spirit, Melee, Weapons, AC } =
+  // Derived stats
+  const { Primary, Body, Intelligence, Spirit, Melee, AC, gadget } =
     stats;
 
   const categoryData = weaponCategories[Primary];
+  const gadgetData = gadgetCategories[gadget];
   const CombatSense = 1 + Intelligence + Spirit;
   const Health = Math.ceil((Body + Spirit) / 2);
   const Stamina = 5 + Body + Spirit;
@@ -260,6 +269,27 @@ function EnemyCard({ id, onDelete }) {
               <div>Damage: {categoryData.damage}</div>
               <div>Penetration: {categoryData.penetration}</div>
               <div>Range: {categoryData.range}</div>
+            </div>
+          )}
+        </div>
+
+        <div className="text-xs mt-2">
+          <select
+            className="w-full bg-neutral-900 text-white p-2 rounded mb-2"
+            value={gadget || ""}
+            onChange={(e) => handleGadgetChange(e.target.value)}
+          >
+            <option value="">Select Gadget</option>
+            {Object.keys(gadgetCategories).map((cat) => (
+              <option key={cat} value={cat}>
+                {gadgetCategories[cat].title}
+              </option>
+            ))}
+          </select>
+
+          {gadgetData && (
+            <div className="text-xs text-gray-400 p-2 rounded">
+              <div className="whitespace-pre-wrap">{gadgetData.rulesText}</div>
             </div>
           )}
         </div>
