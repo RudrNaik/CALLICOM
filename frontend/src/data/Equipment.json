@@ -47,7 +47,7 @@
         "class": "Rifleman",
         "cost": 450,
         "description": "Apparently it’s the sun, in a 40mm can. Blinds anyone looking at it.",
-        "rulesText": "M-Weapons attacker check, Acrobatics defender check\nApplies a -1 modifier to attack for target after deployment if they fail a defense check in combat, or an alertness check out of combat.\nAlso interrupts the target’s action if it succeeds.\nWill guarantee Initiative when used as an opener into a fight."
+        "rulesText": "M-Weapons attacker check, Acrobatics defender check.\n Applies very harshly lit (-2) towards a target. Interrupts actions."
     },
     {
         "id": "40mm-snap",
@@ -56,7 +56,7 @@
         "class": "Rifleman",
         "cost": 0,
         "description": "Spotter grenades, and you won't believe it, in a 40mm can.",
-        "rulesText": "M-Weapons attacker check, Acrobatics defender check\nPings all enemies in an area and provides a live outline of them. (+2 spotted bonus)\nLasts for 1 turn.\nUpon fail or fumble, the snapshot will tag no targets."
+        "rulesText": "M-Weapons attacker check, Acrobatics defender check\nPings all enemies in an area. \nLasts for 1 turn. \nUpon fumble, no pings."
     },
     {
         "id": "40mm-lbv",
@@ -65,7 +65,7 @@
         "class": "Rifleman",
         "cost": 550,
         "description": "Bounceable 40mm HE",
-        "rulesText": "M-Weapons attacker check, Acrobatics defender check\n8 DMG\nAllows you to bounce 40mm grenades around corners or doorframes."
+        "rulesText": "8 DMG.\n M-Weapons attacker check, Acrobatics defender check\n Allows you to bounce 40mm grenades around corners or doorframes."
     },
     {
         "id": "m26-mass",
