@@ -1,0 +1,22 @@
+{
+  "ugl": {
+    "maxTotal": 6,
+    "options": [
+      { "id": "40mm-he", "label": "HE" },
+      { "id": "40mm-smk", "label": "Smoke" },
+      { "id": "40mm-star", "label": "Star" },
+      { "id": "40mm-snap", "label": "Snapshot" },
+      { "id": "40mm-lbv", "label": "LBV HE" }
+    ]
+  },
+  "x89-ams": {
+    "maxRounds": 8,
+    "options": [
+      { "id": "x89-acerm", "label": "ACERM" },
+      { "id": "x89-smk", "label": "Smoke" },
+      { "id": "x89-srn", "label": "Sauron" },
+      { "id": "x89-emp", "label": "EMP" },
+      { "id": "x89-ilm", "label": "Illumination" }
+    ]
+  }
+}
