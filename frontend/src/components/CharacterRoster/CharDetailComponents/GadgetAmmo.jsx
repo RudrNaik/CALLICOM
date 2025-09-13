@@ -9,7 +9,7 @@ export default function GadgetAmmo({
   gadgetAmmo, // Record<string, number>
   setGadgetAmmo, // (next: Record<string, number>) => void
   itemById, // id -> { rulesText, ... }
-  charClass, // unused here but preserved
+  charClass, // used specifically for engineer class so they can get more rockets later on.
   characterCallsign, //to build per-character storage key
 }) {
   if (!config) return null;
@@ -55,7 +55,7 @@ export default function GadgetAmmo({
     for (const [k, v] of Object.entries(obj)) {
       if (!optionIds.has(k)) continue; // keep only known options
       const n = Number(v);
-      out[k] = Number.isFinite(n) ? n : -1; // -1 sentinel is preserved
+      out[k] = Number.isFinite(n) ? n : -1; //
     }
     return out;
   };
@@ -66,7 +66,7 @@ export default function GadgetAmmo({
       0
     );
 
-  // Load from localStorage on gadget/callsign change (like WeaponSlot)
+  // Load from localStorage on change
   useEffect(() => {
     try {
       const saved = localStorage.getItem(localStorageKey);
@@ -74,18 +74,16 @@ export default function GadgetAmmo({
         const parsed = sanitize(JSON.parse(saved));
         setGadgetAmmo(parsed);
       } else {
-        // initialize parent state to only valid option ids (empty/default)
+        // sanitize parent state to only valid options
         setGadgetAmmo(sanitize(gadgetAmmo || {}));
       }
     } catch (e) {
       console.error("GadgetAmmo parse error:", e);
       setGadgetAmmo({});
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [localStorageKey]);
 
   // Persist to localStorage whenever the ammo map changes
-  // (mirror WeaponSlot: only persist during mission if you want that behavior)
   useEffect(() => {
     try {
       const clean = sanitize(gadgetAmmo || {});
@@ -95,16 +93,14 @@ export default function GadgetAmmo({
     } catch (e) {
       console.error("GadgetAmmo save error:", e);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gadgetAmmo, isActive, localStorageKey]);
 
-  // When options list changes, prune unknown keys and resave (keeps LS clean)
+  // When options list changes, prune unknown keys and resave
   useEffect(() => {
     const pruned = sanitize(gadgetAmmo || {});
     if (JSON.stringify(pruned) !== JSON.stringify(gadgetAmmo || {})) {
       setGadgetAmmo(pruned);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [optionIds]);
 
   return (
@@ -155,8 +151,7 @@ export default function GadgetAmmo({
 
                     setGadgetAmmo(next);
 
-                    // Optional immediate write (WeaponSlot writes in a useEffect; this mirrors that behavior if you prefer)
-                    // If you want exact parity with WeaponSlot, you can comment the block below and rely on the useEffect.
+                    // immediate write
                     try {
                       if (isActive) {
                         localStorage.setItem(
