@@ -3,6 +3,8 @@ import equipmentData from "../../../data/Equipment.json";
 import weaponCategories from "../../../data/weaponCategories.json";
 import secondaryGadgets from "../../../data/classSkills.json";
 import WeaponSlot from "./WeaponCards";
+import GadgetAmmo from "./GadgetAmmo";
+import GADGET_AMMO_CONFIG from "../../../data/gadgetAmmoConfig.json";
 
 function EquipmentSelection({
   character,
@@ -22,29 +24,7 @@ function EquipmentSelection({
     miscGear: "",
   };
 
-  const GADGET_AMMO_CONFIG = {
-    ugl: {
-      maxTotal: 6,
-      options: [
-        { id: "40mm-he", label: "HE" },
-        { id: "40mm-smk", label: "Smoke" },
-        { id: "40mm-star", label: "Star" },
-        { id: "40mm-snap", label: "Snapshot" },
-        { id: "40mm-lbv", label: "LBV HE" },
-      ],
-    },
-    "x89-ams": {
-      maxRounds: 8,
-      options: [
-        { id: "x89-acerm", label: "ACERM" },
-        { id: "x89-smk", label: "Smoke" },
-        { id: "x89-srn", label: "Sauron" },
-        { id: "x89-emp", label: "EMP" },
-        { id: "x89-ilm", label: "Illumination" },
-      ],
-    },
-  };
-
+  //percolates items froim the equipment data into an easy to use lookup table.
   const itemById = useMemo(() => {
     const m = {};
     equipmentData.forEach((it) => {
@@ -70,6 +50,7 @@ function EquipmentSelection({
         secondaryWeapon: { name: "", category: "" },
         grenades: ["", ""],
         gadget: "",
+        gadgetAmmo: {},
         armorClass: 0,
         miscGear: "",
       }
@@ -268,6 +249,7 @@ function EquipmentSelection({
             <p>AC{gear.armorClass}</p>
           )}
 
+          {/* Medicine and meds. */}
           {charActive ? (
             <div className="grid sm:grid-cols-1 md:grid-cols-3 gap-4 mt-2">
               {["AFAK", "IFAK", "Painkiller"].map((med, i) => (
@@ -358,135 +340,18 @@ function EquipmentSelection({
 
           {/* Special Ammo UI */}
           {activeGadgetConfig && (
-            <div className="mt-1 rounded border border-orange-500/40 bg-neutral-900/50 p-3">
-              <h4 className="text-orange-300 font-semibold mb-2">
-                Special Ammo
-              </h4>
-
-              {gear.gadget === "ugl" && (
-                <div className="text-xs">
-                  <p className="text-xs text-gray-400 mb-2">
-                    Max {activeGadgetConfig.maxTotal} rounds.
-                  </p>
-
-                  {activeGadgetConfig.options.map((opt) => {
-                    const count = gear.gadgetAmmo?.[opt.id] ?? 0;
-
-                    // Hide options that have 0 rounds when NOT editing
-                    if (!isEditing && count <= 0) return null;
-
-                    const rules = itemById[opt.id]?.rulesText;
-
-                    return (
-                      <div
-                        key={opt.id}
-                        className="flex items-start justify-between gap-2 mb-1"
-                      >
-                        {/* Label + rulesText */}
-                        <div className="flex-1">
-                          <div className="flex items-baseline gap-2">
-                            <span className="text-xs font-semibold">
-                              {opt.label}
-                            </span>
-                            {rules && (
-                              <span className="text-[10px] text-gray-400">
-                                {rules}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Right side: input in edit mode, badge in view mode */}
-
-                        <input
-                          type="number"
-                          min={0}
-                          max={activeGadgetConfig.maxTotal}
-                          value={count}
-                          onChange={(e) => {
-                            const val = parseInt(e.target.value) || 0;
-                            const total = Object.values({
-                              ...gear.gadgetAmmo,
-                              [opt.id]: val,
-                            }).reduce((a, b) => a + b, 0);
-
-                            if (total <= activeGadgetConfig.maxTotal) {
-                              handleChange("gadgetAmmo", {
-                                ...gear.gadgetAmmo,
-                                [opt.id]: val,
-                              });
-                            }
-                          }}
-                          className="w-16 text-center bg-neutral-800 text-white rounded"
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-
-              {gear.gadget === "x89-ams" && (
-                <div className="text-xs">
-                  <p className="text-xs text-gray-400 mb-2">
-                    Choose {activeGadgetConfig.maxRounds} shells.
-                  </p>
-
-                  {activeGadgetConfig.options.map((opt) => {
-                    const count = gear.gadgetAmmo?.[opt.id] ?? 0;
-
-                    // Hide options that have 0 rounds when NOT editing
-                    if (!isEditing && count <= 0) return null;
-
-                    const rules = itemById[opt.id]?.rulesText;
-
-                    return (
-                      <div
-                        key={opt.id}
-                        className="flex items-start justify-between gap-2 mb-1"
-                      >
-                        {/* Label + rulesText */}
-                        <div className="flex-1">
-                          <div className="flex items-baseline gap-2">
-                            <span className="text-xs font-semibold">
-                              {opt.label}
-                            </span>
-                            {rules && (
-                              <span className="text-[10px] text-gray-400">
-                                {rules}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Right side: input in edit mode, badge in view mode */}
-
-                        <input
-                          type="number"
-                          min={0}
-                          max={activeGadgetConfig.maxRounds}
-                          value={count}
-                          onChange={(e) => {
-                            const val = parseInt(e.target.value) || 0;
-                            const total = Object.values({
-                              ...gear.gadgetAmmo,
-                              [opt.id]: val,
-                            }).reduce((a, b) => a + b, 0);
-
-                            if (total <= activeGadgetConfig.maxRounds) {
-                              handleChange("gadgetAmmo", {
-                                ...gear.gadgetAmmo,
-                                [opt.id]: val,
-                              });
-                            }
-                          }}
-                          className="w-16 text-center bg-neutral-800 text-white rounded"
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
+            <GadgetAmmo
+              key={`${character.callsign}-${gear.gadget}`}
+              isEditing={isEditing}
+              isActive={charActive}
+              gadgetId={gear.gadget}
+              gadgetAmmo={gear.gadgetAmmo || {}} 
+              setGadgetAmmo={(next) => handleChange("gadgetAmmo", next)}
+              itemById={itemById}
+              charClass={character.class}
+              characterCallsign={character.callsign}
+              config={activeGadgetConfig}
+            />
           )}
 
           {secondaryGadget && (

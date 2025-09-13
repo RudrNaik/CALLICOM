@@ -1,144 +1,179 @@
-import react from "react";
+// src/components/GadgetAmmo.jsx
+import { useEffect, useMemo } from "react";
 
-function GadgetAmmo ({ activeGadgetConfig, gear, isEditing, itemById}) {
-{activeGadgetConfig && (
-<div className="mt-1 rounded border border-orange-500/40 bg-neutral-900/50 p-3">
-              <h4 className="text-orange-300 font-semibold mb-2">
-                Special Ammo
-              </h4>
+export default function GadgetAmmo({
+  isEditing, // same semantics as before
+  isActive, // mission-active; mirrors charActive in WeaponSlot
+  gadgetId, // e.g. "ugl", "x89-ams", "stim-pouch", "spec-ammo"
+  config, // { options: [{id,label}], maxGrenades/maxRounds/maxStims/maxSpecAmmo }
+  gadgetAmmo, // Record<string, number>
+  setGadgetAmmo, // (next: Record<string, number>) => void
+  itemById, // id -> { rulesText, ... }
+  charClass, // used specifically for engineer class so they can get more rockets later on.
+  characterCallsign, //to build per-character storage key
+}) {
+  if (!config) return null;
 
-              {gear.gadget === "ugl" && (
-                <div className="text-xs">
-                  <p className="text-xs text-gray-400 mb-2">
-                    max {activeGadgetConfig.maxTotal} rounds.
-                  </p>
+  const options = config?.options || [];
+  const optionIds = useMemo(() => new Set(options.map((o) => o.id)), [options]);
 
-                  {activeGadgetConfig.options.map((opt) => {
-                    const count = gear.gadgetAmmo?.[opt.id] ?? 0;
+  // Title + max
+  const { title, max } = useMemo(() => {
+    if (gadgetId === "stim-pouch")
+      return { title: "Stimulants", max: config.maxStims ?? 0 };
+    if (gadgetId === "ugl")
+      return { title: "40mm Rounds", max: config.maxGrenades ?? 0 };
+    if (gadgetId === "x89-ams")
+      return { title: "Mortar Shells", max: config.maxRounds ?? 0 };
+    if (gadgetId === "spec-ammo")
+      return { title: "Special Ammo", max: config.maxSpecAmmo ?? 0 };
+    return { title: "Consumables", max: 0 };
+  }, [gadgetId, config]);
 
-                    // Hide options that have 0 rounds when NOT editing
-                    if (!isEditing && count <= -1) return null;
+  const headerText = useMemo(() => {
+    if (!config) return null;
+    if (gadgetId === "ugl" && config.maxGrenades != null)
+      return `Max ${config.maxGrenades} rounds.`;
+    if (gadgetId === "x89-ams" && config.maxRounds != null)
+      return `Choose up to ${config.maxRounds} shells.`;
+    if (gadgetId === "stim-pouch" && config.maxStims != null)
+      return `Choose up to ${config.maxStims} stims.`;
+    if (gadgetId === "spec-ammo" && config.maxSpecAmmo != null)
+      return `Choose up to ${config.maxSpecAmmo} rounds`;
+    return null;
+  }, [config, gadgetId]);
 
-                    const rules = itemById[opt.id]?.rulesText;
+  // handles localstorage
+  const localStorageKey = useMemo(
+    () => `gadgetAmmo_${characterCallsign}_${gadgetId}`,
+    [characterCallsign, gadgetId]
+  );
 
-                    return (
-                      <div
-                        key={opt.id}
-                        className="flex items-start justify-between gap-2 mb-1"
-                      >
-                        {/* Label + rulesText */}
-                        <div className="flex-1">
-                          <div className="flex items-baseline gap-2">
-                            <span className="text-xs font-semibold">
-                              {opt.label}
-                            </span>
-                            {rules && (
-                              <span className="text-[10px] text-gray-400">
-                                {rules}
-                              </span>
-                            )}
-                          </div>
-                        </div>
+  const sanitize = (obj) => {
+    const out = {};
+    if (!obj || typeof obj !== "object") return out;
+    for (const [k, v] of Object.entries(obj)) {
+      if (!optionIds.has(k)) continue; // keep only known options
+      const n = Number(v);
+      out[k] = Number.isFinite(n) ? n : -1; //
+    }
+    return out;
+  };
 
-                        {/* Right side: input in edit mode, badge in view mode */}
+  const sumNonNeg = (obj) =>
+    Object.values(obj || {}).reduce(
+      (a, n) => a + Math.max(0, Number(n || 0)),
+      0
+    );
 
-                        <input
-                          type="number"
-                          min={0}
-                          max={activeGadgetConfig.maxTotal}
-                          value={count}
-                          onChange={(e) => {
-                            const val = parseInt(e.target.value) || 0;
-                            const total = Object.values({
-                              ...gear.gadgetAmmo,
-                              [opt.id]: val,
-                            }).reduce((a, b) => a + b, 0);
+  // Load from localStorage on change
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(localStorageKey);
+      if (saved) {
+        const parsed = sanitize(JSON.parse(saved));
+        setGadgetAmmo(parsed);
+      } else {
+        // sanitize parent state to only valid options
+        setGadgetAmmo(sanitize(gadgetAmmo || {}));
+      }
+    } catch (e) {
+      console.error("GadgetAmmo parse error:", e);
+      setGadgetAmmo({});
+    }
+  }, [localStorageKey]);
 
-                            if (total <= activeGadgetConfig.maxTotal) {
-                              handleChange("gadgetAmmo", {
-                                ...gear.gadgetAmmo,
-                                [opt.id]: val,
-                              });
-                            }
-                          }}
-                          className="w-16 text-center bg-neutral-800 text-white rounded"
-                        />
-                      </div>
-                    );
-                  })}
+  // Persist to localStorage whenever the ammo map changes
+  useEffect(() => {
+    try {
+      const clean = sanitize(gadgetAmmo || {});
+      if (isActive) {
+        localStorage.setItem(localStorageKey, JSON.stringify(clean));
+      }
+    } catch (e) {
+      console.error("GadgetAmmo save error:", e);
+    }
+  }, [gadgetAmmo, isActive, localStorageKey]);
+
+  // When options list changes, prune unknown keys and resave
+  useEffect(() => {
+    const pruned = sanitize(gadgetAmmo || {});
+    if (JSON.stringify(pruned) !== JSON.stringify(gadgetAmmo || {})) {
+      setGadgetAmmo(pruned);
+    }
+  }, [optionIds]);
+
+  return (
+    <div className="mt-1 rounded border border-orange-500/40 bg-neutral-900/50 p-3">
+      <h4 className="text-orange-300 font-semibold mb-2">{title}</h4>
+      {headerText && <p className="text-xs text-gray-400 mb-2">{headerText}</p>}
+
+      <div className="text-xs">
+        {options.map((opt) => {
+          const rules = itemById?.[opt.id]?.rulesText;
+          const count = Number.isFinite(gadgetAmmo?.[opt.id])
+            ? gadgetAmmo[opt.id]
+            : 0;
+          if (!isEditing && count <= -1) return null;
+
+          return (
+            <div
+              key={opt.id}
+              className="flex items-start justify-between gap-2 mb-1"
+            >
+              {/* Label + rules */}
+              <div className="flex-1">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-xs font-semibold">{opt.label}</span>
+                  {rules && (
+                    <span className="text-[10px] text-gray-400">{rules}</span>
+                  )}
                 </div>
-              )}
+              </div>
 
-              {gear.gadget === "x89-ams" && (
-                <div className="text-xs">
-                  <p className="text-xs text-gray-400 mb-2">
-                    Choose 8 shells.
-                  </p>
+              {/* Input */}
+              {isActive || isEditing ? (
+                <input
+                  type="number"
+                  min={-1}
+                  max={Math.max(0, max)}
+                  value={count}
+                  onChange={(e) => {
+                    let val = parseInt(e.target.value, 10);
+                    if (Number.isNaN(val)) val = -1;
 
-                  {activeGadgetConfig.options.map((opt) => {
-                    const count = gear.gadgetAmmo?.[opt.id] ?? 0;
+                    const next = { ...(gadgetAmmo || {}), [opt.id]: val };
 
-                    // Hide options that have 0 rounds when NOT editing
-                    if (!isEditing && count <= -1) return null;
+                    // Enforce total cap across options
+                    if (max > 0 && sumNonNeg(next) > max) {
+                      return; // reject if exceeding cap
+                    }
 
-                    const rules = itemById[opt.id]?.rulesText;
+                    setGadgetAmmo(next);
 
-                    const selectedKeys = Object.keys(
-                      gear.gadgetAmmo || {}
-                    ).filter((k) => (gear.gadgetAmmo[k] ?? 0) > 0);
-                    const disabled =
-                      !gear.gadgetAmmo?.[opt.id] &&
-                      selectedKeys.length >= activeGadgetConfig.maxTypes;
-
-                    return (
-                      <div
-                        key={opt.id}
-                        className="flex items-start justify-between gap-2 mb-1"
-                      >
-                        {/* Label + rulesText */}
-                        <div className="flex-1">
-                          <div className="flex items-baseline gap-2">
-                            <span className="text-xs font-semibold">
-                              {opt.label}
-                            </span>
-                            {rules && (
-                              <span className="text-[10px] text-gray-400">
-                                {rules}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Right side: input in edit mode, badge in view mode */}
-
-                        <input
-                          type="number"
-                          min={0}
-                          max={8}
-                          value={count}
-                          onChange={(e) => {
-                            const val = parseInt(e.target.value) || 0;
-                            const total = Object.values({
-                              ...gear.gadgetAmmo,
-                              [opt.id]: val,
-                            }).reduce((a, b) => a + b, 0);
-
-                            if (total <= 8) {
-                              handleChange("gadgetAmmo", {
-                                ...gear.gadgetAmmo,
-                                [opt.id]: val,
-                              });
-                            }
-                          }}
-                          className="w-16 text-center bg-neutral-800 text-white rounded"
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
+                    // immediate write
+                    try {
+                      if (isActive) {
+                        localStorage.setItem(
+                          localStorageKey,
+                          JSON.stringify(sanitize(next))
+                        );
+                      }
+                    } catch {}
+                  }}
+                  className="w-16 text-center bg-neutral-800 text-white rounded"
+                />
+              ) : (
+                <p className="px-2 py-1 rounded bg-neutral-900">
+                  <span className="text-yellow-400">
+                    {count}
+                  </span>{" "}
+                </p>
               )}
             </div>
-          )}            
-}  
-
-export default GadgetAmmo
+          );
+        })}
+      </div>
+    </div>
+  );
+}
