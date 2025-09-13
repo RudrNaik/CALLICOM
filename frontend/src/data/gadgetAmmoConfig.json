@@ -1,11 +1,11 @@
 {
   "ugl": {
-    "maxTotal": 6,
+    "maxGrenades": 6,
     "options": [
       { "id": "40mm-he", "label": "HE" },
-      { "id": "40mm-smk", "label": "Smoke" },
-      { "id": "40mm-star", "label": "Star" },
-      { "id": "40mm-snap", "label": "Snapshot" },
+      { "id": "40mm-smk", "label": "SMK" },
+      { "id": "40mm-star", "label": "STR" },
+      { "id": "40mm-snap", "label": "SNAP" },
       { "id": "40mm-lbv", "label": "LBV HE" }
     ]
   },
@@ -13,10 +13,29 @@
     "maxRounds": 8,
     "options": [
       { "id": "x89-acerm", "label": "ACERM" },
-      { "id": "x89-smk", "label": "Smoke" },
-      { "id": "x89-srn", "label": "Sauron" },
+      { "id": "x89-smk", "label": "SMK" },
+      { "id": "x89-srn", "label": "SRN" },
       { "id": "x89-emp", "label": "EMP" },
-      { "id": "x89-ilm", "label": "Illumination" }
+      { "id": "x89-ilm", "label": "ILM" }
+    ]
+  },
+  "spec-ammo": {
+    "maxSpecAmmo": 4,
+    "options": [
+      { "id": "lre-round", "label": "LURE" },
+      { "id": "ap-round", "label": "AP" },
+      { "id": "smrt-round", "label": "SMART" },
+      { "id": "emp-round", "label": "EMP" }
+    ]
+  },
+  "stim-pouch": {
+    "maxStims": 4,
+    "options": [
+      { "id": "rnk", "label": "Regen" },
+      { "id": "snk", "label": "Shock" },
+      { "id": "tnk", "label": "Traumadol" },
+      { "id": "dtnk", "label": "Adrenal" },
+      { "id": "hank", "label": "Nootropic"}
     ]
   }
 }

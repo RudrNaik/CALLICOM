@@ -29,7 +29,7 @@
         "class": "Rifleman",
         "cost": 0,
         "description": "Frag grenade in a 40mm can. Detonates on impact.",
-        "rulesText": "8 DMG\nM-Weapons attacker check, Acrobatics defender check"
+        "rulesText": "8 DMG\nM-Weapons attacker check, Acrobatics defender check. 1 hex AOE from impact."
     },
     {
         "id": "40mm-smk",
@@ -38,7 +38,7 @@
         "class": "Rifleman",
         "cost": 400,
         "description": "Smoke grenades in a 40mm can",
-        "rulesText": "No DMG\nApplies ‘very dimly lit’ effect to an area (-2 attack for all parties to and through the area of the smoke screen.)\nPings from visual sources such as drones and cameras will be erased if a target is no longer visible with smoke."
+        "rulesText": "No DMG\nApplies ‘very dimly lit’ (-2 attack to/through smoke) with a 3 hex AOE.\nPings from visual sources such as cameras are erased if obscured by smoke."
     },
     {
         "id": "40mm-star",
@@ -65,7 +65,7 @@
         "class": "Rifleman",
         "cost": 550,
         "description": "Bounceable 40mm HE",
-        "rulesText": "8 DMG.\n M-Weapons attacker check, Acrobatics defender check\n Allows you to bounce 40mm grenades around corners or doorframes."
+        "rulesText": "8 DMG.\n M-Weapons attacker check, Acrobatics defender check\n Able to be bounced off walls. 1 hex AOE"
     },
     {
         "id": "m26-mass",
@@ -186,40 +186,31 @@
         "rulesText": "Range Modifiers: -1NS | -100C | +1M | -1ELR\nCapacity: 1\nAmmo: 3\nPen: 3\nDamage: 10"
     },
     {
+        "id": "wire-launcher",
+        "title": "Wire Guided Rocket Launcher",
+        "parentId": "C-ENG",
+        "class": "Combat Engineer",
+        "cost": 17000,
+        "description": "Nicknamed the 'straw', wire guided shoulder fired munitions are just as the name says: wire guided. The FCS is built into the launcher itself, and allows the missile to be guided in by the user. As such- it's faster than the guided launchers, but slower than unguided launchers. While at the same time also allowing for much more damage when they connect. Just dont flinch while using it.",
+        "rulesText": "Range Modifiers: Guaranteed hit if target is tracked and no countermeasures deployed\nCapacity: 1\nAmmo: 2\nPen: 3\nDamage: 12"
+    },
+    {
         "id": "guided-launcher",
         "title": "Guided Rocket Launcher",
         "parentId": "C-ENG",
         "class": "Combat Engineer",
         "cost": 17000,
-        "description": "Top attack, wire-guided, and others. Guided rocket launchers are able to be much better controlled for the expense of not being reloadable and much more expensive. However, they hit harder, and will take out most vehicles easily.",
-        "rulesText": "Range Modifiers: Guaranteed hit if target is locked and no countermeasures deployed\nCapacity: 1\nAmmo: 2\nPen: 3\nDamage: 10"
+        "description": "Top attack, PLOS, and others. Guided rocket launchers are able to be much better controlled for the expense of being a bit slower and much more expensive. However, they hit harder, and will take out most vehicles easily.",
+        "rulesText": "Range Modifiers: Guaranteed hit if target is locked and no countermeasures deployed\nCapacity: 1\nAmmo: 2\nPen: 3\nDamage: 15"
     },
     {
-        "id": "aa-launcher",
-        "title": "Anti-Air Rocket Launcher",
-        "parentId": "C-ENG",
-        "class": "Combat Engineer",
-        "cost": 13000,
-        "description": "The missile knows where it is because it knows where it isn’t. AA rockets lock onto targets and fire rockets that seek them out to high success. Useful against helicopters and drones, but not so much actual fast movers.",
-        "rulesText": "Range Modifiers: Guaranteed hit if target is locked and no countermeasures deployed\nCapacity: 1\nAmmo: 2\nPen: 3\nDamage: 10"
-    },
-    {
-        "id": "aw50",
-        "title": "AW50 Anti-Material Rifle",
+        "id": "amr",
+        "title": "Anti-Material Rifle",
         "parentId": "C-ENG",
         "class": "Combat Engineer",
         "cost": 0,
-        "description": "British .50 Caliber anti-material rifle, Bolt action.",
-        "rulesText": "Range Modifiers: -1NS | -2C | +1L | +2ELR\nCapacity: 5\nAmmo: 10\nPen: 3\nDamage: 9"
-    },
-    {
-        "id": "m107",
-        "title": "M107 Anti-Material Rifle",
-        "parentId": "C-ENG",
-        "class": "Combat Engineer",
-        "cost": 12000,
-        "description": "American .50 Caliber anti-material rifle, Semi-auto.",
-        "rulesText": "Range Modifiers: -1NS | -1C | +1L\nCapacity: 5\nAmmo: 10\nPen: 3\nDamage: 10"
+        "description": "From the classics of the AW-50 and M107 Barret to modern options such as the Gepard GM6 Lynx, Anti Material rifles come in all shapes and sizes but offer the same capability: big bullet, big penetration, big damage. Anti Material rifles can penetrate heavy armor and disable dedicated vehicle systems permanently. Such as APS, tracks, or engines. On lighter vehicles, they can punch through the armor, killing passengers or gunnners.",
+        "rulesText": "Range Modifiers: -1NS | -1C | +1L | +2ELR\nCapacity: 5\nAmmo: 10\nPen: 3\nDamage: 10"
     },
     {
         "id": "semenov-railgun",
@@ -305,7 +296,7 @@
         "class": "Fire Support",
         "cost": 10000,
         "description": "Utilizing a backpack feeder and a gyroscopic camera mount, the spitfire allows you to put down an unmatched amount of firepower at the expense of melting barrels and making the logistics officer incredibly angry at you.",
-        "rulesText": "The system has 50 HP (MoS x Weapon Damage) for the camera mount. Shots that strike it will reduce its health.\nWhen it reaches zero health, then the camera mount is disabled and recoil bonuses are removed.\nThe stabilizer removes the ability to aim in exchange for longer suppression to a max of 3 turns. If suppression isn’t stopped before 3 turns, then the barrel overheats and you need a turn to replace it.\nScorpion feeder can be shot, and requires a turn to fix it."
+        "rulesText": "The stabilizer removes the ability to aim in exchange for longer suppression to a max of 3 turns. If suppression isn’t stopped before 3 turns, then the barrel overheats and you need a turn to replace it.\nScorpion feeder can be shot, and requires a turn to fix it."
     },
     {
         "id": "juggernaut-suit",
@@ -320,6 +311,15 @@
         "id": "Medic",
         "title": "Medic",
         "class": ""
+    },
+    {
+        "id": "stim-pouch",
+        "title": "Nanite Stimulants",
+        "parentId": "Medic",
+        "class": "Medic",
+        "cost": 0,
+        "description": "Contains all the stims a medic can carry, from regenerative nanites that heal you, to performance enhancing ones that let you react faster. Just dont get too reliant on them. Don't need junkies in the company. ",
+        "rulesText": "Holds all of the nanite stims for a medic. A medic can carry up to 4 stims of assorted types. Each has their own rules."
     },
     {
         "id": "rnk",
@@ -349,7 +349,7 @@
         "rulesText": "Temporarily removes all wounds\nLasts for 2 + 1d6 + medical skill level turns"
     },
     {
-        "id": "adrenal-dtnk",
+        "id": "dtnk",
         "title": "Adrenal Nanite Kit (DTNK)",
         "parentId": "Medic",
         "class": "Medic",
@@ -426,13 +426,23 @@
         "rulesText": "1 turn deployment up vertical walls, horizontal gaps, and even into windows.\nRequires an M-weapons check to see if the target is hit. Upon failure the charge is expended.\nWhen used on a vertical surface, shifts the operator into a rappel, allowing them to fire from a suspended position.\nUpon success, the hook needs to recharge, which takes three turns.\n3 uses.\nCannot be used by teammates."
     },
     {
+        "id": "spec-ammo",
+        "title": "Special Ammo",
+        "parentId": "Recon",
+        "class": "Sharpshooter",
+        "cost": 0,
+        "description": "Special ammo allows for sharpshooters to have a greater effect with their bullets than just killing people. From disabling electronics with a low power EMP round, to punching through even the heaviest of body armor with AP rounds, Gold Coast's special ammo provides snipers unmatched flexibility on the field.",
+        "rulesText": "Special ammo rules are detailed below. EMP, Lure, AP, and Smart Rounds."
+    
+    },
+    {
         "id": "lre-round",
         "title": "LRE (Lure) Round",
         "parentId": "Recon",
         "class": "Sharpshooter",
         "cost": 0,
         "description": "Lures an enemy towards a specific location. Has a lower drop, and a lower lethality, and makes a cute chirping sound.",
-        "rulesText": "10x\nReduces damage by 3"
+        "rulesText": "Reduces damage by 3, but makes a ping and a noise that makes enemies investigate."
     },
     {
         "id": "ap-round",
@@ -441,7 +451,7 @@
         "class": "Sharpshooter",
         "cost": 7000,
         "description": "High penetration bullets that improve the penetration value of a weapon by 1.",
-        "rulesText": "3x\nCan penetrate Juggernaut suits and disable certain armored vehicles with well-aimed shots."
+        "rulesText": "Increases round penetration by 1. Can penetrate Juggernaut suits and disable vehicle parts with well-aimed shots."
     },
     {
         "id": "smrt-round",
@@ -450,7 +460,7 @@
         "class": "Sharpshooter",
         "cost": 8000,
         "description": "Locks onto a ping and adjusts for bullet drop and windage automatically. Effectively removes the math from shooting, beyond gauging travel time.",
-        "rulesText": "3x\nCan only be used on marked targets and will increase the dice rolled by 2."
+        "rulesText": "Can only be used on marked targets, increases the dice rolled by 1."
     },
     {
         "id": "emp-round",
@@ -459,7 +469,7 @@
         "class": "Sharpshooter",
         "cost": 6000,
         "description": "Creates a small electromagnetic pulse around the impact point.",
-        "rulesText": "5x\nDisables electronics for 2 turns, reduces damage by 4"
+        "rulesText": "Disables and disrupts electronics for 1 turn, reduces damage by 4"
     },
     {
         "id": "Trapper",

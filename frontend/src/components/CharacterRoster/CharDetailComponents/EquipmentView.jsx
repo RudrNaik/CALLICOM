@@ -24,6 +24,7 @@ function EquipmentSelection({
     miscGear: "",
   };
 
+  //percolates items froim the equipment data into an easy to use lookup table.
   const itemById = useMemo(() => {
     const m = {};
     equipmentData.forEach((it) => {
@@ -49,6 +50,7 @@ function EquipmentSelection({
         secondaryWeapon: { name: "", category: "" },
         grenades: ["", ""],
         gadget: "",
+        gadgetAmmo: {},
         armorClass: 0,
         miscGear: "",
       }
@@ -247,6 +249,7 @@ function EquipmentSelection({
             <p>AC{gear.armorClass}</p>
           )}
 
+          {/* Medicine and meds. */}
           {charActive ? (
             <div className="grid sm:grid-cols-1 md:grid-cols-3 gap-4 mt-2">
               {["AFAK", "IFAK", "Painkiller"].map((med, i) => (
@@ -338,16 +341,16 @@ function EquipmentSelection({
           {/* Special Ammo UI */}
           {activeGadgetConfig && (
             <GadgetAmmo
+              key={`${character.callsign}-${gear.gadget}`}
               isEditing={isEditing}
-              charActive={charActive}
+              isActive={charActive}
               gadgetId={gear.gadget}
-              gadgetAmmo={gear.gadgetAmmo}
+              gadgetAmmo={gear.gadgetAmmo || {}} 
               setGadgetAmmo={(next) => handleChange("gadgetAmmo", next)}
               itemById={itemById}
-              charClass = {character.class}
-              config={activeGadgetConfig} // if not found, derives from rulesText
-              baseline={gadgetAmmoBaseline} // for mission resupply; capture when exiting edit or when mission starts
-              title="Ammo"
+              charClass={character.class}
+              characterCallsign={character.callsign}
+              config={activeGadgetConfig}
             />
           )}
 

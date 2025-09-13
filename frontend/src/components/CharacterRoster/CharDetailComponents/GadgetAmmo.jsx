@@ -1,115 +1,180 @@
-// src/components/SpecialAmmoPanel.jsx
-import React, { useMemo } from "react";
-
-// Utility
-const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
-const sum = (obj) => Object.values(obj || {}).reduce((a, b) => a + (b || 0), 0);
+// src/components/GadgetAmmo.jsx
+import { useEffect, useMemo } from "react";
 
 export default function GadgetAmmo({
-  title = "Special Ammo",
-  isEditing,
-  gadgetId,                // e.g., "ugl", "x89-ams"
-  config,                  // { options: [{id,label}], and one of: maxTotal | maxTypes | maxRounds; optional perTypeMax }
-  gadgetAmmo,              // Record<string, number>
-  setGadgetAmmo,           // (next: Record<string, number>) => void
-  itemById,                // Map or object: id -> { rulesText, ... } from your equipmentData
-  className = "",
+  isEditing, // same semantics as before
+  isActive, // mission-active; mirrors charActive in WeaponSlot
+  gadgetId, // e.g. "ugl", "x89-ams", "stim-pouch", "spec-ammo"
+  config, // { options: [{id,label}], maxGrenades/maxRounds/maxStims/maxSpecAmmo }
+  gadgetAmmo, // Record<string, number>
+  setGadgetAmmo, // (next: Record<string, number>) => void
+  itemById, // id -> { rulesText, ... }
+  charClass, // unused here but preserved
+  characterCallsign, //to build per-character storage key
 }) {
+  if (!config) return null;
+
   const options = config?.options || [];
-  const perTypeMax = config?.perTypeMax ?? 8; // sensible default
+  const optionIds = useMemo(() => new Set(options.map((o) => o.id)), [options]);
+
+  // Title + max
+  const { title, max } = useMemo(() => {
+    if (gadgetId === "stim-pouch")
+      return { title: "Stimulants", max: config.maxStims ?? 0 };
+    if (gadgetId === "ugl")
+      return { title: "40mm Rounds", max: config.maxGrenades ?? 0 };
+    if (gadgetId === "x89-ams")
+      return { title: "Mortar Shells", max: config.maxRounds ?? 0 };
+    if (gadgetId === "spec-ammo")
+      return { title: "Special Ammo", max: config.maxSpecAmmo ?? 0 };
+    return { title: "Consumables", max: 0 };
+  }, [gadgetId, config]);
 
   const headerText = useMemo(() => {
     if (!config) return null;
-    if (config.maxTotal != null) return `Max ${config.maxTotal} rounds.`;
-    if (config.maxTypes != null) return `Choose ${config.maxTypes} shell types.`;
-    if (config.maxRounds != null) return `Choose up to ${config.maxRounds} shells.`; // alias for total
+    if (gadgetId === "ugl" && config.maxGrenades != null)
+      return `Max ${config.maxGrenades} rounds.`;
+    if (gadgetId === "x89-ams" && config.maxRounds != null)
+      return `Choose up to ${config.maxRounds} shells.`;
+    if (gadgetId === "stim-pouch" && config.maxStims != null)
+      return `Choose up to ${config.maxStims} stims.`;
+    if (gadgetId === "spec-ammo" && config.maxSpecAmmo != null)
+      return `Choose up to ${config.maxSpecAmmo} rounds`;
     return null;
-  }, [config]);
+  }, [config, gadgetId]);
 
-  if (!config) return null;
+  // handles localstorage
+  const localStorageKey = useMemo(
+    () => `gadgetAmmo_${characterCallsign}_${gadgetId}`,
+    [characterCallsign, gadgetId]
+  );
 
-  const applyChange = (optId, nextVal) => {
-    const v = Math.max(0, nextVal | 0);
-    const next = { ...(gadgetAmmo || {}), [optId]: v };
-
-    // 1) Total rounds limit (UGL, or if you pass maxRounds)
-    if (config.maxTotal != null || config.maxRounds != null) {
-      const cap = config.maxTotal ?? config.maxRounds;
-      if (sum(next) <= cap) setGadgetAmmo(next);
-      return;
+  const sanitize = (obj) => {
+    const out = {};
+    if (!obj || typeof obj !== "object") return out;
+    for (const [k, v] of Object.entries(obj)) {
+      if (!optionIds.has(k)) continue; // keep only known options
+      const n = Number(v);
+      out[k] = Number.isFinite(n) ? n : -1; // -1 sentinel is preserved
     }
-
-    // 2) Max types limit (X-89 default)
-    if (config.maxTypes != null) {
-      const types = Object.keys(next).filter((k) => (next[k] ?? 0) > 0);
-      if (types.length <= config.maxTypes) setGadgetAmmo(next);
-      return;
-    }
-
-    // Fallback (no constraint provided)
-    setGadgetAmmo(next);
+    return out;
   };
 
+  const sumNonNeg = (obj) =>
+    Object.values(obj || {}).reduce(
+      (a, n) => a + Math.max(0, Number(n || 0)),
+      0
+    );
+
+  // Load from localStorage on gadget/callsign change (like WeaponSlot)
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(localStorageKey);
+      if (saved) {
+        const parsed = sanitize(JSON.parse(saved));
+        setGadgetAmmo(parsed);
+      } else {
+        // initialize parent state to only valid option ids (empty/default)
+        setGadgetAmmo(sanitize(gadgetAmmo || {}));
+      }
+    } catch (e) {
+      console.error("GadgetAmmo parse error:", e);
+      setGadgetAmmo({});
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [localStorageKey]);
+
+  // Persist to localStorage whenever the ammo map changes
+  // (mirror WeaponSlot: only persist during mission if you want that behavior)
+  useEffect(() => {
+    try {
+      const clean = sanitize(gadgetAmmo || {});
+      if (isActive) {
+        localStorage.setItem(localStorageKey, JSON.stringify(clean));
+      }
+    } catch (e) {
+      console.error("GadgetAmmo save error:", e);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gadgetAmmo, isActive, localStorageKey]);
+
+  // When options list changes, prune unknown keys and resave (keeps LS clean)
+  useEffect(() => {
+    const pruned = sanitize(gadgetAmmo || {});
+    if (JSON.stringify(pruned) !== JSON.stringify(gadgetAmmo || {})) {
+      setGadgetAmmo(pruned);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [optionIds]);
+
   return (
-    <div className={`mt-1 rounded border border-orange-500/40 bg-neutral-900/50 p-3 ${className}`}>
+    <div className="mt-1 rounded border border-orange-500/40 bg-neutral-900/50 p-3">
       <h4 className="text-orange-300 font-semibold mb-2">{title}</h4>
       {headerText && <p className="text-xs text-gray-400 mb-2">{headerText}</p>}
 
       <div className="text-xs">
         {options.map((opt) => {
-          const count = gadgetAmmo?.[opt.id] ?? 0;
-
-          // Hide zero-count options when NOT editing
-          if (!isEditing && count <= 0) return null;
-
           const rules = itemById?.[opt.id]?.rulesText;
-
-          // For maxTypes mode, prevent enabling new types past the cap
-          let disableForMaxTypes = false;
-          if (isEditing && config.maxTypes != null) {
-            const selectedKeys = Object.keys(gadgetAmmo || {}).filter(
-              (k) => (gadgetAmmo[k] ?? 0) > 0
-            );
-            disableForMaxTypes =
-              !gadgetAmmo?.[opt.id] && selectedKeys.length >= config.maxTypes;
-          }
+          const count = Number.isFinite(gadgetAmmo?.[opt.id])
+            ? gadgetAmmo[opt.id]
+            : 0;
+          if (!isEditing && count <= -1) return null;
 
           return (
-            <div key={opt.id} className="flex items-start justify-between gap-2 mb-1">
-              {/* Label + rulesText */}
+            <div
+              key={opt.id}
+              className="flex items-start justify-between gap-2 mb-1"
+            >
+              {/* Label + rules */}
               <div className="flex-1">
                 <div className="flex items-baseline gap-2">
                   <span className="text-xs font-semibold">{opt.label}</span>
                   {rules && (
-                    <span className="text-[10px] text-gray-400">
-                      {rules}
-                    </span>
+                    <span className="text-[10px] text-gray-400">{rules}</span>
                   )}
                 </div>
               </div>
 
-              {/* Right side: input in edit mode, badge in view mode */}
+              {/* Input */}
+              {isActive || isEditing ? (
                 <input
                   type="number"
-                  min={0}
-                  max={
-                    config.maxTotal != null || config.maxRounds != null
-                      ? (config.maxTotal ?? config.maxRounds)
-                      : perTypeMax
-                  }
+                  min={-1}
+                  max={Math.max(0, max)}
                   value={count}
-                  disabled={disableForMaxTypes}
                   onChange={(e) => {
-                    const raw = parseInt(e.target.value) || 0;
-                    const cap =
-                      config.maxTotal != null || config.maxRounds != null
-                        ? (config.maxTotal ?? config.maxRounds)
-                        : perTypeMax;
-                    const clamped = clamp(raw, 0, cap);
-                    applyChange(opt.id, clamped);
+                    let val = parseInt(e.target.value, 10);
+                    if (Number.isNaN(val)) val = -1;
+
+                    const next = { ...(gadgetAmmo || {}), [opt.id]: val };
+
+                    // Enforce total cap across options
+                    if (max > 0 && sumNonNeg(next) > max) {
+                      return; // reject if exceeding cap
+                    }
+
+                    setGadgetAmmo(next);
+
+                    // Optional immediate write (WeaponSlot writes in a useEffect; this mirrors that behavior if you prefer)
+                    // If you want exact parity with WeaponSlot, you can comment the block below and rely on the useEffect.
+                    try {
+                      if (isActive) {
+                        localStorage.setItem(
+                          localStorageKey,
+                          JSON.stringify(sanitize(next))
+                        );
+                      }
+                    } catch {}
                   }}
-                  className="w-16 text-center bg-neutral-800 text-white rounded disabled:opacity-40"
+                  className="w-16 text-center bg-neutral-800 text-white rounded"
                 />
+              ) : (
+                <p className="px-2 py-1 rounded bg-neutral-900">
+                  <span className="text-yellow-400">
+                    {count}
+                  </span>{" "}
+                </p>
+              )}
             </div>
           );
         })}
