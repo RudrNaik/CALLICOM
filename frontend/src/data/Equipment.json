@@ -528,7 +528,7 @@
         "class": "Trapper",
         "cost": 6000,
         "description": "Jeep stuff's younger, more tech-savvy cousin, M5 SLAMs are AT/Demo charges that can be set to detonate under a variety of circumstances. Easy to program, easy to detonate, and even float in water to act as aquatic mines.",
-        "rulesText": "Can be deployed on any surface with either:\n- Timed detonation (turn count)\n- Attack detonation (automatic)\n- Remote detonation (manual)\n\nHas more firepower than C4, and will take out most tanks from a bottom attack if run over."
+        "rulesText": "Can be deployed on any surface with either:\n- Timed detonation (turn count)\n- Attack detonation (automatic)\n- Remote detonation (manual)\n\nHas more firepower than C4, and will take out most tanks from a bottom attack if run over. 3x."
       },
       {
         "id": "thinkpad",
@@ -538,5 +538,86 @@
         "cost": 0,
         "description": "It’s a ThinkPad. You’re not leaving this job for a while brother, and this thing isn’t breaking unless you shoot it with a tank.",
         "rulesText": "Provides access to the cyberwarfare suite."
+      },
+      {
+        "id": "cyb-cldwn",
+        "title": "Cooldown",
+        "parentId": "thinkpad",
+        "class": "Trapper",
+        "cost": 0,
+        "description": "Utilizing Gold Coast's algorithms, automatically scrambles your position and traceable data to shake enemy cyberwarfare or intrusion countermeasure software.",
+        "rulesText": "Lowers your HEAT by 1"
+      },
+      {
+        "id": "cyb-ppt",
+        "title": "Puppet",
+        "parentId": "thinkpad",
+        "class": "Trapper",
+        "cost": 0,
+        "description": "Manipulate basic device functions, such as opening/closing doors and deactivating/accessing cameras.",
+        "rulesText": "Allows you to open select doors and see through cameras. Does not work with drones or HUDs."
+      },
+      {
+        "id": "cyb-ping",
+        "title": "Ping",
+        "parentId": "thinkpad",
+        "class": "Trapper",
+        "cost": 0,
+        "description": "Accesses all cameras and pings enemies that are visible.",
+        "rulesText": "Pings all enemies visible through cameras. Can be distrupted if cameras are shot, or if target is obscured. Requires user connection. Ping lasts 1 turn."
+      },
+      {
+        "id": "cyb-svr",
+        "title": "Sever",
+        "parentId": "thinkpad",
+        "class": "Trapper",
+        "cost": 0,
+        "description": "Accesses a specific target and cuts their connection to all downlink and uplink connections, effectively 'severing' them from their own command. ",
+        "rulesText": "Disable an enemy's ability to call reinforcements, mark targets, or control drones. 2 Turns. [+1 Defender trace]"
+      },
+      {
+        "id": "cyb-fdbk",
+        "title": "Feedback",
+        "parentId": "thinkpad",
+        "class": "Trapper",
+        "cost": 0,
+        "description": "Deafens a target and scrambles their communications system, making them unable to communicate with others through a deafening tone. Very effective in annoying enemies, or disrupting them entirely",
+        "rulesText": "Interrupts an enemy for a turn and applies a -1 to all actions. Countered by disabling radio. [+2 Defender trace.]"
+      },
+      {
+        "id": "cyb-trc",
+        "title": "Traceback",
+        "parentId": "thinkpad",
+        "class": "Trapper",
+        "cost": 0,
+        "description": "Ping's bigger brother, penetrates into an enemy datalink to trace it back to everything using it. Pings any and every enemy on the local network.",
+        "rulesText": "Pings all enemies on a network. Works regardless of cameras. Disabled if EMP'd or DL is jammed. [+4 Defender trace]"
+      },
+      {
+        "id": "cyb-MShck",
+        "title": "Mass Hack",
+        "parentId": "thinkpad",
+        "class": "Trapper",
+        "cost": 0,
+        "description": "Brute forcing one's way into all local networks, this locks out all enemy users from the datalink. However, it will also spread to the rest of the connected signals, leading a mass lockout that spreads to vehicles, drones, and more.",
+        "rulesText": "Blocks all enemy connections on a network. Disables radio, cameras, and tech like HUDs, turrets, and drones. Effective against vehicles to narrow crew awareness. Erases all enemy pings. lasts for 2 turns. [+5 Defender trace]"
+      },
+      {
+        "id": "cyb-brn",
+        "title": "Mass Hack",
+        "parentId": "thinkpad",
+        "class": "Trapper",
+        "cost": 0,
+        "description": "Connects to all devices on a network and overclocks the CPU of the to burn and disable them. Takes one turn to overclock, but permanently disables that device if successful. When used against vehicles, it automatically leads to a shutdown of non-essential systems to protect itself, effectively kneecapping them until the reboot proces can start.",
+        "rulesText": "Causes a one turn timer to start on all enemy electronics, if the enemies dont react within that turn and disable their equipment- it burns and is permanently disabled. Vehciles electronics are disabled for the next turn and need to restart. [+5 Defender trace]"
+      },
+      {
+        "id": "cyb-MScsh",
+        "title": "Mass Crash",
+        "parentId": "thinkpad",
+        "class": "Trapper",
+        "cost": 0,
+        "description": "Much like Mass Hack and Burnout, Mass Crash also penetrates into an enemy's network- but goes even deeper. Going as far as to intrude into the local power grid to disable everything in the local area. Lights, power, and all enemy electronics are severed and shut down. Useful for creating either perfect darkness to escape, or an opening to push while hostiles. are confused and dazed.",
+        "rulesText": "Same effect as Mass Hack, however also disables all non-natural lighting in the operational area. [+5 Defender trace]"
       }
 ]
