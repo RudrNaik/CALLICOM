@@ -210,7 +210,7 @@
         "class": "Combat Engineer",
         "cost": 0,
         "description": "From the classics of the AW-50 and M107 Barret to modern options such as the Gepard GM6 Lynx, Anti Material rifles come in all shapes and sizes but offer the same capability: big bullet, big penetration, big damage. Anti Material rifles can penetrate heavy armor and disable dedicated vehicle systems permanently. Such as APS, tracks, or engines. On lighter vehicles, they can punch through the armor, killing passengers or gunnners.",
-        "rulesText": "Range Modifiers: -1NS | -1C | +1L | +2ELR\nCapacity: 5\nAmmo: 10\nPen: 3\nDamage: 10"
+        "rulesText": "Range Modifiers: -1NS | -1C | +1L | +2ELR\n Ammo: 10\nPen: 3\nDamage: 10"
     },
     {
         "id": "semenov-railgun",
@@ -219,7 +219,7 @@
         "class": "Combat Engineer",
         "cost": 30000,
         "description": "Advanced, experimental Railgun design from Gold Coast. Utilizes electromagnetics to accelerate a 14.5 Anti-Material round from 0 to Mach 3 in under a second. We are not liable for hearing damage caused by extensive use.",
-        "rulesText": "Range Modifiers: -1NS | -2C | +1L\nCapacity: 5\nAmmo: 10\nPen: 4\nDamage: 12\n\nRequires a turn of charge-up before firing.\nWill cause characters within the room or round path to become Suppressed."
+        "rulesText": "Range Modifiers: -1NS | -2C | +1L\n Ammo: 10\nPen: 4\nDamage: 14\n\nRequires a turn of charge-up before firing.\nWill cause characters within the room or round path to become Suppressed."
     },
     {
         "id": "F-SUP",
