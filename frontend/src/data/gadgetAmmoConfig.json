@@ -74,5 +74,23 @@
   },
   "snapshot": {
     "max": 3
+  },
+  "m26-mass":{
+    "max": 6
+  },
+  "rocket-launcher":{
+    "max": 3
+  },
+  "wire-launcher":{
+    "max": 3
+  },
+  "guided-launcher":{
+    "max": 3
+  },
+  "amr":{
+    "max": 10
+  },
+  "semenov-railgun":{
+    "max": 10
   }
 }
