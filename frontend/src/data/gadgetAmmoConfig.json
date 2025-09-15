@@ -37,5 +37,60 @@
       { "id": "dtnk", "label": "Adrenal" },
       { "id": "hank", "label": "Nootropic"}
     ]
+  },
+  "thinkpad": {
+    "options": [
+      { "id": "cyb-cldwn", "label": "Cooldown" },
+      { "id": "cyb-ppt", "label": "Puppet" },
+      { "id": "cyb-ping", "label": "Ping" },
+      { "id": "cyb-svr", "label": "Sever" },
+      { "id": "cyb-fdbk", "label": "Feedback"},
+      { "id": "cyb-trc", "label": "Traceback" },
+      { "id": "cyb-MShck", "label": "Mass Hack" },
+      { "id": "cyb-brn", "label": "Burnout" },
+      { "id": "cyb-MScsh", "label": "Mass Crashout" }
+    ]
+  },
+  "m5-slam": {
+    "max": 3
+  },
+  "c4": {
+    "max": 4
+  },
+  "lil-mac": {
+    "max": 2
+  },
+  "ankle-busters" : {
+    "max" : 2
+  },
+  "claymores" : {
+    "max" : 3
+  },
+  "shock-sticks" : {
+    "max" : 3
+  },
+  "9bangs" : {
+    "max" : 3
+  },
+  "snapshot": {
+    "max": 3
+  },
+  "m26-mass":{
+    "max": 6
+  },
+  "rocket-launcher":{
+    "max": 3
+  },
+  "wire-launcher":{
+    "max": 3
+  },
+  "guided-launcher":{
+    "max": 3
+  },
+  "amr":{
+    "max": 10
+  },
+  "semenov-railgun":{
+    "max": 10
   }
 }
