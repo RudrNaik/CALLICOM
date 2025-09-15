@@ -44,7 +44,7 @@ function CharacterDetail({ character, onUpdate, user }) {
       setEmergencyDice(character.emergencyDice || 0);
       setOriginalEmergencyDice(character.emergencyDice || 0); // Initialize original emergency dice
       setCampaignInput(character.campaignId || "");
-      setMulticlass(character.multiClass || ""); 
+      setMulticlass(character.multiClass || "");
       setCharActive(false);
     }
   }, [character]);
@@ -186,36 +186,53 @@ function CharacterDetail({ character, onUpdate, user }) {
   };
 
   const patchMulticlass = async (secClass) => {
+    // Guard: must have enough XP and not already multiclassed
+    if (!secClass) return;
+    if (multiClass) return; // or allow replacing if your rules permit
+    if (xpRemaining < 20) {
+      alert("You need at least 20 XP to multiclass.");
+      return;
+    }
+
+    const newXP = Math.max(0, xpRemaining - 20);
+
     const updates = {
       multiClass: secClass,
+      XP: newXP, // send the *new* XP in the same PATCH
     };
 
     const token = localStorage.getItem("token");
-
     if (!token) {
       console.log("No token found, redirecting to login.");
       navigate("/login");
       return;
     }
 
-    const res = await fetch(
-      `https://callicom.onrender.com/api/characters/${user}/${character.callsign}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(updates),
-      }
-    );
+    try {
+      const res = await fetch(
+        `https://callicom.onrender.com/api/characters/${user}/${character.callsign}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(updates),
+        }
+      );
 
-    if (res.ok) {
-      setXpRemaining((xp) => xp - 20);
-      patchXP(xpRemaining);
-      onUpdate();
-    } else {
-      alert("Failed to update multiClass.");
+      if (res.ok) {
+        // Update local state exactly once
+        setMulticlass(secClass);
+        setXpRemaining(newXP);
+        setShowMultiClassModal(false);
+        onUpdate(); // refresh from server if you like
+      } else {
+        alert("Failed to update multiClass.");
+      }
+    } catch (err) {
+      console.error("Error updating multiClass:", err);
+      alert("Error updating multiClass.");
     }
   };
 
@@ -363,19 +380,24 @@ function CharacterDetail({ character, onUpdate, user }) {
           >
             Confirm | {xpRemaining} XP Remaining
           </button>
-        
-          {isEditing && xpRemaining >= 20 && !multiClass && (
-          <button onClick={() => setShowMultiClassModal(true)} className="bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded">
-            Multiclass
-          </button>
+
+          {isEditing && !multiClass && (
+            <button
+              disabled = {xpRemaining < 20}
+              onClick={() => setShowMultiClassModal(true)}
+              className="bg-orange-600 hover:bg-orange-700 disabled:bg-gray-700 disabled:hover:bg-gray-800 px-4 py-2 rounded"
+            >
+              Multiclass | 20 XP
+            </button>
           )}
         </div>
       )}
 
       {showMultiClassModal && xpRemaining >= 20 && (
         <MultiClassModal
-        onClose={setShowMultiClassModal}
-        patchMulticlass = {patchMulticlass}
+          onClose={setShowMultiClassModal}
+          patchMulticlass={patchMulticlass}
+          charClass={character}
         />
       )}
 

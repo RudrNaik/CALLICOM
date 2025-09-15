@@ -4,8 +4,13 @@ import classData from "../../../data/classSkills.json";
 function MultiClassModal({
   onClose,
   patchMulticlass,
+  charClass
 }) {
   const [multiClassSpec, setMulticlass] = useState("");
+  const filtered = Object.keys(classData).filter(
+    (spec) => spec != charClass.class
+  );
+
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
@@ -18,7 +23,7 @@ function MultiClassModal({
           onChange={(e) => setMulticlass(e.target.value)}
         >
           <option value="">Select class</option>
-          {Object.keys(classData).map((spec) => (
+          {filtered.map((spec) => (
             <option key={spec} value={spec}>
               {spec}
             </option>

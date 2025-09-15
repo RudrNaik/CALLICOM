@@ -92,5 +92,8 @@
   },
   "semenov-railgun":{
     "max": 10
+  },
+  "PMGL":{
+    "max": 6
   }
 }
