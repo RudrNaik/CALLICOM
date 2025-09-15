@@ -41,6 +41,7 @@ export default function GadgetAmmo({
         "amr",
         "semenov-railgun",
         "m26-mass",
+        "PMGL"
       ].includes(gadgetId),
     [gadgetId]
   );
@@ -200,6 +201,8 @@ export default function GadgetAmmo({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [optionIds, isMixed, effectiveMax]);
 
+  //console.log(max)
+
   // ------- Render -------
   return (
     <div className="mt-1 rounded border border-orange-500/40 bg-neutral-900/50 p-3">
@@ -215,6 +218,7 @@ export default function GadgetAmmo({
               ? gadgetAmmo[opt.id]
               : 0;
             if (!isEditing && count <= -1) return null;
+            if (itemById?.[opt.id]?.cost !== 0) return null //Specific to the current campaign where it will filter out gadgets based on cost.
 
             return (
               <div
@@ -274,6 +278,7 @@ export default function GadgetAmmo({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {options.map((opt) => {
               const rules = itemById?.[opt.id]?.rulesText;
+              if (itemById?.[opt.id]?.cost !== 0) return null //Specific to the current campaign where it will filter out gadgets based on cost.
               return (
                 <div
                   key={opt.id}

@@ -3,6 +3,7 @@ import { useState } from "react";
 function XpControls({ xpRemaining, setIsEditing, patchXP }) {
   const [showXpInput, setShowXpInput] = useState(false);
   const [xpToAdd, setXpToAdd] = useState("");
+  const [mutliClassed, setMulticlassed] = useState(false);
 
   const handleConfirm = () => {
     const num = parseInt(xpToAdd, 10);

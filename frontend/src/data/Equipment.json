@@ -2,7 +2,7 @@
     {
         "id": "Rifleman",
         "title": "Rifleman",
-        "class": ""
+        "class": "None"
     },
     {
         "id": "ugl",
@@ -14,13 +14,13 @@
         "rulesText": "Range modifier: -3C | +1M | -1L | -2ELR\nAmmo: 6\nCapacity: 1"
     },
     {
-        "id": "rgl",
-        "title": "Rotary Grenade Launcher",
+        "id": "PMGL",
+        "title": "X-50 PMGL",
         "parentId": "Rifleman",
         "class": "Rifleman",
-        "cost": 8000,
-        "description": "THOONK, THOONK, THOONK, THOONK, THOONK’ GET ROTARIED",
-        "rulesText": "Range modifier: -3C | +1M | -1L | -2ELR\nAmmo: 12\nCapacity: 6\nCannot use special ammo."
+        "cost": 0,
+        "description": "Developed from the XM-25 CDTE, the X-50 Programmable Munition Grenade Launcher is a modernized version of the original system. Bringing along thermal optics, auto-rangefinding, and an improved GUI for displaying the trajectory path. \n also: 'THOONK THOONK THOONK GET AIRBURSTED! ",
+        "rulesText": "Range modifier: -3C | +1M | -1L | -2ELR\nAmmo: 6\nUses programmable munitions. These rounds detonate after the distance set, and increase damage against infantry."
     },
     {
         "id": "40mm-he",
@@ -36,7 +36,7 @@
         "title": "40mm SMK Grenade",
         "parentId": "Rifleman",
         "class": "Rifleman",
-        "cost": 400,
+        "cost": 0,
         "description": "Smoke grenades in a 40mm can",
         "rulesText": "No DMG\nApplies ‘very dimly lit’ (-2 attack to/through smoke) with a 3 hex AOE.\nPings from visual sources such as cameras are erased if obscured by smoke."
     },
@@ -54,7 +54,7 @@
         "title": "40mm Snapshot Grenade",
         "parentId": "Rifleman",
         "class": "Rifleman",
-        "cost": 0,
+        "cost": 450,
         "description": "Spotter grenades, and you won't believe it, in a 40mm can.",
         "rulesText": "M-Weapons attacker check, Acrobatics defender check\nPings all enemies in an area. \nLasts for 1 turn. \nUpon fumble, no pings."
     },
@@ -79,7 +79,7 @@
     {
         "id": "Raider",
         "title": "Raider",
-        "class": ""
+        "class": "None"
     },
     {
         "id": "halligan",
@@ -174,7 +174,7 @@
     {
         "id": "C-ENG",
         "title": "Combat Engineer",
-        "class": ""
+        "class": "None"
     },
     {
         "id": "rocket-launcher",
@@ -224,7 +224,7 @@
     {
         "id": "F-SUP",
         "title": "Fire Support",
-        "class": ""
+        "class": "None"
     },
     {
         "id": "x89-ams",
@@ -310,7 +310,7 @@
     {
         "id": "Medic",
         "title": "Medic",
-        "class": ""
+        "class": "None"
     },
     {
         "id": "stim-pouch",
@@ -369,7 +369,7 @@
     {
         "id": "Recon",
         "title": "Sharpshooter",
-        "class": ""
+        "class": "None"
     },
     {
         "id": "hummingbird-drone",
@@ -474,7 +474,7 @@
     {
         "id": "Trapper",
         "title": "Trapper",
-        "class": ""
+        "class": "None"
     },
     {
         "id": "shock-sticks",
@@ -589,7 +589,7 @@
         "title": "Traceback",
         "parentId": "thinkpad",
         "class": "Trapper",
-        "cost": 0,
+        "cost": 30000,
         "description": "Ping's bigger brother, penetrates into an enemy datalink to trace it back to everything using it. Pings any and every enemy on the local network.",
         "rulesText": "Pings all enemies on a network. Works regardless of cameras. Disabled if EMP'd or DL is jammed. [+4 Defender trace]"
       },
@@ -598,7 +598,7 @@
         "title": "Mass Hack",
         "parentId": "thinkpad",
         "class": "Trapper",
-        "cost": 0,
+        "cost": 30000,
         "description": "Brute forcing one's way into all local networks, this locks out all enemy users from the datalink. However, it will also spread to the rest of the connected signals, leading a mass lockout that spreads to vehicles, drones, and more.",
         "rulesText": "Blocks all enemy connections on a network. Disables radio, cameras, and tech like HUDs, turrets, and drones. Effective against vehicles to narrow crew awareness. Erases all enemy pings. lasts for 2 turns. [+5 Defender trace]"
       },
@@ -607,7 +607,7 @@
         "title": "Mass Hack",
         "parentId": "thinkpad",
         "class": "Trapper",
-        "cost": 0,
+        "cost": 30000,
         "description": "Connects to all devices on a network and overclocks the CPU of the to burn and disable them. Takes one turn to overclock, but permanently disables that device if successful. When used against vehicles, it automatically leads to a shutdown of non-essential systems to protect itself, effectively kneecapping them until the reboot proces can start.",
         "rulesText": "Causes a one turn timer to start on all enemy electronics, if the enemies dont react within that turn and disable their equipment- it burns and is permanently disabled. Vehciles electronics are disabled for the next turn and need to restart. [+5 Defender trace]"
       },
@@ -616,7 +616,7 @@
         "title": "Mass Crash",
         "parentId": "thinkpad",
         "class": "Trapper",
-        "cost": 0,
+        "cost": 30000,
         "description": "Much like Mass Hack and Burnout, Mass Crash also penetrates into an enemy's network- but goes even deeper. Going as far as to intrude into the local power grid to disable everything in the local area. Lights, power, and all enemy electronics are severed and shut down. Useful for creating either perfect darkness to escape, or an opening to push while hostiles. are confused and dazed.",
         "rulesText": "Same effect as Mass Hack, however also disables all non-natural lighting in the operational area. [+5 Defender trace]"
       }
