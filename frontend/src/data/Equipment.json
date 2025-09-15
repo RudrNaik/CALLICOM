@@ -2,7 +2,7 @@
     {
         "id": "Rifleman",
         "title": "Rifleman",
-        "class": ""
+        "class": "None"
     },
     {
         "id": "ugl",
@@ -79,7 +79,7 @@
     {
         "id": "Raider",
         "title": "Raider",
-        "class": ""
+        "class": "None"
     },
     {
         "id": "halligan",
@@ -174,7 +174,7 @@
     {
         "id": "C-ENG",
         "title": "Combat Engineer",
-        "class": ""
+        "class": "None"
     },
     {
         "id": "rocket-launcher",
@@ -224,7 +224,7 @@
     {
         "id": "F-SUP",
         "title": "Fire Support",
-        "class": ""
+        "class": "None"
     },
     {
         "id": "x89-ams",
@@ -310,7 +310,7 @@
     {
         "id": "Medic",
         "title": "Medic",
-        "class": ""
+        "class": "None"
     },
     {
         "id": "stim-pouch",
@@ -369,7 +369,7 @@
     {
         "id": "Recon",
         "title": "Sharpshooter",
-        "class": ""
+        "class": "None"
     },
     {
         "id": "hummingbird-drone",
@@ -474,7 +474,7 @@
     {
         "id": "Trapper",
         "title": "Trapper",
-        "class": ""
+        "class": "None"
     },
     {
         "id": "shock-sticks",

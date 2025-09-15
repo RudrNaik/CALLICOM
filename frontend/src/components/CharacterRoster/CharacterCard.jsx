@@ -27,8 +27,8 @@ function CharCard({ character, onSelect, onDelete }) {
         <span className="font-semibold text-white">Name:</span> {character.name}
       </p>
       <p className="text-sm text-gray-400">
-        <span className="font-semibold text-white">Class:</span>{" "}
-        {character.class}
+        <span className="font-semibold text-white text-xs">Class:</span>{" "}
+        {character.class} {character.multiClass}
       </p>
       <p className="text-sm text-gray-400">
         <span className="font-semibold text-white">XP:</span>{" "}

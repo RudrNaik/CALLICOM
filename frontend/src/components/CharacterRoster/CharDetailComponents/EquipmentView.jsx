@@ -57,7 +57,8 @@ function EquipmentSelection({
     );
 
     const filtered = equipmentData.filter(
-      (item) => item.class === character.class
+      (item) =>
+        item.class === character.class || item.class === character.multiClass //&& item.cost === 0
     );
     setClassGadgets(filtered);
 
@@ -345,7 +346,7 @@ function EquipmentSelection({
               isEditing={isEditing}
               isActive={charActive}
               gadgetId={gear.gadget}
-              gadgetAmmo={gear.gadgetAmmo || {}} 
+              gadgetAmmo={gear.gadgetAmmo || {}}
               setGadgetAmmo={(next) => handleChange("gadgetAmmo", next)}
               itemById={itemById}
               charClass={character.class}
