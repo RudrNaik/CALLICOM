@@ -2,9 +2,7 @@ import { useState } from "react";
 import classData from "../../../data/classSkills.json";
 
 function MultiClassModal({
-  xpRemaining,
   onClose,
-  setXpRemaining,
   patchMulticlass,
 }) {
   const [multiClassSpec, setMulticlass] = useState("");

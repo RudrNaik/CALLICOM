@@ -36,7 +36,7 @@
         "title": "40mm SMK Grenade",
         "parentId": "Rifleman",
         "class": "Rifleman",
-        "cost": 400,
+        "cost": 0,
         "description": "Smoke grenades in a 40mm can",
         "rulesText": "No DMG\nApplies ‘very dimly lit’ (-2 attack to/through smoke) with a 3 hex AOE.\nPings from visual sources such as cameras are erased if obscured by smoke."
     },
@@ -54,7 +54,7 @@
         "title": "40mm Snapshot Grenade",
         "parentId": "Rifleman",
         "class": "Rifleman",
-        "cost": 0,
+        "cost": 450,
         "description": "Spotter grenades, and you won't believe it, in a 40mm can.",
         "rulesText": "M-Weapons attacker check, Acrobatics defender check\nPings all enemies in an area. \nLasts for 1 turn. \nUpon fumble, no pings."
     },

@@ -200,6 +200,8 @@ export default function GadgetAmmo({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [optionIds, isMixed, effectiveMax]);
 
+  console.log(max)
+
   // ------- Render -------
   return (
     <div className="mt-1 rounded border border-orange-500/40 bg-neutral-900/50 p-3">
@@ -215,6 +217,7 @@ export default function GadgetAmmo({
               ? gadgetAmmo[opt.id]
               : 0;
             if (!isEditing && count <= -1) return null;
+            if (itemById?.[opt.id]?.cost !== 0) return null
 
             return (
               <div

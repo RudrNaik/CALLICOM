@@ -374,8 +374,6 @@ function CharacterDetail({ character, onUpdate, user }) {
 
       {showMultiClassModal && xpRemaining >= 20 && (
         <MultiClassModal
-        xpRemaining={xpRemaining}
-        setXpRemaining={setXpRemaining}
         onClose={setShowMultiClassModal}
         patchMulticlass = {patchMulticlass}
         />
