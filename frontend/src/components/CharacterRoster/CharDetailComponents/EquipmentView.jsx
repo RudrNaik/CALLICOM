@@ -58,7 +58,7 @@ function EquipmentSelection({
 
     const filtered = equipmentData.filter(
       (item) =>
-        (item.class === character.class || item.class === character.multiClass) && item.cost === 0 //filters items based on class, secondary class, and if they are purchased or not.
+        (item.class === character.class || item.class === character.multiClass) //&& item.cost === 0 //filters items based on class, secondary class, and if they are purchased or not.
     );
     setClassGadgets(filtered);
 
