@@ -156,11 +156,11 @@ export default function CharacterSheetModal({ char, open, onClose }) {
                       <p className="text-neutral-100">{getGadgetTitleById(equip.gadget)}</p>
                     </div>
                     <div className="rounded-lg border border-neutral-700 p-3">
-                      <p className="text-neutral-400 text-xs mb-1">Primary</p>
+                      <p className="text-neutral-400 text-xs mb-1">{equip.primaryWeapon?.category || "Primary"}</p>
                       <p className="text-neutral-100">{equip.primaryWeapon?.name || "None"}</p>
                     </div>
                     <div className="rounded-lg border border-neutral-700 p-3">
-                      <p className="text-neutral-400 text-xs mb-1">Secondary</p>
+                      <p className="text-neutral-400 text-xs mb-1">{equip.secondaryWeapon?.category || "Secondary"}</p>
                       <p className="text-neutral-100">{equip.secondaryWeapon?.name || "None"}</p>
                     </div>
                     <div className="rounded-lg border border-neutral-700 p-3 md:col-span-2">
