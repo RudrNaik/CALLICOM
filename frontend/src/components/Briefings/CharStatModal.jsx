@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import equipmentData from "../../data/Equipment.json";
 import SkillsView from "../CharacterRoster/CharDetailComponents/SkillsView";
@@ -8,8 +8,6 @@ function getGadgetTitleById(id) {
   const match = equipmentData.find((item) => item.id === id);
   return match?.title || "None Selected";
 }
-
-// optional: global refcount for nested modals
 const getLockCount = () => (window.__scrollLockCount ?? 0);
 const setLockCount = (n) => (window.__scrollLockCount = n);
 
@@ -18,7 +16,7 @@ export default function CharacterSheetModal({ char, open, onClose }) {
   const lockedByMe = useRef(false);
   const prevOverflow = useRef("");
 
-  // Scroll lock tied to `open` (component stays mounted)
+  // Scroll lock tied to `open`
   useEffect(() => {
     if (open) {
       // only set once per open
@@ -34,12 +32,12 @@ export default function CharacterSheetModal({ char, open, onClose }) {
       // release lock when closing
       setLockCount(Math.max(0, getLockCount() - 1));
       if (getLockCount() === 0) {
-        // restore to previous inline value (or just clear to '')
+        // restore to previous inline value
         document.body.style.overflow = prevOverflow.current || "";
       }
       lockedByMe.current = false;
     }
-    // also release on unmount
+    // release on unmount
     return () => {
       if (lockedByMe.current) {
         setLockCount(Math.max(0, getLockCount() - 1));
@@ -59,7 +57,7 @@ export default function CharacterSheetModal({ char, open, onClose }) {
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose]);
 
-  // Always render; conditionally render the content for AnimatePresence
+  // Conditionally render the content for AnimatePresence
   return (
     <AnimatePresence>
       {open && char && (
