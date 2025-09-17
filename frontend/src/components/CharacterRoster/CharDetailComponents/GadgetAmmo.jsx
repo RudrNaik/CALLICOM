@@ -19,7 +19,7 @@ export default function GadgetAmmo({
 
   // ---- classify gadget modes ----
   const isMixed = useMemo(
-    () => ["spec-ammo", "stim-pouch", "x89-ams", "ugl"].includes(gadgetId),
+    () => ["spec-ammo", "stim-pouch", "x89-ams", "ugl", "demo-dog"].includes(gadgetId),
     [gadgetId]
   );
 
@@ -78,6 +78,7 @@ export default function GadgetAmmo({
     if (gadgetId === "spec-ammo")
       return { title: "Special Ammo", max: config.maxSpecAmmo ?? 0 };
     if (gadgetId === "thinkpad") return { title: "Hacks", max: 0 };
+    if (gadgetId === "demo-dog") return { title: "Variant", max: 0 };
     if (isExpendable)
       return { title: "Munitions", max: effectiveMax };
     return { title: "Consumables", max: 0 };
@@ -93,6 +94,8 @@ export default function GadgetAmmo({
       return `Choose up to ${config.maxStims} stims.`;
     if (gadgetId === "spec-ammo" && config.maxSpecAmmo != null)
       return `Choose up to ${config.maxSpecAmmo} rounds`;
+    if (gadgetId === "demo-dog")
+      return `Select a variant. [-1 values deselect, increase to magazine size for selected variant.]`
     if (isExpendable) return `Max: ${effectiveMax}x rounds/grenades/charges.`;
     return null;
   }, [config, gadgetId, isExpendable, effectiveMax]);

@@ -222,6 +222,74 @@
         "rulesText": "Range Modifiers: -1NS | -2C | +1L\n Ammo: 10\nPen: 4\nDamage: 14\n\nRequires a turn of charge-up before firing.\nWill cause characters within the room or round path to become Suppressed."
     },
     {
+        "id": "T-ENG",
+        "title": "Technical Engineer",
+        "class": "None"
+    },
+    {
+        "id": "fire-hornet",
+        "title": "XMQ-16 Fire Hornet",
+        "parentId": "T-ENG",
+        "class": "Technical Engineer",
+        "cost": 30000,
+        "description": "Taking the concept of the RQ-16 T-HAWK and MQ-8 Fire Scout, the Fire Hornet combines the concepts into a smaller, quadcopter platform. Equipped with a gun gimble and BUDDI Spotting software, the Fire Scout offers engineers the flexibility to fight from multiple angles, or flank targets they can't get to from the sky.",
+        "rulesText": "L-wep: 1 | Endurance: 1 | Notice: 2 | Investigation: 1 \n 5 HP | AC:0 \n [Airborne] [Repairable] "
+    },
+    {
+        "id": "demo-dog",
+        "title": "XMQ-88 Demolition Dog",
+        "parentId": "T-ENG",
+        "class": "Technical Engineer",
+        "cost": 0,
+        "description": "Developed to solve an ethics concern of K-9 units, and subsequently creating new ones with unmanned drones, the XMQ-88 Demo-Dog is an unmanned, autonomous, quadrapedial robot. It can be equipped with a variety of equipment, from supressed SMGs for a frontline role, marksman rifles as a remote sniper sentry, to even LMGs for supressive fire. It even makes noises when you pet it!",
+        "rulesText": "General-Wep: 1 | Endurance: 2 | Notice: 1 | Stealth: 1 \n 30 HP | AC:1 \n [Ground] [Repairable]"
+    },
+    {
+        "id": "dd-frontliner",
+        "title": "XMQ-88 Demo-Dog [Frontline]",
+        "parentId": "T-ENG",
+        "class": "Technical Engineer",
+        "cost": 0,
+        "description": "The original, and ever beloved Demo Dog. Don't fix what aint broken.",
+        "rulesText": "DMG 5 | PEN 2 | Range: +1 M , -1 L , -1 ELR | 6 turns of ammo |"
+    },
+    {
+        "id": "dd-stealth",
+        "title": "XMQ-88 Demo-Dog [Stealth]",
+        "parentId": "T-ENG",
+        "class": "Technical Engineer",
+        "cost": 6000,
+        "description": "Customized stealth package for the demo-dog. Originally created for the Special Reconaissance teams and SOCOM requirements, the package installs whisper quiet servos, strips unecessary armor, and swaps the standard belt fed GCR-500 for a supressed .300 blackout 'Kitty Kat' version.",
+        "rulesText": "DMG 4 | PEN 1 | Range: +1 C, -1 L, -2 ELR | 6 turns of ammo | +1 dice to stealth checks. AC:0"
+    },
+    {
+        "id": "dd-marksman",
+        "title": "XMQ-88 Demo-Dog [Marksman]",
+        "parentId": "T-ENG",
+        "class": "Technical Engineer",
+        "cost": 8000,
+        "description": "Dedicated marksman variant for Long Range Recon and endurance. Strips down the armor much like the stealth variant in favor of an advanced sensor suite.",
+        "rulesText": "DMG 6 | PEN 2 | Range: -1 C | +1 L | -1 ELR | 6 turns of ammo | +1 dice to notice checks, AC:0"
+    },
+    {
+        "id": "dd-gunner",
+        "title": "XMQ-88 Demo-Dog [Gunner]",
+        "parentId": "T-ENG",
+        "class": "Technical Engineer",
+        "cost": 5000,
+        "description": "Based off of prototypes found in 2018, the Gunner variant offers more firepower and ammo in exchange for poor heat dispersion due to the gimbal mount.",
+        "rulesText": "DMG 5 | PEN 2 | Range: +1 M , -1 L , -1 ELR | 9 turns of ammo | Can supress for at most 3 turns before barrel overheats or belt jams."
+    },
+    {
+        "id": "LMD",
+        "title": "XMQ-88 UCAV 'Magic Missile'",
+        "parentId": "T-ENG",
+        "class": "Technical Engineer",
+        "cost": 0,
+        "description": "The whir of electric motors and the buzz of small drones have become the new age stuka siren. Equipped with a shaped charge warhead, 'magic missiles' are guided by their operators onto targets such as tanks or infantry before detonating. Useful against dug in targets and some armored vehicles.",
+        "rulesText": "8 dmg, AT. When deployed, user's turn ends immediately. When attacking an enemy, the defender rolls acrobatics if they wish to dodge, weapons if they want to shoot it out of the sky. Uses a Drive check when deployed. Fumbles pre-detonate the warhead."
+    },
+    {
         "id": "F-SUP",
         "title": "Fire Support",
         "class": "None"
