@@ -178,7 +178,7 @@ function LoadoutSection({ char }) {
           <DerivedCard label="Combat Sense" value={1 + INT + SPR} />
           <DerivedCard
             label="Deep/Flesh"
-            value={`${(SPR + BDY + 5) + armor} / ${Math.ceil(((SPR + BDY + 5) + armor) / 2)}`}
+            value={`${(SPR + BDY + 5) + armor} / ${Math.ceil(((SPR + BDY + 5)/2 + armor))}`}
           />
           <DerivedCard label="Inst-Death" value={(SPR + BDY + 5) * 2} />
           <DerivedCard label="Sys-Shock" value={Math.ceil((BDY + SPR) / 2) + 5} />
