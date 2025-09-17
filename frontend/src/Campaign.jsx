@@ -237,7 +237,7 @@ function Campaigns() {
     }
   };
 
-  // 🔄 Fullscreen Spinner Overlay
+  // Fullscreen Spinner Overlay
   if (isInitialLoading) {
     return (
       <div className="fixed inset-0 bg-neutral-900 flex flex-col items-center justify-center">
@@ -278,7 +278,7 @@ function Campaigns() {
         </motion.div>
 
         {/* THREE COLUMN GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
+        <div className="flex flex-grow:1 flex-shrink:0 gap-8">
           {/* CAMPAIGN VIEW */}
           <motion.div
             initial={{ opacity: 0 }}

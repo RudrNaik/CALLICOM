@@ -5,7 +5,7 @@ function EnemyView() {
   const [enemyIds, setEnemyIds] = useState([]);
   const [loaded, setLoaded] = useState(false); // ⬅ track whether we've loaded data
 
-  // ✅ Load IDs from localStorage once on mount
+  // Load IDs from localStorage once on mount
   useEffect(() => {
     const saved = localStorage.getItem("enemy-ids");
     if (saved) {
@@ -57,7 +57,7 @@ function EnemyView() {
         + Add Enemy
       </button>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2">
+      <div className="flex gap-4">
         {enemyIds.map((id) => (
           <EnemyCard key={id} id={id} onDelete={removeEnemy} />
         ))}
