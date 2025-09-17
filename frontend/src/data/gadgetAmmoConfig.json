@@ -51,6 +51,14 @@
       { "id": "cyb-MScsh", "label": "Mass Crashout" }
     ]
   },
+  "demo-dog": {
+    "options": [
+      { "id": "dd-frontliner", "label": "Frontline"},
+      { "id": "dd-stealth", "label": "Stealth" },
+      { "id": "dd-marksman", "label": "Marksman" },
+      { "id": "dd-gunner", "label": "Gunner" }
+    ]
+  },
   "m5-slam": {
     "max": 3
   },
@@ -95,5 +103,8 @@
   },
   "PMGL":{
     "max": 6
+  },
+  "LMD":{
+    "max": 3
   }
 }
