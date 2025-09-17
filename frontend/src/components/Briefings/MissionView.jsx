@@ -108,9 +108,9 @@ function MissionView({
   if (!missionData) return null;
 
   return (
-    <div className="bg-neutral-800/90 border border-orange-500 rounded-xl p-6 shadow-lg max-w-md min-h-[700px] max-h-[700px] overflow-y-auto whitespace-pre-line scrollbar-thin scrollbar-thumb-orange-400 scrollbar-track-neutral-700">
+    <div className="bg-neutral-800/90 border border-orange-500 rounded-xl p-6 shadow-lg min-h-[700px] max-h-[700px] overflow-y-auto whitespace-pre-line scrollbar-thin scrollbar-thumb-orange-400 scrollbar-track-neutral-700">
       {editing ? (
-        <div className="space-y-4">
+        <div>
           <p className="text-orange-300 text-xs font-bold">Mission ID</p>
           <input
             disabled={submitting}

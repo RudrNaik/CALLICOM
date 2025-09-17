@@ -110,7 +110,7 @@ function EnemyCard({ id, onDelete }) {
   const woundMod = FW + DW * 2;
 
   return (
-    <div className="relative bg-neutral-900/90 bg-[radial-gradient(circle,_rgba(255,100,0,0.06)_1px,_transparent_1px)] [background-size:8px_8px] rounded-lg p-4 border mt-5 border-orange-400 hover:border-orange-600 group scrollbar-thin scrollbar-thumb-orange-400 scrollbar-track-neutral-700">
+    <div className="relative max-w-[16rem] min-w-[16rem] bg-neutral-900/90 bg-[radial-gradient(circle,_rgba(255,100,0,0.06)_1px,_transparent_1px)] [background-size:8px_8px] rounded-lg p-4 border mt-5 border-orange-400 hover:border-orange-600 group scrollbar-thin scrollbar-thumb-orange-400 scrollbar-track-neutral-700">
       <button
         className="absolute top-2 right-3 text-red-500 hover:text-red-700 text-xs"
         onClick={deleteSelf}
