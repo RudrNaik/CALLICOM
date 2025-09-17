@@ -41,7 +41,8 @@ export default function GadgetAmmo({
         "amr",
         "semenov-railgun",
         "m26-mass",
-        "PMGL"
+        "PMGL",
+        "LMD"
       ].includes(gadgetId),
     [gadgetId]
   );
