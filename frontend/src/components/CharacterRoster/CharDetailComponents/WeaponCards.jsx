@@ -193,13 +193,13 @@ const WeaponSlot = ({
           </p>
           {categoryData && (
             <>
-              <p className="text-xs text-gray-400 mt-1">
+              <div className="text-xs text-gray-400 mt-1">
                 DMG {categoryData.damage} | PEN {categoryData.penetration} |
                 Range: {categoryData.range} | <br></br> Class:{" "}
                 <strong>{categoryData.class}</strong>
                 <hr />
                 TOTAL: {totalTurns} turns | MAG: {magazineSize} turns
-              </p>
+              </div>
               {charActive && (
                 <div className="flex justify-around items-start gap-5 mt-2">
                   {/* Left: Counters + Buttons stacked vertically */}
