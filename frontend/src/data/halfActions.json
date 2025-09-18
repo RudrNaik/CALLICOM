@@ -4,28 +4,28 @@
       "color":"bg-neutral-800/80",
       "type": "Half",
       "icon": "/Half_Action.svg",
-      "description": "Deploy a bipod or use a gadget.\n\nCertain gadgets may end your turn immediately, such as Controlling Drones, Pinging, or Hacking."
+      "description": "[Offensive]\n Deploy a bipod or use a gadget.\n\nCertain gadgets may end your turn immediately, such as Controlling Drones, Pinging, or Hacking."
+    },
+    {
+      "name": "Reload",
+      "type": "Full",
+      "color":"bg-neutral-800/80",
+      "icon": "/Half_Action.svg",
+      "description": "[Support]\n Reload your selected weapon, restoring your round count to full.\n\n, when reloading, you can shoot again in the same turn. However- it will apply a -1 to your shot."
     },
     {
       "name": "Patch up",
       "type": "Half",
       "color":"bg-neutral-800/80",
       "icon": "/Half_Action.svg",
-      "description": "Patch yourself up and remove wounds.\n\nPatching yourself up requires having 1 FAK for a flesh wound, and 2 FAKs or an AFAK for deep wounds. When consumed, these items are removed from your inventory.\n\nYou remove 1 + [Medical skill roll] worth of wounds when consumed. \n\n Alternatively, painkillers do exist, and can be used by rolling your medical skill to nullify wounds for 1+[medical roll] turns."
+      "description": "[Support] [Medical]\n Patch yourself up and remove wounds.\n\nPatching yourself up requires having 1 FAK for a flesh wound, and 2 FAKs or an AFAK for deep wounds. When consumed, these items are removed from your inventory.\n\nYou remove 1 + [Medical skill roll] worth of wounds when consumed. \n\n Alternatively, painkillers do exist, and can be used by rolling your medical skill to nullify wounds for 1+[medical roll] turns."
     },
     {
       "name": "Rally",
       "type": "Half",
       "color":"bg-neutral-800/80",
       "icon": "/Half_Action.svg",
-      "description": "Rally your team and other allies.\n\nOnce per turn one team member can rally, using your leadership skill to bolster the morale of friendlies and add a +1 to friendly actions until your next turn. This effect can be negated if the rallier is hit or an intimidate beats the rally bonus. The check requires beating a threshold of 3 \n\n You can also single out targets using Rally, and apply a +1 for others when shooting at them. This is against a threshold of 2."
-    },
-    {
-      "name": "Intimidate",
-      "type": "Half",
-      "color":"bg-neutral-800/80",
-      "icon": "/Half_Action.svg",
-      "description": "Intimidate your foes and others for compliance.\n\nWhen Intimidating, you roll your intimidation stat against an enemy's spirit. If you win the opposed roll, you apply your margin of success as a debuff to their actions against you for a turn. If you lose, you get the enemy's ire, and they will focus on you."
+      "description": "[Support] [Leadership]\n Rally your team and other allies.\n\nOnce per turn one team member can rally, using your leadership skill to bolster the morale of friendlies. The bonus thresholds are: \n\n  < 1 : no bonuses\n 2-4 : +1 bonus to all actions for the next turn.\n 5-6+: +1 dice to all friendly actions the next turn. \n\n (You also have to type something in character for it to count)."
     }
   ]
   

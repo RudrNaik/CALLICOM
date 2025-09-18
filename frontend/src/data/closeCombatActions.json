@@ -1,0 +1,30 @@
+[
+    {
+        "name": "Grappling",
+        "color": "bg-neutral-800/80",
+        "type": "Half",
+        "icon": "/Half_Action.svg",
+        "description": "Grappling attempts are always made with Brawl skill. If successful, instead of dealing damage you may choose to start a grapple. The grappling characters cannot move normally, and can’t make attacks against anyone else. \n\n On each grappler's turn, an Opposed Brawl test is made. The winner can deal normal unarmed damage, move the opponent up to half a normal movement turn, or end the grapple. Grappled characters count as being unaware against other attacks made against them."
+    },
+    {
+        "name": "Disarming",
+        "type": "Full",
+        "color": "bg-neutral-800/80",
+        "icon": "/Half_Action.svg",
+        "description": "Disarm attempts are more difficult to pull off. You must have at least 2 MoS, and the opponent may try to counter with a successful Alertness test with a Threshold equal to your original attack.\n\n If the opponent succeeds, nothing happens. If he fails, his weapon leaves his grasp. If you were using Brawl skill in disarming your opponent, you now hold his weapon. If not, the weapon is on the ground."
+    },
+    {
+        "name": "Tripping",
+        "type": "Half",
+        "color": "bg-neutral-800/80",
+        "icon": "/Half_Action.svg",
+        "description": "If you decide to attempt tripping your opponent, They are entitled to make an Alertness or Body test (opponent’s choice) with a Threshold equal to your original attack to resist it.\n\n If they succeed nothing happens, but if they fails, they are knocked down, and thus has a -3 defense modifier until they get up, and may not sprint on his next turn."
+    },
+    {
+        "name": "Shove",
+        "type": "Half",
+        "color": "bg-neutral-800/80",
+        "icon": "/Half_Action.svg",
+        "description": " If you decide to attempt shoving your opponent, he is entitled to make an Alertness or Body test (opponent’s choice) with a Threshold equal to your original attack to resist it.\n\n If he succeeds nothing happens, but if he fails you may shove him backward up to your Body+1 in meters. You may do a follow-up move, but it is not necessary."
+    }
+]
