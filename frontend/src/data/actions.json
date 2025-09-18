@@ -4,49 +4,56 @@
       "color":"bg-neutral-800/80",
       "type": "Full",
       "icon": "/Full_Action.svg",
-      "description": "Shoot your selected weapon, reducing rounds from the magazine and your total ammo count.\n\nShooting is an opposed roll between an attacker's respective weapon roll + bonuses, and the defender's armor roll + bonuses.\n\nAbides by ranged combat rules."
+      "description": "[Offensive]\n Shoot your selected weapon, reducing rounds from the magazine and your total ammo count.\n\nShooting is an opposed roll between an attacker's respective weapon roll + bonuses, and the defender's armor roll + bonuses.\n\nAbides by ranged combat rules."
     },
     {
       "name": "Throw",
       "type": "Full",
       "color":"bg-neutral-800/80",
       "icon": "/Full_Action.svg",
-      "description": "Throw a grenade or a throwable object/gadget at an enemy, reduces gadget/grenade count if throwing a grenade or gadget.\n\nThrowing at an individual is an opposed roll between an attacker's throw skill and a defender's acrobatics. Upon success, the defender is able to get out of the way, but is forced out of cover for the rest of the turn."
+      "description": "[Offensive]\n Throw a grenade or a throwable object/gadget at an enemy, reduces gadget/grenade count if throwing a grenade or gadget.\n\nThrowing at an individual is an opposed roll between an attacker's throw skill and a defender's acrobatics. Upon success, the defender is able to get out of the way, but is forced out of cover for the rest of the turn."
     },
     {
       "name": "Close Combat",
       "type": "Full",
       "color":"bg-neutral-800/80",
       "icon": "/Full_Action.svg",
-      "description": "Melee or CQC an enemy within striking distance (Point Blank).\n\nYou may do any special close combat action, and works off of the close combat rules. Roll your selected weapon (Melee for armed, CQC for unarmed) against an enemy's Defense to block, or Melee and CQC to parry."
-    },
-    {
-      "name": "Aim",
-      "type": "Full",
-      "color":"bg-neutral-800/80",
-      "icon": "/Full_Action.svg",
-      "description": "Aim and focus your shot.\n\nFor each turn spent aiming, increase the dice of your next attacking roll up to 3. You can target specific limbs, weakpoints, or inanimate objects while aiming. If you do any other action before you fire, your aiming bonuses are removed.\n\n -Aiming at a torso-sized target removes one die from the skill test.\n -Aiming at a limb-sized target removes two dice from the skill test.\n -Aiming at a head-sized target removes three dice from the skill test.\n\n The victim’s normal Wound Thresholds are halved (round up) for all shots aimed at vital locations, such as the head. Shots aimed at specific limbs are useful as non-fatal attacks — they cannot cause Instant Death, unless through system shock and can also stop a character from moving."
+      "description": "[Offensive]\n Melee or CQC an enemy within striking distance (Point Blank).\n\nYou may do any special close combat action, and works off of the close combat rules. Roll your selected weapon (Melee for armed, CQC for unarmed) against an enemy's Defense to block, or Melee and CQC to parry."
     },
     {
       "name": "Ready",
       "type": "Full",
       "color":"bg-neutral-800/80",
       "icon": "/Full_Action.svg",
-      "description": "Ready yourself for a trigger.\n\nWhen readying you can hold an action until a specified event occurs. Such as a door opening, an enemy becoming visible or stepping into place, etc. Once declared with a trigger, or the specified event, the character will remain readied until the trigger happens or they leave the readied state.\n\nWhen readied, you will enact the action even out of your own turn."
-    },
-    {
-      "name": "Reload",
-      "type": "Full",
-      "color":"bg-neutral-800/80",
-      "icon": "/Full_Action.svg",
-      "description": "Reload your selected weapon, restoring your magazine count to full.\n\nRequires a full action. When reloading from empty you can save the empty magazine into your inventory."
+      "description": "[Support]\n Ready yourself for a trigger.\n\nWhen readying you can hold an action until a specified event occurs. Such as a door opening, an enemy becoming visible or stepping into place, etc. Once declared with a trigger, or the specified event, the character will remain readied until the trigger happens or they leave the readied state.\n\nWhen readied, you will enact the action even out of your own turn."
     },
     {
       "name": "Brace",
       "type": "Full",
       "color":"bg-neutral-800/80",
       "icon": "/Full_Action.svg",
-      "description": "Brace yourself against cover.\n\n When bracing, you get a +2 to your defense rolls, however cannot do anything other than brace for that turn. Flanking negates this, along with high power rifles and a ping."
+      "description": "[Defensive]\n Brace yourself against cover.\n\n When bracing, you get a +2 to your defense rolls, however cannot do anything other than brace for that turn. Flanking negates this, along with high power rifles and a ping."
+    },
+    {
+      "name": "Intimidate",
+      "type": "Half",
+      "color":"bg-neutral-800/80",
+      "icon": "/Half_Action.svg",
+      "description": "[Offensive]\n Intimidate your foes and others for compliance.\n\nWhen Intimidating, you roll your intimidation against an enemy's spirit. If you win the opposed roll, you apply your margin of success as a debuff to their actions against for a turn. If you lose, you get the enemy's ire, and they will focus on you. \n\n (You also have to type something in character for it to count)."
+    },
+    {
+      "name": "Disengage",
+      "color":"bg-neutral-800/80",
+      "type": "Half",
+      "icon": "/Half_Action.svg",
+      "description": "[Defensive]\n Disengage from a fight and slip away.\n\nWhen disengaging, do an opposed stealth roll against an enemy's alertness. Upon success, you are disengaged. Enemies will search your last known position, and in combat it allows you to sneak around, but any offensive action will re-engage you. You can aim however.\n\n When moving while disengaged, you will roll stealth checks against an enemy's alertness to remain disengaged. Upon firing on an enemy or failing a check, you re-engage with them and are back in the fight at the end of the initiative queue."
+    },
+    {
+      "name": "Repair",
+      "color":"bg-neutral-800/80",
+      "type": "Half",
+      "icon": "/Half_Action.svg",
+      "description": "[Support] [Repair Tool]\n Repair vehicles, equipment, and drones \n\n When repairing, roll with tinker to determine the amount of wounds of damage repaired. Prioritizes Critical Damage first, and then fixes minor damage. vehicle crews 'relax' when their vehicles are being repaired.\n\n For drones, multiply the roll by 2 for how much damage repaired."
     }
   ]
   

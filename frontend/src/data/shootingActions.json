@@ -1,0 +1,31 @@
+[
+    {
+      "name": "Aim",
+      "color":"bg-neutral-800/80",
+      "type": "Half",
+      "icon": "/Full_Action.svg",
+      "description": "Available for: \n[All Weapons]\n\nA character can spend up to 3 combat rounds steadying his aim to improve his odds to hit. Add one die to the attacker’s roll per round spent aiming, up to a maximum of +3. The character may not move while aiming. A character can aim at a specific vehicle or body part (e.g. torso, arm or leg, APS, or wheels).\n\n-Aiming at a torso-sized target removes one die from the skill test.\n -Aiming at a limb or head-sized target removes two dice from the skill test.\n\n In addition, a character can also aim and shoot in the same turn, but this applies the maluses above. \n\n The victim’s normal Wound Thresholds are halved (round up) for all shots aimed at vital locations, such as the head. Shots aimed at specific limbs are useful as non-fatal attacks — they cannot cause Instant Death, unless through system shock and can also stop a character from moving. \n\n You can aim at inanimate objects against a threshold of 1."
+    },
+    {
+      "name": "Burst",
+      "color":"bg-neutral-800/80",
+      "type": "Half",
+      "icon": "/Half_Action.svg",
+      "description": "Available for:\n[Assault Rifles] [Marksman Rifles]\n\nSome weapons are capable of burst fire. Burst attacks usually consist of firing a tight burst towards a single opponent. The attacker may decrease a number of his dice, up to a maximum of -2. \n\nIf the attack succeeds, the amount of dice decreased is added to the attack’s Margin of Success, thus increasing the damage."
+    },
+    {
+      "name": "Spray",
+      "color":"bg-neutral-800/80",
+      "type": "Half",
+      "icon": "/Half_Action.svg",
+      "description": "Available for: \n[SMGs] [Carbines]\n\n Weapons capable of rapid, automatic fire can be used to attack multiple targets in a single action by spraying across targets. Thus, people or objects between the targets can be hit as well. A player must declare that they are spraying before any attacks are made. The player then chooses the targets of his attack.\n\n Maximum number of targets that possibly can be attacked is three. All targets must be no more than one hex apart (if they are, count each empty hex space as a target). Each attack is rolled separately, and each individual target may not be attacked more than once per round by the same weapon. This attack consumes the same amount of ammo as a normal firing action, multiplied by the targets."
+    },
+    {
+      "name": "Supression",
+      "color":"bg-neutral-800/80",
+      "type": "Half",
+      "icon": "/Full_Action.svg",
+      "description": "Available for: \n [LMGs]\n\nSuppression fire is a military term for putting lots of lead in the air, to make others keep their head down. The attacker chooses an area (up to 3 hexes) then rolls their attack normally. Record the result and add 2 to it: that’s the Saturation Fire Threshold. Anyone or anything which enters the line of fire during the round must beat the Saturation Threshold or take damage. Offensive actions such as shooting or deploying drones and grenades will roll against the saturation fire threshold for damage.\n\n If the defender is already in the suppressed zone before the attack and under cover, the defender must roll a Spirit attribute test against a threshold of 4. \n\n Upon success: -1 dice to all rolls, defender can move (acrobatics vs saturation fire threshold). \nUpon failure: -2 dice to all rolls. No movement allowed. \n\nAttackers can split their fire towards targets, however this will divide the threshold by how many targets there are. If damage is taken, supression is stopped."
+    }
+  ]
+  

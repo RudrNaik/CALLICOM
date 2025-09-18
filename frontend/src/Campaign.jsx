@@ -194,7 +194,7 @@ function Campaigns() {
 
       if (!res.ok) throw new Error("Failed to create mission");
 
-      await refreshMissions();
+      refreshMissions();
       setCurrentMissionId(newMission.id);
     } catch (err) {
       console.error("Error adding mission:", err);
