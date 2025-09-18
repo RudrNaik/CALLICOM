@@ -40,6 +40,9 @@ function EquipmentSelection({
   const [medCounts, setMedCounts] = useState([1, 2, 1]); // [AFAK, IFAK, Painkiller]
   const activeGadgetConfig = GADGET_AMMO_CONFIG[gear.gadget];
   const [gadgetAmmoBaseline, setGadgetAmmoBaseline] = useState(null);
+  const [primaryOptions, setPrimaries] = useState({});
+  const [secondaryOptions, setSecondary] = useState({});
+  const [maxArmor, setArmor] = useState(1);
 
   useEffect(() => {
     if (!character) return;
@@ -56,19 +59,80 @@ function EquipmentSelection({
       }
     );
 
+    //filters items based on class, secondary class, and if they are purchased or not.
     const filtered = equipmentData.filter(
       (item) =>
-        (item.class === character.class || item.class === character.multiClass) && item.cost === 0 //filters items based on class, secondary class, and if they are purchased or not.
+        (item.class === character.class ||
+          item.class === character.multiClass) &&
+        item.cost === 0
     );
     setClassGadgets(filtered);
 
-    //console.log(secondaryGadgets[character.class].classGadget);
+    //Excludes primaries based on MAIN class, not secondary.
+    let excluded;
+    if (character.class === "Sharpshooter") {
+      excluded = [
+        "Machine Guns",
+        "Drum Shotguns",
+        "Light Pistols",
+        "Heavy Pistols",
+      ];
+    } else if (character.class === "Fire Support") {
+      excluded = ["Sniper Rifles", "Light Pistols", "Heavy Pistols"];
+    } else {
+      excluded = [
+        "Sniper Rifles",
+        "Machine Guns",
+        "Drum Shotguns",
+        "Light Pistols",
+        "Heavy Pistols",
+      ];
+    }
+    const primaryFilter = Object.fromEntries(
+      Object.entries(weaponCategories).filter(
+        ([key]) => !excluded.includes(key)
+      )
+    );
+    setPrimaries(primaryFilter);
 
+    //Restrics Armor per SUPP getting AC3 as max (to use the juggernaut suit), everyone else has max of AC1
+    if (
+      character.class === "Combat Engineer" ||
+      character.class === "Technical Engineer" ||
+      character.class === "Medic"
+    ) {
+      setArmor(2);
+    } else if (character.class === "Fire Support") {
+      setArmor(3);
+    } else {
+      setArmor(1);
+    }
+
+    //Excludes secondaries universally.
+    excluded = [
+      "Sniper Rifles",
+      "Machine Guns",
+      "Drum Shotguns",
+      "Marksman Rifles",
+      "Assault Rifles",
+      "Shotguns",
+      "Carbines",
+    ];
+    const secondaryFilter = Object.fromEntries(
+      Object.entries(weaponCategories).filter(
+        ([key]) => !excluded.includes(key)
+      )
+    );
+    setSecondary(secondaryFilter);
+
+    //Grabs secondary gadget (class gadget) and assigns it.
     if (secondaryGadgets[character.class]) {
       setSecGadget(secondaryGadgets[character.class].classGadget);
     } else {
       setSecGadget(null);
     }
+
+    //Sets the grenades.
     setGrenadeCounts([3, 3]);
   }, [character]);
 
@@ -124,6 +188,9 @@ function EquipmentSelection({
     }
   };
 
+  // console.log(primaryOptions);
+  // console.log(secondaryOptions);
+
   return (
     <div className="mt-8 text-white" style={{ fontFamily: "Geist_Mono" }}>
       <div className="relative inline-block group">
@@ -148,7 +215,7 @@ function EquipmentSelection({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Weapons */}
-        {["primaryWeapon", "secondaryWeapon"].map((slot) => (
+        {/* {["primaryWeapon", "secondaryWeapon"].map((slot) => (
           <WeaponSlot
             key={`${slot}-${character.callsign}`}
             slot={slot}
@@ -159,7 +226,25 @@ function EquipmentSelection({
             characterCallsign={character.callsign}
             charActive={charActive}
           />
-        ))}
+        ))} */}
+        <WeaponSlot
+          slot={"primaryWeapon"}
+          weapon={gear["primaryWeapon"]}
+          isEditing={isEditing}
+          weaponCategories={primaryOptions}
+          handleWeaponChange={handleWeaponChange}
+          characterCallsign={character.callsign}
+          charActive={charActive}
+        />
+        <WeaponSlot
+          slot={"secondaryWeapon"}
+          weapon={gear["secondaryWeapon"]}
+          isEditing={isEditing}
+          weaponCategories={secondaryOptions}
+          handleWeaponChange={handleWeaponChange}
+          characterCallsign={character.callsign}
+          charActive={charActive}
+        />
         {/* Grenades */}
         <div className="bg-neutral-800/80 border-l-8 border-orange-400 p-6 rounded shadow">
           <h3 className="font-semibold text-orange-300">Grenades</h3>
@@ -239,7 +324,7 @@ function EquipmentSelection({
             <input
               type="number"
               min={0}
-              max={3}
+              max={maxArmor}
               className="w-full bg-neutral-900 text-white p-2 rounded"
               value={gear.armorClass}
               onChange={(e) =>
