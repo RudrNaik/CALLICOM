@@ -108,9 +108,9 @@ function MissionView({
   if (!missionData) return null;
 
   return (
-    <div className="bg-neutral-800/90 border border-orange-500 rounded-xl p-6 shadow-lg min-h-[700px] max-h-[700px] overflow-y-auto whitespace-pre-line scrollbar-thin scrollbar-thumb-orange-400 scrollbar-track-neutral-700">
+    <div className="bg-neutral-800/90 border border-orange-500  min-w-full rounded-xl p-6 shadow-lg min-h-[700px] max-h-[700px] overflow-y-auto whitespace-pre-line scrollbar-thin scrollbar-thumb-orange-400 scrollbar-track-neutral-700">
       {editing ? (
-        <div>
+        <div className="min-w-sm">
           <p className="text-orange-300 text-xs font-bold">Mission ID</p>
           <input
             disabled={submitting}
@@ -119,7 +119,7 @@ function MissionView({
             onChange={(e) => handleChange("id", e.target.value)}
           />
 
-          <p className="text-orange-300 text-xs font-bold">Name</p>
+          <p className="text-orange-300 text-xs font-bold mt-2">Name</p>
           <input
             disabled={submitting}
             className="w-full p-2 bg-neutral-900 border border-orange-400 rounded"
@@ -127,7 +127,7 @@ function MissionView({
             onChange={(e) => handleChange("Name", e.target.value)}
           />
 
-          <p className="text-orange-300 text-xs font-bold">Type</p>
+          <p className="text-orange-300 text-xs font-bold mt-2">Type</p>
           <input
             disabled={submitting}
             className="w-full p-2 bg-neutral-900 border border-orange-400 rounded"
@@ -135,7 +135,7 @@ function MissionView({
             onChange={(e) => handleChange("Type", e.target.value)}
           />
 
-          <p className="text-orange-300 text-xs font-bold">Status</p>
+          <p className="text-orange-300 text-xs font-bold mt-2">Status</p>
           <select
             disabled={submitting}
             className="w-full p-2 bg-neutral-900 border border-orange-400 rounded"
@@ -149,7 +149,7 @@ function MissionView({
 
           {"Brief,Execution,FA,Support,CnC".split(",").map((field) => (
             <div key={field}>
-              <p className="text-orange-300 text-xs font-bold">
+              <p className="text-orange-300 text-xs font-bold mt-2">
                 {field === "FA"
                   ? "Force Assessment"
                   : field === "CnC"
@@ -158,7 +158,7 @@ function MissionView({
               </p>
               <textarea
                 disabled={submitting}
-                className="w-full p-2 bg-neutral-900 border border-orange-400 rounded whitespace-pre-wrap"
+                className="w-full p-2 min-h-70 bg-neutral-900 border border-orange-400 rounded whitespace-pre-wrap"
                 rows={3}
                 value={missionData[field] || ""}
                 onChange={(e) => handleChange(field, e.target.value)}
@@ -367,7 +367,7 @@ function MissionView({
           </button>
         </div>
       ) : (
-        <div>
+        <div className="min-w-sm">
           <h2 className="uppercase text-lg font-bold text-neutral-200 bg-orange-500 p-2">
             [{missionData.Name}]
           </h2>
