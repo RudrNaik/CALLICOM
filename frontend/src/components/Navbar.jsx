@@ -81,7 +81,7 @@ const Navbar = ({}) => {
             onClick={toggleDropdown}
             className="p-2 rounded-full hover:bg-neutral-700 transition"
           >
-            <img src={UserIcon} alt="profile" className="h-6 w-6 text-white" />
+            <img src={UserIcon} alt="profile" className="h-6 w-6 text-white cursor-pointer" />
           </button>
 
           {/* Dropdown Menu */}
