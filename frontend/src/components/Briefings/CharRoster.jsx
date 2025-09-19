@@ -63,6 +63,7 @@ export default function Roster({ characters, isLoading }) {
             <p className="text-orange-300 font-semibold text-sm">
               {char.callsign} | {char.name}
             </p>
+            <p className="absolute top-2 right-3 text-orange-300 text-[0.60rem]">{char.userId}</p>
             <p className="text-xs text-neutral-300">
               {char.class} | {char.multiClass || "No multiclass"} | {char.background}
             </p>
