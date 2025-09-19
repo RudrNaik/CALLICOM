@@ -30,32 +30,34 @@ function Calamari() {
               Stay connected with the latest news, including upcoming releases,
               developer updates, and playtest information.
             </p>
-            <button className="w-fit bg-black text-white px-6 py-3 uppercase font-mono text-sm tracking-widest hover:bg-orange-400 hover:text-black transition">
-              See All News ↗
-            </button>
+            <a href="https://x.com/Spinypine2">
+              <button className="w-fit bg-black text-white px-6 py-3 uppercase font-mono text-sm tracking-widest hover:bg-orange-400 hover:text-black transition cursor-pointer">
+                See All News ↗
+              </button>
+            </a>
           </div>
 
           {/* Right */}
           <div className="bg-orange-400 grid grid-cols-2 grid-rows-[auto_1fr] text-xl font-mono p-6 gap-4">
             {/* Social Icons Column */}
-            <div className="flex flex-col">
+            <div className="flex flex-col ">
               <a href="https://media.discordapp.net/attachments/1002301423935033494/1192709670360592485/attachment-1-1-1.gif?ex=68238930&is=682237b0&hm=fe992efe1190b2741852b7169af0e4f7338d2d666f433d7a5c6fe1b01a9cca00&">
-                <button className="text-black hover:text-orange-400 hover:bg-black px-2 py-1 text-left w-full transition-colors">
+                <button className="text-black hover:text-orange-400 hover:bg-black px-2 py-1 text-left w-full transition-colors cursor-pointer">
                   [🎮] Discord
                 </button>
               </a>
               <a href="https://bsky.app/profile/spinypine2.bsky.social">
-                <button className="text-black hover:text-orange-400 hover:bg-black px-2 py-1 text-left w-full transition-colors">
+                <button className="text-black hover:text-orange-400 hover:bg-black px-2 py-1 text-left w-full transition-colors cursor-pointer">
                   [✉️] Bluesky
                 </button>
               </a>
               <a href="https://x.com/Spinypine2">
-                <button className="text-black hover:text-orange-400 hover:bg-black px-2 py-1 text-left w-full transition-colors">
+                <button className="text-black hover:text-orange-400 hover:bg-black px-2 py-1 text-left w-full transition-colors cursor-pointer">
                   [❌] X
                 </button>
               </a>
               <a href="https://steamcommunity.com/id/spinypine/">
-                <button className="text-black hover:text-orange-400 hover:bg-black px-2 py-1 text-left w-full transition-colors">
+                <button className="text-black hover:text-orange-400 hover:bg-black px-2 py-1 text-left w-full transition-colors cursor-pointer">
                   [🕹️] Steam
                 </button>
               </a>
@@ -67,14 +69,15 @@ function Calamari() {
                 <div className="text-sm uppercase font-bold mb-2">STEAM</div>
                 <p className="leading-snug tracking-wide text-xs">
                   COMING TO STEAM, PLAYSTATION 5, AND XBOX SERIES X/S WITH FULL
-                  CROSS PLAY AND CROSS SAVE ON SEPTEMBER 23, 2025. WISHLIST NOW
-                  AND STAY UP TO DATE WITH THE LATEST DETAILS.
+                  CROSS PLAY AND CROSS SAVE. WISHLIST NOW AND STAY UP TO DATE
+                  WITH THE LATEST UPDATES.
                 </p>
               </div>
-
-              <button className="mt-4 border border-orange-400 px-4 py-2 uppercase text-xs font-bold hover:bg-orange-400 hover:text-black transition">
-                Wishlist Now ↗
-              </button>
+              <a href="https://steamcommunity.com/id/spinypine/">
+                <button className="mt-4 border border-orange-400 px-4 py-2 uppercase text-xs font-bold hover:bg-orange-400 hover:text-black transition cursor-pointer">
+                  Wishlist Now ↗
+                </button>
+              </a>
             </div>
           </div>
         </section>
@@ -249,7 +252,7 @@ function Calamari() {
             </p>
 
             <Link to="/CALLICOM/Armory">
-              <button className="w-fit bg-black text-white px-6 py-3 uppercase font-mono text-sm tracking-widest hover:bg-orange-400 hover:text-black transition">
+              <button className="w-fit bg-black text-white px-6 py-3 uppercase font-mono text-sm tracking-widest hover:bg-orange-400 hover:text-black transition cursor-pointer">
                 See The Armory ↗
               </button>
             </Link>
@@ -269,7 +272,7 @@ function Calamari() {
               Taking notes from games like Lancer- Calamari offers simple to use
               GM and player tools through CALLICOM (Combined Arms Large Language
               Interface-Command), an out of character and in character command
-              and control system. With CALLICOM, GM's have less work with almost
+              and control system. With CALLICOM, GMs have less work with almost
               all major bookeeping being done in CALLICOM itself, from enemy
               managment, player health, and skills. While in character,
               contractors get access to datalink from land sea and air, leaving
@@ -291,7 +294,7 @@ function Calamari() {
             </span>
 
             <Link to="/CALLICOM">
-              <button className="w-fit bg-black text-white px-6 py-3 uppercase font-mono text-sm tracking-widest hover:bg-orange-400 hover:text-black transition">
+              <button className="w-fit bg-black text-white px-6 py-3 uppercase font-mono text-sm tracking-widest hover:bg-orange-400 hover:text-black transition cursor-pointer">
                 Check out CALLICOM ↗
               </button>
             </Link>
