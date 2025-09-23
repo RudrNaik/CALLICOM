@@ -9,10 +9,10 @@ import { Link } from "react-router-dom";
 function Calamari() {
   return (
     <div
-      className="bg-repeat bg-[length:1920px_1080px] w-screen min-h-screen"
+      className="bg-repeat bg-[length:1920px_1080px] w-full min-h-screen"
       style={{ backgroundImage: `url(${background})` }}
     >
-      <section className="flex w-screen h-[700px]">
+      <section className="flex w-full h-[700px]">
         <Sidebar />
         <Carousel />
       </section>

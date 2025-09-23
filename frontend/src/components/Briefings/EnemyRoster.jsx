@@ -3,7 +3,7 @@ import EnemyCard from "./EnemyCard";
 
 function EnemyView() {
   const [enemyIds, setEnemyIds] = useState([]);
-  const [loaded, setLoaded] = useState(false); // ⬅ track whether we've loaded data
+  const [loaded, setLoaded] = useState(false); // track whether we've loaded data
 
   // Load IDs from localStorage once on mount
   useEffect(() => {
@@ -21,18 +21,17 @@ function EnemyView() {
     } else {
       setEnemyIds(["enemy-1"]);
     }
-    setLoaded(true); // ✅ allow saving from this point forward
+    setLoaded(true); // allow saving from this point forward
   }, []);
 
-  // ✅ Save to localStorage when enemyIds change (but only after first load)
+  // Save to localStorage when enemyIds change (but only after first load)
   useEffect(() => {
     if (loaded) {
       localStorage.setItem("enemy-ids", JSON.stringify(enemyIds));
-      console.log("Saved enemy IDs:", enemyIds);
     }
   }, [enemyIds, loaded]);
 
-  // ✅ Generate the next unused ID
+  // Generate the next unused ID
   const addEnemy = () => {
     let counter = 1;
     let nextId = `enemy-${counter}`;

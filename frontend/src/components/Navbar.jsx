@@ -46,7 +46,7 @@ const Navbar = ({}) => {
       `}
     >
       <div
-        className="flex items-center relative w-full"
+        className="flex items-center relative"
         style={{ fontFamily: "Geist_Mono" }}
       >
         <img src={SpinyLogo} alt="Logo" className="h-20" />

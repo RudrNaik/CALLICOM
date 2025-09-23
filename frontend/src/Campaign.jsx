@@ -256,11 +256,9 @@ function Campaigns() {
     );
   }
 
-  console.log(filteredMissions);
-
   return (
     <div
-      className="bg-repeat bg-[length:1920px_1080px] w-screen min-h-screen text-white crt-overlay"
+      className="bg-repeat bg-[length:1920px_1080px] w-full min-h-full text-white crt-overlay"
       style={{
         backgroundImage: `url(${background})`,
         fontFamily: "Geist_Mono",

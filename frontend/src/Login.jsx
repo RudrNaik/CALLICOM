@@ -45,7 +45,7 @@ function Login() {
 
   return (
     <div
-      className="bg-repeat w-screen min-h-screen bg-cover"
+      className="bg-repeat w-full min-h-screen bg-cover"
       style={{ backgroundImage: `url(${background})` }}
     >
       <Navbar />

@@ -10,6 +10,7 @@ function MissionView({
   const [editing, setEditing] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [missionData, setMissionData] = useState(null);
+  const [staticMissionID, setStaticID] = useState(null);
 
   useEffect(() => {
     setMissionData(currentMission);
@@ -86,7 +87,7 @@ function MissionView({
 
     try {
       await fetch(
-        `https://callicom.onrender.com/api/missions/${missionData.id}`,
+        `https://callicom.onrender.com/api/missions/${currentMission.id}`,
         {
           method: "PUT",
           headers: {
@@ -102,6 +103,7 @@ function MissionView({
       console.error("Error saving mission:", error);
     } finally {
       setSubmitting(false);
+      setStaticID(missionData.id);
     }
   };
 

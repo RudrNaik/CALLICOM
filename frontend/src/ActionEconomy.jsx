@@ -50,7 +50,7 @@ export default function ActionEconomyPage() {
 
   return (
     <div
-      className="bg-repeat bg-[length:1920px_1080px] min-h-screen w-screen text-white font-mono"
+      className="bg-repeat bg-[length:1920px_1080px] min-h-screen w-full text-white font-mono"
       style={{ backgroundImage: `url(${background})` }}
     >
       {/* Spacer for nav */}
