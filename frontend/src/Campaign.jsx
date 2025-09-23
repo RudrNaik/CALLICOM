@@ -31,7 +31,7 @@ function Campaigns() {
   const isInitialLoading = loadingCampaignData || isLoading;
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    //const token = localStorage.getItem("token");
     // if (!token) {
     //   console.log("No token found, redirecting to login.");
     //   navigate("/login");
