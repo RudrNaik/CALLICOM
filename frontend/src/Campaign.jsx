@@ -160,7 +160,10 @@ function Campaigns() {
 
     const token = localStorage.getItem("token");
     const newMission = {
-      id: `mission${missions.length}`,
+      id: `mission${missions.length + 5}`,
+      location: "",
+      lat:"",
+      lon:"",
       campaignId: currentCampaign,
       Name: "New Mission",
       Type: "Side Mission",
@@ -253,6 +256,8 @@ function Campaigns() {
     );
   }
 
+  console.log(filteredMissions);
+
   return (
     <div
       className="bg-repeat bg-[length:1920px_1080px] w-screen min-h-screen text-white crt-overlay"
@@ -333,7 +338,6 @@ function Campaigns() {
           </div>
         )}
       </div>
-
       <Footer />
     </div>
   );

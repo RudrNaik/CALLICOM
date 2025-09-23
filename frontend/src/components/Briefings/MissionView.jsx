@@ -147,6 +147,29 @@ function MissionView({
             <option>UPCOMING</option>
           </select>
 
+          <p className="text-orange-300 text-xs font-bold mt-2">Location</p>
+          <input
+            disabled={submitting}
+            className="w-full p-2 bg-neutral-900 border border-orange-400 rounded"
+            value={missionData.location}
+            onChange={(e) => handleChange("location", e.target.value)}
+          />
+
+          <p className="text-orange-300 text-xs font-bold mt-2">Lat/long</p>
+          <input
+            disabled={submitting}
+            className="w-md p-2 bg-neutral-900 border border-orange-400 rounded"
+            value={missionData.lat}
+            onChange={(e) => handleChange("lat", e.target.value)}
+          />
+          <input
+            disabled={submitting}
+            className="w-md p-2 bg-neutral-900 border border-orange-400 rounded"
+            value={missionData.lon}
+            onChange={(e) => handleChange("lon", e.target.value)}
+          />
+
+
           {"Brief,Execution,FA,Support,CnC".split(",").map((field) => (
             <div key={field}>
               <p className="text-orange-300 text-xs font-bold mt-2">
@@ -371,7 +394,8 @@ function MissionView({
           <h2 className="uppercase text-lg font-bold text-neutral-200 bg-orange-500 p-2">
             [{missionData.Name}]
           </h2>
-          <h2 className="text-sm text-neutral-400 mb-4">{missionData.Type}</h2>
+          <h2 className="text-sm text-neutral-400">{missionData.Type}</h2>
+          <h3 className="text-sm text-neutral-400 mb-4">{missionData.location} |{missionData.lat},{missionData.lon}</h3>
 
           <p className="text-orange-300 text-xs font-bold mb-1">
             Key Objectives
