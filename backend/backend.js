@@ -159,6 +159,23 @@ app.get("/api/campaigns", async (req, res) => {
   }
 });
 
+app.get("/api/lore", async (req, res) => {
+  const client = new MongoClient(url);
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const collection = db.collection("lore");
+
+    const characters = await collection.find().toArray();
+    res.status(200).json(characters);
+  } catch (err) {
+    console.error("Error fetching campaigns:", err.message);
+    res.status(500).json({ error: "Failed to fetch logs" });
+  } finally {
+    await client.close();
+  }
+});
+
 app.get("/api/missions", async (req, res) => {
   const client = new MongoClient(url);
   try {

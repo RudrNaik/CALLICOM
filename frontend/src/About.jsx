@@ -7,7 +7,7 @@ import AboutPortraits from "./components/AboutPortraits";
 function About() {
   return (
     <div
-      className="bg-repeat bg-[length:1920px_1080px] w-screen min-h-screen"
+      className="bg-repeat bg-[length:1920px_1080px] w-full min-h-screen"
       style={{ backgroundImage: `url(${background})` }}
     >
       <div className="py-10"></div>
