@@ -54,10 +54,7 @@ export default function App() {
           <Route path="/CALLICOM/Armory" element={<Armory />} />
           <Route path="/CALLICOM/CharacterManager" element={<CharManager />} />
           <Route path="/CALLICOM/Campaigns" element={<Campaigns />} />
-          <Route
-            path="/CALLICOM/CharacterCreator"
-            element={<CharacterCreator />}
-          />
+          <Route path="/CALLICOM/CharacterCreator" element={<CharacterCreator />} />
           <Route path="/signup" element={<SignUp />} />
         </Routes>
       </div>
