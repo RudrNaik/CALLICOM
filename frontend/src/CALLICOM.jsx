@@ -120,6 +120,7 @@ const TerminalPage = () => {
             transition={{ duration: 0.3, delay: 0.8 }}
             className="flicker"
           >
+            {isLoggedIn ? (
               <TerminalPanel
                 title="Briefings"
                 subtitle="CALLICOM Proprietary briefing software"
@@ -127,6 +128,15 @@ const TerminalPage = () => {
                 onHover={handleHover}
                 link={"/CALLICOM/campaigns"}
               />
+            ) : (
+              <TerminalPanel
+                title="Briefings [Requires login]"
+                subtitle="[WARNING: UNCC IDENT NOT FOUND]"
+                icon="⚠️"
+                onHover={handleHover}
+                link={"/login"}
+              />
+            )}
           </motion.div>
 
           <motion.div
