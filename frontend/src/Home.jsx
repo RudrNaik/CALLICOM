@@ -13,7 +13,7 @@ function Calamari() {
       style={{ backgroundImage: `url(${background})` }}
     >
       <section className="flex w-full h-[700px]">
-        <Sidebar />
+        <Sidebar className="hidden sm:block" />
         <Carousel />
       </section>
 

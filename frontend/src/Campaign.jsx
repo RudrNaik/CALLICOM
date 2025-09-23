@@ -31,7 +31,7 @@ function Campaigns() {
   const isInitialLoading = loadingCampaignData || isLoading;
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    //const token = localStorage.getItem("token");
     // if (!token) {
     //   console.log("No token found, redirecting to login.");
     //   navigate("/login");
@@ -270,7 +270,7 @@ function Campaigns() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.3, delay: 0 }}
-          className="flicker"
+          className="flicker hidden md:block"
         >
           <TopDeploymentBanner
             unit={currentCampaign?.unit || "CALAMARI OPERATIONAL SUPPORT GROUP"}
@@ -281,7 +281,7 @@ function Campaigns() {
         </motion.div>
 
         {/* THREE COLUMN GRID */}
-        <div className="flex flex-grow:1 flex-shrink:0 gap-8">
+        <div className="flex gap-8">
           {/* CAMPAIGN VIEW */}
           <motion.div
             initial={{ opacity: 0 }}

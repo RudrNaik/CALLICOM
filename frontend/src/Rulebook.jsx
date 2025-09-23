@@ -5,7 +5,7 @@ import Intro from "./components/Rulebook/Introduction";
 const Rulebook = () => {
   return (
     <div
-      className="font-[Geist_Mono] bg-repeat bg-[length:1920px_1080px] w-full min-h-screen text-white justify-center"
+      className="font-[Geist_Mono] bg-repeat bg-[length:1920px_1080px] w-full text-white justify-center"
       style={{ backgroundImage: `url(${background})` }}
     >
       <div className="py-10"> </div>
