@@ -213,7 +213,7 @@ function EquipmentSelection({
         </div>
       </div>
 
-      <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid sm:grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Weapons */}
         {/* {["primaryWeapon", "secondaryWeapon"].map((slot) => (
           <WeaponSlot
@@ -246,7 +246,7 @@ function EquipmentSelection({
           charActive={charActive}
         />
         {/* Grenades */}
-        <div className="bg-neutral-800/80 border-l-8 border-orange-400 p-6 rounded shadow">
+        <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-400 p-6 rounded shadow">
           <h3 className="font-semibold text-orange-300">Grenades</h3>
 
           {isEditing ? (
@@ -318,7 +318,7 @@ function EquipmentSelection({
         </div>
 
         {/* Armor Class */}
-        <div className="bg-neutral-800/80 border-l-8 border-orange-400 p-6 rounded shadow">
+        <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-400 p-6 rounded shadow">
           <h3 className="font-semibold text-orange-300">Armor Class</h3>
           {isEditing ? (
             <input
@@ -385,7 +385,7 @@ function EquipmentSelection({
         </div>
 
         {/* Gadget */}
-        <div className="bg-neutral-800/80 border-l-8 border-orange-400 p-6 rounded shadow col-span-2">
+        <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-400 p-6 rounded shadow col-span-2">
           <h3 className="font-semibold text-orange-300">Class Gadget</h3>
           {isEditing ? (
             <select
@@ -459,7 +459,7 @@ function EquipmentSelection({
         </div>
 
         {/* inventory */}
-        <div className="bg-neutral-800/80 border-l-8 border-orange-400 p-6 rounded shadow col-span-2">
+        <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-400 p-6 rounded shadow col-span-2">
           <h3 className="font-semibold text-orange-300">Inventory</h3>
           {isEditing ? (
             <textarea

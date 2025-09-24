@@ -112,9 +112,17 @@ function Campaigns() {
           throw new Error("Invalid data format");
         }
 
-        const filtered = data.filter(
-          (char) => char.campaignId === currentCampaignId
-        );
+        // let str = "Chile2018, Siberia2022";
+        // console.log(str.replace(/\s/g, "").split(","));
+
+        const filtered = data.filter((char) => {
+          if (!char?.campaignId) return false; // safely skip
+          return char.campaignId
+            .replace(/\s/g, "")
+            .split(",")
+            .includes(currentCampaignId);
+        });
+
         setCharacters(filtered);
         setIsLoading(false);
       })
@@ -162,8 +170,8 @@ function Campaigns() {
     const newMission = {
       id: `mission${missions.length + 5}`,
       location: "",
-      lat:"",
-      lon:"",
+      lat: "",
+      lon: "",
       campaignId: currentCampaign,
       Name: "New Mission",
       Type: "Side Mission",
