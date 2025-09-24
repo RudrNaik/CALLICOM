@@ -145,7 +145,7 @@ const WeaponSlot = ({
   return (
     <div
       key={`${slot}-${characterCallsign}`}
-      className="bg-neutral-800/80 border-l-8 border-orange-400 p-6 rounded shadow"
+      className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-400 p-6 rounded shadow"
     >
       <h3 className="font-semibold text-orange-300 mb-2">
         {slot === "primaryWeapon" ? "Primary Weapon" : "Secondary Weapon"}
@@ -201,7 +201,7 @@ const WeaponSlot = ({
                 TOTAL: {totalTurns} turns | MAG: {magazineSize} turns
               </div>
               {charActive && (
-                <div className="flex justify-around items-start gap-5 mt-2">
+                <div className="flex justify-left items-start gap-5 mt-2">
                   {/* Left: Counters + Buttons stacked vertically */}
                   <div className="flex flex-col">
                     <div className="text-xs text-white">

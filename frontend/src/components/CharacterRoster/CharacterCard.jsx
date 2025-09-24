@@ -2,7 +2,11 @@ function CharCard({ character, onSelect, onDelete }) {
   return (
     <div
       onClick={() => onSelect(character)}
-      className="relative bg-neutral-800 border border-orange-500 hover:border-orange-400 rounded p-4 shadow text-white"
+      className="relative  bg-neutral-900
+          bg-[radial-gradient(circle,_rgba(255,100,0,0.06)_1px,_transparent_1px)]
+          [background-size:8px_8px] border border-orange-500 hover:border-orange-400 rounded p-4 shadow text-white hover:bg-orange-500/50 hover:shadow-inner
+          transition duration-200
+          group cursor-pointer"
     >
       {/* Delete button */}
       <button
@@ -12,7 +16,7 @@ function CharCard({ character, onSelect, onDelete }) {
               `Are you sure you want to delete ${character.callsign}?`
             )
           ) {
-            onDelete(character.callsign); 
+            onDelete(character.callsign);
           }
         }}
         className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-sm"
@@ -29,6 +33,10 @@ function CharCard({ character, onSelect, onDelete }) {
       <p className="text-sm text-gray-400">
         <span className="font-semibold text-white text-xs">Class:</span>{" "}
         {character.class} {character.multiClass}
+      </p>
+      <p className="text-sm text-gray-400">
+        <span className="font-semibold text-white text-xs">BG:</span>{" "}
+        {character.background}
       </p>
       <p className="text-sm text-gray-400">
         <span className="font-semibold text-white">XP:</span>{" "}

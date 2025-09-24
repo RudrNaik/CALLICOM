@@ -28,7 +28,7 @@ const CharManager = () => {
     >
       <div className="py-10"></div>
       <div
-        className="grid grid-cols-1 gap-6 p-6"
+        className="p-6"
         style={{ fontFamily: "Geist_Mono" }}
       >
         <motion.div

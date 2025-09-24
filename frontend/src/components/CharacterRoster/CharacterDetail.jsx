@@ -14,6 +14,7 @@ function CharacterDetail({ character, onUpdate, user }) {
   if (!character) return null;
 
   const [isEditing, setIsEditing] = useState(false);
+  const [isEditingBio, setIsEditingBio] = useState(false);
   const [isEditingEquipment, setIsEditingEquipment] = useState(false);
   const [xpRemaining, setXpRemaining] = useState(character.XP || 0);
   const [editedSkills, setEditedSkills] = useState({ ...character.skills });
@@ -35,6 +36,7 @@ function CharacterDetail({ character, onUpdate, user }) {
   const [charActive, setCharActive] = useState(false);
   const [multiClass, setMulticlass] = useState(character.multiClass || "");
   const [showMultiClassModal, setShowMultiClassModal] = useState(false);
+  const [Biography, setBio] = useState("");
 
   useEffect(() => {
     if (character) {
@@ -46,6 +48,7 @@ function CharacterDetail({ character, onUpdate, user }) {
       setCampaignInput(character.campaignId || "");
       setMulticlass(character.multiClass || "");
       setCharActive(false);
+      setBio(character?.Bio || "N/A");
     }
   }, [character]);
 
@@ -236,6 +239,43 @@ function CharacterDetail({ character, onUpdate, user }) {
     }
   };
 
+  const patchBio = async (bio) => {
+    const updates = {
+      Bio: bio,
+    };
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.log("No token found, redirecting to login.");
+      navigate("/login");
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `https://callicom.onrender.com/api/characters/${user}/${character.callsign}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(updates),
+        }
+      );
+
+      if (res.ok) {
+        setIsEditingBio(false);
+        onUpdate(); // refresh from server if you like
+      } else {
+        alert("Failed to update Bio.");
+      }
+    } catch (err) {
+      console.error("Error updating Bio:", err);
+      alert("Error updating Bio.");
+    }
+  };
+
   const handleSaveChanges = async () => {
     const updates = {
       XP: xpRemaining,
@@ -276,18 +316,19 @@ function CharacterDetail({ character, onUpdate, user }) {
 
   return (
     <div
-      className="max-w-5xl mx-auto p-6 space-y-6 text-white"
+      className="mx-auto p-6 space-y-3 text-white"
       style={{ fontFamily: "Geist_Mono" }}
     >
-      <h1 className="text-3xl font-bold text-orange-400 mb-1">
+      <h1 className="text-4xl font-bold text-orange-400 mb-1">
         {character.name} [{character.callsign}]
       </h1>
-      <h2 className="text-gray-400">
+      <h2 className="text-gray-400 mb-5">
         {character.class} {character.multiClass}
       </h2>
+      
 
       <div className="relative inline-block group">
-        <h2 className="text-xl font-bold text-orange-400 mt-2 mb-0">
+        <h2 className="text-2xl font-bold text-orange-400 mt-4 mb-0">
           Attributes
         </h2>
 
@@ -383,7 +424,7 @@ function CharacterDetail({ character, onUpdate, user }) {
 
           {isEditing && !multiClass && (
             <button
-              disabled = {xpRemaining < 20}
+              disabled={xpRemaining < 20}
               onClick={() => setShowMultiClassModal(true)}
               className="bg-orange-600 hover:bg-orange-700 disabled:bg-gray-700 disabled:hover:bg-gray-800 px-4 py-2 rounded"
             >
@@ -448,6 +489,42 @@ function CharacterDetail({ character, onUpdate, user }) {
         addEmergencyDie={addEmergencyDie}
       />
 
+      {/* Biography */}
+      <h2 className="text-xl font-bold text-orange-400 mt-2 mb-0.5">
+        Biography
+      </h2>
+      <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-400 p-6 rounded shadow col-span-2">
+        {isEditingBio ? (
+          <textarea
+            className="w-full bg-neutral-900 text-white p-2 rounded resize-y min-h-[100px]"
+            placeholder="UNCC LC-514-A 'Formal Background'"
+            value={Biography}
+            onInput={(e) => setBio(e.target.value)}
+          />
+        ) : (
+          <p className="whitespace-pre-wrap text-xs mt-1">
+            {Biography || "..."}
+          </p>
+        )}
+      </div>
+
+      {isEditingBio ? (
+        <button
+          onClick={() => patchBio(Biography)}
+          className="bg-orange-600 hover:bg-orange-700 px-4 py-1 rounded"
+        >
+          Close
+        </button>
+      ) : (
+        <button
+          onClick={() => setIsEditingBio(true)}
+          className="bg-orange-600 hover:bg-orange-700 px-4 py-1 rounded"
+        >
+          Edit
+        </button>
+      )}
+
+      {/* Campaign Assignment */}
       <div className="mt-6">
         <h2 className="text-xl font-bold text-orange-400 mb-2">
           Assign to Campaign

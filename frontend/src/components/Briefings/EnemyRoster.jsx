@@ -13,7 +13,7 @@ function EnemyView() {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed)) {
           setEnemyIds(parsed);
-          console.log("Loaded enemy IDs:", parsed);
+          //console.log("Loaded enemy IDs:", parsed);
         }
       } catch (err) {
         console.error("Failed to parse enemy-ids:", err);
