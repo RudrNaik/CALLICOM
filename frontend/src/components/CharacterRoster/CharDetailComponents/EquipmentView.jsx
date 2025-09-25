@@ -227,6 +227,7 @@ function EquipmentSelection({
             charActive={charActive}
           />
         ))} */}
+
         <WeaponSlot
           slot={"primaryWeapon"}
           weapon={gear["primaryWeapon"]}
@@ -245,6 +246,7 @@ function EquipmentSelection({
           characterCallsign={character.callsign}
           charActive={charActive}
         />
+
         {/* Grenades */}
         <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-400 p-6 rounded shadow">
           <h3 className="font-semibold text-orange-300">Grenades</h3>
