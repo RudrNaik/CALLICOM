@@ -289,7 +289,7 @@ function Campaigns() {
         </motion.div>
 
         {/* THREE COLUMN GRID */}
-        <div className="flex gap-8">
+        <div className="md:flex sm:grid-cols-1 sm:gap-y-2 gap-4">
           {/* CAMPAIGN VIEW */}
           <motion.div
             initial={{ opacity: 0 }}

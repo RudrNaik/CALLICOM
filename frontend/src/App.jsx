@@ -13,6 +13,7 @@ import Home from "./Home";
 import Campaigns from "./Campaign";
 import SignUp from "./SignUp";
 import Navbar from "./components/Navbar";
+import HexTest from "./HexTest"
 import { AuthProvider } from "./AuthContext";
 import "./App.css"
 import { useEffect } from "react";
@@ -56,6 +57,7 @@ export default function App() {
           <Route path="/CALLICOM/Campaigns" element={<Campaigns />} />
           <Route path="/CALLICOM/CharacterCreator" element={<CharacterCreator />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/hextext" element={<HexTest/>} />
         </Routes>
       </div>
     </Router>
