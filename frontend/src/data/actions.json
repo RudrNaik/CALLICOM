@@ -46,7 +46,7 @@
       "color":"bg-neutral-800/80",
       "type": "Half",
       "icon": "/Half_Action.svg",
-      "description": "[Defensive]\n Disengage from a fight and slip away.\n\nWhen disengaging, do an opposed stealth roll against an enemy's alertness. Upon success, you are disengaged. Enemies will search your last known position, and in combat it allows you to sneak around, but any offensive action will re-engage you. You can aim however.\n\n When moving while disengaged, you will roll stealth checks against an enemy's alertness to remain disengaged. Upon firing on an enemy or failing a check, you re-engage with them and are back in the fight at the end of the initiative queue."
+      "description": "[Defensive]\n Disengage from a fight and slip away.\n\nWhen disengaging, do an opposed stealth roll against an enemy's alertness. Upon success, you are disengaged. Enemies will search your last known position, and in combat it allows you to sneak around, but any offensive action will re-engage you. You can aim however.\n\n When moving while disengaged, you will roll stealth checks against an enemy's alertness to remain disengaged. Upon firing on an enemy or failing a check, you re-engage with them.\n\n You can also search for disengaged enemies using a bonus action."
     },
     {
       "name": "Repair",
