@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import equipmentData from "../../data/Equipment.json";
 import SkillsView from "../CharacterRoster/CharDetailComponents/SkillsView";
 import skillGroups from "../../data/skills.json";
+import SpecView from "../CharacterRoster/CharDetailComponents/SpecView";
 
 function getGadgetTitleById(id) {
   const match = equipmentData.find((item) => item.id === id);
@@ -150,9 +151,18 @@ export default function CharacterSheetModal({ char, open, onClose }) {
                   increaseSkill={() => {}}
                   decreaseSkill={() => {}}
                 />
+
+                <h2 className="mt-2 text-md font-bold text-orange-400">
+                  Specializations:
+                </h2>
+                <SpecView
+                  specializations={char.specializations}
+                  isEditing={false}
+                  removeSpec={() => {}}
+                />
               </div>
             )}
-            {tab === "bio" && (<BioSection char={char} />)}
+            {tab === "bio" && <BioSection char={char} />}
           </motion.div>
         </motion.div>
       )}
@@ -269,9 +279,7 @@ function BioSection({ char }) {
     <div className="rounded-xl border border-orange-500/50 bg-neutral-900/60 p-4 mt-4">
       <p className="text-orange-300 text-lg font-bold mb-3">BIOGRAPHY</p>
       <div>
-        <p className=" whitespace-pre-line text-xs"> 
-          {bio}
-        </p>
+        <p className=" whitespace-pre-line text-xs">{bio}</p>
       </div>
     </div>
   );

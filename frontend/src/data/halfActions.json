@@ -11,7 +11,7 @@
       "type": "Full",
       "color":"bg-neutral-800/80",
       "icon": "/Half_Action.svg",
-      "description": "[Support]\n Reload your selected weapon, restoring your round count to full.\n\n, when reloading, you can shoot again in the same turn. However- it will apply a -1 to your shot."
+      "description": "[Support]\n Reload your selected weapon, restoring your round count to full.\n\n, when reloading, you can shoot again in the same turn. However- it will apply a -1 to your shot. \n\n Reloading must be declared before shooting. Not after."
     },
     {
       "name": "Patch up",
@@ -25,7 +25,7 @@
       "type": "Half",
       "color":"bg-neutral-800/80",
       "icon": "/Half_Action.svg",
-      "description": "[Support] [Leadership]\n Rally your team and other allies.\n\nOnce per turn one team member can rally, using your leadership skill to bolster the morale of friendlies. The bonus thresholds are: \n\n  < 1 : no bonuses\n 2-4 : +1 bonus to all actions for the next turn.\n 5-6+: +1 dice to all friendly actions the next turn. \n\n (You also have to type something in character for it to count)."
+      "description": "[Support] [Leadership]\n Rally your team and other allies.\n\nOnce per turn a team member can rally, using your leadership skill to bolster the morale of friendlies. The bonus thresholds are: \n\n  < 1 : no bonuses\n 2-4 : +1 bonus to all actions for the next turn.\n 5-6+: +1 dice to all friendly actions the next turn. \n\n Each team member can rally once per encounter  (You also have to type something in character for it to count)."
     }
   ]
   
