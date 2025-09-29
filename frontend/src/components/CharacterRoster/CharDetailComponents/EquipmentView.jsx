@@ -334,7 +334,35 @@ function EquipmentSelection({
               }
             />
           ) : (
-            <p>AC{gear.armorClass}</p>
+            <p>
+              AC{gear.armorClass}
+              {gear.armorClass == 0 && (
+                <p className="text-xs text-neutral-400">
+                  No maluses for moving and shooting. -1 for sprinting and
+                  shooting.
+                </p>
+              )}
+              {gear.armorClass == 1 && (
+                <p className="text-xs text-neutral-400">
+                  No Bonuses
+                </p>
+              )}
+              {gear.armorClass == 2 && (
+                <p className="text-xs text-neutral-400">
+                  -1 to movement related checks [Acrobatics][Jump][Climb][Endurance]
+                </p>
+              )}
+              {gear.armorClass == 3 && (
+                <p className="text-xs text-neutral-400">
+                  -2 to movement related checks [Acrobatics][Jump][Climb][Endurance]
+                </p>
+              )}
+              {gear.armorClass >= 4 && (
+                <p className="text-xs text-neutral-400">
+                  [N/A // Cannot have an AC past 3.]
+                </p>
+              )}
+            </p>
           )}
 
           {/* Medicine and meds. */}

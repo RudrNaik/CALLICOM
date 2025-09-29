@@ -4,21 +4,21 @@
       "color":"bg-neutral-800/80",
       "type": "Movement",
       "icon": "/Half_Action.svg",
-      "description": "Move within one range band (Close Range).\n\nWhile moving, if you do any actions you will take a -1 to all rolls because of it."
+      "description": "Move within one range band (Close Range).\n\nWhile moving, if you do any actions you will take a -1 to all rolls because of it. If using AC0 armor, this is negated."
     },
     {
       "name": "Sprint",
       "type": "Movement",
       "color":"bg-neutral-800/80",
       "icon": "/Half_Action.svg",
-      "description": "Sprint up to two range bands (Medium Range) at a blistering pace.\n\nYou can do actions while sprinting, but not too well. you suffer a -2 to all actions while sprinting with some exceptions"
+      "description": "Sprint up to two range bands (Medium Range) at a blistering pace.\n\nYou can do actions while sprinting, but not too well. you suffer a -2 to all actions while sprinting. If using AC0 armor, this is reduced to -1."
     },
     {
       "name": "Flank",
       "type": "Movement",
       "color":"bg-neutral-800/80",
       "icon": "/Half_Action.svg",
-      "description": "Move to flank someone. \n\n When flanking, it needs to be declared in advance. As such, you suffer a malus depending on distance travelled to all actions done while flanking per movement rules. However- when flanking a target or a piece of cover, you negate any cover bonuses they may have. \n\nTo determine if a target is being flanked, draw imaginary lines from the hexe faces of adjacent cover. If the shooter is in hexes behind those lines, then they are considered being flanked."
+      "description": "Move to flank someone. \n\n When flanking, it needs to be declared in advance. As such, you suffer a malus depending on distance travelled to all actions done while flanking per movement rules. However- when flanking a target or a piece of cover, you negate any cover bonuses they may have. \n\nTo determine if a target is being flanked, draw imaginary lines from the hex faces of adjacent cover outwards of the target. If the shooter is in hexes behind those lines, then they are considered being flanked."
     }
   ]
   

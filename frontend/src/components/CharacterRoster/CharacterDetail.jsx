@@ -325,7 +325,6 @@ function CharacterDetail({ character, onUpdate, user }) {
       <h2 className="text-gray-400 mb-5">
         {character.class} {character.multiClass}
       </h2>
-      
 
       <div className="relative inline-block group">
         <h2 className="text-2xl font-bold text-orange-400 mt-4 mb-0">
@@ -450,6 +449,20 @@ function CharacterDetail({ character, onUpdate, user }) {
         increaseSkill={increaseSkill}
         decreaseSkill={decreaseSkill}
       />
+
+      <div className="relative inline-block group">
+        <h2 className="text-xl font-bold text-orange-400">Specializations</h2>
+
+        {/* Tooltip modal */}
+        <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-1">
+          <p>
+            Specialiations provide a{" "}
+            <span className="text-orange-500 font-bold">+1</span> to rolls when
+            conditions are met. For example, a specialization in Carbines
+            provides a +1 when rolling to attack with a Carbine.
+          </p>
+        </div>
+      </div>
 
       {specializations.length > 0 && (
         <SpecView
