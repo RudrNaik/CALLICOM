@@ -192,7 +192,7 @@
         "class": "Combat Engineer",
         "cost": 17000,
         "description": "Nicknamed the 'straw', wire guided shoulder fired munitions are just as the name says: wire guided. The FCS is built into the launcher itself, and allows the missile to be guided in by the user. As such- it's faster than the guided launchers, but slower than unguided launchers. While at the same time also allowing for much more damage when they connect. Just dont flinch while using it.",
-        "rulesText": "Range Modifiers: Guaranteed hit if target is tracked and no countermeasures deployed\nCapacity: 1\nAmmo: 2\nPen: 3\nDamage: 12"
+        "rulesText": "Guaranteed hit if target is tracked and no countermeasures deployed. Can be guided where every 2 hexes, you can change its direction of travel by one hex from its current path.\n Opposed [Alertness] check to notice, reaction is either countermeasures, bracing, or evasion.\nCapacity: 1\nAmmo: 2\nPen: 3\nDamage: 12"
     },
     {
         "id": "guided-launcher",
@@ -201,7 +201,7 @@
         "class": "Combat Engineer",
         "cost": 17000,
         "description": "Top attack, PLOS, and others. Guided rocket launchers are able to be much better controlled for the expense of being a bit slower and much more expensive. However, they hit harder, and will take out most vehicles easily.",
-        "rulesText": "Range Modifiers: Guaranteed hit if target is locked and no countermeasures deployed\nCapacity: 1\nAmmo: 2\nPen: 3\nDamage: 15"
+        "rulesText": "Guaranteed hit if target is locked and no countermeasures deployed, Opposed [Alertness] check to notice, reaction is either countermeasures, bracing, or evasion.\nCapacity: 1\nAmmo: 2\nPen: 3\nDamage: 15"
     },
     {
         "id": "amr",
@@ -210,7 +210,7 @@
         "class": "Combat Engineer",
         "cost": 0,
         "description": "From the classics of the AW-50 and M107 Barret to modern options such as the Gepard GM6 Lynx, Anti Material rifles come in all shapes and sizes but offer the same capability: big bullet, big penetration, big damage. Anti Material rifles can penetrate heavy armor and disable dedicated vehicle systems permanently. Such as APS, tracks, or engines. On lighter vehicles, they can punch through the armor, killing passengers or gunnners.",
-        "rulesText": "Range Modifiers: -1NS | -1C | +1L | +2ELR\n Ammo: 10\nPen: 3\nDamage: 10"
+        "rulesText": "Range Modifiers: +1 Bipod | -2C | +1L | +2ELR\n Ammo: 10\nPen: 3\nDamage: 10"
     },
     {
         "id": "semenov-railgun",
@@ -219,7 +219,7 @@
         "class": "Combat Engineer",
         "cost": 30000,
         "description": "Advanced, experimental Railgun design from Gold Coast. Utilizes electromagnetics to accelerate a 14.5 Anti-Material round from 0 to Mach 3 in under a second. We are not liable for hearing damage caused by extensive use.",
-        "rulesText": "Range Modifiers: -1NS | -2C | +1L\n Ammo: 10\nPen: 4\nDamage: 14\n\nRequires a turn of charge-up before firing.\nWill cause characters within the room or round path to become Suppressed."
+        "rulesText": "Range Modifiers: +1 Bipod | -2C | +1L | +2ELR\n Ammo: 10\nPen: 4\nDamage: 14\n\nRequires a turn of charge-up before firing.\nWill cause characters within the room or round path to become Suppressed."
     },
     {
         "id": "T-ENG",
@@ -231,9 +231,18 @@
         "title": "XMQ-16 Fire Hornet",
         "parentId": "T-ENG",
         "class": "Technical Engineer",
-        "cost": 30000,
+        "cost": 20000,
         "description": "Taking the concept of the RQ-16 T-HAWK and MQ-8 Fire Scout, the Fire Hornet combines the concepts into a smaller, quadcopter platform. Equipped with a gun gimble and BUDDI Spotting software, the Fire Scout offers engineers the flexibility to fight from multiple angles, or flank targets they can't get to from the sky.",
-        "rulesText": "L-wep: 1 | Endurance: 1 | Notice: 2 | Investigation: 1 \n 5 HP | AC:0 \n [Airborne] [Repairable] "
+        "rulesText": "L-wep: 1 | Endurance: 1 | Notice: 2 | Investigation: 1 \nDMG 4 | PEN 1 | Range: +1 C, -1 L, -2 ELR | 6 turns of ammo \n 10 HP | AC:0 \n [Airborne] [Repairable] "
+    },
+    {
+        "id": "sniper-sentry",
+        "title": "XSQ-10 RedEye",
+        "parentId": "T-ENG",
+        "class": "Technical Engineer",
+        "cost": 9000,
+        "description": "Originally the basis for the Demo Dog and Fire Hornet gimble mount, the RedEye is a standalone, remote control sniper turret that can be deployed to provide sniper cover over an area. Just make sure someone doesnt shoot back at it. It's fragile.",
+        "rulesText": "Range Modifiers: -2C | +1L | +2ELR\n Ammo: 5\nPen: 2\nDamage: 7\n Hp: 5 \n [Ground][Repairable]"
     },
     {
         "id": "demo-dog",
@@ -258,7 +267,7 @@
         "title": "XMQ-88 Demo-Dog [Stealth]",
         "parentId": "T-ENG",
         "class": "Technical Engineer",
-        "cost": 6000,
+        "cost": 7000,
         "description": "Customized stealth package for the demo-dog. Originally created for the Special Reconaissance teams and SOCOM requirements, the package installs whisper quiet servos, strips unecessary armor, and swaps the standard belt fed GCR-500 for a supressed .300 blackout 'Kitty Kat' version.",
         "rulesText": "DMG 4 | PEN 1 | Range: +1 C, -1 L, -2 ELR | 6 turns of ammo | +1 dice to stealth checks. AC:0"
     },
@@ -267,7 +276,7 @@
         "title": "XMQ-88 Demo-Dog [Marksman]",
         "parentId": "T-ENG",
         "class": "Technical Engineer",
-        "cost": 8000,
+        "cost": 10000,
         "description": "Dedicated marksman variant for Long Range Recon and endurance. Strips down the armor much like the stealth variant in favor of an advanced sensor suite.",
         "rulesText": "DMG 6 | PEN 2 | Range: -1 C | +1 L | -1 ELR | 6 turns of ammo | +1 dice to notice checks, AC:0"
     },
@@ -276,18 +285,18 @@
         "title": "XMQ-88 Demo-Dog [Gunner]",
         "parentId": "T-ENG",
         "class": "Technical Engineer",
-        "cost": 5000,
+        "cost": 15000,
         "description": "Based off of prototypes found in 2018, the Gunner variant offers more firepower and ammo in exchange for poor heat dispersion due to the gimbal mount.",
         "rulesText": "DMG 5 | PEN 2 | Range: +1 M , -1 L , -1 ELR | 9 turns of ammo | Can supress for at most 3 turns before barrel overheats or belt jams."
     },
     {
         "id": "LMD",
-        "title": "XMQ-88 UCAV 'Magic Missile'",
+        "title": "XMQ-17 UCAV 'Magic Missile'",
         "parentId": "T-ENG",
         "class": "Technical Engineer",
         "cost": 0,
         "description": "The whir of electric motors and the buzz of small drones have become the new age stuka siren. Equipped with a shaped charge warhead, 'magic missiles' are guided by their operators onto targets such as tanks or infantry before detonating. Useful against dug in targets and some armored vehicles.",
-        "rulesText": "8 dmg, AT. When deployed, user's turn ends immediately. When attacking an enemy, the defender rolls acrobatics if they wish to dodge, weapons if they want to shoot it out of the sky. Uses a Drive check when deployed. Fumbles pre-detonate the warhead."
+        "rulesText": "DMG 8, PEN 3. When deployed, user's turn ends immediately. When attacking an enemy, the defender rolls acrobatics if they wish to dodge, weapons if they want to shoot it out of the sky. Uses a Drive check when deployed. Fumbles pre-detonate the warhead."
     },
     {
         "id": "F-SUP",
@@ -304,13 +313,22 @@
         "rulesText": "H-Weapons attacking roll vs Acrobatics defender roll\nRequires a line of sight to the sky, along with minimal obstruction. One turn setup.\nCannot hit targets inside of buildings or with strong overhead cover.\n8 DMG\nPen: 1\nCap: 1\nAmmo: 8"
     },
     {
+        "id": "x89-he",
+        "title": "X-89 HE",
+        "parentId": "F-SUP",
+        "class": "Fire Support",
+        "cost": 0,
+        "description": "Standard High Explosive ordnance.",
+        "rulesText": "8 DMG | 2 hex AOE"
+    },
+    {
         "id": "x89-acerm",
         "title": "X-89 ACERM rounds (Guided)",
         "parentId": "F-SUP",
         "class": "Fire Support",
         "cost": 1500,
         "description": "Guided rounds that change trajectory mid air to strike a target accurately.",
-        "rulesText": "Adds an extra dice to your attacking roll, increases Pen to 2."
+        "rulesText": "Adds an extra dice to your attacking roll, increases Pen to 2. 8 DMG | 1 hex AOE"
     },
     {
         "id": "x89-smk",
@@ -346,7 +364,7 @@
         "class": "Fire Support",
         "cost": 700,
         "description": "Hangs in the sky and illuminates a wide area, also rings the dinnerbell to where the fight is.",
-        "rulesText": "No DMG\nRemoves all lighting conditions in an area.\nBlinds Thermal and Night vision."
+        "rulesText": "No DMG\nRemoves all lighting and weather conditions in an area.\nBlinds Thermal and Night vision."
     },
     {
         "id": "resupply-bag",
@@ -355,7 +373,7 @@
         "class": "Fire Support",
         "cost": 0,
         "description": "A bag of assorted ammo types. Includes auto-feeders to rapidly refill magazines with them.",
-        "rulesText": "Resupplies all ammo and grenades.\nCan only be deployed once."
+        "rulesText": "Resupplies all ammo and grenades.\nHas same amount of charges as team members."
     },
     {
         "id": "spitfire-feeder",
@@ -364,7 +382,7 @@
         "class": "Fire Support",
         "cost": 10000,
         "description": "Utilizing a backpack feeder and a gyroscopic camera mount, the spitfire allows you to put down an unmatched amount of firepower at the expense of melting barrels and making the logistics officer incredibly angry at you.",
-        "rulesText": "The stabilizer removes the ability to aim in exchange for longer suppression to a max of 3 turns. If suppression isn’t stopped before 3 turns, then the barrel overheats and you need a turn to replace it.\nScorpion feeder can be shot, and requires a turn to fix it."
+        "rulesText": "The stabilizer removes the ability to aim in exchange for an extra +1 to the supression saturation threshold. Allows the user to supress a second set of six hexes. Barrels melt at three turns of consequtive supression. reloading in the same turn has no penalty."
     },
     {
         "id": "juggernaut-suit",
@@ -374,6 +392,15 @@
         "cost": 25000,
         "description": "Repurposed EOD suit equipped with a half exo to assist with movement. Provides a two stage armor system, where the outer layer of armor ‘soaks’ wounds before it begins to strip and fall apart with further impacts, leaving the user with AC1 armor once it’s shredded.",
         "rulesText": "The suit can soak up to 200 HP (MoS x weapon damage) from enemies.\nWhen shot at, instead of rounds missing when a check is failed, the armor soaks the base damage of the weapon (MoS of 1) and it’s deducted from the health pool.\nWhen this health pool reaches zero, the user will drop down to AC1."
+    },
+    {
+        "id": "mp-aps",
+        "title": "MP-APS",
+        "parentId": "F-SUP",
+        "class": "Fire Support",
+        "cost": 13000,
+        "description": "A man portable version of the Active Protection System. A hard kill countermeasure for defeating most munitions such as 40mms, grenades, rockets, and even drones. When deployed, it shines a brght green light on areas it is protecting when active. Has 3 consequtive charges. Each turn when used consumes a charge.",
+        "rulesText": "Deployable on most terrain, benefits from cover bonuses. Destroys all munitions from UCAVs, 40mms, Rockets, and grenades in a five hex radius. Won't destroy friendly munitions, but does lead to enemy munitions detonating pre-maturely. Protects for one turn when active. Requires two turns to recharge."
     },
     {
         "id": "Medic",
@@ -403,7 +430,7 @@
         "title": "Shock Nanite Kit (SNK)",
         "parentId": "Medic",
         "class": "Medic",
-        "cost": 2500,
+        "cost": 3000,
         "description": "Retooled for giving one final hurrah, Shock Nanites make the user a bit more hardy for a short while, and stops them from going into system shock.",
         "rulesText": "Increase System Shock threshold by 5\nLasts for 1d6 + medical skill level turns"
     },
@@ -412,7 +439,7 @@
         "title": "Traumadol Nanite Kit (TNK)",
         "parentId": "Medic",
         "class": "Medic",
-        "cost": 2000,
+        "cost": 5000,
         "description": "Retooled for killing any and all pain, Truamadol Nanites make the user feel nothing, other than emotion — we didn't disable that just yet.",
         "rulesText": "Temporarily removes all wounds\nLasts for 2 + 1d6 + medical skill level turns"
     },
@@ -421,18 +448,18 @@
         "title": "Adrenal Nanite Kit (DTNK)",
         "parentId": "Medic",
         "class": "Medic",
-        "cost": 2000,
+        "cost": 8000,
         "description": "Created to simulate a release of adrenaline via nanites, the Adrenal Nanites give you a kick of energy in the moment.",
-        "rulesText": "Adds another half action for the user\nLasts for the turn"
+        "rulesText": "Adds another standard action for the user\nLasts for the turn"
     },
     {
         "id": "hank",
         "title": "Nootropic Nanite Kit (HANK)",
         "parentId": "Medic",
         "class": "Medic",
-        "cost": 2000,
+        "cost": 10000,
         "description": "Utilizing the power of nootropics and nicknamed 'high alert', these nanites give you a much more powerful boost of energy as they also mix in adrenaline. Leading to a single use but highly effective combat stimulant.",
-        "rulesText": "Adds another full action for the user once. Further uses can cause a system shock.\nLasts for the turn."
+        "rulesText": "Adds another standard and movement action, reduces maluses from movement by 1.\nLasts for the turn."
     },
     {
         "id": "Recon",
@@ -526,7 +553,7 @@
         "title": "SMRT (Smart) Round",
         "parentId": "Recon",
         "class": "Sharpshooter",
-        "cost": 8000,
+        "cost": 10000,
         "description": "Locks onto a ping and adjusts for bullet drop and windage automatically. Effectively removes the math from shooting, beyond gauging travel time.",
         "rulesText": "Can only be used on marked targets, increases the dice rolled by 1."
     },
@@ -657,7 +684,7 @@
         "title": "Traceback",
         "parentId": "thinkpad",
         "class": "Trapper",
-        "cost": 30000,
+        "cost": 15000,
         "description": "Ping's bigger brother, penetrates into an enemy datalink to trace it back to everything using it. Pings any and every enemy on the local network.",
         "rulesText": "Pings all enemies on a network. Works regardless of cameras. Disabled if EMP'd or DL is jammed. [+4 Defender trace]"
       },
@@ -675,7 +702,7 @@
         "title": "Burnout",
         "parentId": "thinkpad",
         "class": "Trapper",
-        "cost": 30000,
+        "cost": "[???]",
         "description": "Connects to all devices on a network and overclocks the CPU of the to burn and disable them. Takes one turn to overclock, but permanently disables that device if successful. When used against vehicles, it automatically leads to a shutdown of non-essential systems to protect itself, effectively kneecapping them until the reboot proces can start.",
         "rulesText": "Causes a one turn timer to start on all enemy electronics, if the enemies dont react within that turn and disable their equipment- it burns and is permanently disabled. Vehciles electronics are disabled for the next turn and need to restart. [+5 Defender trace]"
       },
@@ -684,7 +711,7 @@
         "title": "Mass Crash",
         "parentId": "thinkpad",
         "class": "Trapper",
-        "cost": 30000,
+        "cost": "[???]",
         "description": "Much like Mass Hack and Burnout, Mass Crash also penetrates into an enemy's network- but goes even deeper. Going as far as to intrude into the local power grid to disable everything in the local area. Lights, power, and all enemy electronics are severed and shut down. Useful for creating either perfect darkness to escape, or an opening to push while hostiles. are confused and dazed.",
         "rulesText": "Same effect as Mass Hack, however also disables all non-natural lighting in the operational area. [+5 Defender trace]"
       }

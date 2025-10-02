@@ -12,6 +12,7 @@
   "x89-ams": {
     "maxRounds": 8,
     "options": [
+      { "id": "x89-he", "label": "HE" },
       { "id": "x89-acerm", "label": "ACERM" },
       { "id": "x89-smk", "label": "SMK" },
       { "id": "x89-srn", "label": "SRN" },
@@ -105,6 +106,12 @@
     "max": 6
   },
   "LMD":{
+    "max": 3
+  },
+  "sniper-sentry":{
+    "max": 5
+  },
+  "mp-aps":{
     "max": 3
   }
 }

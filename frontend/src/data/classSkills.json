@@ -110,7 +110,7 @@
     "classGadget": {
       "id": "Deployable Shield",
       "description": "Deployable shields create instant cover wherever, whenever. perfect for when you just dont have a fortified position, or are too lazy to get into one.",
-      "fluff": "Enginearing my fuckin' LIMIT",
+      "fluff": "Reinforcement, on demand",
       "gameplay":"Creates deployable cover adjacent to the contractor. can be picked back up for re-use. Will be destroyed with rocket launchers and above."
     }
   },
