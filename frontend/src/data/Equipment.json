@@ -97,6 +97,92 @@
         "rulesText": "[Heavy Weapons][Fire Support][Suppression]\nRange modifier: +1 C | -1 M | -3 L | -4 ELR\n PEN: 1 | DMG: 6 \n RSV: 12 | CAP: 6"
     },
     {
+        "id": "grenades",
+        "title": "Grenades",
+        "class": "None",
+        "rulesText": "Handy little tools in a pinch, throwables come in a variety of shapes and sizes with each one designed to carry out a specific task. These tasks range from stealth assassination, infantry removal, concealment, disorientation and anti-armour.",
+        "description": "Shit's rigged to blow get the fuck back-"
+    },
+    {
+        "id": "frag",
+        "title": "Frag Grenades",
+        "parentId": "grenades",
+        "class": "All",
+        "cost": 0,
+        "description": "A bog standard high explosive fragmentation grenade. Light, easy to carry, easier to throw. Useful for many applications.",
+        "rulesText": "[Throw][DMG]\n Follows ranged rules. When thrown in combat, prompts [Throw] vs [Armor] or [Acrobatics]. Out of combat,requires an alertness to check if they react.\n Enemies can also [Brace] as a reaction to boost their armor roll at the cost of -1 to all actions for the next turn.\n If defender chooses to roll acrobatics, you move 2 hexes away from where you are.\n 8 DMG | 1 hex AOE. \n destroys cover and soft walls."
+    },
+    {
+        "id": "flash",
+        "title": "Flashbangs",
+        "parentId": "grenades",
+        "class": "All",
+        "cost": 0,
+        "description": "The power of chemistry, in the palm of your hand. Useful in dissuading people from choosing to shoot back, or to create an opening and interrupt them.",
+        "rulesText": "[Throw][Interrupt]\n Follows ranged rules. When thrown in combat, prompts [Throw] vs [Alertness] for them to turn away or evade.\n 0 DMG | 2 hex AOE. \n Applies 'Concussion' on all targets within the AOE."
+    },
+    {
+        "id": "thermtex",
+        "title": "Thermtex",
+        "parentId": "grenades",
+        "class": "All",
+        "cost": 4000,
+        "description": "The power of chemistry once more, now re-engineered and applied to burn at 2000 degrees celsius, and then detonate into a spectacular explosion. Powerful enough to deal damage to vehicles and burn through armor. Not as effective against people unless stuck... But why would you do that?",
+        "rulesText": "[Throw][AT]\n Follows ranged rules. When thrown in combat, prompts [Throw] vs [Armor] or [Acrobatics]. Out of combat,requires an alertness to check if they react.\n Enemies can also [Brace] as a reaction to boost their armor roll at the cost of -1 to all actions for the next turn.\n If defender chooses to roll acrobatics, you move 2 hexes away from where you are.\n 8 DMG | 1 hex AOE. \n Destroys cover,soft, and hard walls. Can damage armored vehicles"
+    },
+    {
+        "id": "smoke",
+        "title": "Smoke",
+        "parentId": "grenades",
+        "class": "All",
+        "cost": 0,
+        "description": "Creates a plume of smoke around a designated location. Perfect for slipping away from enemies, or covering an advance.",
+        "rulesText": "[Throw][Obscure]\n Follows ranged rules. When thrown in combat, prompts [Throw].\n 0 DMG | 3 hex AOE. \n Applies very dimly lit to the area [-2] for 2 turns starting when it was deployed."
+    },
+    {
+        "id": "knife",
+        "title": "Throwing Knives",
+        "parentId": "grenades",
+        "class": "All",
+        "cost": 0,
+        "description": "Knife to meet you. [Cackling]",
+        "rulesText": "[Throw][Stealth]\n Follows ranged rules. When thrown in combat, prompts [Throw] vs [Acrobatics] or [Armor].\n 7 DMG. \n Makes no noise, and can be aimed to debilitate someone if need be."
+    },
+    {
+        "id": "misc",
+        "title": "Miscellaneous Gear",
+        "class": "None",
+        "rulesText": "Ranging from NVGs to Thermals, Miscellaneous gear is anything not encompassed by any of the classes.",
+        "description": "The violence has escalated."
+    },
+    {
+        "id": "nvg",
+        "title": "Night Vision Goggles",
+        "parentId": "misc",
+        "class": "All",
+        "cost": 0,
+        "description": "Moons out Goons out.",
+        "rulesText": "[Vision][Night]\n Normalizes all lighting conditions. Applies a 'poorly lit' (-1) modifier to Long Range and a 'very poorly lit' (-2) modifier to Extreme Long Range. Ideal for CQB. Counteracts all lighting-based visibility debuffs."
+    },
+    {
+        "id": "irnvg",
+        "title": "IR/Thermal Goggles",
+        "parentId": "misc",
+        "class": "All",
+        "cost": 20000,
+        "description": "The bane of modern warfare.",
+        "rulesText": "[Vision][IR]\n normalizes all lighting and weather conditions. Applies a -2 modifier at Close Range and -1 at Medium Range. Best suited for long-range spotting roles. Counters smoke, and all weather conditions."
+    },
+    {
+        "id": "envg",
+        "title": "Magnetic Vision Goggles",
+        "parentId": "misc",
+        "class": "All",
+        "cost": 35000,
+        "description": "The Future is now old man. ",
+        "rulesText": "[Vision][Magnetics]\n normalizes all lighting and weather conditions. Applies a 'poorly lit' (-1) modifier to Long Range and a 'very poorly lit' (-2) modifier to Extreme Long Range. Allows the user to see through all walls up to medium range when active. Counters smoke and all weather conditions. \n\n Only purchaseable through the Bastogne Martel Foundation."
+    },
+    {
         "id": "Rifleman",
         "title": "Rifleman",
         "class": "None",
