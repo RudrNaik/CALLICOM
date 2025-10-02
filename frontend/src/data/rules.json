@@ -213,12 +213,5 @@
         "mechanic": "Grand Operations",
         "parentId": "GrandOperations",
         "description": "With the larger size of grand operations, it also leads to vehicles becoming much more useful. Depending on the vehicle commandeered, a team can move a much longer distance in a short amount of time. However- there are limitations. \n\n >Light Vehicles [RSOV][LNDCRUSR][RZR]: Move four hexes instead of 1. Can traverse dense terrain but travel speed reduces to normal. Provides little protection if caught in an ambush. \n>Medium Vehicles [HMMWV][MRAP][JLTV]: Move two hexes instead of 1, can traverse dense terrain but travel speed reduces to normal. Provides protection if caught in an ambush, hit a mine, or more.\n >Heavy Vehicles [M1A2 SEPV2][M3A2 IFV][LAV-88]: Move at the same speed as normal. Cannot traverse dense terrain. Provides impeccable protection, firepower, and more in a fight. \n\n All vehicles are immune to endurance checks. Certain vehicles that are amphibious like BMPs or LAVs can cross water without endurance or athletics checks. No vehicles can traverse mountainous terrain."
-    },
-    {
-        "id": "GrandOperations",
-        "title": "Spotting In Grand Operations",
-        "mechanic": "Grand Operations",
-        "parentId": "GrandOperations",
-        "description": "The standard field of view for a team extends out to two hexes in every direction around them if not obstructed. Inclines and dense terrain will block your field of view, while downslopes and open terrain won't obstruct your field of view. Dense terrain also allows you to not be spotted as easily by drones and vehicles.\n\n Engagement distance starts at one adjacent hex over, where enemies are all considered at extreme long range until you move into the same hex where the engagement uses the Tactical Maps. \n\n Vehicles can be noticed in advance through dense terrain if running on petrol, and also can be spotted from up to three 3 out. However- some can also spot from 3 hexes depending on the vehicle's direction of travel and optics. \n\n UAVs such as friendly MQ-9s also can spot enemies in a large area Same with aircraft with SNIPER or LITENING pods and relay the information via Datalink"
     }
 ]

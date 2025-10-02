@@ -203,7 +203,7 @@
         "title": "X-50 PMGL",
         "parentId": "Rifleman",
         "class": "Rifleman",
-        "cost": 0,
+        "cost": 11000,
         "description": "Developed from the XM-25 CDTE, the X-50 Programmable Munition Grenade Launcher is a modernized version of the original system. Bringing along thermal optics, auto-rangefinding, and an improved GUI for displaying the trajectory path. \n also: 'THOONK THOONK THOONK GET AIRBURSTED! ",
         "rulesText": "Range modifier: -3C | +1M | -1L | -2ELR\nAmmo: 6\nUses programmable munitions. These rounds detonate after the distance set, and increase damage against infantry."
     },
@@ -356,7 +356,7 @@
         "class": "Raider",
         "cost": 15000,
         "description": "Renders the user Invisible via an advanced particle refraction display simulating light flowing around them. Makes their silhouette very faint, and almost invisible in low light conditions.",
-        "rulesText": "When in light, the user is translucent, and their silhouette can be seen. Cloak breaks when moving rapidly (Sprinting/Moving) and creates an afterimage trail behind the user.\nAll attacking rolls have to flip a coin. Heads is success. Upon success, they can attack. When active, provides an extra dice to all defense and stealth rolls.\nLasts 3 turns.\nRequires 2 rapid movement turns to recharge, or 4 normal movement turns.\nCan also use a half action to wiggle in place to charge for a normal movement turn."
+        "rulesText": "When in light, the user is translucent, and their silhouette can be seen. Cloak breaks when firing, and creates an afterimage trail behind the user during the turn it's broken.\nAll attacking rolls have to flip a coin. Heads is success. Upon success, they can attack. When active, provides an extra dice to stealth rolls.\nLasts 3 turns.\nRequires 2 rapid movement turns to recharge, or 4 normal movement turns.\nCan also use a bonus action to wiggle in place to charge for a normal movement turn."
     },
     {
         "id": "C-ENG",
@@ -507,7 +507,7 @@
     },
     {
         "id": "x89-he",
-        "title": "X-89 HE",
+        "title": "X-89 HE rounds",
         "parentId": "F-SUP",
         "class": "Fire Support",
         "cost": 0,
@@ -592,8 +592,8 @@
         "parentId": "F-SUP",
         "class": "Fire Support",
         "cost": 13000,
-        "description": "A man portable version of the Active Protection System. A hard kill countermeasure for defeating most munitions such as 40mms, grenades, rockets, and even drones. When deployed, it shines a brght green light on areas it is protecting when active. Has 3 consequtive charges. Each turn when used consumes a charge.",
-        "rulesText": "Deployable on most terrain, benefits from cover bonuses. Destroys all munitions from UCAVs, 40mms, Rockets, and grenades in a five hex radius. Won't destroy friendly munitions, but does lead to enemy munitions detonating pre-maturely. Protects for one turn when active. Requires two turns to recharge."
+        "description": "A man portable version of the Active Protection System. A hard kill countermeasure for defeating most munitions such as 40mms, grenades, rockets, and even drones. When deployed, it shines a brght green light on areas it is protecting when active.",
+        "rulesText": "Deployable on most terrain, benefits from cover bonuses. Destroys all munitions from UCAVs, 40mms, Rockets, and grenades in a five hex radius. Won't destroy friendly munitions, but does lead to enemy munitions detonating pre-maturely. Has 3 consequtive charges. One charge will protect the area for the turn."
     },
     {
         "id": "Medic",
