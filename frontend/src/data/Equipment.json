@@ -473,7 +473,7 @@
         "class": "Sharpshooter",
         "cost": 0,
         "description": "Built off the chassis of the PD-105 Black Hornet, Hummingbird reconnaissance drones are Gold Coast's home brewed modification, also tying in BUDDI spotting software and hardened Datalinks.",
-        "rulesText": "User carried, 2x\nSpots for 2 turns\n2 notice | 1 stealth | 1 investigation"
+        "rulesText": "User carried\nSpots traps, gadgets, and more in the encounter area\n2 notice | 1 stealth | 1 investigation"
     },
     {
         "id": "silverbird-uav",
@@ -482,7 +482,7 @@
         "class": "Sharpshooter",
         "cost": 8000,
         "description": "Built off of the Marine's SUAV, the Silver Bird is an autonomous drone that orbits the user at a high altitude to mark targets. Has only NV. Provides standard pings.",
-        "rulesText": "User Carried, 1x\nSpots for 3 turns\n2 notice | 1 acrobatics | 2 investigation"
+        "rulesText": "User Carried\nSpots in a large area, extending to 2 world hexes from the encounter area\n2 notice | 1 acrobatics | 2 investigation"
     },
     {
         "id": "bumblebee-echolocator",
@@ -491,7 +491,7 @@
         "class": "Sharpshooter",
         "cost": 12000,
         "description": "Survey drone utilizing echolocation to mark moving enemies. Shakes the ground when activated, but will always provide a ping. Can be shot down easily once noticed, and is kinda fat.",
-        "rulesText": "Pre-Deployed\nSpots for 2 turns\n3 Notice"
+        "rulesText": "Pre-Deployed\nSpots for 2 turns\n3 Notice \n[Aiborne][Repairable]"
     },
     {
         "id": "grappling-hook",
