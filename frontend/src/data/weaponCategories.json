@@ -11,13 +11,13 @@
     "class": "L-Weapons",
     "damage": 6,
     "penetration": 2,
-    "range": "-1 M | -1 L | -2 ELR",
+    "range": "+1 C | -1 L | -2 ELR",
     "totalTurns": 6,
     "magazineSize": 2
   },
   "SMGs": {
     "class": "L-Weapons",
-    "damage": 3,
+    "damage": 4,
     "penetration": 1,
     "range": "+1 C | -1 L | -2 ELR",
     "totalTurns": 12,
