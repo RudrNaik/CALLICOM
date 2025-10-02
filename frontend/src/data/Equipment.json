@@ -150,7 +150,7 @@
     },
     {
         "id": "misc",
-        "title": "Miscellaneous Gear",
+        "title": "Misc Gear",
         "class": "None",
         "rulesText": "Ranging from NVGs to Thermals, Miscellaneous gear is anything not encompassed by any of the classes.",
         "description": "The violence has escalated."

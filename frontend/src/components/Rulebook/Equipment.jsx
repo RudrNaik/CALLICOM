@@ -16,7 +16,7 @@ const Equipment = () => {
         <input
           type="text"
           placeholder="Search equipment..."
-          className="w-full sm:w-96 p-2 mb-6 rounded bg-neutral-800 text-white border border-orange-400 focus:outline-none"
+          className="sm:w-96 p-2 mb-6 rounded bg-neutral-800 text-white border border-orange-400 focus:outline-none"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value.toLowerCase())}
         />
