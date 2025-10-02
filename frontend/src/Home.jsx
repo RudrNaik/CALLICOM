@@ -302,7 +302,7 @@ function Calamari() {
 
           <div className="h-fit ml-auto">
             <img
-              src="/ARD_info.png"
+              src="/ARD_info_2.jpg"
               className="w-full h-full object-cover"
             ></img>
           </div>
