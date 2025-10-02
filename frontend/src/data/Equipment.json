@@ -191,7 +191,7 @@
     },
     {
         "id": "ugl",
-        "title": "Underbarrel Grenade Launcher",
+        "title": "UBGL/Grenade Launcher",
         "parentId": "Rifleman",
         "class": "Rifleman",
         "cost": 0,
