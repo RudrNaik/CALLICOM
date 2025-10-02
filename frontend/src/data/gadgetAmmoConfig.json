@@ -113,5 +113,14 @@
   },
   "mp-aps":{
     "max": 3
+  },
+  "zipline":{
+    "max": 2
+  },
+  "grappling-hook":{
+    "max": 3
+  },
+  "hydraulic-hook":{
+    "max": 3
   }
 }

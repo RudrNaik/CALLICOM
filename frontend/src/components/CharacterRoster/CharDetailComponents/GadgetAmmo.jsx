@@ -44,7 +44,10 @@ export default function GadgetAmmo({
         "PMGL",
         "LMD",
         "sniper-sentry",
-        "mp-aps"
+        "mp-aps",
+        "zipline",
+        "grappling-hook",
+        "hydraulic-hook"
       ].includes(gadgetId),
     [gadgetId]
   );

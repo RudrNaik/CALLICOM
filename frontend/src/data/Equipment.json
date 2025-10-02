@@ -99,7 +99,9 @@
     {
         "id": "Rifleman",
         "title": "Rifleman",
-        "class": "None"
+        "class": "None",
+        "rulesText": "Rifleman is your go-to all-arms expert, being effective at medium-engagement distances using a mixture of assault rifles, battle rifles, and grenades. The Rifleman is arguably the most versatile class but also the most simple.",
+        "description": "We do crowd control. With grenades. It is not subtle. But is very effective."
     },
     {
         "id": "ugl",
@@ -176,7 +178,9 @@
     {
         "id": "Raider",
         "title": "Raider",
-        "class": "None"
+        "class": "None",
+        "rulesText": "Raider is an expert at getting into anywhere, loud or quiet and being the tip of the spear with SMGs, Shotguns, breaching charges, and Ninebangs. The Raider is a stealthy class, but also the most useful in room clearing when things go loud.",
+        "description": "Are we rushing in? Or are we going sneaky-beaky like?"
     },
     {
         "id": "halligan",
@@ -271,7 +275,9 @@
     {
         "id": "C-ENG",
         "title": "Combat Engineer",
-        "class": "None"
+        "class": "None",
+        "rulesText": "Combat engineers are specialists in destroying emplacements, vehicles, and more with launchers and mines. This is the only class with access to Rocket Launchers and Anti-Material rifles such as the Carl Gustav Recoilless Rifle and the M82A1 Anti Materiel Rifle.",
+        "description": "I am heavy weapons guy, and THIS [drops Carl Gustaf onto table] is my weapon."
     },
     {
         "id": "rocket-launcher",
@@ -321,7 +327,9 @@
     {
         "id": "T-ENG",
         "title": "Technical Engineer",
-        "class": "None"
+        "class": "None",
+        "rulesText": "Standoff munitions is the name, drones are the game. Technical Engineers are experts in both vehicular warfare and using drones to attack, distract, or blow up targets. Technicical Engineers are experts in tinkering and tech, and can utilize drones such as the XMQ-88 ‘Demo Dog’ and XMQ-16 ‘Fire Hornet’ proficiently.",
+        "description": "The drones... They speak to me."
     },
     {
         "id": "fire-hornet",
@@ -398,7 +406,9 @@
     {
         "id": "F-SUP",
         "title": "Fire Support",
-        "class": "None"
+        "class": "None",
+        "rulesText": "Experts in putting lead downrange and mortar arcs, Fire Support focuses on suppression and indirect fire. Supports get exclusive access to LMGs, Automatic Shotguns and the X-90 remote mortar system but know that Fire Supports require setup before they can fire.",
+        "description": "Statistically, on average, I shoot all of you about nine times- no twenty-er... Enough to make swiss soldiers."
     },
     {
         "id": "x89-ams",
@@ -502,7 +512,9 @@
     {
         "id": "Medic",
         "title": "Medic",
-        "class": "None"
+        "class": "None",
+        "rulesText": "Medics are the backbone of any good fire team and are the only class focused on keeping others in the fight and buffing them as much as they can. Medics get access to the surgical kit and specialized stims to heal wounds, increase focus, or generally provide buffs in a pinch.",
+        "description": "With one hand I save life, with the other hand I take it, Actually it's the same hand, but that don't sound as good."
     },
     {
         "id": "stim-pouch",
@@ -561,7 +573,9 @@
     {
         "id": "Recon",
         "title": "Sharpshooter",
-        "class": "None"
+        "class": "None",
+        "rulesText": "Expert marksman, the Sharpshooter Class focuses on eliminating targets of opportunity or high-threat enemies with DMRs and Sniper Rifles. Sharpshooters get exclusive access to sniper rifles and equipment such as BUDDI HUD integrations, SOFLAMs, and EXACTO rounds for extreme distances.",
+        "description": "Boom. Headshot. [Trumpets begin playing intro]"
     },
     {
         "id": "hummingbird-drone",
@@ -597,7 +611,7 @@
         "class": "Sharpshooter",
         "cost": 0,
         "description": "Intended to help scale vertical walls and buildings. Can be daisy chained up to three times and 75 meters total.",
-        "rulesText": "1 turn deployment on vertical surfaces. This allows players to climb up any building as if on a makeshift ladder.\nRequires a throw check for if the target is hooked. Upon failure, charge is returned to the player.\n3 uses.\nCan be used by teammates."
+        "rulesText": "1 turn deployment on vertical surfaces. This allows players to climb up any building as if on a makeshift ladder.\nRequires a throw check for if the target is hooked. Upon failure, charge is returned to the player.\n Can be used to gain overwatch positions in Dense Urban terrain, and negate many movement checks.\n3 uses.\nCan be used by teammates."
     },
     {
         "id": "zipline",
@@ -606,7 +620,7 @@
         "class": "Sharpshooter",
         "cost": 3000,
         "description": "Intended to help traverse large gaps between buildings. Cannot be daisy chained, however can also be used to scale vertically if given enough distance. Very fun to ride, but make sure to hook in.",
-        "rulesText": "1 turn deployment across large gaps. This allows players to create a zipline between adjacent buildings.\nRequires an M-weapons check to see if the target is hit. Upon failure, charge is expended.\n2 uses.\nCan be used by teammates."
+        "rulesText": "1 turn deployment across large gaps. This allows players to create a zipline between adjacent buildings.\nRequires an M-weapons check to see if the target is hit. Upon failure, charge is expended.\nCan be used to skip certain movement checks,on downhill or from climb zones. downhill creates 3 hex movement, climb creates 5 hex movement.\n2 uses.\nCan be used by teammates."
     },
     {
         "id": "hydraulic-hook",
@@ -615,7 +629,7 @@
         "class": "Sharpshooter",
         "cost": 7000,
         "description": "Intended for snipers to be able to scale and move between buildings and walls quickly with a universal tool. However, only the operator can move, and only to adjacent buildings or vertically up to 25 meters.",
-        "rulesText": "1 turn deployment up vertical walls, horizontal gaps, and even into windows.\nRequires an M-weapons check to see if the target is hit. Upon failure the charge is expended.\nWhen used on a vertical surface, shifts the operator into a rappel, allowing them to fire from a suspended position.\nUpon success, the hook needs to recharge, which takes three turns.\n3 uses.\nCannot be used by teammates."
+        "rulesText": "1 turn deployment up vertical walls, horizontal gaps, and even into windows.\nRequires an M-weapons check to see if the target is hit. Upon failure the charge is expended.\nWhen used on a vertical surface, shifts the operator into a rappel, allowing them to fire from a suspended position.\n Can be used for overwatch positions in Dense Urban zones, and to skip climb checks.\nUpon success, the hook needs to recharge, which takes three turns.\n3 uses.\nCannot be used by teammates."
     },
     {
         "id": "spec-ammo",
@@ -625,7 +639,6 @@
         "cost": 0,
         "description": "Special ammo allows for sharpshooters to have a greater effect with their bullets than just killing people. From disabling electronics with a low power EMP round, to punching through even the heaviest of body armor with AP rounds, Gold Coast's special ammo provides snipers unmatched flexibility on the field.",
         "rulesText": "Special ammo rules are detailed below. EMP, Lure, AP, and Smart Rounds."
-    
     },
     {
         "id": "lre-round",
@@ -666,7 +679,9 @@
     {
         "id": "Trapper",
         "title": "Trapper",
-        "class": "None"
+        "class": "None",
+        "rulesText": "Unlike their close Sharpshooter cousins, Trappers focus on ambushes with traps and some ingenuity along with sabotage and stealth. Trappers also get access to the Cyberwarfare Suite, but also access Claymores, anti-tank mines and more.",
+        "description": "A gift for you, no charge... oh wait, explosive charge!"
     },
     {
         "id": "shock-sticks",
@@ -675,9 +690,9 @@
         "class": "Trapper",
         "cost": 0,
         "description": "Shock Sticks are quiet, non-lethal traps which can be used to stealthily dispatch guards or patrols, bar the noise of them being tazed.",
-        "rulesText": "\nAttacker Throw vs Defender Acrobatics [thrown]\nor\nAttacker Disguise/Throw vs Defender Notice [mine]\nUser carried, 3x\nCan be thrown to be deployed in a hard-to-reach place or without breaking the player's concealment."
-      },
-      {
+        "rulesText": "Attacker Throw vs Defender Acrobatics [thrown]\nor\nAttacker Disguise/Throw vs Defender Notice [mine]\nUser carried, 3x\nCan be thrown to be deployed in a hard-to-reach place or without breaking the player's concealment."
+    },
+    {
         "id": "claymores",
         "title": "Claymores",
         "parentId": "Trapper",
@@ -685,8 +700,8 @@
         "cost": 3500,
         "description": "Shotgun in a tin. Riddles a target with ball bearings when triggered, and will auto-detonate by itself whenever something passes by. Don't worry, it won't fire if friendlies are near.",
         "rulesText": "Attacker Disguise vs Defender Notice\nUser carried, 3x\n8 DMG\nWhen a Claymore’s laser tripwire is activated, it detonates and riddles the target with a combination of shrapnel and ball bearings."
-      },
-      {
+    },
+    {
         "id": "lil-mac",
         "title": "Lil Mac'",
         "parentId": "Trapper",
@@ -694,8 +709,8 @@
         "cost": 2500,
         "description": "KNOCKOUT! When activated, the Lil Mac springs up from the ground and smacks into the enemy’s face, knocking them down.",
         "rulesText": "Attacker Disguise vs Defender Notice\nUser carried, 2x\nWhen triggered, mine props up and knocks investigator out for a total of 4 turns."
-      },
-      {
+    },
+    {
         "id": "ankle-busters",
         "title": "Ankle Busters",
         "parentId": "Trapper",
@@ -703,8 +718,8 @@
         "cost": 3000,
         "description": "When activated, enemy movement is disabled as their legs and feet are riddled with shrapnel.\n\n... Somehow this isn't much better than claymores.",
         "rulesText": "Attacker Disguise vs Defender Notice\nUser carried, simple action to deploy. 2x\nWhen activated the enemy cannot move until they bandage themselves or receive treatment from a medic.\nAttacker Disguise vs Defender Notice"
-      },
-      {
+    },
+    {
         "id": "c4",
         "title": "C4",
         "parentId": "Trapper",
@@ -712,8 +727,8 @@
         "cost": 4000,
         "description": "Better known as 'jeep stuff', C4 is a malleable material that when introduced to an electric charge—detonates spectacularly. There are a lot of use cases. Get creative.",
         "rulesText": "Attacker Throw/Disguise vs Defender Acrobatics/Notice\nUser carried, simple action to deploy. x4\nWhen detonated, the C4 creates a massive explosion, capable of wiping out entire groups or a vehicle if they are attached or right on top of the explosive."
-      },
-      {
+    },
+    {
         "id": "m5-slam",
         "title": "M5 SLAM",
         "parentId": "Trapper",
@@ -721,8 +736,8 @@
         "cost": 6000,
         "description": "Jeep stuff's younger, more tech-savvy cousin, M5 SLAMs are AT/Demo charges that can be set to detonate under a variety of circumstances. Easy to program, easy to detonate, and even float in water to act as aquatic mines.",
         "rulesText": "Can be deployed on any surface with either:\n- Timed detonation (turn count)\n- Attack detonation (automatic)\n- Remote detonation (manual)\n\nHas more firepower than C4, and will take out most tanks from a bottom attack if run over. 3x."
-      },
-      {
+    },
+    {
         "id": "thinkpad",
         "title": "Thinkpad",
         "parentId": "Trapper",
@@ -730,8 +745,8 @@
         "cost": 0,
         "description": "It’s a ThinkPad. You’re not leaving this job for a while brother, and this thing isn’t breaking unless you shoot it with a tank.",
         "rulesText": "Provides access to the cyberwarfare suite."
-      },
-      {
+    },
+    {
         "id": "cyb-cldwn",
         "title": "Cooldown",
         "parentId": "thinkpad",
@@ -739,8 +754,8 @@
         "cost": 0,
         "description": "Utilizing Gold Coast's algorithms, automatically scrambles your position and traceable data to shake enemy cyberwarfare or intrusion countermeasure software.",
         "rulesText": "Lowers your HEAT by 1"
-      },
-      {
+    },
+    {
         "id": "cyb-ppt",
         "title": "Puppet",
         "parentId": "thinkpad",
@@ -748,8 +763,8 @@
         "cost": 0,
         "description": "Manipulate basic device functions, such as opening/closing doors and deactivating/accessing cameras.",
         "rulesText": "Allows you to open select doors and see through cameras. Does not work with drones or HUDs."
-      },
-      {
+    },
+    {
         "id": "cyb-ping",
         "title": "Ping",
         "parentId": "thinkpad",
@@ -757,8 +772,8 @@
         "cost": 0,
         "description": "Accesses all cameras and pings enemies that are visible.",
         "rulesText": "Pings all enemies visible through cameras. Can be distrupted if cameras are shot, or if target is obscured. Requires user connection. Ping lasts 1 turn."
-      },
-      {
+    },
+    {
         "id": "cyb-svr",
         "title": "Sever",
         "parentId": "thinkpad",
@@ -766,8 +781,8 @@
         "cost": 0,
         "description": "Accesses a specific target and cuts their connection to all downlink and uplink connections, effectively 'severing' them from their own command. ",
         "rulesText": "Disable an enemy's ability to call reinforcements, mark targets, or control drones. 2 Turns. [+1 Defender trace]"
-      },
-      {
+    },
+    {
         "id": "cyb-fdbk",
         "title": "Feedback",
         "parentId": "thinkpad",
@@ -775,8 +790,8 @@
         "cost": 0,
         "description": "Deafens a target and scrambles their communications system, making them unable to communicate with others through a deafening tone. Very effective in annoying enemies, or disrupting them entirely",
         "rulesText": "Interrupts an enemy for a turn and applies a -1 to all actions. Countered by disabling radio. [+2 Defender trace.]"
-      },
-      {
+    },
+    {
         "id": "cyb-trc",
         "title": "Traceback",
         "parentId": "thinkpad",
@@ -784,8 +799,8 @@
         "cost": 15000,
         "description": "Ping's bigger brother, penetrates into an enemy datalink to trace it back to everything using it. Pings any and every enemy on the local network.",
         "rulesText": "Pings all enemies on a network. Works regardless of cameras. Disabled if EMP'd or DL is jammed. [+4 Defender trace]"
-      },
-      {
+    },
+    {
         "id": "cyb-MShck",
         "title": "Mass Hack",
         "parentId": "thinkpad",
@@ -793,8 +808,8 @@
         "cost": 30000,
         "description": "Brute forcing one's way into all local networks, this locks out all enemy users from the datalink. However, it will also spread to the rest of the connected signals, leading a mass lockout that spreads to vehicles, drones, and more.",
         "rulesText": "Blocks all enemy connections on a network. Disables radio, cameras, and tech like HUDs, turrets, and drones. Effective against vehicles to narrow crew awareness. Erases all enemy pings. lasts for 2 turns. [+5 Defender trace]"
-      },
-      {
+    },
+    {
         "id": "cyb-brn",
         "title": "Burnout",
         "parentId": "thinkpad",
@@ -802,8 +817,8 @@
         "cost": "[???]",
         "description": "Connects to all devices on a network and overclocks the CPU of the to burn and disable them. Takes one turn to overclock, but permanently disables that device if successful. When used against vehicles, it automatically leads to a shutdown of non-essential systems to protect itself, effectively kneecapping them until the reboot proces can start.",
         "rulesText": "Causes a one turn timer to start on all enemy electronics, if the enemies dont react within that turn and disable their equipment- it burns and is permanently disabled. Vehciles electronics are disabled for the next turn and need to restart. [+5 Defender trace]"
-      },
-      {
+    },
+    {
         "id": "cyb-MScsh",
         "title": "Mass Crash",
         "parentId": "thinkpad",
@@ -811,5 +826,5 @@
         "cost": "[???]",
         "description": "Much like Mass Hack and Burnout, Mass Crash also penetrates into an enemy's network- but goes even deeper. Going as far as to intrude into the local power grid to disable everything in the local area. Lights, power, and all enemy electronics are severed and shut down. Useful for creating either perfect darkness to escape, or an opening to push while hostiles. are confused and dazed.",
         "rulesText": "Same effect as Mass Hack, however also disables all non-natural lighting in the operational area. [+5 Defender trace]"
-      }
+    }
 ]
