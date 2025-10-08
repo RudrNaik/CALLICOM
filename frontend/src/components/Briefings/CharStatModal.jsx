@@ -179,6 +179,8 @@ function LoadoutSection({ char }) {
   const SPR = Number(A.Spirit ?? 0);
   const BDY = Number(A.Body ?? 0);
   const EXP = Number(A.Expertise ?? 0);
+  const unrmd = 3 + BDY + char.skills.CQC;
+  const armd = 3 + BDY + char.skills.Melee;
 
   return (
     <div className="mt-4 flex gap-4 justify-center">
@@ -204,8 +206,12 @@ function LoadoutSection({ char }) {
         </div>
 
         {/* Derived */}
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-5 gap-2">
           <DerivedCard label="Combat Sense" value={1 + INT + SPR} />
+          <DerivedCard
+            label="Armd/Unrmd DMG"
+            value={`${armd} / ${unrmd}`}
+          />
           <DerivedCard
             label="Deep/Flesh"
             value={`${SPR + BDY + 5 + armor} / ${Math.ceil(
