@@ -77,7 +77,7 @@ function Campaigns() {
 
     setFilteredMissions(campaignMissions);
 
-    const current = campaignMissions.find((m) => m.status === "CURRENT");
+    const current = campaignMissions.find((m) => m.status === "ACTIVE");
     const fallback = campaignMissions[0];
 
     setCurrentMissionId(current?.id || fallback?.id || null);
