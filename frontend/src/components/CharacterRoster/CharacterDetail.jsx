@@ -34,13 +34,18 @@ function CharacterDetail({ character, onUpdate, user }) {
     character.campaignId || ""
   );
   const [charActive, setCharActive] = useState(false);
+  const [isEditingAttr, setEditAttr] = useState(false);
   const [multiClass, setMulticlass] = useState(character.multiClass || "");
   const [showMultiClassModal, setShowMultiClassModal] = useState(false);
   const [Biography, setBio] = useState("");
+  const [attributes, setAttributes] = useState({ ...character.attributes });
+
+  console.log(attributes);
 
   useEffect(() => {
     if (character) {
       setSpecializations([...character.specializations]);
+      setAttributes({ ...character.attributes });
       setEditedSkills({ ...character.skills });
       setXpRemaining(character.XP || 0);
       setEmergencyDice(character.emergencyDice || 0);
@@ -276,6 +281,58 @@ function CharacterDetail({ character, onUpdate, user }) {
     }
   };
 
+  const patchAttribute = async (attrKey) => {
+    if (!attrKey) return;
+    if (xpRemaining < 40) {
+      alert("You need 40 XP for an attribute increase.");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.log("No token found, redirecting to login.");
+      navigate("/login");
+      return;
+    }
+
+    const nextAttributes = {
+      ...attributes,
+      [attrKey]: (attributes?.[attrKey] ?? 0) + 1,
+    };
+    const newXP = xpRemaining - 40;
+
+    try {
+      const res = await fetch(
+        `https://callicom.onrender.com/api/characters/${user}/${character.callsign}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            XP: newXP,
+            attributes: nextAttributes,
+          }),
+        }
+      );
+
+      if (res.ok) {
+        // Commit locally
+        setAttributes(nextAttributes);
+        setXpRemaining(newXP);
+        onUpdate?.();
+      } else {
+        alert("Failed to purchase attribute.");
+      }
+    } catch (err) {
+      console.error("Error updating attribute:", err);
+      alert("Error updating attribute.");
+    } finally {
+      setEditAttr(false);
+    }
+  };
+
   const handleSaveChanges = async () => {
     const updates = {
       XP: xpRemaining,
@@ -283,10 +340,10 @@ function CharacterDetail({ character, onUpdate, user }) {
       specializations,
       emergencyDice,
       multiClass,
+      attributes,
     };
 
     const token = localStorage.getItem("token");
-
     if (!token) {
       console.log("No token found, redirecting to login.");
       navigate("/login");
@@ -346,7 +403,24 @@ function CharacterDetail({ character, onUpdate, user }) {
           </p>
         </div>
       </div>
-      <AttributeView character={character} />
+      <AttributeView
+        attributes={attributes}
+        xp={xpRemaining}
+        isEditing={isEditingAttr}
+        onBuy={patchAttribute}
+      />
+      {xpRemaining >= 40 && (
+        <button
+          onClick={() => setEditAttr((prev) => !prev)}
+          className={`px-2 py-1 text-xs rounded ${
+            isEditingAttr
+              ? "bg-red-700 hover:bg-red-800"
+              : "bg-orange-600 hover:bg-orange-600"
+          }`}
+        >
+          {isEditingAttr ? "Cancel" : "Edit Attributes"}
+        </button>
+      )}
 
       <DerivedStats
         character={character}
