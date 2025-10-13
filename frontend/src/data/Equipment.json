@@ -149,6 +149,85 @@
         "rulesText": "[Throw][Stealth]\n Follows ranged rules. When thrown in combat, prompts [Throw] vs [Acrobatics] or [Armor].\n 7 DMG. \n Makes no noise, and can be aimed to debilitate someone if need be."
     },
     {
+        "id": "passives",
+        "title": "Unique Class Gear",
+        "class": "None",
+        "rulesText": "BUDDI Integrations, more rockets, repair tools and more- each class comes with a specific piece of gear only it gets, thats inaccessible otherwise. Even with multiclassing.",
+        "description": "PTFO."
+    },
+    {
+        "id": "soflam",
+        "title": "SOFLAM",
+        "parentId": "passives",
+        "class": "Class",
+        "cost": 0,
+        "description": "Equipped with a laser desginator, laser mic, rangefinder, and an integrated datalink module to stream information directly to CAS and Indirect Fire systems, the SOFLAM allows Riflemen to observe, designate, and destroy targets with fast air or artillery.",
+        "rulesText": "Lased targets are both pinged and designated. Fire support munitions are guaranteed hits against vehicles unless countermeasures are deployed. Uses a full action to desginate. Can ping large swaths of targets if in FOV (area between hex diagonals in a certain direction)."
+    },
+    {
+        "id": "autoPick",
+        "title": "AutoPick",
+        "parentId": "passives",
+        "class": "Class",
+        "cost": 0,
+        "description": "Bringing a quieter entry tool, The AutoPick allows raiders to auto-pick locks, safes, and more in the blink of an eye.",
+        "rulesText": "Auto-Picks can be deployed on locked doors to automatically open them within the same turn. Some heavier or more complex doorswill require a turn, but there are always some doors you just cant pick..."
+    },
+    {
+        "id": "xtraRounds",
+        "title": "Extra Rounds",
+        "parentId": "passives",
+        "class": "Class",
+        "cost": 0,
+        "description": "Combat engineers pack more ammo for their AT and AA rockets. Allowing them to carry double the normal amount.",
+        "rulesText": "2x to rocket reserve capacity."
+    },
+    {
+        "id": "repairTool",
+        "title": "Repair Tool",
+        "parentId": "passives",
+        "class": "Class",
+        "cost": 0,
+        "description": "Wrenches, Impact Drills, Blowtorches and more. Repair tools let Technical Engineers to fix up drones and vehicles, or more creatively seal off doors and destroy enemy infrastructure.",
+        "rulesText": "Vehicle equivalent of an AFAK, uses a tinker roll to fix vehicle critical damage and minor damage. Can be used to damage or sabotage enemy vehicles or infrastructure. Unlimited uses. Can also do the opposite."
+    },
+    {
+        "id": "deployableShield",
+        "title": "Deployable Shield",
+        "parentId": "passives",
+        "class": "Class",
+        "cost": 0,
+        "description": "Deployable shields create instant cover wherever, whenever. perfect for when you just dont have a fortified position, or are too lazy to get into one.",
+        "rulesText": "Creates deployable cover adjacent to the contractor. can be picked back up for re-use. Will be destroyed with rocket launchers and above. 2 hexes wide."
+    },
+    {
+        "id": "medicBag",
+        "title": "Medic Bag",
+        "parentId": "passives",
+        "class": "Class",
+        "cost": 0,
+        "description": "One cannot carry all the medicine they need on them at all times. However, the revolutionary idea of ‘stuff everything else into another bag and carry it too was invented, which the Medic Bag utilizes.",
+        "rulesText": "Big medic bag that restocks all medical supplies when interacted with. Has the same amount of charges as players in the party. Can be picked back up or thrown."
+    },
+    {
+        "id": "BUDDI",
+        "title": "BUDDI HUD integration",
+        "parentId": "passives",
+        "class": "Class",
+        "cost": 0,
+        "description": "The 'Ballistic Universal Distance Demarcation Indicator' HUD integration is a nifty piece of software Gold Coast developed to give snipers an edge in long range engagements. Namely by giving them a lead and drop indicator on pinged targets.",
+        "rulesText": "Big medic bag that restocks all medical supplies when interacted with. Has the same amount of charges as players in the party. Can be picked back up or thrown."
+    },
+    {
+        "id": "counterSpell",
+        "title": "Counterspell Infiltration Device",
+        "parentId": "passives",
+        "class": "Class",
+        "cost": 0,
+        "description": "Developed from the STALKER PRD, the X-55 'Counterspell' infiltration device is a specialized signal jammer to deny the enemy a 'ping' or mark on where you are.",
+        "rulesText": "Cannot trigger digitally triggered traps, and cannot be digitally pinged by drones."
+    },
+    {
         "id": "misc",
         "title": "Misc Gear",
         "class": "None",
@@ -196,7 +275,7 @@
         "class": "Rifleman",
         "cost": 0,
         "description": "THOONK’",
-        "rulesText": "Range modifier: -3C | +1M | -1L | -2ELR\nAmmo: 6\nCapacity: 1"
+        "rulesText": "[M-Wep]\nRange modifier: -3C | +1M | -1L | -2ELR\nAmmo: 6\nCapacity: 1"
     },
     {
         "id": "PMGL",
@@ -205,7 +284,7 @@
         "class": "Rifleman",
         "cost": 11000,
         "description": "Developed from the XM-25 CDTE, the X-50 Programmable Munition Grenade Launcher is a modernized version of the original system. Bringing along thermal optics, auto-rangefinding, and an improved GUI for displaying the trajectory path. \n also: 'THOONK THOONK THOONK GET AIRBURSTED! ",
-        "rulesText": "Range modifier: -3C | +1M | -1L | -2ELR\nAmmo: 6\nUses programmable munitions. These rounds detonate after the distance set, and increase damage against infantry."
+        "rulesText": "[H-Wep]\nRange modifier: -3C | +1L | -1ELR\nAmmo: 6\nUses programmable, airburst munitions. Deals 9 damage to infantry, none to vehicles."
     },
     {
         "id": "40mm-he",
@@ -230,7 +309,7 @@
         "title": "40mm Star Grenade",
         "parentId": "Rifleman",
         "class": "Rifleman",
-        "cost": 450,
+        "cost": 2500,
         "description": "Apparently it’s the sun, in a 40mm can. Blinds anyone looking at it.",
         "rulesText": "M-Weapons attacker check, Acrobatics defender check.\n Applies very harshly lit (-2) towards a target. Interrupts actions."
     },
@@ -239,7 +318,7 @@
         "title": "40mm Snapshot Grenade",
         "parentId": "Rifleman",
         "class": "Rifleman",
-        "cost": 450,
+        "cost": 3600,
         "description": "Spotter grenades, and you won't believe it, in a 40mm can.",
         "rulesText": "M-Weapons attacker check, Acrobatics defender check\nPings all enemies in an area. \nLasts for 1 turn. \nUpon fumble, no pings."
     },
@@ -282,7 +361,7 @@
         "title": "Breach Pen",
         "parentId": "Raider",
         "class": "Raider",
-        "cost": 1500,
+        "cost": 0,
         "description": "A concoction of metal oxide, metal powders, and god knows what else that superheats to over 2,000 degrees celsius and burns through almost everything. Steel, Concrete, or locks. All in the form of a stick.",
         "rulesText": "Tinker check\nOpens all doors up to heavily reinforced ones.\nCan create shootable holes in any wall.\nMakes a light hissing noise that can be masked by other noises. Will melt through the door’s lock or hinges. Provides a bright light that can attract attention."
     },
@@ -519,7 +598,7 @@
         "title": "X-89 ACERM rounds (Guided)",
         "parentId": "F-SUP",
         "class": "Fire Support",
-        "cost": 1500,
+        "cost": 0,
         "description": "Guided rounds that change trajectory mid air to strike a target accurately.",
         "rulesText": "Adds an extra dice to your attacking roll, increases Pen to 2. 8 DMG | 1 hex AOE"
     },
@@ -528,7 +607,7 @@
         "title": "X-89 SMK rounds (Smoke)",
         "parentId": "F-SUP",
         "class": "Fire Support",
-        "cost": 800,
+        "cost": 0,
         "description": "Creates a plume of smoke around a designated location.",
         "rulesText": "No DMG\nApplies ‘very dimly lit’ effect to an area (-2 attack for all parties to and through the area of the smoke screen.)\nPings from visual sources such as drones and cameras will be erased if a target is no longer visible with smoke."
     },
@@ -537,7 +616,7 @@
         "title": "X-89 SRN rounds (Sauron)",
         "parentId": "F-SUP",
         "class": "Fire Support",
-        "cost": 1200,
+        "cost": 0,
         "description": "Hangs in the sky via a parachute and pings targets, sadly— it also is very easy to spot and can be shot down.",
         "rulesText": "H-Weapons attacker check vs Notice and Weapon Defender Check\nNo DMG\nPings all enemies in an area and provides a live outline of them. (+1 spotted bonus)\nLasts for 2 turns.\nUpon fumble, the Sauron will tag no targets."
     },
@@ -546,7 +625,7 @@
         "title": "X-89 EMP rounds",
         "parentId": "F-SUP",
         "class": "Fire Support",
-        "cost": 1500,
+        "cost": 3500,
         "description": "Starshell rounds’ bigger brother. No longer are you just jamming comms, but now you're full on cutting all power to devices in an area.",
         "rulesText": "No DMG\nDisables all electronics and lights around the user.\nIf indoors with no natural lighting, it applies a pitch black effect to the room and any adjacent. If there is natural lighting, it will apply a very dimly lit or poorly lit effect.\nElectronics will return in 3 turns."
     },
@@ -555,7 +634,7 @@
         "title": "X-89 ILM rounds (Illumination)",
         "parentId": "F-SUP",
         "class": "Fire Support",
-        "cost": 700,
+        "cost": 1700,
         "description": "Hangs in the sky and illuminates a wide area, also rings the dinnerbell to where the fight is.",
         "rulesText": "No DMG\nRemoves all lighting and weather conditions in an area.\nBlinds Thermal and Night vision."
     },
