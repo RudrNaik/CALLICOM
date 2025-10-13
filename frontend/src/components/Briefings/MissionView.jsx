@@ -392,7 +392,7 @@ function MissionView({
           </button>
         </div>
       ) : (
-        <div className="min-w-sm">
+        <div className="">
           <h2 className="uppercase text-lg font-bold text-neutral-200 bg-orange-500 p-2">
             [{missionData.Name}]
           </h2>
