@@ -19,7 +19,7 @@
       "id": "SOFLAM",
       "description": "Equipped with a laser desginator, laser mic, rangefinder, and an integrated datalink module to stream information directly to CAS and Indirect Fire systems, the SOFLAM allows Riflemen to observe, designate, and destroy targets with fast air or artillery.",
       "fluff": "Hunker down or bugger off- here comes the thunder.",
-      "gameplay":"Lased targets are both pinged and designated. Fire support munitions are guaranteed hits against vehicles unless countermeasures are deployed. Uses a full action to desginate."
+      "gameplay":"Lased targets are both pinged and designated. Fire support munitions are guaranteed hits against vehicles unless countermeasures are deployed. Uses a full action to desginate. Can ping large swaths of targets if in FOV (area between hex diagonals in a certain direction)."
     }
   },
   "Raider": {
@@ -88,7 +88,7 @@
       "id": "Repair Tool",
       "description": "Wrenches, Impact Drills, Blowtorches and more. Repair tools let Technical Engineers to fix up drones and vehicles, or more creatively seal off doors and destroy enemy infrastructure.",
       "fluff": "Enginearing my fuckin' LIMIT",
-      "gameplay":"Vehicle equivalent of an AFAK, uses a tinker roll to fix vehicle critical damage and minor damage. Can be used to damage or sabotage enemy vehicles or infrastructure."
+      "gameplay":"Vehicle equivalent of an AFAK, uses a tinker roll to fix vehicle critical damage and minor damage. Can be used to damage or sabotage enemy vehicles or infrastructure. Unlimited uses. Can also do the opposite."
     }
   },
   "Fire Support": {
@@ -111,7 +111,7 @@
       "id": "Deployable Shield",
       "description": "Deployable shields create instant cover wherever, whenever. perfect for when you just dont have a fortified position, or are too lazy to get into one.",
       "fluff": "Reinforcement, on demand",
-      "gameplay":"Creates deployable cover adjacent to the contractor. can be picked back up for re-use. Will be destroyed with rocket launchers and above."
+      "gameplay":"Creates deployable cover adjacent to the contractor. can be picked back up for re-use. Will be destroyed with rocket launchers and above. 2 hexes wide."
     }
   },
   "Medic": {
@@ -157,7 +157,7 @@
       "id": "BUDDI HUD integration",
       "description": "The 'Ballistic Universal Distance Demarcation Indicator' HUD integration is a nifty piece of software Gold Coast developed to give snipers an edge in long range engagements. Namely by giving them a lead and drop indicator on pinged targets.",
       "fluff": "I see you.",
-      "gameplay":"Provides user with an extra +1 on all pinged targets in LR-ELR range bands."
+      "gameplay":"Provides user with an extra +1 bonus on all pinged targets in LR-ELR range bands."
     }
   },
   "Trapper": {
@@ -177,7 +177,7 @@
     "rulesText": "Unlike their close Sharpshooter cousins, Trappers focus on ambushes with traps and some ingenuity. Trappers also get access to the Cyberwarfare Suite, but also access Claymores, anti-tank mines and more.",
     "description": "A gift for you, no charge... oh wait, explosive charge!",
     "classGadget": {
-      "id": "'Counterspell' Infiltration Device'",
+      "id": "'Counterspell' Infiltration Device",
       "description": "Developed from the STALKER PRD, the X-55 'Counterspell' infiltration device is a specialized signal jammer to deny the enemy a 'ping' or mark on where you are.",
       "fluff": "You cant see me, my time is now",
       "gameplay":"Cannot trigger digitally triggered traps, and cannot be digitally pinged by drones."
