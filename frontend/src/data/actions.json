@@ -4,7 +4,7 @@
       "color":"bg-neutral-800/80",
       "type": "Full",
       "icon": "/Full_Action.svg",
-      "description": "[Offensive]\n Shoot your selected weapon, reducing rounds from the magazine and your total ammo count.\n\nShooting is an opposed roll between an attacker's respective weapon roll + bonuses, and the defender's armor roll + bonuses.\n\nAbides by ranged combat rules."
+      "description": "[Offensive]\n Shoot your selected weapon, reducing rounds from the magazine and your total ammo count.\n\nShooting is an opposed roll between an attacker's respective weapon roll + bonuses, and the defender's armor roll + bonuses.\n\nAbides by ranged combat rules.\n You can peek around a corner 1 hex in any direction to get a line of sight."
     },
     {
       "name": "Throw",
@@ -38,21 +38,21 @@
       "name": "Intimidate",
       "type": "Half",
       "color":"bg-neutral-800/80",
-      "icon": "/Half_Action.svg",
+      "icon": "/Full_Action.svg",
       "description": "[Offensive]\n Intimidate your foes and others for compliance.\n\nWhen Intimidating, you roll your intimidation against an enemy's spirit. If you win the opposed roll, you apply your margin of success as a debuff to their actions against for a turn. If you lose, you get the enemy's ire, and they will focus on you. \n\n (You also have to type something in character for it to count)."
     },
     {
       "name": "Disengage",
       "color":"bg-neutral-800/80",
       "type": "Half",
-      "icon": "/Half_Action.svg",
+      "icon": "/Full_Action.svg",
       "description": "[Defensive]\n Disengage from a fight and slip away.\n\nWhen disengaging, do an opposed stealth roll against an enemy's alertness. Upon success, you are disengaged. Enemies will search your last known position, and in combat it allows you to sneak around, but any offensive action will re-engage you. You can aim however.\n\n When moving while disengaged, you will roll stealth checks against an enemy's alertness to remain disengaged. Upon firing on an enemy or failing a check, you re-engage with them.\n\n You can also search for disengaged enemies using a bonus action."
     },
     {
       "name": "Repair",
       "color":"bg-neutral-800/80",
       "type": "Half",
-      "icon": "/Half_Action.svg",
+      "icon": "/Full_Action.svg",
       "description": "[Support] [Repair Tool]\n Repair vehicles, equipment, and drones \n\n When repairing, roll with tinker to determine the amount of wounds of damage repaired. Prioritizes Critical Damage first, and then fixes minor damage. vehicle crews 'relax' when their vehicles are being repaired.\n\n For drones, multiply the roll by 2 for how much damage repaired."
     }
   ]
