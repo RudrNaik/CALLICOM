@@ -39,7 +39,7 @@ export default function Roster({ characters, isLoading }) {
   const popoutPos = clampPopout();
 
   return (
-    <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border border-orange-500 rounded-xl p-6 shadow-lg min-w-md min-h-[700px] max-h-[700px] overflow-y-auto scrollbar-thin scrollbar-thumb-orange-400 scrollbar-track-neutral-700">
+    <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border border-orange-500 rounded-xl p-6 shadow-lg min-w-sm sm:max-w-full md:max-w-md min-h-[700px] max-h-[700px] overflow-y-auto whitespace-pre-line scrollbar-thin scrollbar-thumb-orange-400 scrollbar-track-neutral-700">
       <h2 className="uppercase text-sm text-orange-400">Operator Roster</h2>
       {isLoading ? (
         <div className="flex items-center text-xs text-orange-400 py-2 mb-2">
@@ -63,9 +63,12 @@ export default function Roster({ characters, isLoading }) {
             <p className="text-orange-300 font-semibold text-sm">
               {char.callsign} | {char.name}
             </p>
-            <p className="absolute top-2 right-3 text-orange-300 text-[0.60rem]">{char.userId}</p>
+            <p className="absolute top-2 right-3 text-orange-300 text-[0.60rem]">
+              {char.userId}
+            </p>
             <p className="text-xs text-neutral-300">
-              {char.class} | {char.multiClass || "No multiclass"} | {char.background}
+              {char.class} | {char.multiClass || "No multiclass"} |{" "}
+              {char.background}
             </p>
 
             {hoveredChar === char._id && (
@@ -75,14 +78,36 @@ export default function Roster({ characters, isLoading }) {
                 exit={{ opacity: 0, scale: 0.98 }}
                 transition={{ duration: 0.08 }}
                 className="fixed w-72 pointer-events-none transform -translate-x-1/2 -translate-y-full bg-neutral-900/95 border border-orange-400 text-xs text-neutral-100 p-4 rounded-lg shadow-xl z-50"
-                style={{ left: `${popoutPos.left}px`, top: `${popoutPos.top}px` }}
+                style={{
+                  left: `${popoutPos.left}px`,
+                  top: `${popoutPos.top}px`,
+                }}
               >
-                <p><span className="font-bold text-orange-400">Class:</span> {char.class || "Unknown"} | {char.multiClass || "N/A"}</p>
-                <p><span className="font-bold text-orange-400">Armor:</span> {char.equipment?.armorClass ?? "None"}</p>
-                <p><span className="font-bold text-orange-400">Primary:</span> {char.equipment?.primaryWeapon?.name || "None"}</p>
-                <p><span className="font-bold text-orange-400">Secondary:</span> {char.equipment?.secondaryWeapon?.name || "None"}</p>
-                <p><span className="font-bold text-orange-400">Gadget:</span> {getGadgetTitleById(char.equipment?.gadget)}</p>
-                <p><span className="font-bold text-orange-400">Grenades:</span> {(char.equipment?.grenades?.[0] || "-")} | {(char.equipment?.grenades?.[1] || "-")}</p>
+                <p>
+                  <span className="font-bold text-orange-400">Class:</span>{" "}
+                  {char.class || "Unknown"} | {char.multiClass || "N/A"}
+                </p>
+                <p>
+                  <span className="font-bold text-orange-400">Armor:</span>{" "}
+                  {char.equipment?.armorClass ?? "None"}
+                </p>
+                <p>
+                  <span className="font-bold text-orange-400">Primary:</span>{" "}
+                  {char.equipment?.primaryWeapon?.name || "None"}
+                </p>
+                <p>
+                  <span className="font-bold text-orange-400">Secondary:</span>{" "}
+                  {char.equipment?.secondaryWeapon?.name || "None"}
+                </p>
+                <p>
+                  <span className="font-bold text-orange-400">Gadget:</span>{" "}
+                  {getGadgetTitleById(char.equipment?.gadget)}
+                </p>
+                <p>
+                  <span className="font-bold text-orange-400">Grenades:</span>{" "}
+                  {char.equipment?.grenades?.[0] || "-"} |{" "}
+                  {char.equipment?.grenades?.[1] || "-"}
+                </p>
               </motion.div>
             )}
           </div>
