@@ -85,7 +85,7 @@ function CharacterRoster({ userId }) {
         setIsLoading(false);
       });
 
-    fetch(`http://callicom.onrender.com/api/campaignEquipment`, { 
+    fetch(`https://callicom.onrender.com/api/campaignEquipment`, { 
       method: "GET",
       headers: {
         "Content-Type": "application/json",

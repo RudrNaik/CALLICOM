@@ -68,7 +68,6 @@ function EquipmentSelection({
 
     //filters items based on class, secondary class, and if they are purchased or not.
     let filtered = null;
-    console.log(!campEquipment || campEquipment == null)
     if (!campEquipment || campEquipment == null) {
       filtered = equipmentData.filter(
         (item) =>
