@@ -282,7 +282,7 @@
         "title": "X-50 PMGL",
         "parentId": "Rifleman",
         "class": "Rifleman",
-        "cost": 11000,
+        "cost": 17000,
         "description": "Developed from the XM-25 CDTE, the X-50 Programmable Munition Grenade Launcher is a modernized version of the original system. Bringing along thermal optics, auto-rangefinding, and an improved GUI for displaying the trajectory path. \n also: 'THOONK THOONK THOONK GET AIRBURSTED! ",
         "rulesText": "[H-Wep]\nRange modifier: -3C | +1L | -1ELR\nAmmo: 6\nUses programmable, airburst munitions. Deals 9 damage to infantry, none to vehicles."
     },
@@ -309,7 +309,7 @@
         "title": "40mm Star Grenade",
         "parentId": "Rifleman",
         "class": "Rifleman",
-        "cost": 2500,
+        "cost": 5500,
         "description": "Apparently it’s the sun, in a 40mm can. Blinds anyone looking at it.",
         "rulesText": "M-Weapons attacker check, Acrobatics defender check.\n Applies very harshly lit (-2) towards a target. Interrupts actions."
     },
@@ -327,7 +327,7 @@
         "title": "40mm LBV HE Grenade",
         "parentId": "Rifleman",
         "class": "Rifleman",
-        "cost": 550,
+        "cost": 2550,
         "description": "Bounceable 40mm HE",
         "rulesText": "8 DMG.\n M-Weapons attacker check, Acrobatics defender check\n Able to be bounced off walls. 1 hex AOE"
     },
@@ -397,7 +397,7 @@
         "title": "Snapshot Grenades",
         "parentId": "Raider",
         "class": "Raider",
-        "cost": 1500,
+        "cost": 7000,
         "description": "Spotters, stupid fucking box grenades, wallhacks, they go by many names but do the same thing. You throw them into an area or room, everyone gets pinged.\nFollow ups vary.",
         "rulesText": "Opposed Throw Check\nPings all enemies in an area and provides a live outline of them. (+2 spotted bonus)\nLasts for 1 turn.\nUpon fail or fumble, the snapshot will tag no targets."
     },
@@ -460,16 +460,16 @@
         "class": "Combat Engineer",
         "cost": 17000,
         "description": "Nicknamed the 'straw', wire guided shoulder fired munitions are just as the name says: wire guided. The FCS is built into the launcher itself, and allows the missile to be guided in by the user. As such- it's faster than the guided launchers, but slower than unguided launchers. While at the same time also allowing for much more damage when they connect. Just dont flinch while using it.",
-        "rulesText": "Guaranteed hit if target is tracked and no countermeasures deployed. Can be guided where every 2 hexes, you can change its direction of travel by one hex from its current path.\n Opposed [Alertness] check to notice, reaction is either countermeasures, bracing, or evasion.\nCapacity: 1\nAmmo: 2\nPen: 3\nDamage: 12"
+        "rulesText": "Guaranteed hit if target is tracked and no countermeasures deployed. Can be guided where every 2 hexes, you can change its direction of travel by one hex from its current path.\n Opposed [Alertness] check to notice, reaction is either countermeasures, bracing, or evasion.\nCapacity: 1\nAmmo: 2\nPen: 3\nDamage: 10"
     },
     {
         "id": "guided-launcher",
         "title": "Guided Rocket Launcher",
         "parentId": "C-ENG",
         "class": "Combat Engineer",
-        "cost": 17000,
+        "cost": 19000,
         "description": "Top attack, PLOS, and others. Guided rocket launchers are able to be much better controlled for the expense of being a bit slower and much more expensive. However, they hit harder, and will take out most vehicles easily.",
-        "rulesText": "Guaranteed hit if target is locked and no countermeasures deployed, Opposed [Alertness] check to notice, reaction is either countermeasures, bracing, or evasion.\nCapacity: 1\nAmmo: 2\nPen: 3\nDamage: 15"
+        "rulesText": "Guaranteed hit if target is locked and no countermeasures deployed, Opposed [Alertness] check to notice, reaction is either countermeasures, bracing, or evasion.\nCapacity: 1\nAmmo: 2\nPen: 3\nDamage: 10"
     },
     {
         "id": "amr",
@@ -478,7 +478,7 @@
         "class": "Combat Engineer",
         "cost": 0,
         "description": "From the classics of the AW-50 and M107 Barret to modern options such as the Gepard GM6 Lynx, Anti Material rifles come in all shapes and sizes but offer the same capability: big bullet, big penetration, big damage. Anti Material rifles can penetrate heavy armor and disable dedicated vehicle systems permanently. Such as APS, tracks, or engines. On lighter vehicles, they can punch through the armor, killing passengers or gunnners.",
-        "rulesText": "Range Modifiers: +1 Bipod | -2C | +1L | +2ELR\n Ammo: 10\nPen: 3\nDamage: 10"
+        "rulesText": "Range Modifiers: +1 Bipod | -2C | +1L | +2ELR\n Ammo: 10\nPen: 3\nDamage: 8"
     },
     {
         "id": "semenov-railgun",
@@ -487,7 +487,7 @@
         "class": "Combat Engineer",
         "cost": 30000,
         "description": "Advanced, experimental Railgun design from Gold Coast. Utilizes electromagnetics to accelerate a 14.5 Anti-Material round from 0 to Mach 3 in under a second. We are not liable for hearing damage caused by extensive use.",
-        "rulesText": "Range Modifiers: +1 Bipod | -2C | +1L | +2ELR\n Ammo: 10\nPen: 4\nDamage: 14\n\nRequires a turn of charge-up before firing.\nWill cause characters within the room or round path to become Suppressed."
+        "rulesText": "Range Modifiers: +1 Bipod | -2C | +1L | +2ELR\n Ammo: 10\nPen: 4\nDamage: 10\n\nRequires a turn of charge-up before firing.\nWill cause characters within the room or round path to become Suppressed."
     },
     {
         "id": "T-ENG",
@@ -598,7 +598,7 @@
         "title": "X-89 ACERM rounds (Guided)",
         "parentId": "F-SUP",
         "class": "Fire Support",
-        "cost": 0,
+        "cost": 5000,
         "description": "Guided rounds that change trajectory mid air to strike a target accurately.",
         "rulesText": "Adds an extra dice to your attacking roll, increases Pen to 2. 8 DMG | 1 hex AOE"
     },
@@ -607,7 +607,7 @@
         "title": "X-89 SMK rounds (Smoke)",
         "parentId": "F-SUP",
         "class": "Fire Support",
-        "cost": 0,
+        "cost": 4500,
         "description": "Creates a plume of smoke around a designated location.",
         "rulesText": "No DMG\nApplies ‘very dimly lit’ effect to an area (-2 attack for all parties to and through the area of the smoke screen.)\nPings from visual sources such as drones and cameras will be erased if a target is no longer visible with smoke."
     },
@@ -652,7 +652,7 @@
         "title": "Spitfire Feeder System",
         "parentId": "F-SUP",
         "class": "Fire Support",
-        "cost": 10000,
+        "cost": 16000,
         "description": "Utilizing a backpack feeder and a gyroscopic camera mount, the spitfire allows you to put down an unmatched amount of firepower at the expense of melting barrels and making the logistics officer incredibly angry at you.",
         "rulesText": "The stabilizer removes the ability to aim in exchange for an extra +1 to the supression saturation threshold. Allows the user to supress a second set of six hexes. Barrels melt at three turns of consequtive supression. reloading in the same turn has no penalty."
     },
@@ -713,7 +713,7 @@
         "title": "Traumadol Nanite Kit (TNK)",
         "parentId": "Medic",
         "class": "Medic",
-        "cost": 5000,
+        "cost": 8000,
         "description": "Retooled for killing any and all pain, Truamadol Nanites make the user feel nothing, other than emotion — we didn't disable that just yet.",
         "rulesText": "Temporarily removes all wounds\nLasts for 2 + 1d6 + medical skill level turns"
     },
@@ -722,7 +722,7 @@
         "title": "Adrenal Nanite Kit (DTNK)",
         "parentId": "Medic",
         "class": "Medic",
-        "cost": 8000,
+        "cost": 9000,
         "description": "Created to simulate a release of adrenaline via nanites, the Adrenal Nanites give you a kick of energy in the moment.",
         "rulesText": "Adds another standard action for the user\nLasts for the turn"
     },
