@@ -13,6 +13,7 @@ function EquipmentSelection({
   refreshCharacter,
   setIsEditing,
   charActive,
+  campEquipment,
 }) {
   const defaultGear = {
     primaryWeapon: { name: "", category: "" },
@@ -27,9 +28,15 @@ function EquipmentSelection({
   //percolates items froim the equipment data into an easy to use lookup table.
   const itemById = useMemo(() => {
     const m = {};
-    equipmentData.forEach((it) => {
-      m[it.id] = it;
-    });
+    if (!campEquipment) {
+      equipmentData.forEach((it) => {
+        m[it.id] = it;
+      });
+    } else {
+      campEquipment.forEach((it) => {
+        m[it.id] = it;
+      });
+    }
     return m;
   }, []);
 
@@ -60,12 +67,22 @@ function EquipmentSelection({
     );
 
     //filters items based on class, secondary class, and if they are purchased or not.
-    const filtered = equipmentData.filter(
-      (item) =>
-        (item.class === character.class ||
-          item.class === character.multiClass) &&
-        item.cost === 0
-    );
+    let filtered = null;
+    console.log(!campEquipment || campEquipment == null)
+    if (!campEquipment || campEquipment == null) {
+      filtered = equipmentData.filter(
+        (item) =>
+          (item.class === character.class ||
+            item.class === character.multiClass)
+      );
+    } else {
+      filtered = campEquipment.filter(
+        (item) =>
+          (item.class === character.class ||
+            item.class === character.multiClass) &&
+          item.cost === 0
+      );
+    }
     setClassGadgets(filtered);
 
     //Excludes primaries based on MAIN class, not secondary.
@@ -343,18 +360,18 @@ function EquipmentSelection({
                 </p>
               )}
               {gear.armorClass == 1 && (
-                <p className="text-xs text-neutral-400">
-                  No Bonuses
-                </p>
+                <p className="text-xs text-neutral-400">No Bonuses</p>
               )}
               {gear.armorClass == 2 && (
                 <p className="text-xs text-neutral-400">
-                  -1 to movement related checks [Acrobatics][Jump][Climb][Endurance]
+                  -1 to movement related checks
+                  [Acrobatics][Jump][Climb][Endurance]
                 </p>
               )}
               {gear.armorClass == 3 && (
                 <p className="text-xs text-neutral-400">
-                  -2 to movement related checks [Acrobatics][Jump][Climb][Endurance]
+                  -2 to movement related checks
+                  [Acrobatics][Jump][Climb][Endurance]
                 </p>
               )}
               {gear.armorClass >= 4 && (
@@ -467,6 +484,7 @@ function EquipmentSelection({
               charClass={character.class}
               characterCallsign={character.callsign}
               config={activeGadgetConfig}
+              campActive={!(!campEquipment || campEquipment == null)}
             />
           )}
 

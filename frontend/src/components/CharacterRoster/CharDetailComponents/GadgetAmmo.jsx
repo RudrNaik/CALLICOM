@@ -11,6 +11,7 @@ export default function GadgetAmmo({
   itemById,
   charClass,
   characterCallsign, // for per-character storage key
+  campActive
 }) {
   if (!config) return null;
 
@@ -227,7 +228,7 @@ export default function GadgetAmmo({
               ? gadgetAmmo[opt.id]
               : 0;
             if (!isEditing && count <= -1) return null;
-            if (itemById?.[opt.id]?.cost !== 0) return null //Specific to the current campaign where it will filter out gadgets based on cost.
+            if (campActive && itemById?.[opt.id]?.cost !== 0) return null //Specific to the current campaign where it will filter out gadgets based on cost.
 
             return (
               <div
@@ -287,7 +288,7 @@ export default function GadgetAmmo({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {options.map((opt) => {
               const rules = itemById?.[opt.id]?.rulesText;
-              if (itemById?.[opt.id]?.cost !== 0) return null //Specific to the current campaign where it will filter out gadgets based on cost.
+              if (campActive && itemById?.[opt.id]?.cost !== 0) return null //Specific to the current campaign where it will filter out gadgets based on cost.
               return (
                 <div
                   key={opt.id}

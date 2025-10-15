@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 
 function CharacterRoster({ userId }) {
   const [characters, setCharacters] = useState([]);
+  const [equipment, setEquipment] = useState([]);
   const [selectedCharacter, setSelectedCharacter] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [refreshFlag, setRefreshFlag] = useState(false);
@@ -83,6 +84,56 @@ function CharacterRoster({ userId }) {
         console.error("Error fetching characters:", err);
         setIsLoading(false);
       });
+
+    fetch(`http://callicom.onrender.com/api/campaignEquipment`, { 
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then(async (res) => {
+        const text = await res.text();
+
+        if (res.status === 401 || res.status === 403) {
+          if (
+            text.toLowerCase().includes("token expired") ||
+            text.toLowerCase().includes("jwt expired") ||
+            text.toLowerCase().includes("tokenexpirederror")
+          ) {
+            console.warn("Token expired. Redirecting to login.");
+          } else {
+            console.warn("Access denied. Redirecting to login.");
+          }
+
+          localStorage.removeItem("token");
+          navigate("/login");
+          return;
+        }
+
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch (err) {
+          console.error("Invalid JSON response:", text);
+          setIsLoading(false);
+          return;
+        }
+
+        if (!Array.isArray(data)) {
+          console.error("Unexpected data format:", data);
+          setIsLoading(false);
+          return;
+        }
+
+        setEquipment(data);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error fetching gear:", err);
+        setIsLoading(false);
+      });
+    
   }, [userId, refreshFlag]);
 
   const triggerRefresh = () => setRefreshFlag((prev) => !prev);
@@ -138,7 +189,7 @@ function CharacterRoster({ userId }) {
         ) : (
           <div className="text-gray-400 mb-2 text-xs">
             {" "}
-            Operators Updated.
+            Operators Updated. {equipment.length}x equipment ready.
           </div>
         )}
       </motion.div>
@@ -182,6 +233,7 @@ function CharacterRoster({ userId }) {
                   character={selectedCharacter}
                   user={userId}
                   onUpdate={triggerRefresh}
+                  equipment = {equipment}
                 />
               </motion.div>
             </div>

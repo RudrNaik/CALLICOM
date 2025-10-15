@@ -10,7 +10,7 @@ import EquipmentSelection from "./CharDetailComponents/EquipmentView";
 import XpControls from "./CharDetailComponents/XpHandler";
 import MultiClassModal from "./CharDetailComponents/MultiClassModal";
 
-function CharacterDetail({ character, onUpdate, user }) {
+function CharacterDetail({ character, onUpdate, user, equipment }) {
   if (!character) return null;
 
   const [isEditing, setIsEditing] = useState(false);
@@ -435,6 +435,7 @@ function CharacterDetail({ character, onUpdate, user }) {
         refreshCharacter={onUpdate}
         setIsEditing={setIsEditingEquipment}
         charActive={charActive}
+        campEquipment={equipment} //comment out when current campaign is completed for good. This controls if equipment is limited or not.
       />
 
       {!isEditingEquipment && (
