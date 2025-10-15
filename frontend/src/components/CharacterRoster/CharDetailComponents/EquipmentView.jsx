@@ -229,7 +229,7 @@ function EquipmentSelection({
         </div>
       </div>
 
-      <div className="grid sm:grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Weapons */}
         {/* {["primaryWeapon", "secondaryWeapon"].map((slot) => (
           <WeaponSlot
@@ -243,7 +243,7 @@ function EquipmentSelection({
             charActive={charActive}
           />
         ))} */}
-
+        <div className="sm:col-span-1">
         <WeaponSlot
           slot={"primaryWeapon"}
           weapon={gear["primaryWeapon"]}
@@ -253,6 +253,8 @@ function EquipmentSelection({
           characterCallsign={character.callsign}
           charActive={charActive}
         />
+        </div>
+        <div className="sm:col-span-1">
         <WeaponSlot
           slot={"secondaryWeapon"}
           weapon={gear["secondaryWeapon"]}
@@ -262,6 +264,7 @@ function EquipmentSelection({
           characterCallsign={character.callsign}
           charActive={charActive}
         />
+        </div>
 
         {/* Grenades */}
         <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-400 p-6 rounded shadow">
