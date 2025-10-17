@@ -78,91 +78,104 @@ export default function CharacterSheetModal({ char, open, onClose }) {
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: 10, opacity: 0, scale: 0.98 }}
             transition={{ duration: 0.12 }}
-            className="absolute left-1/2 top-1/2 w-[min(64rem,95vw)] max-h-[85vh]
-                       -translate-x-1/2 -translate-y-1/2 overflow-y-auto
-                       rounded-2xl border border-orange-400 bg-neutral-900/95 p-6 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
+            className="absolute left-1/2 top-1/2 w-[min(64rem,95vw)] 
+             min-h-[90vh] max-h-[90vh] -translate-x-1/2 -translate-y-1/2
+             rounded-2xl border border-orange-400 bg-neutral-900/95 shadow-2xl 
+             overflow-hidden flex flex-col"
           >
-            {/* Header */}
-            <div className="flex items-start gap-4">
-              <div className="flex-1">
-                <h2 className="text-2xl font-bold text-neutral-100 tracking-wide">
-                  {(char.callsign || "UNKNOWN").toUpperCase()}
-                </h2>
-                <p className="text-sm text-neutral-300">
-                  {char.name} • {char.class}
-                  {char.multiClass ? ` (+ ${char.multiClass})` : ""} •{" "}
-                  {char.background}
-                </p>
-              </div>
-              <button
-                onClick={onClose}
-                className="px-3 py-1 rounded-lg bg-orange-500 hover:bg-orange-600 text-black font-semibold"
-              >
-                Close
-              </button>
-            </div>
-
-            {/* Tabs */}
-            <div className="mt-4">
-              <div className="inline-flex rounded-xl border border-orange-500/40 bg-neutral-900/60 overflow-hidden">
+            {/* Header (not scrollable) */}
+            <div className="p-6 pb-4">
+              <div className="flex items-start gap-4">
+                <div className="flex-1">
+                  <h2 className="text-2xl font-bold text-neutral-100 tracking-wide">
+                    {(char.callsign || "UNKNOWN").toUpperCase()}
+                  </h2>
+                  <p className="text-sm text-neutral-300">
+                    {char.name} • {char.class}
+                    {char.multiClass ? ` (+ ${char.multiClass})` : ""} •{" "}
+                    {char.background}
+                  </p>
+                </div>
                 <button
-                  className={`px-4 py-2 text-sm font-semibold ${
-                    tab === "loadout"
-                      ? "bg-orange-500 text-white"
-                      : "text-orange-300 hover:bg-neutral-800"
-                  }`}
-                  onClick={() => setTab("loadout")}
+                  onClick={onClose}
+                  className="px-3 py-1 rounded-lg bg-orange-500 hover:bg-orange-600 text-black font-semibold"
                 >
-                  Loadout
-                </button>
-                <button
-                  className={`px-4 py-2 text-sm font-semibold border-l border-orange-500/40 ${
-                    tab === "skills"
-                      ? "bg-orange-500 text-white"
-                      : "text-orange-300 hover:bg-neutral-800"
-                  }`}
-                  onClick={() => setTab("skills")}
-                >
-                  Skills
-                </button>
-                <button
-                  className={`px-4 py-2 text-sm font-semibold border-l border-orange-500/40 ${
-                    tab === "bio"
-                      ? "bg-orange-500 text-white"
-                      : "text-orange-300 hover:bg-neutral-800"
-                  }`}
-                  onClick={() => setTab("bio")}
-                >
-                  Biography
+                  Close
                 </button>
               </div>
-            </div>
 
-            {/* Body */}
-            {tab === "loadout" && <LoadoutSection char={char} />}
-            {tab === "skills" && (
+              {/* Tabs (still not scrollable) */}
               <div className="mt-4">
-                <SkillsView
-                  skillGroups={skillGroups}
-                  isEditing={false}
-                  editedSkills={{}}
-                  character={char}
-                  increaseSkill={() => {}}
-                  decreaseSkill={() => {}}
-                />
-
-                <h2 className="mt-2 text-md font-bold text-orange-400">
-                  Specializations:
-                </h2>
-                <SpecView
-                  specializations={char.specializations}
-                  isEditing={false}
-                  removeSpec={() => {}}
-                />
+                <div className="inline-flex rounded-xl border border-orange-500/40 bg-neutral-900/60 overflow-hidden">
+                  <button
+                    className={`px-4 py-2 text-sm font-semibold ${
+                      tab === "loadout"
+                        ? "bg-orange-500 text-white"
+                        : "text-orange-300 hover:bg-neutral-800"
+                    }`}
+                    onClick={() => setTab("loadout")}
+                  >
+                    Loadout
+                  </button>
+                  <button
+                    className={`px-4 py-2 text-sm font-semibold border-l border-orange-500/40 ${
+                      tab === "skills"
+                        ? "bg-orange-500 text-white"
+                        : "text-orange-300 hover:bg-neutral-800"
+                    }`}
+                    onClick={() => setTab("skills")}
+                  >
+                    Skills
+                  </button>
+                  <button
+                    className={`px-4 py-2 text-sm font-semibold border-l border-orange-500/40 ${
+                      tab === "bio"
+                        ? "bg-orange-500 text-white"
+                        : "text-orange-300 hover:bg-neutral-800"
+                    }`}
+                    onClick={() => setTab("bio")}
+                  >
+                    Biography
+                  </button>
+                </div>
               </div>
-            )}
-            {tab === "bio" && <BioSection char={char} />}
+            </div>
+
+            {/* Scrollable body only */}
+            <div
+              className="flex-1 overflow-y-auto px-6 pb-6
+               scrollbar-thin scrollbar-thumb-orange-400 scrollbar-track-neutral-700"
+            >
+              {tab === "loadout" && <LoadoutSection char={char} />}
+
+              {tab === "skills" && (
+                <div className="mt-2">
+                  <h2 className="mt-2 text-md font-bold text-orange-400">
+                    Skills:
+                  </h2>
+                  <SkillsView
+                    skillGroups={skillGroups}
+                    isEditing={false}
+                    editedSkills={{}}
+                    character={char}
+                    increaseSkill={() => {}}
+                    decreaseSkill={() => {}}
+                  />
+
+                  <h2 className="mt-4 text-md font-bold text-orange-400">
+                    Specializations:
+                  </h2>
+                  <SpecView
+                    specializations={char.specializations}
+                    isEditing={false}
+                    removeSpec={() => {}}
+                  />
+                </div>
+              )}
+
+              {tab === "bio" && <BioSection char={char} />}
+            </div>
           </motion.div>
         </motion.div>
       )}
@@ -208,10 +221,7 @@ function LoadoutSection({ char }) {
         {/* Derived */}
         <div className="grid grid-cols-5 gap-2">
           <DerivedCard label="Combat Sense" value={1 + INT + SPR} />
-          <DerivedCard
-            label="Armd/Unrmd DMG"
-            value={`${armd} / ${unrmd}`}
-          />
+          <DerivedCard label="Armd/Unrmd DMG" value={`${armd} / ${unrmd}`} />
           <DerivedCard
             label="Deep/Flesh"
             value={`${SPR + BDY + 5 + armor} / ${Math.ceil(

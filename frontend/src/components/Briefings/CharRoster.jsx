@@ -39,7 +39,7 @@ export default function Roster({ characters, isLoading }) {
   const popoutPos = clampPopout();
 
   return (
-    <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border border-orange-500 rounded-xl p-6 shadow-lg min-w-sm sm:max-w-full md:max-w-md min-h-[700px] max-h-[700px] overflow-y-auto whitespace-pre-line scrollbar-thin scrollbar-thumb-orange-400 scrollbar-track-neutral-700">
+    <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border border-orange-500 rounded-sm p-6 shadow-lg min-w-sm sm:max-w-full md:max-w-md min-h-[700px] max-h-[700px] overflow-y-auto whitespace-pre-line scrollbar-thin scrollbar-thumb-orange-400 scrollbar-track-neutral-700">
       <h2 className="uppercase text-sm text-orange-400">Operator Roster</h2>
       {isLoading ? (
         <div className="flex items-center text-xs text-orange-400 py-2 mb-2">

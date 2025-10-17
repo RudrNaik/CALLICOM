@@ -1,0 +1,38 @@
+{
+  "Alertness": {
+    "Drive" : "Measure your knowledge and skill driving land, sea and air vehicles, as well as combat drones.",
+    "L-Weapons":"Measure of a character's proficiency with pistols, revolvers, and submachine guns. Includes basic knowledge of maintenance procedures.",
+    "M-Weapons":"Measure of a character's proficiency with assault rifles, battle rifles, shotguns, DMRs, and sniper rifles. Includes basic knowledge of maintenance procedures.",
+    "H-Weapons":"Measure of a character's proficiency with Light Machine Guns, Rocket Launchers, and Grenade Launchers. Includes basic knowledge of maintenance procedures.",
+    "Stealth":"Measure of a character's ability to do things surreptitiously and quietly. Opposed roll against Awareness when done against another character",
+    "Throw":"Measure of a character's ability to accurately throw an object at a target. Used when throwing grenades and other offensive weapons.",
+    "Tinker":"Measure of a character's skill to repair, modify, and or create machinery under time constraints, poor conditions or modify equipment in novel and desperate ways."
+  },
+  "Body": {
+    "Acrobatics": "Measure of a character's ability to perform activities requiring balancing, and gymnastics",
+    "Athletics": "Measure of a character's ability to engage in physical activities. Includes skills, knowledge of rules, and training required by athletic activities.",
+    "Endurance": "Measure of a character's conditioning to endure various long-time exertions",
+    "Climb": "Measure of a character's ability to climb and rappel",
+    "Jump": "Measure of a character's ability to jump over distances. Modified by body and movement speed",
+    "Melee": "Measure of a character's skill in attacking and/or defending with close-combat weapons, such as knives, swords, and bayonets",
+    "CQC": "Measure of a character's ability in close-range combat using unarmed fighting techniques"
+  },
+  "Intelligence": {
+    "Politics": "A character's ability to stay in the loop of the politics of a business, nation, or military. Ranges from understanding the inner workings to maneuvering within a company or group",
+    "Tech": "A characters ability to use and manipulate technically complicated items and gadgets. Also encompasses a character's know-how with computers, allowing them to hack enemy computer systems to gather intel.",
+    "Forgery": "A character’s ability to accurately duplicate objects, such as official documents, works of art, money, and handwriting. Also the ability to recognize a forgery and give opinion as to the origin.",
+    "Investigation": "A character's ability to collect information on people, places, and events. This information can be gathered by any means not covered by the Connections or Tech Skills",
+    "Medicine": "A character's ability to diagnose and treat various traumatic injuries and pathological infections or diseases. Used for first aid.",
+    "Navigate": "Represents A character’s proficiency in the various techniques used to track one’s positions and movements.",
+    "Trivia": "A measure of a character's ability to recall useful bits of information on various different topics."
+  },
+  "Spirit": {
+    "Disguise": "Covers everything regarding physically masking a character from the enemy through a combination of outfits, camouflage, and adaptation to a character's environment. Actual impersonation of a specific individual may be more difficult",
+    "Etiquette": "How a character acts and talks to different people across society to not offend others or talk out of line. If a character attempts to use his skill to interact in a related but unfamiliar milieu, a -2 penalty is imposed.",
+    "Intimidate": "A characters ability to put the fear of god into their opponent, whether it be to obtain information or to terrify enemies into a retreat or surrender",
+    "Leadership": "A character's capacity to lead others, either by example or through inspiration. With inspired and rallied characters, they can receive a bonus from the leadership.",
+    "Persuasion": "A character's ability to talking with a silver tongue to obtain information or persuade an enemy to surrender. It may also be used for more personal interactions per GM discretion.",
+    "Connections": "A character's connections and ability to use said connections to gain information, goods, or rumors that are not common knowledge or easily obtainable.",
+    "Notice": "A character's ability to perceive details that may be overlooked. Includes spotting traps, locating intel, ID'ing a target, empathizing with them etc."
+  }
+}

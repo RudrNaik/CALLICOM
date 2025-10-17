@@ -15,7 +15,7 @@ const Rules = () => {
         <input
           type="text"
           placeholder="Search rules..."
-          className="w-full sm:w-96 p-2 mb-6 rounded bg-neutral-800 text-white border border-orange-400 focus:outline-none"
+          className="w-full sm:w-96 p-2 mb-6 rounded bg-neutral-800 text-white border border-orange-500 focus:outline-none"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value.toLowerCase())}
         />
