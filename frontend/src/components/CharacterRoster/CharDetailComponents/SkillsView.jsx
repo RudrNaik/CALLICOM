@@ -17,7 +17,7 @@ function SkillsView({
             {object.map((skill) => (
               <div
                 key={skill}
-                className="bg-gradient-to-t from-neutral-800 px-2 py-1 rounded-xs flex justify-between border-l-4 border-orange-500"
+                className="bg-gradient-to-r from-neutral-800 px-2 py-1 rounded-xs flex justify-between border-l-4 border-orange-500"
               >
                 <span className="">
                   {skill}
