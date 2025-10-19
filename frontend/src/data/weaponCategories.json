@@ -27,7 +27,7 @@
     "class": "L-Weapons",
     "damage": 4,
     "penetration": 1,
-    "range": "+1 M | -1 ELR",
+    "range": "+1 M | -1L | -2 ELR",
     "totalTurns": 12,
     "magazineSize": 3
   },

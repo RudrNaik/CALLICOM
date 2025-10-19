@@ -158,7 +158,7 @@ function CampaignView({
   return (
     <div>
       {currentCampaign && (
-        <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border border-orange-500 rounded-xl p-6 shadow-lg min-w-sm sm:max-w-full md:max-w-md min-h-[700px] max-h-[700px] overflow-y-auto whitespace-pre-line scrollbar-thin scrollbar-thumb-orange-400 scrollbar-track-neutral-700">
+        <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border border-orange-500 rounded-sm p-6 shadow-lg min-w-sm sm:max-w-full md:max-w-md min-h-[700px] max-h-[700px] overflow-y-auto whitespace-pre-line scrollbar-thin scrollbar-thumb-orange-400 scrollbar-track-neutral-700">
           {/* Campaign Selector */}
           <div className="relative">
             <div className="bg-orange-500 p-2 rounded text-neutral-900 font-bold">

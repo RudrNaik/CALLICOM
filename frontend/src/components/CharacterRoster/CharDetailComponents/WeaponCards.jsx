@@ -145,7 +145,7 @@ const WeaponSlot = ({
   return (
     <div
       key={`${slot}-${characterCallsign}`}
-      className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-400 p-6 rounded shadow"
+      className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-4 lg:p-6 rounded shadow mt-2"
     >
       <h3 className="font-semibold text-orange-300 mb-2">
         {slot === "primaryWeapon" ? "Primary Weapon" : "Secondary Weapon"}

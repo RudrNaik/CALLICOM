@@ -23,7 +23,7 @@ const CharManager = () => {
 
   return (
     <div
-      className="font-[Geist_Mono] bg-repeat bg-[length:1920px_1080px] w-full min-h-screen text-white justify-center"
+      className="font-[Geist_Mono] bg-repeat bg-[length:1920px_1080px] w-full min-h-screen text-white justify-center "
       style={{ backgroundImage: `url(${background})` }}
     >
       <div className="py-10"></div>
@@ -37,7 +37,7 @@ const CharManager = () => {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="flicker"
         >
-          <div className="flex flex-col space-y-10">
+          <div className="">
             <TerminalPanel
               title="Character Creator"
               subtitle="Hiring Portal"

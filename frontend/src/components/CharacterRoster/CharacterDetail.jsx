@@ -40,8 +40,6 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
   const [Biography, setBio] = useState("");
   const [attributes, setAttributes] = useState({ ...character.attributes });
 
-  console.log(attributes);
-
   useEffect(() => {
     if (character) {
       setSpecializations([...character.specializations]);
@@ -581,7 +579,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
       <h2 className="text-xl font-bold text-orange-400 mt-2 mb-0.5">
         Biography
       </h2>
-      <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-400 p-6 rounded shadow col-span-2">
+      <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-6 rounded shadow col-span-2">
         {isEditingBio ? (
           <textarea
             className="w-full bg-neutral-900 text-white p-2 rounded resize-y min-h-[100px]"

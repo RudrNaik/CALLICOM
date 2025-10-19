@@ -126,7 +126,7 @@ function DerivedStats({ character, userId, refreshCharacter }) {
       </div>
 
       {/* Card */}
-      <div className="rounded-sm overflow-hidden bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-400">
+      <div className="rounded-sm overflow-hidden bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500">
 
         <div className="grid grid-cols-2 md:grid-cols-4 text-center text-sm">
           {/* Row 1 headers */}

@@ -9,5 +9,5 @@ export default {
       },
     },
   },
-  plugins: [scrollbar],
+  plugins: require('tailwind-scrollbar')({ nocompatible: true }),
 };

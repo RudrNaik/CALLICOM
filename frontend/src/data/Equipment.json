@@ -40,7 +40,7 @@
         "class": "All",
         "cost": 2600,
         "description": "Carbines and PDWs are the stepping stone from SMG to Assault Rifle, covering weapons that fire intermediate cartridges like 5.56x45, 4.6x30, and 5.7x28. A bit more wieldy than the SMG, the carbine is much more tuned to medium-range engagements and cannot spray or burst like their AR cousins.",
-        "rulesText": "[Light Weapons]\nRange modifier: +1 M | -1 ELR\n PEN: 1 | DMG: 4 \n RSV: 12 | CAP: 3"
+        "rulesText": "[Light Weapons][Spray]\nRange modifier: +1 M | -1L | -2 ELR\n PEN: 1 | DMG: 4 \n RSV: 12 | CAP: 3"
     },
     {
         "id": "ar",
