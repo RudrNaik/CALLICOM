@@ -6,7 +6,7 @@ import classes from "../../data/classSkills.json";
 function EnemyCard({ id, onDelete }) {
   const defaultStats = {
     Name: "Enemy",
-    Class: "Class",
+    Class: "Rifleman",
     Alertness: 0,
     Body: 0,
     Intelligence: 0,
@@ -14,8 +14,8 @@ function EnemyCard({ id, onDelete }) {
     AC: 0,
     Weapons: 0,
     Melee: 0,
-    Primary: "N/A",
-    Gadget: "N/A",
+    Primary: "Assault Rifles",
+    Gadget: "",
   };
 
   const [stats, setStats] = useState(defaultStats);
@@ -126,7 +126,7 @@ function EnemyCard({ id, onDelete }) {
       />
       <select
         className="w-full bg-neutral-900 text-neutral-400 text-xs p-2 rounded mb-2"
-        value={stats.Class ?? ""} // make sure it’s a string
+        value={stats.Class ?? "Rifleman"} // make sure it’s a string
         onChange={(e) => handleChange("Class", e.target.value)}
       >
         <option value="" disabled>
@@ -269,7 +269,7 @@ function EnemyCard({ id, onDelete }) {
 
         <div className="text-xs mt-2">
           <select
-            className="w-full bg-neutral-900 text-white p-2 rounded mb-2"
+            className="w-full bg-neutral-900 text-white rounded mb-2"
             value={Primary || ""}
             onChange={(e) => handleWeaponChange(e.target.value)}
           >
@@ -282,7 +282,7 @@ function EnemyCard({ id, onDelete }) {
           </select>
 
           {categoryData && (
-            <div className="text-xs text-gray-400 p-2 rounded">
+            <div className="text-xs text-gray-400 rounded">
               <div>Damage: {categoryData.damage}</div>
               <div>Penetration: {categoryData.penetration}</div>
               <div>Range: {categoryData.range}</div>
@@ -292,7 +292,7 @@ function EnemyCard({ id, onDelete }) {
 
         <div className="text-xs mt-2">
           <select
-            className="w-full bg-neutral-900 text-white p-2 rounded mb-2"
+            className="w-full bg-neutral-900 text-white rounded mb-2"
             value={gadget || ""}
             onChange={(e) => handleGadgetChange(e.target.value)}
           >
@@ -305,7 +305,7 @@ function EnemyCard({ id, onDelete }) {
           </select>
 
           {gadget && filteredGadgets[gadget] && (
-            <div className="text-xs text-gray-400 p-2 rounded">
+            <div className="text-xs text-gray-400 rounded">
               <div className="whitespace-pre-wrap">
                 {filteredGadgets[gadget].rulesText}
               </div>

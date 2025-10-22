@@ -83,16 +83,22 @@ function EquipmentSelection({
     }
     setClassGadgets(filtered);
 
-    //Excludes primaries based on MAIN class, not secondary.
+    //Excludes primaries based on main and sub classes
     let excluded;
-    if (character.class === "Sharpshooter") {
+    if (
+      character.class === "Sharpshooter" ||
+      character.multiClass === "Sharpshooter"
+    ) {
       excluded = [
         "Machine Guns",
         "Drum Shotguns",
         "Light Pistols",
         "Heavy Pistols",
       ];
-    } else if (character.class === "Fire Support") {
+    } else if (
+      character.class === "Fire Support" ||
+      character.multiClass === "Fire Support"
+    ) {
       excluded = ["Sniper Rifles", "Light Pistols", "Heavy Pistols"];
     } else {
       excluded = [
@@ -336,17 +342,20 @@ function EquipmentSelection({
               max={maxArmor}
               className="w-full bg-neutral-900 text-white p-2 rounded"
               value={gear.armorClass}
-              onChange={(e) =>
-                handleChange("armorClass", parseInt(e.target.value))
-              }
+              onChange={(e) => {
+                let val = parseInt(e.target.value, 10);
+                if (Number.isNaN(val)) val = 0;
+                if (maxArmor > 0 && val > maxArmor) return; // cap
+                handleChange("armorClass", val);
+              }}
             />
           ) : (
             <p>
               AC{gear.armorClass}
               {gear.armorClass == 0 && (
                 <p className="text-xs text-neutral-400">
-                  No maluses for moving and shooting. -1 for sprinting and
-                  shooting.
+                  No maluses for sprinting and shooting, +1 to all movement
+                  related checks [Acrobatics][Jump][Climb][Endurance]
                 </p>
               )}
               {gear.armorClass == 1 && (

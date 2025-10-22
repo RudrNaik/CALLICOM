@@ -18,7 +18,7 @@
       "color":"bg-neutral-800/80",
       "type": "Half",
       "icon": "/Half_Action.svg",
-      "description": "Available for: \n[SMGs] [Carbines]\n\n Weapons capable of rapid, automatic fire can be used to attack multiple targets in a single action by spraying across targets. Thus, people or objects between the targets can be hit as well. A player must declare that they are spraying before any attacks are made. The player then chooses the targets of his attack.\n\n Maximum number of targets that possibly can be attacked is three. All targets must be no more than one hex apart (if they are, count each empty hex space as a target or every 5m gap). Each attack is rolled separately, and each individual target may not be attacked more than once per round by the same weapon. This attack consumes the same amount of ammo as a normal firing action, multiplied by the targets."
+      "description": "Available for: \n[SMGs] [Carbines]\n\n Weapons capable of rapid, automatic fire can be used to attack multiple targets in a single action by spraying across targets. Thus, people or objects between the targets can be hit as well. A player must declare that they are spraying before any attacks are made. The player then chooses the targets of his attack.\n\n Maximum number of targets that possibly can be attacked is three. All targets must be no more than three hexes apart (if they are, count each three hexes as a target or every 5m gap). Each attack is rolled separately, and each individual target can be attacked more than once per round by the same weapon. This attack consumes the same amount of ammo as a normal firing action, multiplied by the amount of times fired."
     },
     {
       "name": "Supression",

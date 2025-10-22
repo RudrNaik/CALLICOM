@@ -114,7 +114,6 @@ export default function Roster({ characters, isLoading }) {
         ))}
       </div>
 
-      {/* Modal is rendered in-tree, but uses fixed positioning */}
       <CharacterSheetModal
         open={!!selectedChar}
         char={selectedChar}

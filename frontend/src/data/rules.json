@@ -79,14 +79,21 @@
         "title": "Spraying",
         "mechanic": "Ranged",
         "parentId": "Ranged",
-        "description": "Available for: \n[SMGs] [Carbines]\n\n Weapons capable of rapid, automatic fire can be used to attack multiple targets in a single action by spraying across targets. Thus, people or objects between the targets can be hit as well. A player must declare that they are spraying before any attacks are made. The player then chooses the targets of his attack.\n\n Maximum number of targets that possibly can be attacked is three. All targets must be no more than one hex apart (if they are, count each empty hex space as a target). Each attack is rolled separately, and each individual target may not be attacked more than once per round by the same weapon. This attack consumes the same amount of ammo as a normal firing action, multiplied by the targets."
+        "description": "Available for: \n[SMGs] [Carbines]\n\n Weapons capable of rapid, automatic fire can be used to attack multiple targets in a single action by spraying across targets. Thus, people or objects between the targets can be hit as well. A player must declare that they are spraying before any attacks are made. The player then chooses the targets of his attack.\n\n Maximum number of targets that possibly can be attacked is three. All targets must be no more than three hexes apart (if they are, count each three hexes as a target or every 5m gap). Each attack is rolled separately, and each individual target can be attacked more than once per round by the same weapon. This attack consumes the same amount of ammo as a normal firing action, multiplied by the amount of times fired."
     },
     {
         "id": "Supression",
         "title": "Supressing",
         "mechanic": "Ranged",
         "parentId": "Ranged",
-        "description": "Available for: \n [LMGs]\n\nSuppression fire is a military term for putting lots of lead in the air, to make others keep their head down. The attacker chooses an area (up to 3 hexes or 5m) then rolls their attack normally. Record the result and add 2 to it: that’s the Saturation Fire Threshold. Anyone or anything which enters the line of fire during the round must beat the Saturation Threshold or take damage. Offensive actions such as shooting or deploying drones and grenades will roll against the saturation fire threshold for damage. If an enemy isnt in cover, they are immediately shifted to prone.\n\n If the defender is already in the suppressed zone before the attack and under cover, the defender must roll a Spirit attribute test against a threshold of 4. \n\n Upon success: defender can move (acrobatics vs saturation fire threshold). \nUpon failure: -1 dice to all rolls. No movement allowed. \n\nAttackers can split their fire towards targets, however this will divide the threshold by how many targets there are. If damage is taken or interrupted, supression is stopped."
+        "description": "Available for: \n [LMGs] [D-Shot]\n\nSuppression fire is a military term for putting lots of lead in the air, to make others keep their head down. The attacker chooses an area (up to 3 hexes or 5m) then rolls their attack normally. Record the result and add 2 to it: that’s the Saturation Fire Threshold. Anyone or anything which enters the line of fire during the round must beat the Saturation Threshold or take damage. Offensive actions such as shooting or deploying drones and grenades will roll against the saturation fire threshold for damage. If an enemy isnt in cover, they are immediately shifted to prone.\n\n If the defender is already in the suppressed zone before the attack and under cover, the defender must roll a Spirit attribute test against a threshold of 4. \n\n Upon success: defender can move (acrobatics vs saturation fire threshold). \nUpon failure: -1 dice to all rolls. No movement allowed. \n\nAttackers can split their fire towards targets, however this will divide the threshold by how many targets there are. If damage is taken or interrupted, supression is stopped."
+    },
+    {
+        "id": "ExtremeRange",
+        "title": "Extreme Long Range Shooting",
+        "mechanic": "Ranged",
+        "parentId": "Ranged",
+        "description": "Available for: \n [Sniper Rifles]\n\nWhen shooting from extreme long range and from 'out of map' (As in you are firing from an adjacent hex over as a sniper) you have much more factors to consider when shooting. Humidity, Elevation, Travel Time, and even the spin of the earth via the coriollis effect can change the impact point of your shot at those ranges. As such, before firing from ELR and out of Hex, you need to roll navigate to determine how well your character has accounted for these factors before the shot and how they will affect it.\n\n >1 [-2] is a complete failure or miscalculation, -2 malus\n >2-3 [-1] is succeding in 'some' of the calculations and adjusting for those factors, -1 malus \n>4-5 [+0] is accurately accounting for factors and leads to no maluses \n>6 [+1] is spot on and extremely accurate with your calculations, +1 bonus."
     },
     {
         "id": "CQC",
@@ -135,7 +142,7 @@
         "title": "Armor and Plates",
         "mechanic": "Core",
         "parentId": "",
-        "description": "The human body is a fragile thing, one bullet in the right place can do enough damage to maim someone for life. Which is why armor is always important. \n\n Armor in gameplay mainly focuses on the coverage provided. Where AC0 has no armor at all, just a chest rig at best, and AC3 is a full on juggernaut or EOD suit. Your armor value is the number you roll with when in ranged combat with someone else. \n\n What level of armor also affects how enumbered you are as a person, where: \n\n AC0: Maluses to moving and shooting are reduced by 1.\n AC1: No affects\n AC2: -1 to movement related checks [Acrobatics][Jump][Climb][Endurance]\n AC3: -2 to movement related checks [Acrobatics][Jump][Climb][Endurance].\n\n You can always choose to strip yourself of armor if need be. However, you will always reduce to AC0 when you strip."
+        "description": "The human body is a fragile thing, one bullet in the right place can do enough damage to maim someone for life. Which is why armor is always important. \n\n Armor in gameplay mainly focuses on the coverage provided. Where AC0 has no armor at all, just a chest rig at best, and AC3 is a full on juggernaut or EOD suit. Your armor value is the number you roll with when in ranged combat with someone else. \n\n What level of armor also affects how enumbered you are as a person, where: \n\n AC0: No maluses to actions after or during movement. +1 to movement related checks [Acrobatics][Jump][Climb][Endurance]. +1 to [Stealth] checks. \n AC1: No affects\n AC2: -1 to movement related checks [Acrobatics][Jump][Climb][Endurance]\n AC3: -2 to movement related checks [Acrobatics][Jump][Climb][Endurance].\n\n You can always choose to strip yourself of armor if need be. However, you will always reduce to AC0 when you strip."
     },
     {
         "id": "Penetration",
@@ -165,12 +172,13 @@
         "parentId": "",
         "description": "Environmental conditions add dynamic factors to missions by affecting visibility and audibility of both friendlies and enemies.\n\nWeather Conditions:\n- Fog: Applies a global 'poorly lit' modifier for medium range and 'very poorly lit' for long and extreme long range bands. Countered by Thermal.\n- Heavy Rain: Applies a -1 to all observation checks [Notice][Alertness][Investigate] and includes Fog effects. Thunder can help mask certain noises.\n- Nighttime: Applies a 'poorly lit' modifier globally when outdoors.\n- New Moon: Applies a 'very dimly lit' modifier globally when outdoors.\n- Full Moon: No lighting modifiers.\n\nWhen multiple conditions apply, the highest modifier is used, unless countered by Thermal or NVGs.\n\nExample: If a mission has Fog, Heavy Rain, and Nighttime, only the most severe modifier applies ('poorly lit' [-1] at close-medium range; 'very poorly lit' [-2] at long/ELR)."
     },
+    
     {
         "id": "Vision",
         "title": "NVG and Thermal",
         "mechanic": "Core",
         "parentId": "",
-        "description": "Night Vision and Thermal optics affect how a contractor is able to see in a variety of lighting conditions.\n\n-NVG (Night Vision Goggles): Normalizes all lighting conditions. Applies a 'poorly lit' (-1) modifier to Long Range and a 'very poorly lit' (-2) modifier to Extreme Long Range. Ideal for CQB. Counteracts all lighting-based visibility debuffs.\n\n- IR (Thermal Imaging): Also normalizes all lighting and weather conditions. However, imposes a -2 modifier at Close Range and -1 at Medium Range. Best suited for long-range spotting roles. IR must be purchased using the Operational Budget.\n\nNVGs are standard-issue gear. Thermal (IR) must be explicitly acquired through buy periods, or found during a mission."
+        "description": "Night Vision and Thermal optics affect how a contractor is able to see in a variety of lighting conditions.\n\n-NVG (Night Vision Goggles): Normalizes all lighting conditions. Applies a -1 modifier to Extreme Long Range. Ideal for CQB. Counteracts all lighting-based visibility debuffs.\n\n- IR (Thermal Imaging): Also normalizes all lighting and weather conditions. However, imposes a -1 modifier at Close Range. Best suited for long-range spotting roles and can see through smoke. IR must be purchased using the Operational Budget.\n\nNVGs are standard-issue gear. Thermal (IR) must be explicitly acquired through buy periods, or found during a mission."
     },
     {
         "id": "EDice",
@@ -184,7 +192,7 @@
         "title": "Moving While Shooting",
         "mechanic": "Core",
         "parentId": "",
-        "description": "Operators can move and perform actions (such as shooting or throwing) simultaneously, with accuracy penalties depending on thier movement speed.\n\n- Moving & Shooting: Apply a global -1 modifier to all actions.\n- Sprinting & Shooting: Apply a global -2 modifier to all actions."
+        "description": "Operators can move and perform actions (such as shooting or throwing) simultaneously, with accuracy penalties depending on thier movement speed.\n\n- Moving & Shooting: Apply a global -1 modifier to all actions.\n- Sprinting & Shooting: Apply a global -2 modifier to all actions.\n\n If a character opts instead to fire from stationary AFTER moving, the maluses change: \n\n - Moving then shooting: No modifiers \n - Sprinting then shooting: -1 global modifier \n\n Shooting from stationary and then moving has no penalty."
     },
     {
         "id": "CombatModifiers",
