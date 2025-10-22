@@ -223,14 +223,14 @@ function LoadoutSection({ char }) {
           <DerivedCard label="Combat Sense" value={1 + INT + SPR} />
           <DerivedCard label="Armd/Unrmd DMG" value={`${armd} / ${unrmd}`} />
           <DerivedCard
-            label="Deep/Flesh"
+            label="Deep/Flsh"
             value={`${SPR + BDY + 5 + armor} / ${Math.ceil(
               (SPR + BDY + 5) / 2 + armor
             )}`}
           />
-          <DerivedCard label="Inst-Death" value={(SPR + BDY + 5) * 2} />
+          <DerivedCard label="Inst-Dth" value={(SPR + BDY + 5) * 2} />
           <DerivedCard
-            label="Sys-Shock"
+            label="Sys-Shk"
             value={Math.ceil((BDY + SPR) / 2) + 5}
           />
         </div>

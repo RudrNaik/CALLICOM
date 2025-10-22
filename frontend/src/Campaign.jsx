@@ -289,13 +289,13 @@ function Campaigns() {
         </motion.div>
 
         {/* THREE COLUMN GRID */}
-        <div className="md:flex sm:grid-cols-1 sm:gap-y-2 gap-4">
+        <div className="md:flex sm:grid-cols-1 gap-4">
           {/* CAMPAIGN VIEW */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="flicker"
+            className="flicker sm:py-2"
           >
             <CampaignView
               currentCampaign={currentCampaign}
@@ -317,7 +317,7 @@ function Campaigns() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.6 }}
-            className="flicker"
+            className="flicker sm:py-2"
           >
             <MissionView
               currentMission={currentMission}
@@ -333,7 +333,7 @@ function Campaigns() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 1.0 }}
-            className="flicker"
+            className="flicker sm:py-2"
           >
             <Roster characters={characters} isLoading={isLoading} />
           </motion.div>
