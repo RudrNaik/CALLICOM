@@ -68,7 +68,17 @@ function EquipmentSelection({
 
     //filters items based on class, secondary class, and if they are purchased or not.
     let filtered = null;
-    if (!campEquipment || campEquipment == null) {
+    if (
+      character?.campaignId == undefined ||
+      character?.campaignId == null ||
+      !character?.campaignId
+        ?.replace(/\s/g, "")
+        ?.split(",")
+        ?.includes("Siberia2022") ||
+      !campEquipment ||
+      campEquipment == null ||
+      campEquipment == undefined
+    ) {
       filtered = equipmentData.filter(
         (item) =>
           item.class === character.class || item.class === character.multiClass
@@ -209,6 +219,21 @@ function EquipmentSelection({
     }
   };
 
+  // console.log(
+  //   character?.campaignId == undefined ||
+  //     character?.campaignId == null ||
+  //     !campEquipment ||
+  //     campEquipment == null ||
+  //     campEquipment == undefined
+  // );
+  // if (character?.campaignId != null) {
+  //   console.log(
+  //     character?.campaignId
+  //       .replace(/\s/g, "")
+  //       .split(",")
+  //       .includes("Siberia2022")
+  //   );
+  // }
   // console.log(primaryOptions);
   // console.log(secondaryOptions);
 
@@ -484,6 +509,7 @@ function EquipmentSelection({
               characterCallsign={character.callsign}
               config={activeGadgetConfig}
               campActive={!(!campEquipment || campEquipment == null)}
+              campaignId = {character?.campaignId}
             />
           )}
 

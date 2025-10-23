@@ -11,7 +11,8 @@ export default function GadgetAmmo({
   itemById,
   charClass,
   characterCallsign, // for per-character storage key
-  campActive
+  campActive,
+  campaignId
 }) {
   if (!config) return null;
 
@@ -113,7 +114,7 @@ export default function GadgetAmmo({
     [characterCallsign, gadgetId]
   );
 
-  // ---- sanitize based on type of munitions (also migrates legacy) ----
+  // ---- sanitize based on type of munitions ----
   const sanitize = (obj) => {
     const out = {};
     if (!obj || typeof obj !== "object") return out;
@@ -122,13 +123,12 @@ export default function GadgetAmmo({
       for (const [k, v] of Object.entries(obj)) {
         if (!optionIds.has(k)) continue;
         const n = Number(v);
-        out[k] = Number.isFinite(n) ? n : -1; // -1 sentinel to hide in non-edit mode
+        out[k] = Number.isFinite(n) ? n : -1; // -1 check to hide in non-edit mode
       }
       return out;
     }
 
     if (isExpendable) {
-      // Preferred pooled key
       if (Object.prototype.hasOwnProperty.call(obj, EX_KEY)) {
         const n = Number(obj[EX_KEY]);
         out[EX_KEY] = Number.isFinite(n)
@@ -219,7 +219,7 @@ export default function GadgetAmmo({
       <h4 className="text-orange-300 font-semibold mb-2">{title}</h4>
       {headerText && <p className="text-xs text-gray-400 mb-2">{headerText}</p>}
 
-      {/* MIXED MUNITIONS (UBGL / AMS / Spec / Stims) */}
+      {/* MIXED MUNITIONS (UBGL / AMS / Spec / Stims/ Demo Dogs) */}
       {isMixed && (
         <div className="text-xs">
           {options.map((opt) => {
@@ -228,7 +228,7 @@ export default function GadgetAmmo({
               ? gadgetAmmo[opt.id]
               : 0;
             if (!isEditing && count <= -1) return null;
-            if (campActive && itemById?.[opt.id]?.cost !== 0) return null //Specific to the current campaign where it will filter out gadgets based on cost.
+            if (campActive && itemById?.[opt.id]?.cost !== 0 && campaignId?.replace(/\s/g, "")?.split(",")?.includes("Siberia2022")) return null //Specific to the current campaign where it will filter out gadgets based on cost.
 
             return (
               <div
@@ -288,7 +288,7 @@ export default function GadgetAmmo({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {options.map((opt) => {
               const rules = itemById?.[opt.id]?.rulesText;
-              if (campActive && itemById?.[opt.id]?.cost !== 0) return null //Specific to the current campaign where it will filter out gadgets based on cost.
+              if (campActive && itemById?.[opt.id]?.cost != 0 && campaignId?.replace(/\s/g, "")?.split(",")?.includes("Siberia2022")) return null //Specific to the current campaign where it will filter out gadgets based on cost.
               return (
                 <div
                   key={opt.id}

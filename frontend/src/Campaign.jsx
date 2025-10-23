@@ -118,9 +118,9 @@ function Campaigns() {
         const filtered = data.filter((char) => {
           if (!char?.campaignId) return false; // safely skip
           return char.campaignId
-            .replace(/\s/g, "")
-            .split(",")
-            .includes(currentCampaignId);
+            ?.replace(/\s/g, "")
+            ?.split(",")
+            ?.includes(currentCampaignId);
         });
 
         setCharacters(filtered);
