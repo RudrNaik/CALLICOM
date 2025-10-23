@@ -168,7 +168,7 @@
         "id": "halligan",
         "title": "Halligan Bar",
         "parentId": "passives",
-        "class": "Raider",
+        "class": "Class",
         "cost": 0,
         "description": "A Halligan bar",
         "rulesText": "Athletics Check\nOpens most hinged doors (cannot open bulkheads and heavily reinforced doors)\nMakes minimal noise, however it breaks the door."
