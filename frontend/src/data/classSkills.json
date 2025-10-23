@@ -39,10 +39,10 @@
     "rulesText": "Raider is an expert at getting into anywhere, loud or quiet and being the tip of the spear with SMGs, Shotguns, breaching charges, and Ninebangs. The Raider is a stealthy class, but also the most useful in room clearing when things go loud.",
     "description": "Are we rushing in? Or are we going sneaky-beaky like?",
     "classGadget": {
-      "id": "AutoPick",
-      "description": "Bringing a quieter entry tool, The AutoPick allows raiders to auto-pick locks, safes, and more in the blink of an eye. ",
+      "id": "Halligan Bar",
+      "description": "Halligan Bars are a mix between a crowbar, a pry bar, and a pick- letting you force open doors in a pinch or whack someone in the head with it as needed.",
       "fluff": "'click', open sesame.",
-      "gameplay":"Auto-Picks can be deployed on locked doors to automatically open them within the same turn. Some heavier or more complex doorswill require a turn, but there are always some doors you just cant pick."
+      "gameplay":"Athletics Check\nOpens most hinged doors (cannot open bulkheads and heavily reinforced doors)\nMakes minimal noise, however it breaks the door."
     }
   },
   "Combat Engineer": {
