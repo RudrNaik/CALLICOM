@@ -165,13 +165,13 @@
         "rulesText": "Lased targets are both pinged and designated. Fire support munitions are guaranteed hits against vehicles unless countermeasures are deployed. Uses a full action to desginate. Can ping large swaths of targets if in FOV (area between hex diagonals in a certain direction)."
     },
     {
-        "id": "autoPick",
-        "title": "AutoPick",
+        "id": "halligan",
+        "title": "Halligan Bar",
         "parentId": "passives",
-        "class": "Class",
+        "class": "Raider",
         "cost": 0,
-        "description": "Bringing a quieter entry tool, The AutoPick allows raiders to auto-pick locks, safes, and more in the blink of an eye.",
-        "rulesText": "Auto-Picks can be deployed on locked doors to automatically open them within the same turn. Some heavier or more complex doorswill require a turn, but there are always some doors you just cant pick..."
+        "description": "A Halligan bar",
+        "rulesText": "Athletics Check\nOpens most hinged doors (cannot open bulkheads and heavily reinforced doors)\nMakes minimal noise, however it breaks the door."
     },
     {
         "id": "xtraRounds",
@@ -346,15 +346,6 @@
         "class": "None",
         "rulesText": "Raider is an expert at getting into anywhere, loud or quiet and being the tip of the spear with SMGs, Shotguns, breaching charges, and Ninebangs. The Raider is a stealthy class, but also the most useful in room clearing when things go loud.",
         "description": "Are we rushing in? Or are we going sneaky-beaky like?"
-    },
-    {
-        "id": "halligan",
-        "title": "Halligan Bar",
-        "parentId": "Raider",
-        "class": "Raider",
-        "cost": 0,
-        "description": "A Halligan bar",
-        "rulesText": "Athletics Check\nOpens most hinged doors (cannot open bulkheads and heavily reinforced doors)\nMakes minimal noise, however it breaks the door."
     },
     {
         "id": "breachpen",
@@ -935,8 +926,8 @@
         "parentId": "thinkpad",
         "class": "Trapper",
         "cost": 0,
-        "description": "Accesses all cameras and pings enemies that are visible.",
-        "rulesText": "Pings all enemies visible through cameras. Can be distrupted if cameras are shot, or if target is obscured. Requires user connection. Ping lasts 1 turn."
+        "description": "Accesses local cameras and devices and pings enemies that are visible.",
+        "rulesText": "Pings all enemies within 25 hexes. Can be distrupted if cameras are shot, or if target is obscured. Requires user connection. Ping lasts 1 turn."
     },
     {
         "id": "cyb-svr",
@@ -945,7 +936,7 @@
         "class": "Trapper",
         "cost": 0,
         "description": "Accesses a specific target and cuts their connection to all downlink and uplink connections, effectively 'severing' them from their own command. ",
-        "rulesText": "Disable an enemy's ability to call reinforcements, mark targets, or control drones. 2 Turns. [+1 Defender trace]"
+        "rulesText": "[-1 Traceability] Disable an enemy's ability to call reinforcements, mark targets, or control drones. 2 Turns."
     },
     {
         "id": "cyb-fdbk",
@@ -954,7 +945,7 @@
         "class": "Trapper",
         "cost": 10000,
         "description": "Deafens a target and scrambles their communications system, making them unable to communicate with others through a deafening tone. Very effective in annoying enemies, or disrupting them entirely",
-        "rulesText": "Interrupts an enemy for a turn and applies a -1 to all actions. Countered by disabling radio. [+2 Defender trace.]"
+        "rulesText": "[-2 Traceability] Interrupts an enemy for a turn and applies a -1 to all actions. Countered by disabling radio."
     },
     {
         "id": "cyb-trc",
@@ -963,16 +954,16 @@
         "class": "Trapper",
         "cost": 15000,
         "description": "Ping's bigger brother, penetrates into an enemy datalink to trace it back to everything using it. Pings any and every enemy on the local network.",
-        "rulesText": "Pings all enemies on a network. Works regardless of cameras. Disabled if EMP'd or DL is jammed. [+4 Defender trace]"
+        "rulesText": "[-3 Traceability] Pings all enemies on a network. Works regardless of cameras. Disabled if EMP'd or DL is jammed."
     },
     {
         "id": "cyb-MShck",
         "title": "Mass Hack",
         "parentId": "thinkpad",
         "class": "Trapper",
-        "cost": 30000,
+        "cost": "[???]",
         "description": "Brute forcing one's way into all local networks, this locks out all enemy users from the datalink. However, it will also spread to the rest of the connected signals, leading a mass lockout that spreads to vehicles, drones, and more.",
-        "rulesText": "Blocks all enemy connections on a network. Disables radio, cameras, and tech like HUDs, turrets, and drones. Effective against vehicles to narrow crew awareness. Erases all enemy pings. lasts for 2 turns. [+5 Defender trace]"
+        "rulesText": "[-4 traceability] Blocks all enemy connections on a network. Disables radio, cameras, and tech like HUDs, turrets, and drones. Effective against vehicles to narrow crew awareness. Erases all enemy pings. lasts for 2 turns."
     },
     {
         "id": "cyb-brn",
@@ -981,7 +972,7 @@
         "class": "Trapper",
         "cost": "[???]",
         "description": "Connects to all devices on a network and overclocks the CPU of the to burn and disable them. Takes one turn to overclock, but permanently disables that device if successful. When used against vehicles, it automatically leads to a shutdown of non-essential systems to protect itself, effectively kneecapping them until the reboot proces can start.",
-        "rulesText": "Causes a one turn timer to start on all enemy electronics, if the enemies dont react within that turn and disable their equipment- it burns and is permanently disabled. Vehciles electronics are disabled for the next turn and need to restart. [+5 Defender trace]"
+        "rulesText": "[-5 Traceability] Causes a one turn timer to start on all enemy electronics, if the enemies dont react within that turn and disable their equipment- it burns and is permanently disabled. Vehciles electronics are disabled for the next turn and need to restart."
     },
     {
         "id": "cyb-MScsh",
@@ -990,6 +981,6 @@
         "class": "Trapper",
         "cost": "[???]",
         "description": "Much like Mass Hack and Burnout, Mass Crash also penetrates into an enemy's network- but goes even deeper. Going as far as to intrude into the local power grid to disable everything in the local area. Lights, power, and all enemy electronics are severed and shut down. Useful for creating either perfect darkness to escape, or an opening to push while hostiles. are confused and dazed.",
-        "rulesText": "Same effect as Mass Hack, however also disables all non-natural lighting in the operational area. [+5 Defender trace]"
+        "rulesText": "[-5 traceability] Same effect as Mass Hack, however also disables all non-natural lighting in the operational area."
     }
 ]
