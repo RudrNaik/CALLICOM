@@ -35,9 +35,6 @@ input[type="number"].num-themed {
   background-color: #0a0a0a;      /* near black */
   border: 1px solid #fb923c66;    /* orange-400 w/ alpha */
   border-radius: 0.25rem;
-  padding-left: 0.25rem;
-  padding-right: 1.75rem;         /* room for custom buttons if you add later */
-  height: 1.5rem;                 /* ~h-6 */
   line-height: 1.5rem;
 }
 

@@ -86,6 +86,8 @@ function EnemyCard({ id, onDelete }) {
   const FleshWoundThreshold = Math.ceil(Stamina / 2) + (AC || 0);
   const DeepWoundThreshold = Stamina + (AC || 0);
   const woundMod = FW + DW * 2;
+  const instantDeath = Stamina * 2;
+  const systemShock = Math.ceil((Body + Spirit) / 2) + 5;
 
   // NEW: weapon + gadget lookups for inline display
   const weaponInfo = weaponCategories[Primary] || null;
@@ -189,7 +191,11 @@ function EnemyCard({ id, onDelete }) {
         </div>
       </div>
 
-      {/* Weapon */}
+      <div className="flex flex-col items-center text-xs">
+        <div className="text-orange-300">SYS: <span className="text-red-700">{systemShock}</span></div>
+        <div className="text-orange-300">DTH: <span className="text-red-900">{instantDeath}</span></div>
+      </div>
+
       {/* Weapon */}
       <div className="flex flex-col text-xs min-w-[10rem]">
         <div className="flex items-center gap-2">
@@ -244,7 +250,7 @@ function EnemyCard({ id, onDelete }) {
         {/* Description below selector */}
         {selectedGadget ? (
           <div
-            className="text-neutral-400 leading-tight mt-1 max-w-[35rem]"
+            className="text-neutral-400 leading-tight mt-1 max-w-[30rem]"
             title={selectedGadget.rulesText}
           >
             {selectedGadget.rulesText}
