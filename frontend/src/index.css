@@ -29,5 +29,66 @@ html {
   background-color: #f97316; /* orange-500 */
 }
 
+/* Base look for your numeric inputs */
+input[type="number"].num-themed {
+  color: #e5e7eb;                 /* neutral-200 */
+  background-color: #0a0a0a;      /* near black */
+  border: 1px solid #fb923c66;    /* orange-400 w/ alpha */
+  border-radius: 0.25rem;
+  padding-left: 0.25rem;
+  padding-right: 1.75rem;         /* room for custom buttons if you add later */
+  height: 1.5rem;                 /* ~h-6 */
+  line-height: 1.5rem;
+}
+
+/* Hide native spinners (Chrome/Edge/Safari) */
+input[type="number"].num-themed::-webkit-outer-spin-button,
+input[type="number"].num-themed::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox: remove native spinner look */
+input[type="number"].num-themed {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+/* Base dark theme for all dropdowns you want to restyle */
+select.select-themed {
+  color: #ffffff;                 /* orange-500 text */
+  background-color: #0a0a0a;      /* black background */
+  border: 1px solid #fb923c99;    /* orange-400/60 border */
+  border-radius: 0.25rem;
+  padding: 0.25rem 1.75rem 0.25rem 0.5rem;
+  background-image:
+    linear-gradient(45deg, transparent 50%, #fb923c 50%),
+    linear-gradient(135deg, #fb923c 50%, transparent 50%);
+  background-position:
+    calc(100% - 14px) calc(50% - 3px),
+    calc(100% - 10px) calc(50% - 3px);
+  background-size: 4px 4px, 4px 4px;
+  background-repeat: no-repeat;
+  appearance: none;               /* hide native arrow */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+/* Hover / focus states */
+select.select-themed:hover {
+  border-color: #fb923c;
+}
+select.select-themed:focus {
+  outline: none;
+  box-shadow: 0 0 0 1px #fb923c;
+}
+
+/* Optional for Firefox extra padding issue */
+select.select-themed::-ms-expand {
+  display: none;
+}
+
+
+
 
 
