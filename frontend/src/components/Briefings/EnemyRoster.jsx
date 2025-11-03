@@ -48,7 +48,7 @@ function EnemyView() {
   };
 
   return (
-    <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border border-orange-500 rounded-xl p-6 shadow-lg mt-5 overflow-y-auto scrollbar-thin scrollbar-thumb-orange-400 scrollbar-track-neutral-700">
+    <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border border-orange-500 rounded-xl p-6 shadow-lg mt-5 space-y-3 overflow-y-auto scrollbar-thin scrollbar-thumb-orange-400 scrollbar-track-neutral-700">
       <button
         className="mb-4 px-4 py-1 bg-orange-500 text-white rounded hover:bg-orange-600"
         onClick={addEnemy}
@@ -56,11 +56,9 @@ function EnemyView() {
         + Add Enemy
       </button>
 
-      <div className="flex gap-4">
-        {enemyIds.map((id) => (
-          <EnemyCard key={id} id={id} onDelete={removeEnemy} />
-        ))}
-      </div>
+      {enemyIds.map((id) => (
+        <EnemyCard key={id} id={id} onDelete={removeEnemy} />
+      ))}
     </div>
   );
 }
