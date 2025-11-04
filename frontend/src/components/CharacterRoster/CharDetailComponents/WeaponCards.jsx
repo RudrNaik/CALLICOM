@@ -154,13 +154,13 @@ const WeaponSlot = ({
       {isEditing ? (
         <>
           <input
-            className="w-full bg-neutral-900 text-white p-2 rounded mb-2"
+            className="w-full bg-neutral-900 text-white p-2 border-1 border-orange-400/60 rounded mb-2"
             placeholder="Weapon Name"
             value={weapon?.name || ""}
             onChange={(e) => handleWeaponChange(slot, "name", e.target.value)}
           />
           <select
-            className="w-full bg-neutral-900 text-white p-2 rounded mb-2"
+            className="w-full select-themed p-2 rounded mb-2"
             value={weapon?.category || ""}
             onChange={(e) =>
               handleWeaponChange(slot, "category", e.target.value)

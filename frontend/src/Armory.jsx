@@ -10,8 +10,6 @@ const Armory = () => {
     >
       <div className="py-10"> </div>
       <Equipment />
-
-      <Footer />
     </div>
   );
 };

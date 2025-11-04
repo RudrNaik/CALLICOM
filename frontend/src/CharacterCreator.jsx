@@ -85,7 +85,6 @@ const CharacterCreator = () => {
         />
       )}
 
-      <Footer />
     </div>
   );
 };

@@ -294,7 +294,7 @@ function EquipmentSelection({
               {gear.grenades.map((grenade, i) => (
                 <input
                   key={i}
-                  className="w-full bg-neutral-900 text-white py-2 px-2 rounded"
+                  className="w-full bg-neutral-900 text-white border-1 border-orange-400/60 py-2 px-2 rounded"
                   placeholder={`Grenade ${i + 1}`}
                   value={grenade}
                   onChange={(e) => handleGrenadeChange(i, e.target.value)}
@@ -365,7 +365,7 @@ function EquipmentSelection({
               type="number"
               min={0}
               max={maxArmor}
-              className="w-full bg-neutral-900 text-white p-2 rounded"
+              className="w-full bg-neutral-900 border-1 border-orange-400/60 text-white p-2 rounded"
               value={gear.armorClass}
               onChange={(e) => {
                 let val = parseInt(e.target.value, 10);
@@ -460,7 +460,7 @@ function EquipmentSelection({
           <h3 className="font-semibold text-orange-300">Class Gadget</h3>
           {isEditing ? (
             <select
-              className="w-full bg-neutral-900 text-white p-2 rounded"
+              className="w-full select-themed p-2 rounded"
               value={gear.gadget}
               onChange={(e) => handleChange("gadget", e.target.value)}
             >
@@ -536,7 +536,7 @@ function EquipmentSelection({
           <h3 className="font-semibold text-orange-300">Inventory</h3>
           {isEditing ? (
             <textarea
-              className="w-full bg-neutral-900 text-white p-2 rounded resize-y min-h-[100px]"
+              className="w-full bg-neutral-900 text-white p-2 text-xs rounded resize-y min-h-[100px]"
               placeholder="Extra mission items, RP gear, etc..."
               value={gear.miscGear}
               onChange={(e) => handleChange("miscGear", e.target.value)}

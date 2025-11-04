@@ -433,7 +433,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
         refreshCharacter={onUpdate}
         setIsEditing={setIsEditingEquipment}
         charActive={charActive}
-        campEquipment={equipment} //comment out when current campaign is completed for good. This controls if equipment is limited or not.
+        campEquipment={equipment} //Know that this only applies to Siberia2022 atm. Any character not assigned to that campaign does not have the restrictions.
       />
 
       {!isEditingEquipment && (

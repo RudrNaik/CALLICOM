@@ -309,7 +309,6 @@ function Calamari() {
         </section>
       </section>
 
-      <Footer />
     </div>
   );
 }

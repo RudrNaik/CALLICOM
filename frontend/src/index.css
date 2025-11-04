@@ -54,7 +54,7 @@ input[type="number"].num-themed {
 /* Base dark theme for all dropdowns you want to restyle */
 select.select-themed {
   color: #ffffff;                 /* orange-500 text */
-  background-color: #0a0a0a;      /* black background */
+  background-color: #171717;      /* black background */
   border: 1px solid #fb923c99;    /* orange-400/60 border */
   border-radius: 0.25rem;
   padding: 0.25rem 1.75rem 0.25rem 0.5rem;
@@ -77,7 +77,7 @@ select.select-themed:hover {
 }
 select.select-themed:focus {
   outline: none;
-  box-shadow: 0 0 0 1px #fb923c;
+  box-shadow: 0.5px #fb923c;
 }
 
 /* Optional for Firefox extra padding issue */

@@ -12,7 +12,6 @@ function About() {
     >
       <div className="py-10"></div>
       <AboutPortraits />
-      <Footer />
     </div>
   );
 }

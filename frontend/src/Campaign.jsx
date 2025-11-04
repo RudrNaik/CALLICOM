@@ -344,7 +344,6 @@ function Campaigns() {
           </div>
         )}
       </div>
-      <Footer />
     </div>
   );
 }

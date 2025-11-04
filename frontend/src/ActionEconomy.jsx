@@ -154,8 +154,6 @@ export default function ActionEconomyPage() {
           visibleSections.length === 1 &&
           visibleSections[0].items.length === 0 && <EmptyState query={q} />}
       </main>
-
-      <Footer />
     </div>
   );
 }

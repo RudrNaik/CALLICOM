@@ -14,9 +14,11 @@ import Campaigns from "./Campaign";
 import SignUp from "./SignUp";
 import Navbar from "./components/Navbar";
 import { AuthProvider } from "./AuthContext";
-import "./App.css"
+import "./App.css";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import Thing from "./testing";
+import Footer from "./components/Footer";
 
 // Scroll to top on route change
 function ScrollToTop() {
@@ -29,36 +31,45 @@ function ScrollToTop() {
   return null;
 }
 
-// what the fuck is going on lmao
-
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   return (
     <AuthProvider>
-    <Router>
-      <div className="min-h-screen bg-gray-100 text-gray-900">
-        <Navbar isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
-        <ScrollToTop />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route
-            path="/login"
-            element={<Login setIsLoggedIn={setIsLoggedIn} />}
-          />
-          <Route path="" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/CALLICOM" element={<TerminalPage />} />
-          <Route path="/CALLICOM/ActionEcon" element={<ActionEconomyPage />} />
-          <Route path="/CALLICOM/Rulebook" element={<Rulebook />} />
-          <Route path="/CALLICOM/Armory" element={<Armory />} />
-          <Route path="/CALLICOM/CharacterManager" element={<CharManager />} />
-          <Route path="/CALLICOM/Campaigns" element={<Campaigns />} />
-          <Route path="/CALLICOM/CharacterCreator" element={<CharacterCreator />} />
-          <Route path="/signup" element={<SignUp />} />
-        </Routes>
-      </div>
-    </Router>
+      <Router>
+        <div className="min-h-screen bg-gray-100 text-gray-900">
+          <Navbar isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+          <ScrollToTop />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route
+              path="/login"
+              element={<Login setIsLoggedIn={setIsLoggedIn} />}
+            />
+            <Route path="" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/CALLICOM" element={<TerminalPage />} />
+            <Route
+              path="/CALLICOM/ActionEcon"
+              element={<ActionEconomyPage />}
+            />
+            <Route path="/CALLICOM/Rulebook" element={<Rulebook />} />
+            <Route path="/CALLICOM/Armory" element={<Armory />} />
+            <Route
+              path="/CALLICOM/CharacterManager"
+              element={<CharManager />}
+            />
+            <Route path="/CALLICOM/Campaigns" element={<Campaigns />} />
+            <Route
+              path="/CALLICOM/CharacterCreator"
+              element={<CharacterCreator />}
+            />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="*" element={<Thing />}></Route>
+          </Routes>
+          <Footer />
+        </div>
+      </Router>
     </AuthProvider>
   );
 }
