@@ -169,8 +169,6 @@ const TerminalPage = () => {
           <TerminalFeed logs={logs} />
         </div>
       </div>
-
-      <Footer />
     </div>
   );
 };

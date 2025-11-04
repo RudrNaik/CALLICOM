@@ -56,7 +56,6 @@ const CharManager = () => {
 
       <CharacterRoster userId={user.userName} />
 
-      <Footer />
     </div>
   );
 };

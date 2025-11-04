@@ -12,7 +12,6 @@ const Rulebook = () => {
 
       <Intro />
 
-      <Footer />
     </div>
   );
 };

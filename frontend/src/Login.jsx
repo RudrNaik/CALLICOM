@@ -125,7 +125,6 @@ function Login() {
         </div>
       </form>
 
-      <Footer />
     </div>
   );
 }
