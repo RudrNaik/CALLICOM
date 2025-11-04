@@ -85,7 +85,7 @@ function CharacterRoster({ userId }) {
         setIsLoading(false);
       });
 
-    fetch(`https://callicom.onrender.com/api/campaignEquipment`, { 
+    fetch(`https://callicom.onrender.com/api/campaignEquipment`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -133,7 +133,6 @@ function CharacterRoster({ userId }) {
         console.error("Error fetching gear:", err);
         setIsLoading(false);
       });
-    
   }, [userId, refreshFlag]);
 
   const triggerRefresh = () => setRefreshFlag((prev) => !prev);
@@ -170,7 +169,7 @@ function CharacterRoster({ userId }) {
 
   return (
     <div
-      className="sm:max-w-full md:max-w-10/12 mx-auto p-2 lg:p-6 space-y-1  text-white sm:border-0 md:border-l-6 border-orange-500 bg-neutral-800/30"
+      className="scroll-anchor-none sm:max-w-full md:max-w-10/12 mx-auto p-2 lg:p-6 space-y-1  text-white sm:border-0 md:border-l-6 border-orange-500 bg-neutral-800/30"
       style={{ fontFamily: "Geist_Mono" }}
     >
       <h1 className="text-2xl font-bold text-orange-400">Your Characters</h1>
@@ -212,7 +211,7 @@ function CharacterRoster({ userId }) {
         ))}
       </div>
       <div>
-        {selectedCharacter && (
+        {selectedCharacter ? (
           <div>
             <div className="relative flex py-5 items-center">
               <div className="flex-grow border-t border-gray-100"></div>
@@ -221,7 +220,7 @@ function CharacterRoster({ userId }) {
               </span>
               <div className="flex-grow border-t border-gray-100"></div>
             </div>
-            <div className="mt-8">
+            <div className="min-h[30rem]">
               <motion.div
                 key={selectedCharacter?._id}
                 initial={{ opacity: 0 }}
@@ -233,11 +232,36 @@ function CharacterRoster({ userId }) {
                   character={selectedCharacter}
                   user={userId}
                   onUpdate={triggerRefresh}
-                  equipment = {equipment}
+                  equipment={equipment}
                 />
               </motion.div>
             </div>
           </div>
+        ) : (
+          <motion.div
+            key={selectedCharacter?._id}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.2, delay: 0.2 }}
+            className="flicker"
+          >
+            <div
+              className="relative min-h-[30rem] bg-neutral-900/10 bg-[radial-gradient(circle,_rgba(255,100,0,0.06)_1px,_transparent_1px)][background-size:8px_8px] p-4 shadow overflow-hidden group"
+            >
+              {/* Decorative X lines */}
+              <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute top-0 left-0 w-360 h-[2px] bg-neutral-100/30 origin-top-left rotate-22"></div>
+                <div className="absolute top-0 right-0 w-360 h-[2px] bg-neutral-100/30 origin-top-right -rotate-22"></div>
+              </div>
+
+              {/* Center text */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="px-4 py-2 bg-neutral-900 text-orange-400 border-l-4 border-orange-500 font-semibold text-center shadow-sm">
+                  [CALLI.OS ::/] No Character Selected
+                </span>
+              </div>
+            </div>
+          </motion.div>
         )}
       </div>
     </div>
