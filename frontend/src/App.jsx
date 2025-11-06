@@ -19,7 +19,7 @@ import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import Thing from "./testing";
 import Footer from "./components/Footer";
-import Lore from "./lore";
+import Lore from "./Lore";
 
 // Scroll to top on route change
 function ScrollToTop() {
