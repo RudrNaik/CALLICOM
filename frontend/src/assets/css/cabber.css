@@ -1,0 +1,16 @@
+/* cabber.css */
+.glitch--subtle {
+  animation: distort-subtle 1s ease infinite;
+}
+
+@keyframes distort-subtle {
+  0%, 24%, 30%, 74%, 80%, 100% { text-shadow: none; }
+  25% { text-shadow: rgba(255,0,0,1) 2px -1px 0, rgba(0,255,255,1) -2px 3px 0; }
+  27% { text-shadow: rgba(255,0,0,1) -2px -3px 0, rgba(0,255,255,1) 2px 1px 0; }
+  28% { text-shadow: rgba(255,0,0,1) 2px 1px 0,  rgba(0,255,255,1) -4px 1px 0; }
+  29% { text-shadow: rgba(255,0,0,1) -4px 1px 0, rgba(0,255,255,1) -2px -1px 0; }
+  76% { text-shadow: rgba(255,0,0,1) -4px 1px 0, rgba(0,255,255,1) -2px -1px 0; }
+  77% { text-shadow: rgba(255,0,0,1) -2px -3px 0, rgba(0,255,255,1) 2px 1px 0; }
+  78% { text-shadow: rgba(255,0,0,1) 2px -1px 0,  rgba(0,255,255,1) -2px 3px 0; }
+  79% { text-shadow: rgba(255,0,0,1) 2px 1px 0,   rgba(0,255,255,1) -4px 1px 0; }
+}

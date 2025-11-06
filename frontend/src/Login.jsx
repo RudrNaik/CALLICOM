@@ -61,7 +61,7 @@ function Login() {
         >
           <h1 className="text-4xl font-bold p-2 bg-orange-500">LOGIN ::/</h1>
           <h2 class="text-sm">
-            <span className="text-orange-500 ">CALLI/COM</span> UNCC IDENT
+            <span className="text-orange-500">CALLI/COM</span> UNCC IDENT
             SERVICE // LOGIN
           </h2>
           <p class="text-xs py-2 text-neutral-400/80">

@@ -248,15 +248,9 @@ function CharacterRoster({ userId }) {
             <div
               className="relative min-h-[30rem] bg-neutral-900/10 bg-[radial-gradient(circle,_rgba(255,100,0,0.06)_1px,_transparent_1px)][background-size:8px_8px] p-4 shadow overflow-hidden group"
             >
-              {/* Decorative X lines */}
-              <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-0 left-0 w-360 h-[2px] bg-neutral-100/30 origin-top-left rotate-22"></div>
-                <div className="absolute top-0 right-0 w-360 h-[2px] bg-neutral-100/30 origin-top-right -rotate-22"></div>
-              </div>
 
-              {/* Center text */}
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="px-4 py-2 bg-neutral-900 text-orange-400 border-l-4 border-orange-500 font-semibold text-center shadow-sm">
+                <span className="px-4 py-2 bg-neutral-900 border-l-4 border-orange-500 font-semibold text-center shadow-sm">
                   [CALLI.OS ::/] No Character Selected
                 </span>
               </div>
