@@ -238,26 +238,7 @@ function EquipmentSelection({
   // console.log(secondaryOptions);
 
   return (
-    <div className="mt-8 text-white" style={{ fontFamily: "Geist_Mono" }}>
-      <div className="relative inline-block group">
-        <h2 className="text-xl font-bold text-orange-400 mt-4 mb-4">
-          Equipment
-        </h2>
-
-        {/* Tooltip modal */}
-        <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-1">
-          <p>
-            Your equipment determines the gear that you bring into a mission.
-            You can choose a{" "}
-            <span className="text-orange-500 font-bold">primary</span>, a{" "}
-            <span className="text-orange-500 font-bold">secondary</span>, 2
-            types of <span className="text-orange-500 font-bold">grenades</span>
-            , and then your{" "}
-            <span className="text-orange-500 font-bold">armor</span> and{" "}
-            <span className="text-orange-500 font-bold">gadget</span>.
-          </p>
-        </div>
-      </div>
+    <div className=" text-white" style={{ fontFamily: "Geist_Mono" }}>
 
       <div className="grid grid-cols-2 gap-2">
         {/* Weapons */}

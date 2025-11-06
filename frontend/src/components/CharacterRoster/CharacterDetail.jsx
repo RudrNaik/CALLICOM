@@ -383,7 +383,8 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
 
       <div className="relative inline-block group">
         <h2 className="text-2xl font-bold text-orange-400 mt-4 mb-0">
-          Attributes
+          Attributes{" "}
+          <span className="text-xs font-light text-neutral-400">[?]</span>
         </h2>
 
         {/* Tooltip modal */}
@@ -426,6 +427,26 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
         refreshCharacter={onUpdate}
       />
 
+      <div className="relative inline-block group">
+        <h2 className="text-xl font-bold text-orange-400 mt-4">
+          Equipment{" "}
+          <span className="text-xs font-light text-neutral-400">[?]</span>
+        </h2>
+
+        {/* Tooltip modal */}
+        <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-1">
+          <p>
+            Your equipment determines the gear that you bring into a mission.
+            You can choose a{" "}
+            <span className="text-orange-500 font-bold">primary</span>, a{" "}
+            <span className="text-orange-500 font-bold">secondary</span>, 2
+            types of <span className="text-orange-500 font-bold">grenades</span>
+            , and then your{" "}
+            <span className="text-orange-500 font-bold">armor</span> and{" "}
+            <span className="text-orange-500 font-bold">gadget</span>.
+          </p>
+        </div>
+      </div>
       <EquipmentSelection
         character={character}
         isEditing={isEditingEquipment}
@@ -459,7 +480,10 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
       <h2 className=""></h2>
 
       <div className="relative inline-block group">
-        <h2 className="text-xl font-bold text-orange-400 mt-0 mb-0">Skills</h2>
+        <h2 className="text-xl font-bold text-orange-400 mt-0 mb-0">
+          Skills{" "}
+          <span className="text-xs font-light text-neutral-400">[?]</span>
+        </h2>
 
         {/* Tooltip modal */}
         <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-1">
@@ -524,7 +548,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
       />
 
       <div className="relative inline-block group">
-        <h2 className="text-xl font-bold text-orange-400">Specializations</h2>
+        <h2 className="text-xl font-bold text-orange-400">Specializations <span className="text-xs font-light text-neutral-400">[?]</span></h2>
 
         {/* Tooltip modal */}
         <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-1">

@@ -9,25 +9,30 @@ import { motion } from "framer-motion";
 const bootLines = [
   "CALLI.OS/COMMAND/CONTROL SYSTEM INITIALIZING",
   "GC Laboratories CALLI/COM 1.0.14",
-  "1.0.14 Gold Coast Laboratories // Please Operate Responsibly",
-  "Mirrorsmoke (R) GCLABS (R) 8.0 (Build 01014)",
-  "Connecting to Operator Datbases",
+  "1.0.14 Gold Coast Laboratories // Government or Contractor use ONLY",
+  "MSMK.DIV (R) GC.LABS (R) 8.0 (Build 01014)",
+  "Connecting to UNCC Contractor Datbases",
   ">USERNAME: [*******]",
   ">PASSWORD: [************]",
-  "Credentials verified. Welcome back Operator.",
+  "Credentials verified. Welcome back Contractor.",
   "",
-  "    ▄██████░▄█████░▄█████▄░██████▄",
-  "    ██░░░░░░██░░░░░██░░░██░██░░░██",
-  "    ██░░███░██░░░░░██░░░██░██░░░██",
-  "    ██░░░██░██░░░░░██░░░██░██░░░██",
-  "    ▀█████▀░▀█████░▀█████▀░██░░░██",
-  "    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░",
-  "|-[Calamari Operational Support Group]-|",
-  "|    (Operational Services Network)    |",
-  "|--------------------------------------|",
-  "      [Anytime, Anywhere, Anyhow.]      ",
+  "  /$$$$$$   /$$$$$$  /$$       /$$       /$$$$$$  /$$$$$$   /$$$$$$  /$$      /$$",
+  " /$$__  $$ /$$__  $$| $$      | $$      |_  $$_/ /$$__  $$ /$$__  $$| $$$    /$$$",
+  "| $$  \\__/| $$  \\ $$| $$      | $$        | $$  | $$  \\__/| $$  \\ $$| $$$$  /$$$$",
+  "| $$      | $$$$$$$$| $$      | $$        | $$  | $$      | $$  | $$| $$ $$/$$ $$",
+  "| $$      | $$__  $$| $$      | $$        | $$  | $$      | $$  | $$| $$  $$$| $$",
+  "| $$    $$| $$  | $$| $$      | $$        | $$  | $$    $$| $$  | $$| $$\\  $ | $$",
+  "|  $$$$$$/| $$  | $$| $$$$$$$$| $$$$$$$$ /$$$$$$|  $$$$$$/|  $$$$$$/| $$ \\/  | $$",
+  " \\______/ |__/  |__/|________/|________/|______/ \\______/  \\______/ |__/     |__/",
   "",
-  ">//[CALLI/COM: System Baked. Ready. Input command on next line, press Enter to submit]",
+  "|-[COMBINED ARMS LARGE LANGUAGE INTERFACE - COMMAND]-|",
+  "|         (Calamari Operational Support Group)       |",
+  "|----------------------------------------------------|",
+  "              [Anytime, Anywhere, Anyhow.]      ",
+  "",
+  "> REMEMBER, CYBER DEFENSE ENDS WITH YOU. DONT CLICK WEIRD LINKS",
+  "",
+  ">[CALLI.OS ::/] System Baked. Ready. Input command on next line, press Enter to submit.",
 ];
 
 const TerminalPage = () => {
@@ -54,7 +59,7 @@ const TerminalPage = () => {
   const handleHover = (path, description) => {
     if (isBooting) return;
     setLogs((prev) => [...prev.slice(-28), `$ ${path}`]);
-    setLogs((prev) => [...prev, `>//[CALLI:COM ${description}]`]);
+    setLogs((prev) => [...prev, `>[CALLI.OS::/] ${description}`]);
   };
 
   return (
@@ -166,7 +171,7 @@ const TerminalPage = () => {
         </div>
 
         <div className="h-full">
-          <TerminalFeed logs={logs} />
+          <TerminalFeed logs={logs}/>
         </div>
       </div>
     </div>

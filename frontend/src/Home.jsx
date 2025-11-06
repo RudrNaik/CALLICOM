@@ -1,9 +1,7 @@
 import React from "react";
 import background from "./assets/Images/4060492.jpg";
 import Sidebar from "./components/Sidebar";
-import Navbar from "./components/Navbar";
 import Carousel from "./components/Carousel";
-import Footer from "./components/Footer";
 import { Link } from "react-router-dom";
 
 function Calamari() {
