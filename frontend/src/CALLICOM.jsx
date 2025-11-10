@@ -123,7 +123,7 @@ const TerminalPage = () => {
           >
             <TerminalPanel
               title="Archives"
-              subtitle="Operations Field Manual"
+              subtitle="Intelligence Records and Reports"
               icon="🖿"
               onHover={handleHover}
               link={"/CALLICOM/lore"}
