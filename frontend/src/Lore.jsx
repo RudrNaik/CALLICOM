@@ -4,27 +4,24 @@ import Calamari from "./assets/Images/Calamari_Logo.png";
 import IntelReport from "./components/LoreDocs/Report";
 import SidebarNav from "./components/Rulebook/SidebarNav";
 import loreExample from "./data/loreExample.json";
+import { useNavigate } from "react-router-dom";
 
 const Lore = () => {
   const [step, setStep] = useState(0);
   const [file, setFile] = useState(null);
   const [expandedSections, setExpandedSections] = useState({});
   const [lore, setLore] = useState(loreExample);
+  const navigate = useNavigate();
+
+  const loadingLoreData = lore.legnth == 0;
+  const isInitialLoading = loadingLoreData || isLoading;
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      console.log("No token found, redirecting to login.");
-      navigate("/login");
-      return;
-    }
-
     const fetchLore = fetch(
       "https://callicom.onrender.com/api/lore", //https://callicom.onrender.com/api/lore
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
       }
     ).then((res) => res.json());
@@ -35,20 +32,34 @@ const Lore = () => {
       })
       .catch((err) => {
         console.error("Error fetching lore data:", err);
-        navigate("/login");
+        navigate("/CALLICOM");
       });
   }, []);
 
   const sections = lore.filter((r) => !r.parentId);
   const toggleSection = (id) =>
     setExpandedSections((prev) => ({ ...prev, [id]: !prev[id] }));
-  const getChildren = (parentId) =>
-    lore.filter((r) => r.parentId === parentId);
+  const getChildren = (parentId) => lore.filter((r) => r.parentId === parentId);
   const indexOfSelected = (id) => lore.findIndex((r) => r.id === id);
 
   function handleStepChange(id) {
     setFile(indexOfSelected(id));
     setStep(1);
+  }
+
+  if (isInitialLoading) {
+    return (
+      <div className="fixed inset-0 bg-neutral-900 flex flex-col items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-orange-500 border-solid mb-4"></div>
+        <p className="text-white text-sm font-mono tracking-wide">
+          Initializing briefing environment...
+        </p>
+        <p className="text-xs py-2 font-mono text-neutral-400/80">
+          //[⚠]:: Please be patient as occasionally the environment will require
+          the backend to spool up. Usually this takes 20-30 seconds.
+        </p>
+      </div>
+    );
   }
 
   return (
