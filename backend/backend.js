@@ -176,6 +176,23 @@ app.get("/api/campaignEquipment", async (req, res) => {
   }
 });
 
+app.get("/api/lore", async (req, res) => {
+  const client = new MongoClient(url);
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const collection = db.collection("loreDocs");
+
+    const lore = await collection.find().toArray();
+    res.status(200).json(lore);
+  } catch (err) {
+    console.error("Error fetching archives:", err.message);
+    res.status(500).json({ error: "Failed to fetch lore archives" });
+  } finally {
+    await client.close();
+  }
+});
+
 app.get("/api/missions", async (req, res) => {
   const client = new MongoClient(url);
   try {
@@ -210,7 +227,7 @@ app.get("/api/characters", async (req, res) => {
   }
 });
 
-app.use(authenticateJWT); // All routes after this will require authentication
+app.use(authenticateJWT); // All routes after this require JWT authentication
 
 // 🔹 Create new campaign
 app.post("/api/campaigns", verifyAdmin, async (req, res) => {
@@ -238,10 +255,10 @@ app.put("/api/campaigns/:id", verifyAdmin, async (req, res) => {
     const db = client.db(dbName);
     const collection = db.collection("campaigns");
 
-    const { _id, id, ...update } = req.body; // don’t allow changing identifiers
+    const { _id, id, ...update } = req.body;
 
     const result = await collection.updateOne(
-      { id: req.params.id },         // ← plain string compare
+      { id: req.params.id },         
       { $set: update }
     );
 
@@ -256,7 +273,7 @@ app.put("/api/campaigns/:id", verifyAdmin, async (req, res) => {
 });
 
 
-// 🔹 Create new mission
+//  Create new mission
 app.post("/api/missions", async (req, res) => {
   const client = new MongoClient(url);
   try {
@@ -274,7 +291,7 @@ app.post("/api/missions", async (req, res) => {
   }
 });
 
-// 🔹 Edit existing mission
+//  Edit existing mission
 app.put("/api/missions/:id", async (req, res) => {
   const client = new MongoClient(url);
   try {

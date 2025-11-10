@@ -1,10 +1,56 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import background from "./assets/Images/4060492.jpg";
 import Calamari from "./assets/Images/Calamari_Logo.png";
-import IntelReport from "./components/CharacterRoster/LoreDocs/Report";
+import IntelReport from "./components/LoreDocs/Report";
 import SidebarNav from "./components/Rulebook/SidebarNav";
+import loreExample from "./data/loreExample.json";
 
-function Lore() {
+const Lore = () => {
+  const [step, setStep] = useState(0);
+  const [file, setFile] = useState(null);
+  const [expandedSections, setExpandedSections] = useState({});
+  const [lore, setLore] = useState(loreExample);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.log("No token found, redirecting to login.");
+      navigate("/login");
+      return;
+    }
+
+    const fetchLore = fetch(
+      "https://callicom.onrender.com/api/lore", //https://callicom.onrender.com/api/lore
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    ).then((res) => res.json());
+
+    Promise.all([fetchLore])
+      .then(([loreData]) => {
+        setLore(loreData);
+      })
+      .catch((err) => {
+        console.error("Error fetching lore data:", err);
+        navigate("/login");
+      });
+  }, []);
+
+  const sections = lore.filter((r) => !r.parentId);
+  const toggleSection = (id) =>
+    setExpandedSections((prev) => ({ ...prev, [id]: !prev[id] }));
+  const getChildren = (parentId) =>
+    lore.filter((r) => r.parentId === parentId);
+  const indexOfSelected = (id) => lore.findIndex((r) => r.id === id);
+
+  function handleStepChange(id) {
+    setFile(indexOfSelected(id));
+    setStep(1);
+  }
+
   return (
     <div
       className="bg-repeat bg-[length:1920px_1080px] w-full min-h-screen text-white  text-xs font-[Geist_Mono]"
@@ -67,18 +113,122 @@ function Lore() {
         </div>
       </div>
 
-      {/* Content */}
-      <div className="grid grid-cols-5">
-        <SidebarNav rules={[]}></SidebarNav>
-        <div className="cols-span-3 mt-10">
-          <IntelReport title={"SOMETHING"}/>  
-        </div>
-        
-      </div>
+      {/* list View */}
+      {step == 0 && (
+        <div className="grid grid-cols-5 text-sm">
+          <ul className="col-start-2 col-span-3 text-sm">
+            {sections.map((lore) => {
+              const children = getChildren(lore.id);
+              const isSectionOpen = expandedSections[lore.id];
 
-      
+              return (
+                <li key={lore.id}>
+                  <div
+                    className="flex items-center px-2 py-1 hover:text-orange-400 cursor-pointer"
+                    onClick={() => toggleSection(lore.id)}
+                  >
+                    {children.length > 0 ? (
+                      <span className=" text-orange-300 select-none px-2">
+                        {isSectionOpen ? "🗁 " : "🗀 "}
+                      </span>
+                    ) : (
+                      <span className=" text-neutral-300 select-none px-2">
+                        {"🗀"}
+                      </span>
+                    )}
+                    {lore.id}
+                  </div>
+
+                  {isSectionOpen && children.length > 0 && (
+                    <ul className="ml-4 mt-1 px-3 text-gray-300">
+                      {children.map((sub) => (
+                        <li
+                          key={sub.id}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleStepChange(sub.id);
+                          }}
+                        >
+                          {" "}
+                          ↳ 🗏 {sub.title}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
+
+      {/* Content */}
+      {step == 1 && (
+        <div className="grid grid-cols-5">
+          {/* Another list copy. */}
+          <ul className="col-span-1 justify-items-normal mx-auto text-sm">
+            <li>
+              <div
+                className="flex items-center px-2 py-1 hover:text-orange-400 cursor-pointer"
+                onClick={() => setStep(0)}
+              >
+                <span className="px-2">↰ Back to DB</span>
+              </div>
+            </li>
+            {sections.map((lore) => {
+              const children = getChildren(lore.id);
+              const isSectionOpen = expandedSections[lore.id];
+
+              return (
+                <li key={lore.id}>
+                  <div
+                    className="flex items-center px-2 py-1 hover:text-orange-400 cursor-pointer"
+                    onClick={() => toggleSection(lore.id)}
+                  >
+                    {children.length > 0 ? (
+                      <span className=" text-orange-300 select-none px-2">
+                        {isSectionOpen ? "🗁 " : "🗀 "}
+                      </span>
+                    ) : (
+                      <span className=" text-neutral-300 select-none px-2">
+                        {"🗀"}
+                      </span>
+                    )}
+                    {lore.id}
+                  </div>
+
+                  {isSectionOpen && children.length > 0 && (
+                    <ul className="ml-4 mt-1 px-3 text-gray-300">
+                      {children.map((sub) => (
+                        <li
+                          key={sub.id}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleStepChange(sub.id);
+                          }}
+                        >
+                          {" "}
+                          ↳ 🗏 {sub.title}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+          {/* Actual content: */}
+          <div className="col-span-3 mt-10">
+            <IntelReport
+              title={lore[file].title}
+              content={lore[file].content}
+              fluff={lore[file].fluff}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
-}
+};
 
 export default Lore;

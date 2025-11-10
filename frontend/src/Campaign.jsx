@@ -31,19 +31,19 @@ function Campaigns() {
   const isInitialLoading = loadingCampaignData || isLoading;
 
   useEffect(() => {
-    //const token = localStorage.getItem("token");
-    // if (!token) {
-    //   console.log("No token found, redirecting to login.");
-    //   navigate("/login");
-    //   return;
-    // }
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.log("No token found, redirecting to login.");
+      navigate("/login");
+      return;
+    }
 
     const fetchCampaigns = fetch(
       "https://callicom.onrender.com/api/campaigns",
       {
         headers: {
           "Content-Type": "application/json",
-          //Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       }
     ).then((res) => res.json());
@@ -51,7 +51,7 @@ function Campaigns() {
     const fetchMissions = fetch("https://callicom.onrender.com/api/missions", {
       headers: {
         "Content-Type": "application/json",
-        //Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     }).then((res) => res.json());
 
