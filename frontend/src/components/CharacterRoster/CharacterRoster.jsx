@@ -182,7 +182,28 @@ function CharacterRoster({ userId }) {
       >
         {isLoading ? (
           <div className="flex items-center text-orange-400 font-bold py-2">
-            <div className="w-4 h-4 border-t-3 border-solid border-orange-500 rounded-3xl animate-spin mr-2"></div>
+            <div className="">
+              <svg
+                className="animate-spin h-4 w-4 inline-block text-orange-500 mr-2"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                ></path>
+              </svg>
+            </div>
             Fetching Operators...
           </div>
         ) : (
@@ -245,10 +266,7 @@ function CharacterRoster({ userId }) {
             transition={{ duration: 0.2, delay: 0.2 }}
             className="flicker"
           >
-            <div
-              className="relative min-h-[30rem] bg-neutral-900/10 bg-[radial-gradient(circle,_rgba(255,100,0,0.06)_1px,_transparent_1px)][background-size:8px_8px] p-4 shadow overflow-hidden group"
-            >
-
+            <div className="relative min-h-[30rem] bg-neutral-900/10 bg-[radial-gradient(circle,_rgba(255,100,0,0.06)_1px,_transparent_1px)][background-size:8px_8px] p-4 shadow overflow-hidden group">
               <div className="absolute inset-0 flex items-center justify-center">
                 <span className="px-4 py-2 bg-neutral-900 border-l-4 border-orange-500 font-semibold text-center shadow-sm">
                   [CALLI.OS ::/] No Character Selected

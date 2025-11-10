@@ -19,6 +19,7 @@ import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import Thing from "./testing";
 import Footer from "./components/Footer";
+import Lore from "./Lore";
 
 // Scroll to top on route change
 function ScrollToTop() {
@@ -65,6 +66,7 @@ export default function App() {
               element={<CharacterCreator />}
             />
             <Route path="/signup" element={<SignUp />} />
+            <Route path="/CALLICOM/lore" element={<Lore/>}/>
             <Route path="*" element={<Thing />}></Route>
           </Routes>
           <Footer />

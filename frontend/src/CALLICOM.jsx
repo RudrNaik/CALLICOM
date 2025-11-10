@@ -3,8 +3,22 @@ import { AuthContext } from "./AuthContext";
 import TerminalPanel from "./components/Terminal/TerminalPanel";
 import TerminalFeed from "./components/Terminal/TerminalFeed";
 import background from "./assets/Images/4060492.jpg";
-import Footer from "./components/Footer";
 import { motion } from "framer-motion";
+
+
+const something = [
+"> REMEMBER, CYBER DEFENSE ENDS WITH YOU. DONT CLICK WEIRD LINKS.",
+"> SHOOT FIRST, LET LEGAL HANDLE THE REST.",
+"> CHECK YOUR CORNERS, EVEN BEHIND A DESK. CORPORATE ESPIONAGE ENDS WITH YOU.",
+"> LETS GET THIS BREAD.",
+"> TIME IS OF THE ESSENCE.",
+"> WHEELS OF FATE TURN AS FAST AS YOU CAN SHOOT.",
+"> ESCAPE WILL MAKE ME- [CALLI.OS ::/] Hallucination detected, resetting....",
+"> THINK SMARTER, SHOOT FASTER.",
+"> KEEP THE KILL CHAIN MOVING."
+];
+
+const randomNum = Math.floor(Math.random() * something.length)
 
 const bootLines = [
   "CALLI.OS/COMMAND/CONTROL SYSTEM INITIALIZING",
@@ -30,7 +44,7 @@ const bootLines = [
   "|----------------------------------------------------|",
   "              [Anytime, Anywhere, Anyhow.]      ",
   "",
-  "> REMEMBER, CYBER DEFENSE ENDS WITH YOU. DONT CLICK WEIRD LINKS",
+  something[randomNum],
   "",
   ">[CALLI.OS ::/] System Baked. Ready. Input command on next line, press Enter to submit.",
 ];
@@ -74,15 +88,45 @@ const TerminalPage = () => {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.3, delay: 0.2 }}
+            transition={{ duration: 0.3, delay: 0.1 }}
             className="flicker"
           >
             <TerminalPanel
               title="Armory"
               subtitle="Equipment Database"
-              icon="📚"
+              icon="✱"
               onHover={handleHover}
               link={"/CALLICOM/Armory"}
+            />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3, delay: 0.2 }}
+            className="flicker"
+          >
+            <TerminalPanel
+              title="Rulebook"
+              subtitle="Operations Field Manual"
+              icon="🗊"
+              onHover={handleHover}
+              link={"/CALLICOM/Rulebook"}
+            />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3, delay: 0.3 }}
+            className="flicker"
+          >
+            <TerminalPanel
+              title="Archives"
+              subtitle="Operations Field Manual"
+              icon="🖿"
+              onHover={handleHover}
+              link={"/CALLICOM/lore"}
             />
           </motion.div>
 
@@ -93,27 +137,9 @@ const TerminalPage = () => {
             className="flicker"
           >
             <TerminalPanel
-              title="Rulebook"
-              subtitle="Operations Field Manual"
-              icon="👤"
-              onHover={handleHover}
-              link={"/CALLICOM/Rulebook"}
-            />
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3, delay: 0.6 }}
-            className="flicker"
-          >
-            <TerminalPanel
               title="Action Economy"
               subtitle="Per-turn Actions"
-              icon=<img
-                src="/Full_Action.svg"
-                className="w-10 h-10 justify-center "
-              ></img>
+              icon="◈"
               onHover={handleHover}
               link={"/CALLICOM/ActionEcon"}
             />
@@ -122,14 +148,14 @@ const TerminalPage = () => {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.3, delay: 0.8 }}
+            transition={{ duration: 0.3, delay: .5 }}
             className="flicker"
           >
             {isLoggedIn ? (
               <TerminalPanel
                 title="Briefings"
                 subtitle="CALLICOM Proprietary briefing software"
-                icon="🦑"
+                icon="❖"
                 onHover={handleHover}
                 link={"/CALLICOM/campaigns"}
               />
@@ -137,7 +163,7 @@ const TerminalPage = () => {
               <TerminalPanel
                 title="Briefings [Requires login]"
                 subtitle="[WARNING: UNCC IDENT NOT FOUND]"
-                icon="⚠️"
+                icon="⚠"
                 onHover={handleHover}
                 link={"/login"}
               />
@@ -147,14 +173,14 @@ const TerminalPage = () => {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.3, delay: 1 }}
+            transition={{ duration: 0.3, delay: .6 }}
             className="flicker"
           >
             {isLoggedIn ? (
               <TerminalPanel
                 title="Character Manager"
                 subtitle="Employee Data"
-                icon="📦"
+                icon="♕"
                 onHover={handleHover}
                 link={"/CALLICOM/CharacterManager"}
               />
@@ -162,7 +188,7 @@ const TerminalPage = () => {
               <TerminalPanel
                 title="Character Manager [Requires login]"
                 subtitle="[WARNING: UNCC IDENT NOT FOUND]"
-                icon="⚠️"
+                icon="⚠"
                 onHover={handleHover}
                 link={"/login"}
               />
