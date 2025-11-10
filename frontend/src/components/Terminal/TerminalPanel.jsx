@@ -26,7 +26,7 @@ const TerminalPanel = ({ title, subtitle, icon, onHover, link }) => {
         `}
       >
           <h1 className="text-2xl font-bold tracking-wider flex items-center gap-3 p-2">
-            <span>{icon}</span> {title}
+            <span className="text-orange-400">{icon}</span> {title}
           </h1>
         
         <p className="text-xs text-gray-300 tracking-wider flex items-center">&gt; {subtitle}</p>
