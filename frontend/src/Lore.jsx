@@ -3,7 +3,7 @@ import background from "./assets/Images/4060492.jpg";
 import Calamari from "./assets/Images/Calamari_Logo.png";
 import IntelReport from "./components/LoreDocs/Report";
 import { useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 const Lore = () => {
   const [step, setStep] = useState(0);
@@ -11,10 +11,12 @@ const Lore = () => {
   const [expandedSections, setExpandedSections] = useState({});
   const [lore, setLore] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [hasLoaded, setHasLoaded] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
+    let isCurrent = true;
     const ac = new AbortController();
 
     (async () => {
@@ -26,11 +28,11 @@ const Lore = () => {
           headers: { "Content-Type": "application/json" },
           signal: ac.signal,
         });
-
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const loreData = await res.json();
 
-        // Ensure we have an array
+        const loreData = await res.json();
+        if (!isCurrent) return;
+
         const asArray = Array.isArray(loreData)
           ? loreData
           : Array.isArray(loreData?.data)
@@ -38,22 +40,26 @@ const Lore = () => {
           : [];
 
         setLore(asArray);
+        setHasLoaded(true); 
       } catch (err) {
-        if (err.name !== "AbortError") {
+        if (err.name === "AbortError") return;
+        if (isCurrent) {
           console.error("Error fetching lore data:", err);
           setError(err);
-          // navigate("/CALLICOM");
+          //navigate("/CALLICOM");
         }
       } finally {
-        setLoading(false);
+        if (isCurrent) setLoading(false);
       }
     })();
 
-    return () => ac.abort();
+    return () => {
+      isCurrent = false;
+      ac.abort();
+    };
   }, [navigate]);
 
-  const loadingLoreData = loading && lore.length === 0;
-  const isInitialLoading = loadingLoreData;
+  const showInitialLoader = loading || (!hasLoaded && lore.length === 0);
 
   const sections = lore.filter((r) => !r.parentId);
   const toggleSection = (id) =>
@@ -69,16 +75,35 @@ const Lore = () => {
     }
   }
 
-  if (isInitialLoading) {
+  if (showInitialLoader) {
     return (
       <div className="fixed inset-0 bg-neutral-900 flex flex-col items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-orange-500 border-solid mb-4"></div>
+        <svg
+          className="animate-spin h-8 w-8 inline-block text-orange-500"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            className="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="3"
+          ></circle>
+          <path
+            className="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+          ></path>
+        </svg>
         <p className="text-white text-sm font-mono tracking-wide">
           Initializing archives environment...
         </p>
         <p className="text-xs py-2 font-mono text-neutral-400/80">
           //[⚠]:: Please be patient as occasionally the environment will require
-          the backend to spool up. This will take 20-60 seconds.
+          the backend to spool up. Usually this takes 20-30 seconds.
         </p>
       </div>
     );
@@ -160,7 +185,7 @@ const Lore = () => {
       </div>
 
       <motion.div
-        key={step} // <— forces remount on step change
+        key={step}
         initial={{ opacity: 0 }}
         animate={{ opacity: [0, 1, 0.85, 1] }}
         exit={{ opacity: 0 }}
