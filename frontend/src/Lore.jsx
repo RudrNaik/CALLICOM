@@ -40,7 +40,7 @@ const Lore = () => {
           : [];
 
         setLore(asArray);
-        setHasLoaded(true); 
+        setHasLoaded(true);
       } catch (err) {
         if (err.name === "AbortError") return;
         if (isCurrent) {
@@ -135,18 +135,18 @@ const Lore = () => {
       <div>
         {/* title */}
         <div className="grid grid-cols-5 gap-2">
-          <div>
+          <div className="justify-items-end">
             <img
               src={Calamari}
               alt="Calamari Logo"
-              className="ml-5 max-h-[250px]"
+              className="ml-5 max-h-[150px]"
             />
           </div>
           <div className="place-items-start mt-[75px] col-span-4 ">
-            <h1 className="border-orange-500 border-l-8 px-2 text-7xl font-extrabold">
+            <h1 className="border-orange-500 border-l-8 px-2 text-5xl font-extrabold">
               CALLICOM-DB
             </h1>
-            <h2 className="text-2xl mt-2 text-neutral-400">
+            <h2 className="text-md mt-2 text-neutral-400">
               INTELLIGENCE AND RECORDS
             </h2>
           </div>
@@ -165,14 +165,23 @@ const Lore = () => {
                 general database. Clearance levels for information in this
                 database is [BLUE-4] which encompasses most contractors within
                 the Rapid Response Regiment, SYNTAC, Special Reconaissance
-                Detachment and other special units within Calamari. [Black-5]
+                Detachment and other special units within Calamari.{" "}
+                <span
+                  className="glitch--subtle"
+                  style={{ animation: "distort-subtle 7s ease infinite" }}
+                >
+                  [Black-5]{" "}
+                </span>
                 information is redacted and stored separately. Information of
                 that classification can be accessed via filing a request with
                 ADMIN-RECORDS or HICOM.
               </p>
               <p className="py-3">
                 The goal of this database is to be an asset and a resource for
-                all Contractors of [BLUE-4] clearance…
+                all Contractors of [BLUE-4] clearance, which comprises members
+                of HEAT, Special Reconaissance, Long Range Reconaissance, and
+                SYNTAC. Along with leadership elements in the Rapid Response
+                Regiment and those in ISR and NIB
               </p>
               <p className="py-3">
                 If you have access to these files and are not of [BLUE-4]
@@ -244,7 +253,7 @@ const Lore = () => {
         {step === 1 && (
           <div className="grid grid-cols-5">
             {/* Side list */}
-            <ul className="col-span-1 justify-items-normal mx-auto text-sm">
+            <ul className="col-span-1 justify-items-normal mx-auto text-sm mt-10">
               <li>
                 <div
                   className="flex items-center px-2 py-1 hover:text-orange-400 cursor-pointer"
@@ -271,7 +280,7 @@ const Lore = () => {
                           {"🗀"}
                         </span>
                       )}
-                      {sec.title}
+                      {sec.id}
                     </div>
 
                     {isSectionOpen && children.length > 0 && (
@@ -285,7 +294,7 @@ const Lore = () => {
                             }}
                             className="hover:text-orange-300 cursor-pointer"
                           >
-                            ↳ 🗏 {sub.title}
+                            ↳ 🗏 {sub.id}
                           </li>
                         ))}
                       </ul>

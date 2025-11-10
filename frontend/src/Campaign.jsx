@@ -298,7 +298,7 @@ function Campaigns() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.3, delay: 0 }}
+          transition={{ duration: 0.2, delay: 0 }}
           className="flicker hidden md:block"
         >
           <TopDeploymentBanner
@@ -315,7 +315,7 @@ function Campaigns() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            transition={{ duration: 0.2, delay: 0.1 }}
             className="flicker sm:py-2"
           >
             <CampaignView
@@ -337,7 +337,7 @@ function Campaigns() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
+            transition={{ duration: 0.2, delay: 0.15 }}
             className="flicker sm:py-2"
           >
             <MissionView
@@ -353,7 +353,7 @@ function Campaigns() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 1.0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
             className="flicker sm:py-2"
           >
             <Roster characters={characters} isLoading={isLoading} />
