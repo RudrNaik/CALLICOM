@@ -271,7 +271,7 @@ const Lore = () => {
                           {"🗀"}
                         </span>
                       )}
-                      {sec.id}
+                      {sec.title}
                     </div>
 
                     {isSectionOpen && children.length > 0 && (
