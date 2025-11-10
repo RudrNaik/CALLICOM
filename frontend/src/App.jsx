@@ -66,7 +66,7 @@ export default function App() {
               element={<CharacterCreator />}
             />
             <Route path="/signup" element={<SignUp />} />
-            <Route path="/lore" element={<Lore/>}/>
+            <Route path="/CALLICOM/lore" element={<Lore/>}/>
             <Route path="*" element={<Thing />}></Route>
           </Routes>
           <Footer />

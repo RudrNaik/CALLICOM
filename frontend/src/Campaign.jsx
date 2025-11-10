@@ -252,7 +252,28 @@ function Campaigns() {
   if (isInitialLoading) {
     return (
       <div className="fixed inset-0 bg-neutral-900 flex flex-col items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-orange-500 border-solid mb-4"></div>
+        <div className="">
+          <svg
+            className="animate-spin h-8 w-8 inline-block text-orange-500"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="3"
+            ></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+            ></path>
+          </svg>
+        </div>
         <p className="text-white text-sm font-mono tracking-wide">
           Initializing briefing environment...
         </p>
