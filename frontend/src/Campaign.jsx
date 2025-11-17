@@ -16,7 +16,7 @@ function Campaigns() {
   const [campaigns, setCampaigns] = useState([]);
   const [missions, setMissions] = useState([]);
   const [filteredMissions, setFilteredMissions] = useState([]);
-  const [currentCampaignId, setCurrentCampaignId] = useState("Siberia2022");
+  const [currentCampaignId, setCurrentCampaignId] = useState("LTW2022");
   const [currentMissionId, setCurrentMissionId] = useState(null);
   const [characters, setCharacters] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
