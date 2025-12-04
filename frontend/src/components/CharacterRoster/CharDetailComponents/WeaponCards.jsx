@@ -9,6 +9,7 @@ const WeaponSlot = ({
   handleWeaponChange,
   characterCallsign,
   charActive,
+  isSecondary
 }) => {
   const categoryData = weaponCategories[weapon?.category];
   const localStorageKey = `ammo_${characterCallsign}_${slot}`;
@@ -84,7 +85,13 @@ const WeaponSlot = ({
     }
   }, [pseudoAmmo]);
 
-  const totalTurns = categoryData?.totalTurns || 0;
+  let magSize;
+  if((weapon?.category == "SMGs") && (isSecondary)){
+    magSize = (categoryData?.totalTurns/2) || 0;
+  } else {
+    magSize = categoryData?.totalTurns || 0
+  }
+  const totalTurns = magSize;
   const magazineSize = categoryData?.magazineSize || 1;
   const turnsRemaining = totalTurns - totalFired;
   const magTurnsLeft = Math.max(0, magazineSize - firedThisMag);

@@ -263,6 +263,7 @@ function EquipmentSelection({
             handleWeaponChange={handleWeaponChange}
             characterCallsign={character.callsign}
             charActive={charActive}
+            isSecondary={true}
           />
         </div>
 
@@ -417,7 +418,7 @@ function EquipmentSelection({
                       onClick={() =>
                         setMedCounts((prev) => {
                           const updated = [...prev];
-                          updated[i] = i === 0 ? 2 : 1; // default: AFAK = 2, others = 1
+                          updated[i] = i === 1 ? 2 : 1; // default: AFAK = 2, others = 1
                           return updated;
                         })
                       }

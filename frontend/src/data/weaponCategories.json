@@ -3,13 +3,13 @@
     "class": "L-Weapons",
     "damage": 4,
     "penetration": 1,
-    "range": "+2 C | -2 L | -3 ELR",
+    "range": "+1 C | -2 L | -3 ELR",
     "totalTurns": 6,
     "magazineSize": 2
   },
   "Heavy Pistols": {
     "class": "L-Weapons",
-    "damage": 6,
+    "damage": 5,
     "penetration": 2,
     "range": "+1 C | -1 L | -2 ELR",
     "totalTurns": 6,
