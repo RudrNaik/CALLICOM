@@ -86,7 +86,7 @@ export default function GadgetAmmo({
     if (gadgetId === "spec-ammo")
       return { title: "Special Ammo", max: config.maxSpecAmmo ?? 0 };
     if (gadgetId === "thinkpad") return { title: "Hacks", max: 0 };
-    if (gadgetId === "demo-dog") return { title: "Variant", max: 0 };
+    if (gadgetId === "demo-dog") return { title: "Variant", max: config.maxStowedAmmo };
     if (isExpendable)
       return { title: "Munitions", max: effectiveMax };
     return { title: "Consumables", max: 0 };

@@ -53,6 +53,7 @@
     ]
   },
   "demo-dog": {
+    "maxStowedAmmo" : 6,
     "options": [
       { "id": "dd-frontliner", "label": "Frontline"},
       { "id": "dd-stealth", "label": "Stealth" },
