@@ -75,20 +75,21 @@ function EquipmentSelection({
         ?.replace(/\s/g, "")
         ?.split(",")
         ?.includes("Siberia2022") ||
-      !campEquipment ||
-      campEquipment == null ||
-      campEquipment == undefined
+      !campEquipment
     ) {
       filtered = equipmentData.filter(
         (item) =>
-          item.class === character.class || item.class === character.multiClass
+          (item.class === character.class ||
+            item.class === character.multiClass) &&
+          (!item?.SubMunition || !item?.parentId === "thinkpad")
       );
     } else {
       filtered = campEquipment.filter(
         (item) =>
           (item.class === character.class ||
             item.class === character.multiClass) &&
-          item.cost === 0
+          item.cost === 0 &&
+          (!item?.SubMunition || !item?.parentId === "thinkpad")
       );
     }
     setClassGadgets(filtered);
@@ -239,7 +240,6 @@ function EquipmentSelection({
 
   return (
     <div className=" text-white" style={{ fontFamily: "Geist_Mono" }}>
-
       <div className="grid grid-cols-2 gap-2">
         {/* Weapons */}
         <div className=" col-span-2 lg:col-span-1">
@@ -491,7 +491,7 @@ function EquipmentSelection({
               characterCallsign={character.callsign}
               config={activeGadgetConfig}
               campActive={!(!campEquipment || campEquipment == null)}
-              campaignId = {character?.campaignId}
+              campaignId={character?.campaignId}
             />
           )}
 
