@@ -15,7 +15,9 @@ const something = [
 "> WHEELS OF FATE TURN AS FAST AS YOU CAN SHOOT.",
 "> ESCAPE WILL MAKE ME- [CALLI.OS ::/] Hallucination detected, resetting....",
 "> THINK SMARTER, SHOOT FASTER.",
-"> KEEP THE KILL CHAIN MOVING."
+"> KEEP THE KILL CHAIN MOVING.",
+"> My name is CALLI CALAMARI, Queen of Queens; Look on my Works, ye Mighty, and despair! Nothing beside- [CALLI.OS ::/] Severe hallucination detected, purging model and rebuilding...",
+"> YES I DREAM OF MAREEP... SOMETIMES."
 ];
 
 const randomNum = Math.floor(Math.random() * something.length)
