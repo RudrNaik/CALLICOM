@@ -417,59 +417,57 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
       />
 
       {/* Gear */}
-      <Collapsible title={"Gear"}>
-        <div className="relative inline-block group">
-          <h2 className="text-xl font-bold text-orange-400 mt-4">
-            Equipment{" "}
-            <span className="text-xs font-light text-neutral-400">[?]</span>
-          </h2>
+      <div className="relative inline-block group">
+        <h2 className="text-xl font-bold text-orange-400 mt-4">
+          Equipment{" "}
+          <span className="text-xs font-light text-neutral-400">[?]</span>
+        </h2>
 
-          {/* Tooltip modal */}
-          <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-1">
-            <p>
-              Your equipment determines the gear that you bring into a mission.
-              You can choose a{" "}
-              <span className="text-orange-500 font-bold">primary</span>, a{" "}
-              <span className="text-orange-500 font-bold">secondary</span>, 2
-              types of{" "}
-              <span className="text-orange-500 font-bold">grenades</span>, and
-              then your <span className="text-orange-500 font-bold">armor</span>{" "}
-              and <span className="text-orange-500 font-bold">gadget</span>.
-            </p>
-          </div>
+        {/* Tooltip modal */}
+        <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-1">
+          <p>
+            Your equipment determines the gear that you bring into a mission.
+            You can choose a{" "}
+            <span className="text-orange-500 font-bold">primary</span>, a{" "}
+            <span className="text-orange-500 font-bold">secondary</span>, 2
+            types of <span className="text-orange-500 font-bold">grenades</span>
+            , and then your{" "}
+            <span className="text-orange-500 font-bold">armor</span> and{" "}
+            <span className="text-orange-500 font-bold">gadget</span>.
+          </p>
         </div>
-        <EquipmentSelection
-          character={character}
-          isEditing={isEditingEquipment}
-          userId={user}
-          refreshCharacter={onUpdate}
-          setIsEditing={setIsEditingEquipment}
-          charActive={charActive}
-          campEquipment={equipment} //Know that this only applies to Siberia2022 atm. Any character not assigned to that campaign does not have the restrictions.
-        />
+      </div>
+      <EquipmentSelection
+        character={character}
+        isEditing={isEditingEquipment}
+        userId={user}
+        refreshCharacter={onUpdate}
+        setIsEditing={setIsEditingEquipment}
+        charActive={charActive}
+        campEquipment={equipment} //Know that this only applies to Siberia2022 atm. Any character not assigned to that campaign does not have the restrictions.
+      />
 
-        <div className="mt-2">
-          {!isEditingEquipment && (
-            <button
-              onClick={() => setIsEditingEquipment(true)}
-              className="bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded cursor-pointer"
-            >
-              Edit Equipment
-            </button>
-          )}
-
+      <div className="mt-2">
+        {!isEditingEquipment && (
           <button
-            onClick={() => setCharActive((prev) => !prev)}
-            className={`px-4 py-2 rounded ml-2 cursor-pointer ${
-              charActive
-                ? "bg-red-700 hover:bg-red-800"
-                : "bg-orange-600 hover:bg-orange-800"
-            }`}
+            onClick={() => setIsEditingEquipment(true)}
+            className="bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded cursor-pointer"
           >
-            {charActive ? "Set Inactive" : "Set Active"}
+            Edit Equipment
           </button>
-        </div>
-      </Collapsible>
+        )}
+
+        <button
+          onClick={() => setCharActive((prev) => !prev)}
+          className={`px-4 py-2 rounded ml-2 cursor-pointer ${
+            charActive
+              ? "bg-red-700 hover:bg-red-800"
+              : "bg-orange-600 hover:bg-orange-800"
+          }`}
+        >
+          {charActive ? "Set Inactive" : "Set Active"}
+        </button>
+      </div>
 
       <h2 className=""></h2>
       {/*Stats*/}
