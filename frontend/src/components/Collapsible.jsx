@@ -1,7 +1,10 @@
 import React, { useState } from "react";
+import { useRef } from "react";
 
 export default function Collapsible({ title, children }) {
   const [open, setOpen] = useState(false);
+
+  const ref = useRef(null);
 
   return (
     <div className="w-fullpl-4 pt-3">
@@ -15,11 +18,12 @@ export default function Collapsible({ title, children }) {
 
       {/* Content wrapper that collapses */}
       <div
-        className={`overflow-hidden transition-[max-height] duration-200 ${
-          open ? "max-h-[2000px]" : "max-h-0"
-        }`}
+        style={{
+          maxHeight: open ? ref.current?.scrollHeight : 0,
+        }}
+        className="overflow-hidden transition-all duration-300"
       >
-        <div className="pt-2">{children}</div>
+        <div ref={ref} className="pt-2">{children}</div>
       </div>
     </div>
   );
