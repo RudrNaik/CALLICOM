@@ -104,17 +104,17 @@ export default function GadgetAmmo({
   const headerText = useMemo(() => {
     if (!config) return null;
     if (gadgetId === "ugl" && config.maxGrenades != null)
-      return `Max ${config.maxGrenades} rounds. [-1 values remove visibility]`;
+      return `Max ${config.maxGrenades} rounds.`;
     if (gadgetId === "x89-ams" && config.maxRounds != null)
-      return `Choose up to ${config.maxRounds} shells. [-1 values remove visibility]`;
+      return `Choose up to ${config.maxRounds} shells.`;
     if (gadgetId === "stim-pouch" && config.maxStims != null)
-      return `Choose up to ${config.maxStims} stims. [-1 values remove visibility]`;
+      return `Choose up to ${config.maxStims} stims. `;
     if (gadgetId === "spec-ammo" && config.maxSpecAmmo != null)
-      return `Choose up to ${config.maxSpecAmmo} rounds [-1 values remove visibility]`;
+      return `Choose up to ${config.maxSpecAmmo} rounds `;
     if (gadgetId === "demo-dog")
-      return `Select a variant. [-1 values remove visibility, increase to magazine size for selected variant.]`;
+      return `Select a variant. [increase to magazine size for selected variant.]`;
     if (gadgetId === "ammo-bag" && config.maxBatches != null)
-      return `Choose up to ${config.maxBatches} charges [-1 values remove visibility]`;
+      return `Choose up to ${config.maxBatches} charges`;
     if (isExpendable) return `Max: ${effectiveMax}x rounds/grenades/charges.`;
     return null;
   }, [config, gadgetId, isExpendable, effectiveMax]);
