@@ -9,6 +9,7 @@ import DerivedStats from "./CharDetailComponents/DerivedStats";
 import EquipmentSelection from "./CharDetailComponents/EquipmentView";
 import XpControls from "./CharDetailComponents/XpHandler";
 import MultiClassModal from "./CharDetailComponents/MultiClassModal";
+import Collapsible from "../Collapsible";
 
 function CharacterDetail({ character, onUpdate, user, equipment }) {
   if (!character) return null;
@@ -548,7 +549,10 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
       />
 
       <div className="relative inline-block group">
-        <h2 className="text-xl font-bold text-orange-400">Specializations <span className="text-xs font-light text-neutral-400">[?]</span></h2>
+        <h2 className="text-xl font-bold text-orange-400">
+          Specializations{" "}
+          <span className="text-xs font-light text-neutral-400">[?]</span>
+        </h2>
 
         {/* Tooltip modal */}
         <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-1">

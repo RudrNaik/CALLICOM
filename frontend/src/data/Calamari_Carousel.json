@@ -1,32 +1,30 @@
 [
-    {
-      "title": "Siberian Suns",
-      "subtitle": "Here comes the snow...",
-      "image": "/ShowOfForce.jpg",
-      "alt": "Siberia Splash Art",
-      "fluff": "With Task Force Gold and the early access playtests finally coming to a close- SpinyNA is excited to reveal our next campaign set in the snowy tundras of Siberia. Where relics of old animosities mix with the fire of modern conflict."
-    },
-    {
-      "title": "A Glimpse To The Future",
-      "subtitle": "Some notes from SpinyNA studios on our sister title to Calamari- Calamari 2088.",
-      "image": "/NikkiShowcase.jpg",
-      "alt": "Nikki Showcase",
-      "fluff": "While our focus is mainly on the modern day Calamari titles and DLC- we've been expirementing to fill a gap we've felt for a long time. Guardsman deploying planetside on 7.25.2026"
-    },
-    {
-      "title": "Devblog 28",
-      "subtitle": "Paradox Larping, maps, rebalancing, and the end of Task Force Gold.",
-      "image": "/Amber_Crysis_Clean_Mesh.png",
-      "alt": "Amber Crysis",
-      "fluff": ""
-    },
-    {
-      "title": "Pre-Order Bonuses",
-      "subtitle": "Early access to Task Force Gold, two new Contractors, and a few more goodies.",
-      "image": "/Kailey_Powerthrough.png",
-      "alt": "Kailey Swamp",
-      "fluff": ""
-    }
-    
-  ]
-  
+  {
+    "title": "Devblog 42",
+    "subtitle": "End of Siberia, Sunsetting for RP6, and rebalancing for weapons and enemies.",
+    "image": "/Amber_Crysis_Clean_Mesh.png",
+    "alt": "Amber Crysis",
+    "fluff": ""
+  },
+  {
+    "title": "Lead The Way",
+    "subtitle": "Ladies and Gentlemen, Welcome to Japan",
+    "image": "/Japan_Intro_ARD-min.png",
+    "alt": "Japan Intro",
+    "fluff": "The world has held its breath long enough- it's turning purple. Campaign 2 releases January 5th, 2026."
+  },
+  {
+    "title": "Siberian Suns",
+    "subtitle": "Here comes the snow...",
+    "image": "/ShowOfForce.jpg",
+    "alt": "Siberia Splash Art",
+    "fluff": "Welcom to Siberia, where relics of old animosities mix with the fire of modern conflict as two nukes go missing in the hands of Ultranationalists."
+  },
+  {
+    "title": "Gold Edition Bonuses",
+    "subtitle": "Access to Task Force Gold, new weapons, new gadgets, and a booster pack to get you into the game faster.",
+    "image": "/Kailey_Powerthrough.png",
+    "alt": "Kailey Swamp",
+    "fluff": ""
+  }
+]
