@@ -409,18 +409,6 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
         isEditing={isEditingAttr}
         onBuy={patchAttribute}
       />
-      {xpRemaining >= 40 && (
-        <button
-          onClick={() => setEditAttr((prev) => !prev)}
-          className={`px-2 py-1 text-xs rounded ${
-            isEditingAttr
-              ? "bg-red-700 hover:bg-red-800"
-              : "bg-orange-600 hover:bg-orange-600"
-          }`}
-        >
-          {isEditingAttr ? "Cancel" : "Edit Attributes"}
-        </button>
-      )}
 
       <DerivedStats
         character={character}
@@ -428,221 +416,278 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
         refreshCharacter={onUpdate}
       />
 
-      <div className="relative inline-block group">
-        <h2 className="text-xl font-bold text-orange-400 mt-4">
-          Equipment{" "}
-          <span className="text-xs font-light text-neutral-400">[?]</span>
-        </h2>
+      {/* Gear */}
+      <Collapsible title={"Gear"}>
+        <div className="relative inline-block group">
+          <h2 className="text-xl font-bold text-orange-400 mt-4">
+            Equipment{" "}
+            <span className="text-xs font-light text-neutral-400">[?]</span>
+          </h2>
 
-        {/* Tooltip modal */}
-        <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-1">
-          <p>
-            Your equipment determines the gear that you bring into a mission.
-            You can choose a{" "}
-            <span className="text-orange-500 font-bold">primary</span>, a{" "}
-            <span className="text-orange-500 font-bold">secondary</span>, 2
-            types of <span className="text-orange-500 font-bold">grenades</span>
-            , and then your{" "}
-            <span className="text-orange-500 font-bold">armor</span> and{" "}
-            <span className="text-orange-500 font-bold">gadget</span>.
-          </p>
+          {/* Tooltip modal */}
+          <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-1">
+            <p>
+              Your equipment determines the gear that you bring into a mission.
+              You can choose a{" "}
+              <span className="text-orange-500 font-bold">primary</span>, a{" "}
+              <span className="text-orange-500 font-bold">secondary</span>, 2
+              types of{" "}
+              <span className="text-orange-500 font-bold">grenades</span>, and
+              then your <span className="text-orange-500 font-bold">armor</span>{" "}
+              and <span className="text-orange-500 font-bold">gadget</span>.
+            </p>
+          </div>
         </div>
-      </div>
-      <EquipmentSelection
-        character={character}
-        isEditing={isEditingEquipment}
-        userId={user}
-        refreshCharacter={onUpdate}
-        setIsEditing={setIsEditingEquipment}
-        charActive={charActive}
-        campEquipment={equipment} //Know that this only applies to Siberia2022 atm. Any character not assigned to that campaign does not have the restrictions.
-      />
+        <EquipmentSelection
+          character={character}
+          isEditing={isEditingEquipment}
+          userId={user}
+          refreshCharacter={onUpdate}
+          setIsEditing={setIsEditingEquipment}
+          charActive={charActive}
+          campEquipment={equipment} //Know that this only applies to Siberia2022 atm. Any character not assigned to that campaign does not have the restrictions.
+        />
 
-      {!isEditingEquipment && (
-        <button
-          onClick={() => setIsEditingEquipment(true)}
-          className="bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded"
-        >
-          Edit Equipment
-        </button>
-      )}
+        <div className="mt-2">
+          {!isEditingEquipment && (
+            <button
+              onClick={() => setIsEditingEquipment(true)}
+              className="bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded cursor-pointer"
+            >
+              Edit Equipment
+            </button>
+          )}
 
-      <button
-        onClick={() => setCharActive((prev) => !prev)}
-        className={`px-4 py-2 rounded ml-2 ${
-          charActive
-            ? "bg-red-700 hover:bg-red-800"
-            : "bg-orange-600 hover:bg-orange-600"
-        }`}
-      >
-        {charActive ? "Set Inactive" : "Set Active"}
-      </button>
+          <button
+            onClick={() => setCharActive((prev) => !prev)}
+            className={`px-4 py-2 rounded ml-2 cursor-pointer ${
+              charActive
+                ? "bg-red-700 hover:bg-red-800"
+                : "bg-orange-600 hover:bg-orange-800"
+            }`}
+          >
+            {charActive ? "Set Inactive" : "Set Active"}
+          </button>
+        </div>
+      </Collapsible>
 
       <h2 className=""></h2>
+      {/*Stats*/}
+      <Collapsible title={"Stats"}>
+        {/* Attr */}
+        <div>
+          <div className="relative inline-block group">
+            <h2 className="text-xl font-bold text-orange-400 mt-4 mb-0">
+              Attributes{" "}
+              <span className="text-xs font-light text-neutral-400">[?]</span>
+            </h2>
 
-      <div className="relative inline-block group">
-        <h2 className="text-xl font-bold text-orange-400 mt-0 mb-0">
-          Skills{" "}
-          <span className="text-xs font-light text-neutral-400">[?]</span>
-        </h2>
-
-        {/* Tooltip modal */}
-        <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-1">
-          <p>
-            Skills determine the amount of dice you{" "}
-            <span className="text-orange-500 font-bold">roll</span> during a{" "}
-            <span className="text-orange-500 font-bold">check</span>. the higher
-            the level, the more dice you roll.
-          </p>
-          <p className="text-neutral-500 text-xs">
-            IE: 0 in a skill is 2d6l, 1 in a skill is 1d6, 2 is 2d6l and so on
-            for a max of 4 levels in a skill.
-          </p>
+            {/* Tooltip modal */}
+            <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-0">
+              <p>
+                Attributes determine your{" "}
+                <span className="text-orange-500 font-bold">
+                  wound thresholds, system shock,
+                </span>{" "}
+                and other critical attributes of your character via{" "}
+                <span className="text-orange-500 font-bold">
+                  derived attributes
+                </span>
+                .
+              </p>
+            </div>
+          </div>
+          <AttributeView
+            attributes={attributes}
+            xp={xpRemaining}
+            isEditing={isEditingAttr}
+            onBuy={patchAttribute}
+          />
+          <div className="mt-2">
+            {xpRemaining >= 40 && (
+              <button
+                onClick={() => setEditAttr((prev) => !prev)}
+                className={`px-2 py-1 text-xs rounded ${
+                  isEditingAttr
+                    ? "bg-red-700 hover:bg-red-800"
+                    : "bg-orange-600 hover:bg-orange-600"
+                }`}
+              >
+                {isEditingAttr ? "Cancel" : "Edit Attributes"}
+              </button>
+            )}
+          </div>
         </div>
-      </div>
 
-      {!isEditing ? (
-        <XpControls
-          xpRemaining={xpRemaining}
-          setIsEditing={setIsEditing}
-          patchXP={patchXP}
-          setMulticlass={setMulticlass}
-          patchMulticlass={patchMulticlass}
+        {/* Skills */}
+        <div className="mt-4">
+          <div className="relative inline-block group">
+            <h2 className="text-xl font-bold text-orange-400 mt-2 mb-1">
+              Skills{" "}
+              <span className="text-xs font-light text-neutral-400">[?]</span>
+            </h2>
+
+            {/* Tooltip modal */}
+            <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-1">
+              <p>
+                Skills determine the amount of dice you{" "}
+                <span className="text-orange-500 font-bold">roll</span> during a{" "}
+                <span className="text-orange-500 font-bold">check</span>. the
+                higher the level, the more dice you roll.
+              </p>
+              <p className="text-neutral-500 text-xs">
+                IE: 0 in a skill is 2d6l, 1 in a skill is 1d6, 2 is 2d6l and so
+                on for a max of 4 levels in a skill.
+              </p>
+            </div>
+          </div>
+
+          {!isEditing ? (
+            <XpControls
+              xpRemaining={xpRemaining}
+              setIsEditing={setIsEditing}
+              patchXP={patchXP}
+              setMulticlass={setMulticlass}
+              patchMulticlass={patchMulticlass}
+            />
+          ) : (
+            <div className="mt-0 flex items-center space-x-2">
+              <br></br>
+              <button
+                onClick={handleSaveChanges}
+                className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded"
+              >
+                Confirm | {xpRemaining} XP Remaining
+              </button>
+
+              {isEditing && !multiClass && (
+                <button
+                  disabled={xpRemaining < 20}
+                  onClick={() => setShowMultiClassModal(true)}
+                  className="bg-orange-600 hover:bg-orange-700 disabled:bg-gray-700 disabled:hover:bg-gray-800 px-4 py-2 rounded"
+                >
+                  Multiclass | 20 XP
+                </button>
+              )}
+            </div>
+          )}
+
+          {showMultiClassModal && xpRemaining >= 20 && (
+            <MultiClassModal
+              onClose={setShowMultiClassModal}
+              patchMulticlass={patchMulticlass}
+              charClass={character}
+            />
+          )}
+
+          <div className="mt-4"></div>
+
+          <SkillsView
+            skillGroups={skillGroups}
+            isEditing={isEditing}
+            editedSkills={editedSkills}
+            character={character}
+            increaseSkill={increaseSkill}
+            decreaseSkill={decreaseSkill}
+          />
+        </div>
+
+        {/* Specializations */}
+        <div className="mt-4">
+          <div className="relative inline-block group">
+            <h2 className="text-xl font-bold text-orange-400">
+              Specializations{" "}
+              <span className="text-xs font-light text-neutral-400">[?]</span>
+            </h2>
+
+            {/* Tooltip modal */}
+            <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-1">
+              <p>
+                Specialiations provide a{" "}
+                <span className="text-orange-500 font-bold">+1</span> to rolls
+                when conditions are met. For example, a specialization in
+                Carbines provides a +1 when rolling to attack with a Carbine.
+              </p>
+            </div>
+          </div>
+
+          {specializations.length > 0 && (
+            <SpecView
+              specializations={specializations}
+              isEditing={isEditing}
+              removeSpec={removeSpecialization}
+            />
+          )}
+
+          {isEditing && xpRemaining >= 5 && (
+            <div className="mt-4">
+              <button
+                onClick={() => setShowSpecModal(true)}
+                className="bg-orange-600 hover:bg-orange-700 px-4 py-1 rounded"
+              >
+                + Add Specialization (−5 XP)
+              </button>
+            </div>
+          )}
+
+          {showSpecModal && (
+            <SpecModal
+              editedSkills={editedSkills}
+              specializations={specializations}
+              xpRemaining={xpRemaining}
+              setSpecializations={setSpecializations}
+              setXpRemaining={setXpRemaining}
+              setShowSpecModal={setShowSpecModal}
+            />
+          )}
+        </div>
+
+        <Edice
+          isEditing={isEditing}
+          emergencyDice={emergencyDice}
+          charEmergencyDice={character.emergencyDice}
+          removeEmergencyDie={removeEmergencyDie}
+          addEmergencyDie={addEmergencyDie}
         />
-      ) : (
-        <div className="mt-0 flex items-center space-x-2">
-          <br></br>
-          <button
-            onClick={handleSaveChanges}
-            className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded"
-          >
-            Confirm | {xpRemaining} XP Remaining
-          </button>
+      </Collapsible>
 
-          {isEditing && !multiClass && (
+      {/* Biography */}
+      <Collapsible title={"Biography"}>
+        <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-6 rounded shadow col-span-2">
+          {isEditingBio ? (
+            <textarea
+              className="w-full bg-neutral-900 text-white p-2 rounded resize-y min-h-[100px]"
+              placeholder="UNCC LC-514-A 'Formal Background'"
+              value={Biography}
+              onInput={(e) => setBio(e.target.value)}
+            />
+          ) : (
+            <p className="whitespace-pre-wrap text-xs mt-1">
+              {Biography || "..."}
+            </p>
+          )}
+        </div>
+        <div className="mt-2">
+          {isEditingBio ? (
             <button
-              disabled={xpRemaining < 20}
-              onClick={() => setShowMultiClassModal(true)}
-              className="bg-orange-600 hover:bg-orange-700 disabled:bg-gray-700 disabled:hover:bg-gray-800 px-4 py-2 rounded"
+              onClick={() => patchBio(Biography)}
+              className="bg-orange-600 hover:bg-orange-700 px-4 py-1 rounded"
             >
-              Multiclass | 20 XP
+              Close
+            </button>
+          ) : (
+            <button
+              onClick={() => setIsEditingBio(true)}
+              className="bg-orange-600 hover:bg-orange-700 px-4 py-1 rounded"
+            >
+              Edit
             </button>
           )}
         </div>
-      )}
-
-      {showMultiClassModal && xpRemaining >= 20 && (
-        <MultiClassModal
-          onClose={setShowMultiClassModal}
-          patchMulticlass={patchMulticlass}
-          charClass={character}
-        />
-      )}
-
-      <SkillsView
-        skillGroups={skillGroups}
-        isEditing={isEditing}
-        editedSkills={editedSkills}
-        character={character}
-        increaseSkill={increaseSkill}
-        decreaseSkill={decreaseSkill}
-      />
-
-      <div className="relative inline-block group">
-        <h2 className="text-xl font-bold text-orange-400">
-          Specializations{" "}
-          <span className="text-xs font-light text-neutral-400">[?]</span>
-        </h2>
-
-        {/* Tooltip modal */}
-        <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-1">
-          <p>
-            Specialiations provide a{" "}
-            <span className="text-orange-500 font-bold">+1</span> to rolls when
-            conditions are met. For example, a specialization in Carbines
-            provides a +1 when rolling to attack with a Carbine.
-          </p>
-        </div>
-      </div>
-
-      {specializations.length > 0 && (
-        <SpecView
-          specializations={specializations}
-          isEditing={isEditing}
-          removeSpec={removeSpecialization}
-        />
-      )}
-
-      {isEditing && xpRemaining >= 5 && (
-        <div className="mt-4">
-          <button
-            onClick={() => setShowSpecModal(true)}
-            className="bg-orange-600 hover:bg-orange-700 px-4 py-1 rounded"
-          >
-            + Add Specialization (−5 XP)
-          </button>
-        </div>
-      )}
-
-      {showSpecModal && (
-        <SpecModal
-          editedSkills={editedSkills}
-          specializations={specializations}
-          xpRemaining={xpRemaining}
-          setSpecializations={setSpecializations}
-          setXpRemaining={setXpRemaining}
-          setShowSpecModal={setShowSpecModal}
-        />
-      )}
-
-      <Edice
-        isEditing={isEditing}
-        emergencyDice={emergencyDice}
-        charEmergencyDice={character.emergencyDice}
-        removeEmergencyDie={removeEmergencyDie}
-        addEmergencyDie={addEmergencyDie}
-      />
-
-      {/* Biography */}
-      <h2 className="text-xl font-bold text-orange-400 mt-2 mb-0.5">
-        Biography
-      </h2>
-      <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-6 rounded shadow col-span-2">
-        {isEditingBio ? (
-          <textarea
-            className="w-full bg-neutral-900 text-white p-2 rounded resize-y min-h-[100px]"
-            placeholder="UNCC LC-514-A 'Formal Background'"
-            value={Biography}
-            onInput={(e) => setBio(e.target.value)}
-          />
-        ) : (
-          <p className="whitespace-pre-wrap text-xs mt-1">
-            {Biography || "..."}
-          </p>
-        )}
-      </div>
-
-      {isEditingBio ? (
-        <button
-          onClick={() => patchBio(Biography)}
-          className="bg-orange-600 hover:bg-orange-700 px-4 py-1 rounded"
-        >
-          Close
-        </button>
-      ) : (
-        <button
-          onClick={() => setIsEditingBio(true)}
-          className="bg-orange-600 hover:bg-orange-700 px-4 py-1 rounded"
-        >
-          Edit
-        </button>
-      )}
+      </Collapsible>
 
       {/* Campaign Assignment */}
-      <div className="mt-6">
-        <h2 className="text-xl font-bold text-orange-400 mb-2">
-          Assign to Campaign
-        </h2>
+      <Collapsible title={"Assign To Campaign"} className="mt-6">
         <div className="flex space-x-2">
           <input
             type="text"
@@ -684,7 +729,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
             Assign
           </button>
         </div>
-      </div>
+      </Collapsible>
     </div>
   );
 }
