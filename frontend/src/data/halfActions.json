@@ -11,7 +11,7 @@
       "type": "Full",
       "color":"bg-neutral-800/80",
       "icon": "/Half_Action.svg",
-      "description": "[Support]\n Reload your selected weapon, restoring your round count to full.\n\n, when reloading, you can shoot again in the same turn. However- it will apply a -1 to your shot. \n\n Reloading must be declared before shooting. Not after."
+      "description": "[Support]\n Reload your selected weapon, restoring your round count to full.\n\n, when reloading with ammunition in the mag, you can shoot again in the same turn. However- it will apply a -1 malus to your shot. \n\n Reloading from empty applies a -1 to all actions that turn."
     },
     {
       "name": "Patch up",
@@ -21,11 +21,11 @@
       "description": "[Support] [Medical]\n Patch yourself up and remove wounds.\n\nPatching yourself up requires having 1 FAK for a flesh wound, and 2 FAKs or an AFAK for deep wounds. When consumed, these items are removed from your inventory.\n\nYou remove 1 + [Medical skill roll] worth of wounds when consumed. \n\n Alternatively, painkillers do exist, and can be used by rolling your medical skill to nullify wounds for 1+[medical roll] turns."
     },
     {
-      "name": "Rally",
-      "type": "Half",
+      "name": "Repair",
       "color":"bg-neutral-800/80",
-      "icon": "/Half_Action.svg",
-      "description": "[Support] [Leadership]\n Rally your team and other allies.\n\nOnce per turn a team member can rally, using your leadership skill to bolster the morale of friendlies. The bonus thresholds are: \n\n  < 1 : no bonuses\n 2-4 : +1 bonus to all actions for the next turn.\n 5-6+: +1 dice to all friendly actions the next turn. \n\n Each team member can rally once per encounter  (You also have to type something in character for it to count)."
+      "type": "Half",
+      "icon": "/Full_Action.svg",
+      "description": "[Support] [Repair Tool]\n Repair vehicles, equipment, and drones \n\n When repairing, roll with tinker to determine the amount of wounds of damage repaired. Prioritizes Critical Damage first, and then fixes minor damage. vehicle crews 'relax' when their vehicles are being repaired.\n\n For drones, multiply the roll by 2 for how much damage repaired."
     }
   ]
   

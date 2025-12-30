@@ -32,7 +32,7 @@
       "type": "Full",
       "color":"bg-neutral-800/80",
       "icon": "/Full_Action.svg",
-      "description": "[Defensive]\n Brace yourself against cover.\n\n When bracing, you get a +2 to your defense rolls, however cannot do anything other than brace for that turn. Flanking negates this, along with high power rifles and a ping."
+      "description": "[Defensive]\n Brace yourself against cover.\n\n When bracing, you get a +2 to your defense rolls, however cannot do anything other than brace for that turn. Flanking negates this, along with high power rifles and a ping. \n\n Cannot move more than close range after bracing."
     },
     {
       "name": "Intimidate",
@@ -49,11 +49,11 @@
       "description": "[Defensive]\n Disengage from a fight and slip away.\n\nWhen disengaging, do an opposed stealth roll against an enemy's alertness. Upon success, you are disengaged. Enemies will search your last known position, and in combat it allows you to sneak around, but any offensive action will re-engage you. You can aim however.\n\n When moving while disengaged, you will roll stealth checks against an enemy's alertness to remain disengaged. Upon firing on an enemy or failing a check, you re-engage with them.\n\n You can also search for disengaged enemies using a bonus action."
     },
     {
-      "name": "Repair",
-      "color":"bg-neutral-800/80",
+      "name": "Rally",
       "type": "Half",
+      "color":"bg-neutral-800/80",
       "icon": "/Full_Action.svg",
-      "description": "[Support] [Repair Tool]\n Repair vehicles, equipment, and drones \n\n When repairing, roll with tinker to determine the amount of wounds of damage repaired. Prioritizes Critical Damage first, and then fixes minor damage. vehicle crews 'relax' when their vehicles are being repaired.\n\n For drones, multiply the roll by 2 for how much damage repaired."
+      "description": "[Support] [Leadership]\n Rally your team and other allies.\n\nOnce per turn a team member can rally, using your leadership skill to bolster the morale of friendlies. The bonus thresholds are: \n\n  <= 1 : no bonuses\n 2-4 : +1 bonus to all actions for the next turn.\n 5: +1 dice and bonus to all friendly actions the next turn.\n 6+: +1 dice and bonus \n\n Each team member can rally once per encounter (You also have to type something in character for it to count). Effect lasts one turn once used. \n\n However, you can also use rally on a specific target, giving them a callout or command that applies the same effect to them. This can be done multiple times an encounter."
     }
   ]
   
