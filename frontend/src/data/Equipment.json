@@ -67,13 +67,13 @@
         "class": "All",
         "cost": 3000,
         "description": "Shotguns are the kings of close quarters, chambered in a variety of 12 gauge shells, and occasionally in 8 gauge, they will annihilate anything foolish enough to stand less than 10 meters in front of them. This high damage potential does come with the caveat of a massive damage drop-off over long distances. These weapons can also be used as makeshift breaching devices and have destructive abilities against soft walls.",
-        "rulesText": "[Medium Weapons]\nRange modifier: +1 C | -1 M | -3 L | -4 ELR\n PEN: 1 | DMG: 6 \n RSV: 12 | CAP: 3"
+        "rulesText": "[Medium Weapons]\nRange modifier: +2 C | -1 M | -3 L | -4 ELR\n PEN: 1 | DMG: 6 \n RSV: 12 | CAP: 3"
     },
     {
         "id": "sr",
         "title": "Sniper Rifles",
         "parentId": "Weapons",
-        "class": "Sharpshooter",
+        "class": "Sharpshooter Only",
         "cost": 5100,
         "description": "Undisputed champions of long-range engagements, sniper rifles are a go-to choice for marksmen. Chambered from anything between 7.62x51 AP, 338 Lupua, and .300 Norma these weapons are perfect for dropping individual targets long before they know what hit them, made all the better with their armour-penetrating rounds that can hit targets behind soft walls and cover. The major downside however is drawbacks for trying to use them in CQC and their low ammo count. Make each shot count.",
         "rulesText": "[Medium Weapons][Sharpshooter][Precision]\nRange modifier: -2 C | +1 L | +2 ELR\n PEN: 2 | DMG: 7 \n RSV: 10 | CAP: 5"
@@ -82,7 +82,7 @@
         "id": "mg",
         "title": "Machine Guns",
         "parentId": "Weapons",
-        "class": "Fire Support",
+        "class": "Fire Support Only",
         "cost": 4800,
         "description": "Lead spitting machines of the battlefield, machine guns are chambered in a mixture of intermediate and heavier hitting calibers ranging from 5.56,5.8x42, 7.62x51, 6.8x51, and 7.62x39. Despite this mix of calibers, their main purpose isn’t to inflict pinpoint precision damage but to instead shatter the will and the cover of anyone in front of their field of fire. Comes with the ability to Suppress this allows the attacker to choose an area of up to 3 hexes wide to suppress.",
         "rulesText": "[Heavy Weapons][Fire Support][Suppression]\nRange modifier: +1 Bipod | +1 M | -1 L | -1 ELR\n PEN: 2 | DMG: 5 \n RSV: 12 | CAP: 6"
@@ -91,7 +91,7 @@
         "id": "drum-shotgun",
         "title": "Drum Shotguns",
         "parentId": "Weapons",
-        "class": "Fire Support",
+        "class": "Fire Support Only",
         "cost": 3300,
         "description": "Like the venerable machine guns of the battlefield, Drum Mag Shotguns fill a similar niche to the machine gun but for close quarters engagements. Packing the punch of the shotgun but lacking the range, these weapons are designed for keeping the enemy’s head down while you rush their position for the kill. Comes with the ability to Suppress, this allows the attacker to choose an area of up to 3 hexes wide to suppress.",
         "rulesText": "[Heavy Weapons][Fire Support][Suppression]\nRange modifier: +1 C | -1 M | -3 L | -4 ELR\n PEN: 1 | DMG: 6 \n RSV: 12 | CAP: 6"
@@ -651,7 +651,7 @@
         "class": "Fire Support",
         "cost": 16000,
         "description": "Utilizing a backpack feeder and a gyroscopic camera mount, the spitfire allows you to put down an unmatched amount of firepower at the expense of melting barrels and making the logistics officer incredibly angry at you.",
-        "rulesText": "The stabilizer removes the ability to aim in exchange for an extra +1 to the supression saturation threshold. Allows the user to supress a second set of six hexes. Barrels melt at three turns of consequtive supression. reloading in the same turn has no penalty."
+        "rulesText": "The stabilizer removes the ability to aim in exchange for an extra +1 to the supression saturation threshold. Allows the user to supress a second set of six hexes. Barrels melt at three turns of consequtive supression. reloading in the same turn has no penalty as ammo is fed from pack."
     },
     {
         "id": "juggernaut-suit",
@@ -670,6 +670,45 @@
         "cost": 13000,
         "description": "A man portable version of the Active Protection System. A hard kill countermeasure for defeating most munitions such as 40mms, grenades, rockets, and even drones. When deployed, it shines a brght green light on areas it is protecting when active.",
         "rulesText": "Deployable on most terrain, benefits from cover bonuses. Destroys all munitions from UCAVs, 40mms, Rockets, and grenades in a five hex radius. Won't destroy friendly munitions, but does lead to enemy munitions detonating pre-maturely. Has 3 consequtive charges. One charge will protect the area for the turn."
+    },
+    {
+        "id": "ammo-bag",
+        "title": "Ammo-Types",
+        "parentId": "F-SUP",
+        "class": "Fire Support",
+        "cost": 5000,
+        "description": "Get your ammo, fresh off the press. Its a bag filled with Stopping Power, Subsonic, or High Velocity rounds. Each with their own effects when loaded.",
+        "rulesText": "When loading out, choose an amount of charges for each ammo type when unlocked. When deployed, or given by a support using this specific ammo bag, you automatically reload your weapon with the new ammo type and gain its benefits for that magazine only. when reloading, the ammo is lost."
+    },
+    {
+        "id": "stp-power",
+        "title": "Stopping Power",
+        "parentId": "F-SUP",
+        "SubMunition": true,
+        "class": "Fire Support",
+        "cost": 0,
+        "description": "Loads the rounds with some extra spice, or well... Grain. It's basically overpressured and high grain ammunition.",
+        "rulesText": "Increases damage by 2 for the magazine."
+    },
+    {
+        "id": "subs",
+        "title": "Subsonics",
+        "parentId": "F-SUP",
+        "SubMunition": true,
+        "class": "Fire Support",
+        "cost": 0,
+        "description": "Underloads and optimizes the rounds to sit at just below supersonic speeds. Removes the distinct 'crack' of supersonic rounds and makes your shot signature significantly quieter.",
+        "rulesText": "When in stealth, wont cause an alertness check when firing. When disengaged, shooting will not re-engage you. When cloaked, it will keep you cloaked even when firing. Reduces weapon damage by 1 for the magazine."
+    },
+    {
+        "id": "high-vel",
+        "title": "High Velocity",
+        "parentId": "F-SUP",
+        "SubMunition": true,
+        "class": "Fire Support",
+        "cost": 0,
+        "description": "Optimizes the rounds to shoot faster and flatter. It wont make your rounds any quieter, but some people say it turns it into a point and shoot adventure game.",
+        "rulesText": "Increases all range bands by a net +1 bonus."
     },
     {
         "id": "Medic",

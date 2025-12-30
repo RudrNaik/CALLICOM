@@ -25,18 +25,14 @@ function EquipmentSelection({
     miscGear: "",
   };
 
-  //percolates items froim the equipment data into an easy to use lookup table.
+  //percolates items from the equipment data into an easy to use lookup table.
   const itemById = useMemo(() => {
     const m = {};
-    if (!campEquipment) {
-      equipmentData.forEach((it) => {
-        m[it.id] = it;
-      });
-    } else {
-      campEquipment.forEach((it) => {
-        m[it.id] = it;
-      });
-    }
+
+    equipmentData.forEach((it) => {
+      m[it.id] = it;
+    });
+
     return m;
   }, []);
 
