@@ -156,7 +156,7 @@
         "title": "Stealth",
         "mechanic": "Core",
         "parentId": "",
-        "description": "Stealth checks are done by rolling an attacker’s Stealth against a defender's alertness as an opposed roll. Success provides the attacker a cover defense bonus until they fire their weapon. Stealth checks can also be rolled with disguise if using camouflage or masking, like hiding in a bush or covering yourself in mud or snow to blend in with it. Lighting can also affect stealth, as poor lighting conditions is a +1 to your roll, very poor lighting is +2, and perfect darkness is +3. Stance and cover also affects your stealth, as crawling (while utilizing camo) and using cover can increase your bonus by +1 each.\n\n If attempting to sneak past, or enter an area surreptitiously, you only need to roll stealth once against a defender's alertness for them not to notice you as you move for subsequent turns. However, when interacting with locks, computers, or anything else in that vein, the attacker must re-roll their stealth value against the defender’s alertness for that action. Fumbles while in stealth will cause guards to get suspicious and come investigate."
+        "description": "Stealth checks are done by rolling an attacker’s Stealth against a defender's alertness as an opposed roll. Success provides the attacker a cover defense bonus until they fire their weapon. Stealth checks can also be rolled with disguise if using camouflage or masking, like hiding in a bush or covering yourself in mud or snow to blend in with it. Lighting can also affect stealth, as poor lighting conditions is a +1 to your roll, very poor lighting is +2, and perfect darkness is +3. Stance and cover also affects your stealth, as prone and using cover can increase your bonus by +1.\n\n If attempting to sneak past, or enter an area surreptitiously, you only need to roll stealth once against a defender's alertness for them not to notice you as you move for subsequent turns. However, when interacting with locks, computers, or anything else in that vein, the attacker must re-roll their stealth value against the defender’s alertness for that action. Fumbles while in stealth will cause guards to get suspicious and come investigate."
     },
     {
         "id": "Squad",
@@ -188,11 +188,11 @@
         "description": "E-Dice can be used both proactively and retroactively, with limitations.\n\n- Proactive Use: prior to a roll, you can declare that you are going to use E-dice to increase the amount of dice you roll with during a check. For example, if you roll a 2d6k1, you can declare an E-dice and increase it to a 3d6k1. \n- Retroactive Use: After a roll, E-dice can be used to gain a second chance, but only for cognition and intelligence based checks, such as notice, investigate, and trivia.\n\n E-Dice can be replenished. however, it requires 2 EXP to retore one dice, and you can only hold a max of 4."
     },
     {
-        "id": "MoveFire",
-        "title": "Moving While Shooting",
+        "id": "Stances",
+        "title": "Moving and Stances while Shooting",
         "mechanic": "Core",
         "parentId": "",
-        "description": "Operators can move and perform actions (such as shooting or throwing) simultaneously, with accuracy penalties depending on thier movement speed.\n\n- Moving & Shooting: Apply a global -1 modifier to all actions.\n- Sprinting & Shooting: Apply a global -2 modifier to all actions.\n\n If a character opts instead to fire from stationary AFTER moving, the maluses change: \n\n - Moving then shooting: No modifiers \n - Sprinting then shooting: -1 global modifier \n\n Shooting from stationary and then moving has no penalty."
+        "description": "Operators can move and perform actions (such as shooting or throwing) simultaneously, with accuracy penalties depending on thier movement speed.\n\n- Moving & Shooting: Apply a global -1 modifier to all actions.\n- Sprinting & Shooting: Apply a global -2 modifier to all actions.\n\n If a character opts instead to fire from stationary AFTER moving, the maluses change: \n\n - Moving then shooting: No modifiers \n - Sprinting then shooting: -1 global modifier \n\n Shooting from stationary and then moving has no penalty.\n\n At the same time, Operators can also choose to mount or prone. When mounting or prone., your character gains a +1 to any shooting actions, but cannot sprint the next round."
     },
     {
         "id": "CombatModifiers",

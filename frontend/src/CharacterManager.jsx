@@ -27,10 +27,7 @@ const CharManager = () => {
       style={{ backgroundImage: `url(${background})` }}
     >
       <div className="py-10"></div>
-      <div
-        className="p-6"
-        style={{ fontFamily: "Geist_Mono" }}
-      >
+      <div className="p-6" style={{ fontFamily: "Geist_Mono" }}>
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -55,9 +52,9 @@ const CharManager = () => {
       </div>
 
       <CharacterRoster userId={user.userName} />
-
     </div>
   );
 };
+
 
 export default CharManager;

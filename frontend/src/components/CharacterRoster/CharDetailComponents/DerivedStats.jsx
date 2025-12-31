@@ -91,7 +91,14 @@ function DerivedStats({ character, userId, refreshCharacter }) {
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, [fleshWounds, deepWounds, userId, character?.callsign, navigate, refreshCharacter]);
+  }, [
+    fleshWounds,
+    deepWounds,
+    userId,
+    character?.callsign,
+    navigate,
+    refreshCharacter,
+  ]);
 
   // Reset when character changes
   useEffect(() => {
@@ -114,10 +121,10 @@ function DerivedStats({ character, userId, refreshCharacter }) {
   return (
     <div className="mt-8 text-white font-geist">
       {/* Save state */}
-      <div className="flex items-center gap-3 text-sm mb-3">
+      <div className="flex items-center gap-3 text-sm">
         {isSaving ? (
           <div className="flex items-center text-orange-400 font-semibold">
-            <div className="w-4 h-4 border-2 border-neutral-700 border-t-2 border-t-orange-500 rounded-full animate-spin mr-2" />
+            <div className="w-4 h-4 border-2 border-neutral-700 border-t-orange-500 rounded-full animate-spin mr-2" />
             Saving…
           </div>
         ) : (
@@ -125,101 +132,124 @@ function DerivedStats({ character, userId, refreshCharacter }) {
         )}
       </div>
 
-      {/* Card */}
-      <div className="rounded-sm overflow-hidden bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500">
+      <div className="rounded-md bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-3">
+        {/* ---------------- MOBILE ---------------- */}
+        <div className="grid grid-cols-2 gap-3 sm:hidden">
+          <StatCard label="Health" value={Health} />
+          <StatCard label="Stamina" value={Stamina} />
+          <StatCard label="Defense" value={Defense} />
+          <StatCard label="Combat Sense" value={CombatSense} />
 
-        <div className="grid grid-cols-2 md:grid-cols-4 text-center text-sm">
-          {/* Row 1 headers */}
-          <HeaderCell>Health</HeaderCell>
-          <HeaderCell>Stamina</HeaderCell>
-          <HeaderCell>Defense</HeaderCell>
-          <HeaderCell>Combat Sense</HeaderCell>
+          <StatCard label="Flesh Threshold" value={FleshWoundThreshold} />
+          <StatCard label="Deep Threshold" value={DeepWoundThreshold} />
 
-          {/* Row 1 values */}
-          <ValueCell>{Health}</ValueCell>
-          <ValueCell>{Stamina}</ValueCell>
-          <ValueCell>{Defense}</ValueCell>
-          <ValueCell>{CombatSense}</ValueCell>
+          <StatCard label="Unarmed DMG" value={UnarmedDamage} />
+          <StatCard label="Armed DMG" value={ArmedDamage} />
 
-          {/* Row 2 headers */}
-          <HeaderCell>Flesh Wound</HeaderCell>
-          <HeaderCell>Deep Wound</HeaderCell>
-          <HeaderCell>Unarmed DMG</HeaderCell>
-          <HeaderCell>Armed DMG</HeaderCell>
+          <StatCard label="System Shock" value={SystemShock} accent="orange" />
+          <StatCard label="Instant Death" value={InstantDeath} accent="red" />
 
-          {/* Row 2 values */}
-          <ValueCell>{FleshWoundThreshold}</ValueCell>
-          <ValueCell>{DeepWoundThreshold}</ValueCell>
-          <ValueCell>{UnarmedDamage}</ValueCell>
-          <ValueCell>{ArmedDamage}</ValueCell>
-
-          {/* Row 3 headers */}
-          <HeaderCell className="text-red-400/90">Instant Death</HeaderCell>
-          <HeaderCell className="text-orange-400/90">System Shock</HeaderCell>
-          <HeaderCell className="md:col-span-2">
-            <span className="text-red-400 font-semibold">Wound Mod</span>
-            <span className="ml-2 text-red-500 font-bold">-{woundMod}</span>
-          </HeaderCell>
-
-          {/* Row 3 values */}
-          <ValueCell>{InstantDeath}</ValueCell>
-          <ValueCell>{SystemShock}</ValueCell>
-
-          {/* Counters */}
-          <div className="col-span-2 grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-white/5">
-            <CounterCell
-              title="Flesh Wounds"
-              value={fleshWounds}
-              onDec={handleDecreaseFleshWounds}
-              onInc={handleIncreaseFleshWounds}
-              disabled={isSaving}
-            />
-            <CounterCell
-              title="Deep Wounds"
-              value={deepWounds}
-              onDec={handleDecreaseDeepWounds}
-              onInc={handleIncreaseDeepWounds}
-              disabled={isSaving}
-            />
+          <div className="col-span-2 text-center text-sm font-semibold text-red-400">
+            Wound Modifier: −{woundMod}
           </div>
+        </div>
+
+        {/* ---------------- DESKTOP ---------------- */}
+        <div className="hidden sm:block space-y-2">
+          <StatRow>
+            <StatCard label="Health" value={Health} />
+            <StatCard label="Stamina" value={Stamina} />
+            <StatCard label="Defense" value={Defense} />
+            <StatCard label="Combat Sense" value={CombatSense} />
+          </StatRow>
+
+          <StatRow>
+            <StatCard label="Flesh Threshold" value={FleshWoundThreshold} />
+            <StatCard label="Deep Threshold" value={DeepWoundThreshold} />
+            <StatCard label="Unarmed DMG" value={UnarmedDamage} />
+            <StatCard label="Armed DMG" value={ArmedDamage} />
+          </StatRow>
+
+          <StatRow>
+            <StatCard
+              label="System Shock"
+              value={SystemShock}
+              accent="orange"
+            />
+            <StatCard label="Instant Death" value={InstantDeath} accent="red" />
+            <div className="flex items-center justify-center col-span-2">
+              <span className="text-red-400 font-semibold">
+                Wound Mod: −{woundMod}
+              </span>
+            </div>
+          </StatRow>
+        </div>
+
+        {/* ---------------- COUNTERS ---------------- */}
+        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-white/5">
+          <CounterCell
+            title="Flesh Wounds"
+            value={fleshWounds}
+            onDec={handleDecreaseFleshWounds}
+            onInc={handleIncreaseFleshWounds}
+            disabled={isSaving}
+          />
+          <CounterCell
+            title="Deep Wounds"
+            value={deepWounds}
+            onDec={handleDecreaseDeepWounds}
+            onInc={handleIncreaseDeepWounds}
+            disabled={isSaving}
+          />
         </div>
       </div>
     </div>
   );
 }
 
-/* --- UI bits --- */
-function HeaderCell({ children, className = "" }) {
-  return (
-    <div
-      className={[
-        "bg-neutral-900/70 font-semibold py-2.5",
-        "border-b border-white/5",
-        "text-xs tracking-wide uppercase text-white/80",
-        className,
-      ].join(" ")}
-    >
-      {children}
-    </div>
-  );
+function StatRow({ children }) {
+  return <div className="grid grid-cols-4 gap-2">{children}</div>;
 }
 
-function ValueCell({ children }) {
+function StatCard({ label, value, accent = "default" }) {
+  const accentMap = {
+    red: "text-red-400",
+    orange: "text-orange-400",
+    default: "text-neutral-100",
+  };
+
   return (
-    <div className="bg-neutral-900/30 py-3 border-b border-white/5">
-      <span className="text-base tabular-nums">{children}</span>
+    <div className="rounded-md border border-neutral-700 bg-neutral-900/60 p-2">
+      <p className="text-[10px] tracking-widest text-neutral-400 uppercase">
+        {label}
+      </p>
+      <p className={`text-lg font-bold ${accentMap[accent]}`}>{value}</p>
     </div>
   );
 }
 
 function CounterCell({ title, value, onDec, onInc, disabled }) {
   return (
-    <div className="bg-neutral-900/30 py-3 flex flex-col items-center gap-2">
-      <span className="font-semibold text-orange-400 text-sm">{title}</span>
+    <div className="bg-neutral-900/40 py-3 flex flex-col items-center gap-2">
+      <span className="font-semibold text-orange-400 text-sm tracking-wide">
+        {title}
+      </span>
       <div className="flex items-center gap-3">
-        <RoundBtn sign="−" onClick={onDec} disabled={disabled} ariaLabel={`${title} minus`} />
-        <span className="min-w-6 text-center text-lg tabular-nums">{value}</span>
-        <RoundBtn sign="+" onClick={onInc} disabled={disabled} ariaLabel={`${title} plus`} />
+        <RoundBtn
+          sign="−"
+          onClick={onDec}
+          disabled={disabled}
+          ariaLabel={`${title} minus`}
+        />
+        <span className="min-w-6 text-center text-lg tabular-nums">
+          {value}
+        </span>
+        <RoundBtn
+          sign="+"
+          onClick={onInc}
+          disabled={disabled}
+          ariaLabel={`${title} plus`}
+        />
       </div>
     </div>
   );
@@ -227,6 +257,7 @@ function CounterCell({ title, value, onDec, onInc, disabled }) {
 
 function RoundBtn({ sign, onClick, disabled, ariaLabel }) {
   const isPlus = sign === "+";
+
   return (
     <button
       type="button"
@@ -240,10 +271,14 @@ function RoundBtn({ sign, onClick, disabled, ariaLabel }) {
         "hover:border-white/20 hover:bg-white/5",
         "active:scale-[0.98] transition",
         "disabled:opacity-50 disabled:cursor-not-allowed",
-        isPlus ? "focus:ring-1 focus:ring-orange-500/50" : "focus:ring-1 focus:ring-red-500/50",
+        isPlus
+          ? "focus:ring-1 focus:ring-orange-500/50"
+          : "focus:ring-1 focus:ring-red-500/50",
       ].join(" ")}
     >
-      <span className={isPlus ? "text-orange-400" : "text-red-400"}>{sign}</span>
+      <span className={isPlus ? "text-orange-400" : "text-red-400"}>
+        {sign}
+      </span>
     </button>
   );
 }

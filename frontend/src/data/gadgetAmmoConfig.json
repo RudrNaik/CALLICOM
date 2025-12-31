@@ -61,17 +61,25 @@
       { "id": "dd-gunner", "label": "Gunner" }
     ]
   },
+  "ammo-bag": {
+    "maxBatches" : 5,
+    "options": [
+      { "id": "stp-power", "label": "Stopping Power"},
+      { "id": "subs", "label": "Subsonics" },
+      { "id": "high-vel", "label": "High Velocity" }
+    ]
+  },
   "m5-slam": {
-    "max": 3
+    "max": 4
   },
   "c4": {
     "max": 4
   },
   "lil-mac": {
-    "max": 2
+    "max": 3
   },
   "ankle-busters" : {
-    "max" : 2
+    "max" : 3
   },
   "claymores" : {
     "max" : 3
@@ -98,19 +106,16 @@
     "max": 3
   },
   "amr":{
-    "max": 10
+    "max": 5
   },
   "semenov-railgun":{
-    "max": 10
+    "max": 5
   },
   "PMGL":{
     "max": 6
   },
   "LMD":{
     "max": 3
-  },
-  "sniper-sentry":{
-    "max": 5
   },
   "mp-aps":{
     "max": 3

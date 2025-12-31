@@ -12,7 +12,7 @@ export default function GadgetAmmo({
   charClass,
   characterCallsign, // for per-character storage key
   campActive,
-  campaignId
+  campaignId,
 }) {
   if (!config) return null;
 
@@ -21,7 +21,15 @@ export default function GadgetAmmo({
 
   // ---- classify gadget modes ----
   const isMixed = useMemo(
-    () => ["spec-ammo", "stim-pouch", "x89-ams", "ugl", "demo-dog"].includes(gadgetId),
+    () =>
+      [
+        "spec-ammo",
+        "stim-pouch",
+        "x89-ams",
+        "ugl",
+        "demo-dog",
+        "ammo-bag",
+      ].includes(gadgetId),
     [gadgetId]
   );
 
@@ -45,11 +53,10 @@ export default function GadgetAmmo({
         "m26-mass",
         "PMGL",
         "LMD",
-        "sniper-sentry",
         "mp-aps",
         "zipline",
         "grappling-hook",
-        "hydraulic-hook"
+        "hydraulic-hook",
       ].includes(gadgetId),
     [gadgetId]
   );
@@ -86,9 +93,11 @@ export default function GadgetAmmo({
     if (gadgetId === "spec-ammo")
       return { title: "Special Ammo", max: config.maxSpecAmmo ?? 0 };
     if (gadgetId === "thinkpad") return { title: "Hacks", max: 0 };
-    if (gadgetId === "demo-dog") return { title: "Variant", max: config.maxStowedAmmo };
-    if (isExpendable)
-      return { title: "Munitions", max: effectiveMax };
+    if (gadgetId === "demo-dog")
+      return { title: "Variant", max: config.maxStowedAmmo ?? 0 };
+    if (gadgetId === "ammo-bag")
+      return { title: "Type", max: config.maxBatches ?? 0 };
+    if (isExpendable) return { title: "Munitions", max: effectiveMax };
     return { title: "Consumables", max: 0 };
   }, [gadgetId, config, isExpendable, effectiveMax]);
 
@@ -99,11 +108,13 @@ export default function GadgetAmmo({
     if (gadgetId === "x89-ams" && config.maxRounds != null)
       return `Choose up to ${config.maxRounds} shells.`;
     if (gadgetId === "stim-pouch" && config.maxStims != null)
-      return `Choose up to ${config.maxStims} stims.`;
+      return `Choose up to ${config.maxStims} stims. `;
     if (gadgetId === "spec-ammo" && config.maxSpecAmmo != null)
-      return `Choose up to ${config.maxSpecAmmo} rounds`;
+      return `Choose up to ${config.maxSpecAmmo} rounds `;
     if (gadgetId === "demo-dog")
-      return `Select a variant. [-1 values deselect, increase to magazine size for selected variant.]`
+      return `Select a variant. [increase to magazine size for selected variant.]`;
+    if (gadgetId === "ammo-bag" && config.maxBatches != null)
+      return `Choose up to ${config.maxBatches} charges`;
     if (isExpendable) return `Max: ${effectiveMax}x rounds/grenades/charges.`;
     return null;
   }, [config, gadgetId, isExpendable, effectiveMax]);
@@ -213,6 +224,19 @@ export default function GadgetAmmo({
 
   //console.log(max)
 
+  const setMixedValue = (id, nextVal) => {
+    const next = { ...(gadgetAmmo || {}), [id]: nextVal };
+
+    if (max > 0 && sumNonNeg(next) > max) return; // pool cap
+
+    setGadgetAmmo(next);
+    try {
+      if (isActive) {
+        localStorage.setItem(localStorageKey, JSON.stringify(sanitize(next)));
+      }
+    } catch {}
+  };
+
   // ------- Render -------
   return (
     <div className="mt-1 rounded border border-orange-500/40 bg-neutral-900/50 p-3">
@@ -228,7 +252,22 @@ export default function GadgetAmmo({
               ? gadgetAmmo[opt.id]
               : 0;
             if (!isEditing && count <= -1) return null;
-            if (campActive && itemById?.[opt.id]?.cost !== 0 && campaignId?.replace(/\s/g, "")?.split(",")?.includes("Siberia2022")) return null //Specific to the current campaign where it will filter out gadgets based on cost.
+            if (
+              campActive &&
+              itemById?.[opt.id]?.cost !== 0 &&
+              campaignId
+                ?.replace(/\s/g, "")
+                ?.split(",")
+                ?.includes("Siberia2022")
+            )
+              return null; //Specific to the current campaign where it will filter out gadgets based on cost.
+
+            console.log({
+              optId: opt.id,
+              item: itemById?.[opt.id],
+              rules: itemById?.[opt.id]?.rulesText,
+              cost: itemById?.[opt.id]?.cost,
+            });
 
             return (
               <div
@@ -247,30 +286,44 @@ export default function GadgetAmmo({
 
                 {/* Input in edit / live readout while not editing */}
                 {isActive || isEditing ? (
-                  <input
-                    type="number"
-                    min={-1}
-                    max={Math.max(0, max)}
-                    value={count}
-                    onChange={(e) => {
-                      let val = parseInt(e.target.value, 10);
-                      if (Number.isNaN(val)) val = -1;
-                      const next = { ...(gadgetAmmo || {}), [opt.id]: val };
+                  <div className="flex items-center gap-1">
+                    {/* Decrement */}
+                    <button
+                      onClick={() => setMixedValue(opt.id, count - 1)}
+                      disabled={count <= -1}
+                      className="w-6 h-6 rounded bg-neutral-800 hover:bg-neutral-700 text-white disabled:opacity-40"
+                    >
+                      −
+                    </button>
 
-                      if (max > 0 && sumNonNeg(next) > max) return; // cap
+                    {/* Value */}
+                    <div
+                      className={`w-8 text-center text-xs font-mono rounded ${
+                        count <= -1
+                          ? "bg-neutral-900 text-gray-500"
+                          : "bg-neutral-900 text-yellow-400"
+                      }`}
+                    >
+                      {count <= -1 ? "—" : count}
+                    </div>
 
-                      setGadgetAmmo(next);
-                      try {
-                        if (isActive) {
-                          localStorage.setItem(
-                            localStorageKey,
-                            JSON.stringify(sanitize(next))
-                          );
-                        }
-                      } catch {}
-                    }}
-                    className="w-16 text-center bg-neutral-800 text-white rounded"
-                  />
+                    {/* Increment */}
+                    <button
+                      onClick={() => setMixedValue(opt.id, count + 1)}
+                      className="w-6 h-6 rounded bg-neutral-800 hover:bg-neutral-700 text-white"
+                    >
+                      +
+                    </button>
+
+                    {/* Deselect */}
+                    <button
+                      onClick={() => setMixedValue(opt.id, -1)}
+                      className="ml-1 px-2 h-6 rounded bg-neutral-900 hover:bg-neutral-800 text-[10px] text-gray-400"
+                      title="Deselect"
+                    >
+                      OFF
+                    </button>
+                  </div>
                 ) : (
                   <p className="px-2 py-1 rounded bg-neutral-900">
                     <span className="text-yellow-400">{count}</span>
@@ -288,7 +341,15 @@ export default function GadgetAmmo({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {options.map((opt) => {
               const rules = itemById?.[opt.id]?.rulesText;
-              if (campActive && itemById?.[opt.id]?.cost != 0 && campaignId?.replace(/\s/g, "")?.split(",")?.includes("Siberia2022")) return null //Specific to the current campaign where it will filter out gadgets based on cost.
+              if (
+                campActive &&
+                itemById?.[opt.id]?.cost != 0 &&
+                campaignId
+                  ?.replace(/\s/g, "")
+                  ?.split(",")
+                  ?.includes("Siberia2022")
+              )
+                return null; //Specific to the current campaign where it will filter out gadgets based on cost.
               return (
                 <div
                   key={opt.id}

@@ -25,18 +25,14 @@ function EquipmentSelection({
     miscGear: "",
   };
 
-  //percolates items froim the equipment data into an easy to use lookup table.
+  //percolates items from the equipment data into an easy to use lookup table.
   const itemById = useMemo(() => {
     const m = {};
-    if (!campEquipment) {
-      equipmentData.forEach((it) => {
-        m[it.id] = it;
-      });
-    } else {
-      campEquipment.forEach((it) => {
-        m[it.id] = it;
-      });
-    }
+
+    equipmentData.forEach((it) => {
+      m[it.id] = it;
+    });
+
     return m;
   }, []);
 
@@ -438,7 +434,7 @@ function EquipmentSelection({
         </div>
 
         {/* Gadget */}
-        <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-6 rounded shadow col-span-2">
+        <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-6 rounded shadow col-span-2 lg:col-span-full">
           <h3 className="font-semibold text-orange-300">Class Gadget</h3>
           {isEditing ? (
             <select
@@ -514,7 +510,7 @@ function EquipmentSelection({
         </div>
 
         {/* inventory */}
-        <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-6 rounded shadow col-span-2">
+        <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-6 rounded shadow col-span-2 lg:col-span-full">
           <h3 className="font-semibold text-orange-300">Inventory</h3>
           {isEditing ? (
             <textarea
