@@ -3,260 +3,301 @@ import weaponCategories from "../../data/weaponCategories.json";
 import gadgetCategories from "../../data/Equipment.json";
 import classes from "../../data/classSkills.json";
 
-function EnemyCard({ id, onDelete }) {
-  const defaultStats = {
-    Name: "Enemy",
-    Class: "Rifleman",
+/* =======================
+   DEFAULT STATE
+======================= */
+const DEFAULT_STATE = {
+  identity: {
+    name: "Enemy",
+    class: "",
+    elite: false,
+    pinged: false,
+  },
+  stats: {
     Alertness: 0,
     Body: 0,
     Intelligence: 0,
     Spirit: 0,
     AC: 0,
-    Weapons: 0,
     Melee: 0,
-    Primary: "Assault Rifles",
+  },
+  loadout: {
+    Primary: "",
     Gadget: "",
-  };
+  },
+  wounds: {
+    FW: 0,
+    DW: 0,
+  },
+};
 
-  const [stats, setStats] = useState(defaultStats);
-  const [FW, setFW] = useState(0);
-  const [DW, setDW] = useState(0);
+function EnemyCard({ id, onDelete }) {
+  const [state, setState] = useState(DEFAULT_STATE);
   const [loaded, setLoaded] = useState(false);
-  const [filteredGadgets, setFiltered] = useState([]);
+  const [filteredGadgets, setFilteredGadgets] = useState([]);
 
+  /* =======================
+     LOAD / SAVE
+  ======================= */
   useEffect(() => {
     try {
-      const saved = localStorage.getItem(`enemy-data-${id}`);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed.stats) setStats(parsed.stats);
-        if (typeof parsed.FW === "number") setFW(parsed.FW);
-        if (typeof parsed.DW === "number") setDW(parsed.DW);
-      }
+      const saved = localStorage.getItem(`enemy-${id}`);
+      if (saved) setState(JSON.parse(saved));
     } catch (err) {
-      console.error(`Failed to parse enemy-data-${id}:`, err);
+      console.error("Failed to load enemy:", err);
     }
     setLoaded(true);
   }, [id]);
 
   useEffect(() => {
     if (!loaded) return;
-    const data = { stats, FW, DW };
-    localStorage.setItem(`enemy-data-${id}`, JSON.stringify(data));
-  }, [stats, FW, DW, id, loaded]);
+    localStorage.setItem(`enemy-${id}`, JSON.stringify(state));
+  }, [state, loaded, id]);
 
+  /* =======================
+     FILTER GADGETS
+  ======================= */
   useEffect(() => {
-    if (stats.Class != null) {
-      setFiltered(
-        gadgetCategories.filter((item) => item.class === stats.Class)
-      );
-    }
-  }, [stats.Class]);
+    setFilteredGadgets(
+      gadgetCategories.filter((g) => g.class === state.identity.class)
+    );
+  }, [state.identity.class]);
 
-  const handleChange = (field, value) => {
-    const numeric = [
-      "Alertness",
-      "Body",
-      "Intelligence",
-      "Spirit",
-      "AC",
-      "Weapons",
-      "Melee",
-    ];
-    setStats((prev) => ({
-      ...prev,
-      [field]: numeric.includes(field) ? parseInt(value) || 0 : value,
-    }));
+  /* =======================
+     UPDATE HELPER
+  ======================= */
+  const update = (path, value) => {
+    setState((prev) => {
+      const next = structuredClone(prev);
+      let ref = next;
+      for (let i = 0; i < path.length - 1; i++) {
+        ref = ref[path[i]];
+      }
+      ref[path[path.length - 1]] = value;
+      return next;
+    });
   };
 
-  const handleWeaponChange = (value) =>
-    setStats((prev) => ({ ...prev, Primary: value }));
-  const handleGadgetChange = (value) =>
-    setStats((prev) => ({ ...prev, Gadget: value }));
-
   const deleteSelf = () => {
-    localStorage.removeItem(`enemy-data-${id}`);
+    localStorage.removeItem(`enemy-${id}`);
     onDelete(id);
   };
 
-  // Derived stats
-  const { Primary, Body, Intelligence, Spirit, AC, Gadget } = stats;
+  /* =======================
+     DERIVED VALUES
+  ======================= */
+  const { identity, stats, loadout, wounds } = state;
+
+  const Body = Number(stats.Body) || 0;
+  const Spirit = Number(stats.Spirit) || 0;
+  const Intelligence = Number(stats.Intelligence) || 0;
+  const AC = Number(stats.AC) || 0;
+  const MeleeBonus = Number(stats.Melee) || 0;
+
   const CombatSense = 1 + Intelligence + Spirit;
   const Stamina = 5 + Body + Spirit;
-  const FleshWoundThreshold = Math.ceil(Stamina / 2) + (AC || 0);
-  const DeepWoundThreshold = Stamina + (AC || 0);
-  const woundMod = FW + DW * 2;
+
+  const FleshWoundThreshold = Math.ceil(Stamina / 2) + AC;
+  const DeepWoundThreshold = Stamina + AC;
+
+  const woundMod = wounds.FW + wounds.DW * 2;
+  const systemShock = 5 + Math.ceil((Body + Spirit) / 2);
   const instantDeath = Stamina * 2;
-  const systemShock = Math.ceil((Body + Spirit) / 2) + 5;
 
-  // NEW: weapon + gadget lookups for inline display
-  const weaponInfo = weaponCategories[Primary] || null;
-  const selectedGadget =
-    (Gadget && filteredGadgets.find((g) => g.title === Gadget)) || null;
+  const meleeDamage = 3 + Body + MeleeBonus;
+  const unarmedDamage = Math.max(1, Math.floor(Body / 2));
 
+  const weaponInfo = weaponCategories[loadout.Primary] || null;
+  const selectedGadget = filteredGadgets.find(
+    (g) => g.title === loadout.Gadget
+  );
+
+  /* =======================
+     RENDER
+  ======================= */
   return (
-    <div className="relative w-full flex items-center gap-4 bg-neutral-900/80 border border-orange-500/60 rounded-lg px-3 py-2 text-[12px] text-neutral-200 hover:border-orange-400 transition">
-      {/* Delete button */}
+    <div className="relative w-64 bg-neutral-900/90 bg-[radial-gradient(circle,_rgba(255,120,0,0.05)_1px,_transparent_1px)] [background-size:8px_8px] rounded-lg p-4 border border-orange-400 hover:border-orange-600 transition">
+      {/* DELETE */}
       <button
-        className="absolute top-1 right-2 text-red-500 hover:text-red-700 text-xs"
         onClick={deleteSelf}
+        className="absolute top-2 right-2 text-red-500 text-xs"
       >
         ✕
       </button>
 
-      {/* Enemy Name / Class */}
-      <div className="flex flex-col w-36">
-        <input
-          type="text"
-          className="font-bold text-sm text-orange-400 bg-transparent border-b border-dashed border-orange-400 focus:outline-none"
-          value={stats.Name}
-          onChange={(e) => handleChange("Name", e.target.value)}
-        />
-        <select
-          className="select-themed bg-neutral-800 text-xs rounded mt-1 text-neutral-300"
-          value={stats.Class}
-          onChange={(e) => handleChange("Class", e.target.value)}
-        >
-          {Object.keys(classes).map((cls) => (
-            <option key={cls} value={cls}>
-              {cls}
-            </option>
-          ))}
-        </select>
+      {/* HEADER */}
+      <div className="flex justify-between items-start mb-2 mr-3">
+        <div className="flex-1 pr-2">
+          <input
+            className="font-bold text-orange-500 bg-transparent border-b border-dashed w-full"
+            value={identity.name}
+            onChange={(e) => update(["identity", "name"], e.target.value)}
+          />
+          <select
+            className="w-full bg-neutral-900 text-neutral-400 text-xs mt-1"
+            value={identity.class}
+            onChange={(e) => update(["identity", "class"], e.target.value)}
+          >
+            <option value="">Select Class</option>
+            {Object.keys(classes).map((c) => (
+              <option key={c}>{c}</option>
+            ))}
+          </select>
+        </div>
+
+        {/* FLAGS */}
+        <div className="flex flex-col items-end gap-1">
+          <button
+            title="Pinged"
+            onClick={() => update(["identity", "pinged"], !identity.pinged)}
+            className={`w-3 h-3 rounded-full ${
+              identity.pinged ? "bg-red-500" : "border border-neutral-500"
+            }`}
+          />
+          <button
+            title="Elite Enemy"
+            onClick={() => update(["identity", "elite"], !identity.elite)}
+            className={`text-xs ${
+              identity.elite ? "text-orange-400" : "text-neutral-500"
+            }`}
+          >
+            ▲▲
+          </button>
+        </div>
       </div>
 
-      {/* Core Stats */}
-      <div className="grid grid-cols-4 gap-1 text-center">
-        {["Alertness", "Body", "Intelligence", "Spirit"].map((attr) => (
-          <div key={attr} className="flex flex-col items-center">
-            <span className="text-orange-300 text-[11px] font-semibold">
-              {attr.slice(0, 3).toUpperCase()}
-            </span>
+      {/* CORE STATS */}
+      <div className="grid grid-cols-4 text-xs text-center mb-2 gap-2">
+        {["Alertness", "Body", "Intelligence", "Spirit"].map((a) => (
+          <div key={a}>
+            <div className="text-orange-300">{a.slice(0, 3)}</div>
             <input
-              type="number"
-              className="num-themed w-10 text-center bg-neutral-800 rounded text-xs"
-              value={stats[attr]}
-              onChange={(e) => handleChange(attr, e.target.value)}
+              className="w-full bg-neutral-800 text-center"
+              value={stats[a]}
+              onChange={(e) =>
+                update(["stats", a], parseInt(e.target.value) || 0)
+              }
             />
           </div>
         ))}
       </div>
 
-      {/* AC / CS */}
-      <div className="flex flex-col items-center text-xs">
-        <div className="flex items-center gap-1">
-          <span>AC:</span>
+      {/* DEFENSE */}
+      <div className="grid grid-cols-2 text-xs mb-2">
+        <div>
+          AC{" "}
           <input
-            type="number"
-            className="num-themed w-10 text-center bg-neutral-800 rounded"
+            className="w-10 bg-neutral-800 text-center rounded ml-1"
             value={stats.AC}
-            onChange={(e) => handleChange("AC", e.target.value)}
+            onChange={(e) =>
+              update(["stats", "AC"], parseInt(e.target.value) || 0)
+            }
           />
         </div>
-        <div className="text-orange-300">CS: {CombatSense}</div>
+        <div className="text-orange-300">CS {CombatSense}</div>
       </div>
 
-      {/* Wounds */}
-      <div className="flex flex-col items-center text-xs">
-        <div className="text-red-400 font-semibold">WND: {woundMod}</div>
-        <div className="flex items-center gap-1">
-          <span>F:{FleshWoundThreshold}</span>
-          <button
-            onClick={() => setFW(FW + 1)}
-            className="px-1 text-orange-400 border border-orange-500/60 rounded"
-          >
+      {/* WOUNDS */}
+      <div className="border-t border-orange-500/30 pt-1 text-xs">
+        <div className="font-bold">
+          WND <span className="text-red-500">{woundMod}</span>
+        </div>
+
+        <div>
+          FWT {FleshWoundThreshold}{" "}
+          <button onClick={() => update(["wounds", "FW"], wounds.FW + 1)}>
             +
           </button>
-          <button
-            onClick={() => setFW(FW - 1)}
-            className="px-1 text-orange-400 border border-orange-500/60 rounded"
-          >
+          <button onClick={() => update(["wounds", "FW"], wounds.FW - 1)}>
             -
           </button>
         </div>
-        <div className="flex items-center gap-1">
-          <span>D:{DeepWoundThreshold}</span>
-          <button
-            onClick={() => setDW(DW + 1)}
-            className="px-1 text-orange-400 border border-orange-500/60 rounded"
-          >
+
+        <div>
+          DWT {DeepWoundThreshold}{" "}
+          <button onClick={() => update(["wounds", "DW"], wounds.DW + 1)}>
             +
           </button>
-          <button
-            onClick={() => setDW(DW - 1)}
-            className="px-1 text-orange-400 border border-orange-500/60 rounded"
-          >
+          <button onClick={() => update(["wounds", "DW"], wounds.DW - 1)}>
             -
           </button>
         </div>
+
+        <div className="text-[10px]">
+          SYS {systemShock} |{" "}
+          <span className="text-red-700">DTH {instantDeath}</span>
+        </div>
       </div>
 
-      <div className="flex flex-col items-center text-xs">
-        <div className="text-orange-300">SYS: <span className="text-red-700">{systemShock}</span></div>
-        <div className="text-orange-300">DTH: <span className="text-red-900">{instantDeath}</span></div>
-      </div>
+      {/* COMBAT */}
+      <div className="border-t border-orange-500/30 mt-2 pt-1 text-xs">
+        <div className="font-bold text-orange-300">Combat</div>
 
-      {/* Weapon */}
-      <div className="flex flex-col text-xs min-w-[10rem]">
-        <div className="flex items-center gap-2">
-          <span className="text-orange-300 font-semibold">Weapon</span>
-          <select
-            className="select-themed bg-neutral-800 rounded px-1 text-xs"
-            value={Primary}
-            onChange={(e) => handleWeaponChange(e.target.value)}
-          >
-            {Object.keys(weaponCategories).map((w) => (
-              <option key={w} value={w}>
-                {w}
-              </option>
-            ))}
-          </select>
+        <div className="flex items-center gap-1 mt-1">
+          <span>Melee:</span>
+          <input
+            className="w-10 bg-neutral-800 text-center rounded"
+            value={stats.Melee}
+            onChange={(e) =>
+              update(["stats", "Melee"], parseInt(e.target.value) || 0)
+            }
+          />
+          <span className="text-orange-300">DMG {meleeDamage}</span>
         </div>
 
-        {/* stacked stats below the dropdown */}
-        {weaponInfo ? (
-          <div
-            className="text-neutral-400 leading-tight mt-1"
-            title={`Damage: ${weaponInfo.damage} Penetration: ${weaponInfo.penetration} Range: ${weaponInfo.range}`}
-          >
+        <div>
+          Unarmed <span className="text-orange-300">{unarmedDamage}</span>
+        </div>
+      </div>
+
+      {/* WEAPON */}
+      <div className="border-t border-orange-500/30 mt-2 pt-1 text-xs">
+        <div className="font-bold text-orange-300">Weapon</div>
+
+        <select
+          className="w-full bg-neutral-900 text-xs mt-1"
+          value={loadout.Primary}
+          onChange={(e) => update(["loadout", "Primary"], e.target.value)}
+        >
+          <option value="">Select Weapon</option>
+          {Object.keys(weaponCategories).map((w) => (
+            <option key={w}>{w}</option>
+          ))}
+        </select>
+
+        {weaponInfo && (
+          <div className="mt-1 text-[10px] text-neutral-400 border border-orange-500/20 rounded p-1">
             <div>
-              DMG: {weaponInfo.damage} | PEN: {weaponInfo.penetration}
+              <span className="text-orange-300">DMG:</span> {weaponInfo.damage}{" "}
+              | <span className="text-orange-300">PEN:</span>{" "}
+              {weaponInfo.penetration}
             </div>
-            <div>RNG: {weaponInfo.range}</div>
+            <div>
+              <span className="text-orange-300">RNG:</span> {weaponInfo.range}
+            </div>
           </div>
-        ) : (
-          <div className="text-neutral-500 mt-1">—</div>
         )}
       </div>
 
-      {/* Gadget */}
-      <div className="flex flex-col text-xs min-w-[18rem]">
-        <div className="flex items-center gap-2">
-          <span className="text-orange-300 font-semibold">Gadget</span>
-          <select
-            className="select-themed bg-neutral-800 rounded px-1 text-xs min-w-[20rem]"
-            value={Gadget || ""}
-            onChange={(e) => handleGadgetChange(e.target.value)}
-          >
-            <option value="">—</option>
-            {filteredGadgets.map((g, i) => (
-              <option key={i} value={g.title}>
-                {g.title}
-              </option>
-            ))}
-          </select>
-        </div>
+      {/* GADGET */}
+      <div className="border-t border-orange-500/30 mt-2 pt-1 text-xs">
+        <div className="font-bold text-orange-300">Gadget</div>
 
-        {/* Description below selector */}
-        {selectedGadget ? (
-          <div
-            className="text-neutral-400 leading-tight mt-1 max-w-[30rem]"
-            title={selectedGadget.rulesText}
-          >
+        <select
+          className="w-full bg-neutral-900 text-xs mt-1"
+          value={loadout.Gadget}
+          onChange={(e) => update(["loadout", "Gadget"], e.target.value)}
+        >
+          <option value="">Select Gadget</option>
+          {filteredGadgets.map((g) => (
+            <option key={g.title}>{g.title}</option>
+          ))}
+        </select>
+
+        {selectedGadget && (
+          <div className="mt-1 text-[10px] text-neutral-400 border border-orange-500/20 rounded p-1 max-h-28 overflow-y-auto">
             {selectedGadget.rulesText}
           </div>
-        ) : (
-          <div className="text-neutral-500 mt-1">—</div>
         )}
       </div>
     </div>
