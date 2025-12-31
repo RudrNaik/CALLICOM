@@ -53,7 +53,7 @@
       "type": "Half",
       "color":"bg-neutral-800/80",
       "icon": "/Full_Action.svg",
-      "description": "[Support] [Leadership]\n Rally your team and other allies.\n\nOnce per turn a team member can rally, using your leadership skill to bolster the morale of friendlies. The bonus thresholds are: \n\n  <= 1 : no bonuses\n 2-4 : +1 bonus to all actions for the next turn.\n 5: +1 dice and bonus to all friendly actions the next turn.\n 6+: +1 dice and bonus \n\n Each team member can rally once per encounter (You also have to type something in character for it to count). Effect lasts one turn once used. \n\n However, you can also use rally on a specific target, giving them a callout or command that applies the same effect to them. This can be done multiple times an encounter."
+      "description": "[Support] [Leadership]\n Rally your team and other allies.\n\nOnce per turn a team member can rally, using your leadership skill to bolster the morale of friendlies. The bonus thresholds are: \n\n  <= 1 : no bonuses\n 2-4 : +1 bonus to all actions for the next turn.\n 5: +1 dice to all friendly actions the next turn.\n 6+: +1 dice and bonus \n\n Each team member can rally once per encounter (You also have to type something in character for it to count). Effect lasts one turn once used. \n\n However, you can also use rally on a specific target, giving them a callout or command that applies the same effect to them. This can be done multiple times an encounter."
     }
   ]
   
