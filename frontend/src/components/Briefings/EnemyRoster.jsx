@@ -67,21 +67,21 @@ function EnemyView() {
   "
     >
       <button
-        className="mb-4 px-4 py-1 bg-orange-500 text-white rounded hover:bg-orange-600"
+        className="mb-4 px-2 py-1 text-xs bg-orange-500 text-white rounded hover:bg-orange-600"
         onClick={addEnemy}
       >
         + Add Enemy
       </button>
 
       <button
-      className="mb-4 ml-2 px-4 py-1 bg-orange-500 text-white rounded hover:bg-orange-600"
+      className="mb-4 ml-2 px-2 py-1 text-xs bg-orange-500 text-white rounded hover:bg-orange-600"
       onClick = {increaseTurn}
       >
         Turn: {turnCount}
       </button>
 
       <button
-      className="mb-4 ml-2 px-4 py-1 bg-orange-500 text-white rounded hover:bg-orange-600"
+      className="mb-4 ml-2 px-2 py-1 text-xs bg-orange-500 text-white rounded hover:bg-orange-600"
       onClick = {resetTurns}
       >
         Reset

@@ -235,7 +235,7 @@ function EnemyCard({ id, onDelete }) {
           </button>
         </div>
 
-        <div className="text-[10px]">
+        <div className="text-[10px] mt-0.5">
           SYS {systemShock} |{" "}
           <span className="text-red-700">DTH {instantDeath}</span>
         </div>
