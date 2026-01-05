@@ -343,7 +343,7 @@
         "class": "Rifleman",
         "cost": 6600,
         "description": "For when you want a shotgun on hand, but can’t be bothered to carry one yourself.",
-        "rulesText": "M-Weapons attacker check, Acrobatics defender check\nRange Modifier: +1C | -3M -> ELR"
+        "rulesText": "M-Weapons attacker check, Acrobatics defender check\nRange Modifier: +2C | -3M -> -4ELR"
     },
     {
         "id": "Raider",

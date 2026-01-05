@@ -5,6 +5,8 @@ function EnemyView() {
   const [enemyIds, setEnemyIds] = useState([]);
   const [loaded, setLoaded] = useState(false); // track whether we've loaded data
 
+  const [turnCount, setTurnCount] = useState(0);
+
   // Load IDs from localStorage once on mount
   useEffect(() => {
     const saved = localStorage.getItem("enemy-ids");
@@ -47,6 +49,15 @@ function EnemyView() {
     setEnemyIds((prev) => prev.filter((id) => id !== idToRemove));
   };
 
+  const increaseTurn = () => {
+    let currTurn = turnCount;
+    setTurnCount(currTurn+1);
+  }
+
+  const resetTurns = () => {
+    setTurnCount(0);
+  }
+
   return (
     <div
       className="
@@ -56,10 +67,24 @@ function EnemyView() {
   "
     >
       <button
-        className="mb-4 px-4 py-1 bg-orange-500 text-white rounded hover:bg-orange-600"
+        className="mb-4 px-2 py-1 text-xs bg-orange-500 text-white rounded hover:bg-orange-600"
         onClick={addEnemy}
       >
         + Add Enemy
+      </button>
+
+      <button
+      className="mb-4 ml-2 px-2 py-1 text-xs bg-orange-500 text-white rounded hover:bg-orange-600"
+      onClick = {increaseTurn}
+      >
+        Turn: {turnCount}
+      </button>
+
+      <button
+      className="mb-4 ml-2 px-2 py-1 text-xs bg-orange-500 text-white rounded hover:bg-orange-600"
+      onClick = {resetTurns}
+      >
+        Reset
       </button>
 
       <div

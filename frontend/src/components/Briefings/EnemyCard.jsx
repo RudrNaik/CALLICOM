@@ -150,14 +150,14 @@ function EnemyCard({ id, onDelete }) {
           <button
             title="Pinged"
             onClick={() => update(["identity", "pinged"], !identity.pinged)}
-            className={`w-3 h-3 rounded-full ${
+            className={`w-3 h-3 rounded-full cursor-pointer ${
               identity.pinged ? "bg-red-500" : "border border-neutral-500"
             }`}
           />
           <button
             title="Elite Enemy"
             onClick={() => update(["identity", "elite"], !identity.elite)}
-            className={`text-xs ${
+            className={`text-xs cursor-pointer ${
               identity.elite ? "text-orange-400" : "text-neutral-500"
             }`}
           >
@@ -172,7 +172,7 @@ function EnemyCard({ id, onDelete }) {
           <div key={a}>
             <div className="text-orange-300">{a.slice(0, 3)}</div>
             <input
-              className="w-full bg-neutral-800 text-center"
+              className="w-full bg-neutral-800 text-center rounded-xs"
               value={stats[a]}
               onChange={(e) =>
                 update(["stats", a], parseInt(e.target.value) || 0)
@@ -205,25 +205,37 @@ function EnemyCard({ id, onDelete }) {
 
         <div>
           FWT {FleshWoundThreshold}{" "}
-          <button onClick={() => update(["wounds", "FW"], wounds.FW + 1)}>
+          <button
+            className="border-1 border-orange-500 rounded-sm mx-1 mb-0.5 px-1 cursor-pointer"
+            onClick={() => update(["wounds", "FW"], wounds.FW + 1)}
+          >
             +
           </button>
-          <button onClick={() => update(["wounds", "FW"], wounds.FW - 1)}>
+          <button
+            className="border-1 border-orange-500 rounded-sm mx-1 px-1 cursor-pointer"
+            onClick={() => update(["wounds", "FW"], wounds.FW - 1)}
+          >
             -
           </button>
         </div>
 
         <div>
           DWT {DeepWoundThreshold}{" "}
-          <button onClick={() => update(["wounds", "DW"], wounds.DW + 1)}>
+          <button
+            className="border-1 border-orange-500 rounded-sm mx-1 px-1 cursor-pointer"
+            onClick={() => update(["wounds", "DW"], wounds.DW + 1)}
+          >
             +
           </button>
-          <button onClick={() => update(["wounds", "DW"], wounds.DW - 1)}>
+          <button
+            className="border-1 border-orange-500 rounded-sm mx-1 px-1 cursor-pointer"
+            onClick={() => update(["wounds", "DW"], wounds.DW - 1)}
+          >
             -
           </button>
         </div>
 
-        <div className="text-[10px]">
+        <div className="text-[10px] mt-0.5">
           SYS {systemShock} |{" "}
           <span className="text-red-700">DTH {instantDeath}</span>
         </div>

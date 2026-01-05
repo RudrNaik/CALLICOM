@@ -1,59 +1,58 @@
 [
-    {
-      "name": "Shoot",
-      "color":"bg-neutral-800/80",
-      "type": "Full",
-      "icon": "/Full_Action.svg",
-      "description": "[Offensive]\n Shoot your selected weapon, reducing rounds from the magazine and your total ammo count.\n\nShooting is an opposed roll between an attacker's respective weapon roll + bonuses, and the defender's armor roll + bonuses.\n\nAbides by ranged combat rules.\n You can peek around a corner 1 hex in any direction to get a line of sight."
-    },
-    {
-      "name": "Throw",
-      "type": "Full",
-      "color":"bg-neutral-800/80",
-      "icon": "/Full_Action.svg",
-      "description": "[Offensive]\n Throw a grenade or a throwable object/gadget at an enemy, reduces gadget/grenade count if throwing a grenade or gadget.\n\nThrowing at an individual is an opposed roll between an attacker's throw skill and a defender's acrobatics. Upon success, the defender is able to get out of the way, but is forced out of cover for the rest of the turn."
-    },
-    {
-      "name": "Close Combat",
-      "type": "Full",
-      "color":"bg-neutral-800/80",
-      "icon": "/Full_Action.svg",
-      "description": "[Offensive]\n Melee or CQC an enemy within striking distance (Point Blank).\n\nYou may do any special close combat action, and works off of the close combat rules. Roll your selected weapon (Melee for armed, CQC for unarmed) against an enemy's Defense to block, or Melee and CQC to parry."
-    },
-    {
-      "name": "Ready",
-      "type": "Full",
-      "color":"bg-neutral-800/80",
-      "icon": "/Full_Action.svg",
-      "description": "[Support]\n Ready yourself for a trigger.\n\nWhen readying you can hold an action until a specified event occurs. Such as a door opening, an enemy becoming visible or stepping into place, etc. Once declared with a trigger, or the specified event, the character will remain readied until the trigger happens or they leave the readied state.\n\nWhen readied, you will enact the action even out of your own turn."
-    },
-    {
-      "name": "Brace",
-      "type": "Full",
-      "color":"bg-neutral-800/80",
-      "icon": "/Full_Action.svg",
-      "description": "[Defensive]\n Brace yourself against cover.\n\n When bracing, you get a +2 to your defense rolls, however cannot do anything other than brace for that turn. Flanking negates this, along with high power rifles and a ping. \n\n Cannot move more than close range after bracing."
-    },
-    {
-      "name": "Intimidate",
-      "type": "Half",
-      "color":"bg-neutral-800/80",
-      "icon": "/Full_Action.svg",
-      "description": "[Offensive]\n Intimidate your foes and others for compliance.\n\nWhen Intimidating, you roll your intimidation against an enemy's spirit. If you win the opposed roll, you apply your margin of success as a debuff to their actions against for a turn. If you lose, you get the enemy's ire, and they will focus on you. \n\n (You also have to type something in character for it to count)."
-    },
-    {
-      "name": "Disengage",
-      "color":"bg-neutral-800/80",
-      "type": "Half",
-      "icon": "/Full_Action.svg",
-      "description": "[Defensive]\n Disengage from a fight and slip away.\n\nWhen disengaging, do an opposed stealth roll against an enemy's alertness. Upon success, you are disengaged. Enemies will search your last known position, and in combat it allows you to sneak around, but any offensive action will re-engage you. You can aim however.\n\n When moving while disengaged, you will roll stealth checks against an enemy's alertness to remain disengaged. Upon firing on an enemy or failing a check, you re-engage with them.\n\n You can also search for disengaged enemies using a bonus action."
-    },
-    {
-      "name": "Rally",
-      "type": "Half",
-      "color":"bg-neutral-800/80",
-      "icon": "/Full_Action.svg",
-      "description": "[Support] [Leadership]\n Rally your team and other allies.\n\nOnce per turn a team member can rally, using your leadership skill to bolster the morale of friendlies. The bonus thresholds are: \n\n  <= 1 : no bonuses\n 2-4 : +1 bonus to all actions for the next turn.\n 5: +1 dice to all friendly actions the next turn.\n 6+: +1 dice and bonus \n\n Each team member can rally once per encounter (You also have to type something in character for it to count). Effect lasts one turn once used. \n\n However, you can also use rally on a specific target, giving them a callout or command that applies the same effect to them. This can be done multiple times an encounter."
-    }
-  ]
-  
+  {
+    "name": "Shoot",
+    "color": "bg-neutral-800/80",
+    "type": "Full",
+    "icon": "/Full_Action.svg",
+    "description": "[Offensive]\n Shoot your selected weapon, reducing rounds from the magazine and your total ammo count.\n\nShooting is an opposed roll between an attacker's respective weapon roll + bonuses, and the defender's armor roll + bonuses.\n\nAbides by ranged combat rules.\n You can peek around a corner 1 hex in any direction to get a line of sight."
+  },
+  {
+    "name": "Throw",
+    "type": "Full",
+    "color": "bg-neutral-800/80",
+    "icon": "/Full_Action.svg",
+    "description": "[Offensive]\n Throw a grenade or a throwable object/gadget at an enemy, reduces gadget/grenade count if throwing a grenade or gadget.\n\nThrowing at an individual is an opposed roll between an attacker's throw skill and a defender's acrobatics. Upon success, the defender is able to get out of the way, but is forced out of cover for the rest of the turn."
+  },
+  {
+    "name": "Close Combat",
+    "type": "Full",
+    "color": "bg-neutral-800/80",
+    "icon": "/Full_Action.svg",
+    "description": "[Offensive]\n Melee or CQC an enemy within striking distance (Point Blank).\n\nYou may do any special close combat action, and works off of the close combat rules. Roll your selected weapon (Melee for armed, CQC for unarmed) against an enemy's Defense to block, or Melee and CQC to parry."
+  },
+  {
+    "name": "Ready",
+    "type": "Full",
+    "color": "bg-neutral-800/80",
+    "icon": "/Full_Action.svg",
+    "description": "[Support]\n Ready yourself for a trigger.\n\nWhen readying you can hold an action until a specified event occurs. Such as a door opening, an enemy becoming visible or stepping into place, etc. Once declared with a trigger, or the specified event, the character will remain readied until the trigger happens or they leave the readied state.\n\nWhen readied, you will enact the action even out of your own turn."
+  },
+  {
+    "name": "Brace",
+    "type": "Full",
+    "color": "bg-neutral-800/80",
+    "icon": "/Full_Action.svg",
+    "description": "[Defensive]\n Brace yourself against cover.\n\n When bracing, you get an extra +1 bonus to your defense rolls, however cannot move immediately the next turn if its a reaction. Flanking negates this, along with high power rifles and a ping."
+  },
+  {
+    "name": "Intimidate",
+    "type": "Half",
+    "color": "bg-neutral-800/80",
+    "icon": "/Full_Action.svg",
+    "description": "[Offensive]\n Intimidate your foes and others for compliance.\n\nWhen Intimidating, you roll your intimidation against an enemy's spirit. If you win the opposed roll, you apply your margin of success as a debuff to their actions against for a turn. If you lose, you get the enemy's ire, and they will focus on you. \n\n (You also have to type something in character for it to count)."
+  },
+  {
+    "name": "Disengage",
+    "color": "bg-neutral-800/80",
+    "type": "Half",
+    "icon": "/Full_Action.svg",
+    "description": "[Defensive]\n Disengage from a fight and slip away.\n\nWhen disengaging, do an opposed stealth roll against an enemy's alertness. Upon success, you are disengaged. Enemies will search your last known position, and in combat it allows you to sneak around, but any offensive action will re-engage you. You can aim however.\n\n When moving while disengaged, you will roll stealth checks against an enemy's alertness to remain disengaged. Upon firing on an enemy or failing a check, you re-engage with them.\n\n You can also search for disengaged enemies using a bonus action."
+  },
+  {
+    "name": "Rally",
+    "type": "Half",
+    "color": "bg-neutral-800/80",
+    "icon": "/Full_Action.svg",
+    "description": "[Support] [Leadership]\n Rally your team and other allies.\n\nOnce per turn a team member can rally, using your leadership skill to bolster the morale of friendlies. The bonus thresholds are: \n\n  <= 1 : no bonuses\n 2-4 : +1 bonus to all actions for the next turn.\n 5: +1 dice to all friendly actions the next turn.\n 6+: +1 dice and bonus \n\n Each team member can rally once per encounter (You also have to type something in character for it to count). Effect lasts one turn once used. \n\n However, you can also use rally on a specific target, giving them a callout or command that applies the same effect to them. This can be done multiple times an encounter."
+  }
+]

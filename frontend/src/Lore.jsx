@@ -101,7 +101,7 @@ const Lore = () => {
         <p className="text-white text-sm font-mono tracking-wide">
           Initializing archives environment...
         </p>
-        <p className="text-xs py-2 font-mono text-neutral-400/80">
+        <p className="text-xs py-2 mx-2 font-mono text-neutral-400/80">
           //[⚠]:: Please be patient as occasionally the environment will require
           the backend to spool up. Usually this takes 20-30 seconds.
         </p>
@@ -127,9 +127,10 @@ const Lore = () => {
 
   return (
     <div
-      className="bg-repeat bg-[length:1920px_1080px] w-full min-h-screen text-white text-xs font-[Geist_Mono]"
+      className="bg-repeat bg-[length:1920px_1080px] w-full min-h-screen text-white text-xs"
       style={{ backgroundImage: `url(${background})` }}
     >
+      <div style={{ fontFamily: "Geist_Mono" }}>
       <div className="py-10"></div>
       {/* Header and fluff */}
       <div>
@@ -321,6 +322,7 @@ const Lore = () => {
           </div>
         )}
       </motion.div>
+      </div>
     </div>
   );
 };

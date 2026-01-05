@@ -24,7 +24,7 @@
       "name": "Repair",
       "color":"bg-neutral-800/80",
       "type": "Half",
-      "icon": "/Full_Action.svg",
+      "icon": "/Half_Action.svg",
       "description": "[Support] [Repair Tool]\n Repair vehicles, equipment, and drones \n\n When repairing, roll with tinker to determine the amount of wounds of damage repaired. Prioritizes Critical Damage first, and then fixes minor damage. vehicle crews 'relax' when their vehicles are being repaired.\n\n For drones, multiply the roll by 2 for how much damage repaired."
     }
   ]

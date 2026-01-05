@@ -51,6 +51,10 @@ input[type="number"].num-themed {
   appearance: textfield;
 }
 
+button{
+  cursor: pointer;
+}
+
 /* Base dark theme for all dropdowns you want to restyle */
 select.select-themed {
   color: #ffffff;                 /* orange-500 text */
