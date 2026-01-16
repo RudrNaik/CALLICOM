@@ -104,8 +104,7 @@ function EnemyCard({ id, onDelete }) {
   const systemShock = 5 + Math.ceil((Body + Spirit) / 2);
   const instantDeath = Stamina * 2;
 
-  const meleeDamage = 3 + Body + MeleeBonus;
-  const unarmedDamage = Math.max(1, Math.floor(Body / 2));
+  const meleeDamage = Math.max(4, Math.ceil((3 + Body + MeleeBonus)/1.5));
 
   const weaponInfo = weaponCategories[loadout.Primary] || null;
   const selectedGadget = filteredGadgets.find(
@@ -255,10 +254,6 @@ function EnemyCard({ id, onDelete }) {
             }
           />
           <span className="text-orange-300">DMG {meleeDamage}</span>
-        </div>
-
-        <div>
-          Unarmed <span className="text-orange-300">{unarmedDamage}</span>
         </div>
       </div>
 
