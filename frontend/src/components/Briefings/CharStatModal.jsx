@@ -185,6 +185,7 @@ export default function CharacterSheetModal({ char, open, onClose }) {
 
 /* ---- factored loadout section to keep file tidy ---- */
 function LoadoutSection({ char }) {
+  const meleeMax = 7;
   const equip = char.equipment || {};
   const A = char.attributes || {};
   const armor = Number(equip?.armorClass ?? 0);
@@ -192,8 +193,8 @@ function LoadoutSection({ char }) {
   const SPR = Number(A.Spirit ?? 0);
   const BDY = Number(A.Body ?? 0);
   const EXP = Number(A.Expertise ?? 0);
-  const unrmd = 3 + BDY + char.skills.CQC;
-  const armd = 3 + BDY + char.skills.Melee;
+  const unrmd = Math.max(4, Math.ceil((3 + BDY + char.skills.CQC)/1.5));
+  const armd = Math.max(4, Math.ceil((3 +BDY + char.skills.Melee)/1.5));
 
   return (
     <div className="mt-4 flex gap-4 justify-center">
@@ -229,10 +230,7 @@ function LoadoutSection({ char }) {
             )}`}
           />
           <DerivedCard label="Inst-Dth" value={(SPR + BDY + 5) * 2} />
-          <DerivedCard
-            label="Sys-Shk"
-            value={Math.ceil((BDY + SPR) / 2) + 5}
-          />
+          <DerivedCard label="Sys-Shk" value={Math.ceil((BDY + SPR) / 2) + 5} />
         </div>
 
         {/* Loadout */}
