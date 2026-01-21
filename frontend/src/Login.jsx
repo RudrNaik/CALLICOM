@@ -48,7 +48,6 @@ function Login() {
       className="bg-repeat w-full min-h-screen bg-cover"
       style={{ backgroundImage: `url(${background})` }}
     >
-      <Navbar />
       <div className="pt-16"></div>
 
       <form
