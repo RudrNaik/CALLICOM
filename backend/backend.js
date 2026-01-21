@@ -84,7 +84,7 @@ app.post("/api/login", async (req, res) => {
     const token = jwt.sign(
       { userId: user._id, userName: user.userName },
       process.env.JWT_SECRET, // This should now correctly pull the secret from .env
-      { expiresIn: "8h" }
+      { expiresIn: "15d" }
     );
 
     res.json({

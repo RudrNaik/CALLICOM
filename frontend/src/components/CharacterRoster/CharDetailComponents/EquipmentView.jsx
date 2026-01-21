@@ -460,13 +460,13 @@ function EquipmentSelection({
             <div className="text-sm text-gray-300 space-y-2 mt-2">
               <p className="whitespace-pre-line">
                 {
-                  classGadgets.find((gadget) => gadget.id === gear.gadget)
+                  equipmentData.find((gadget) => gadget.id === gear.gadget)
                     ?.rulesText
                 }
               </p>
               <p className="italic">
                 {
-                  classGadgets.find((gadget) => gadget.id === gear.gadget)
+                  equipmentData.find((gadget) => gadget.id === gear.gadget)
                     ?.description
                 }
               </p>

@@ -241,7 +241,7 @@
         "class": "All",
         "cost": 0,
         "description": "Moons out Goons out.",
-        "rulesText": "[Vision][Night]\n Normalizes all lighting conditions. Applies a 'poorly lit' (-1) modifier to Long Range and a 'very poorly lit' (-2) modifier to Extreme Long Range. Ideal for CQB. Counteracts all lighting-based visibility debuffs."
+        "rulesText": "[Vision][Night]\n Normalizes all lighting conditions. Applies a 'poorly lit' (-1) modifier to Long Range and Extreme Long Range. Ideal for CQB. Counteracts all lighting-based visibility debuffs."
     },
     {
         "id": "irnvg",
@@ -250,7 +250,7 @@
         "class": "All",
         "cost": 20000,
         "description": "The bane of modern warfare.",
-        "rulesText": "[Vision][IR]\n normalizes all lighting and weather conditions. Applies a -2 modifier at Close Range and -1 at Medium Range. Best suited for long-range spotting roles. Counters smoke, and all weather conditions."
+        "rulesText": "[Vision][IR]\n normalizes all lighting and weather conditions. Applies a -1 malus at Medium Range and close range. Best suited for long-range spotting roles. Counters smoke, and all weather conditions."
     },
     {
         "id": "envg",
@@ -284,7 +284,7 @@
         "class": "Rifleman",
         "cost": 17000,
         "description": "Developed from the XM-25 CDTE, the X-50 Programmable Munition Grenade Launcher is a modernized version of the original system. Bringing along thermal optics, auto-rangefinding, and an improved GUI for displaying the trajectory path. \n also: 'THOONK THOONK THOONK GET AIRBURSTED! ",
-        "rulesText": "[H-Wep]\nRange modifier: -3C | +1L | -1ELR\nAmmo: 6\nUses programmable, airburst munitions. Deals 9 damage to infantry, none to vehicles."
+        "rulesText": "[H-Wep]\nRange modifier: -3C | +1L | -1ELR\nAmmo: 6\nUses programmable, airburst munitions. Deals 9 damage to infantry and ignores cover. No damage to vehicles."
     },
     {
         "id": "40mm-he",
@@ -294,7 +294,7 @@
         "class": "Rifleman",
         "cost": 0,
         "description": "Frag grenade in a 40mm can. Detonates on impact.",
-        "rulesText": "8 DMG\nM-Weapons attacker check, Acrobatics defender check. 1 hex AOE from impact."
+        "rulesText": "8 DMG\nM-Weapons attacker check, Acrobatics defender check. 1 hex AOE."
     },
     {
         "id": "40mm-smk",
@@ -376,7 +376,7 @@
         "parentId": "Raider",
         "class": "Raider",
         "cost": 2000,
-        "description": "vRRRRRrrrrrrRRRRRRRRRRRrrrrRRRRRRRRRRR\nEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEeeeeeeeeEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE\nClang\nDoor open.",
+        "description": "vRRRRRrrrrrrRRRRRRRRRRRrrrrRRRRRRRRRRR\nEEEEEEEEEEEEeeeeeeeeEEEEEEEEEEE-\nClang\nDoor open.",
         "rulesText": "H-Weapons Check\nTakes one turn to open most doors. Heavily reinforced doors require accumulated successes (2).\nCan cut through most walls easily, and make new doorways or angles to shoot at enemies from.\nMakes less noise than a breaching charge. However, it is louder than a halligan.\nUpon fumble, the blade can break."
     },
     {
@@ -481,7 +481,7 @@
         "title": "Semenov HVAM Railgun",
         "parentId": "C-ENG",
         "class": "Combat Engineer",
-        "cost": 30000,
+        "cost": "[???]",
         "description": "Advanced, experimental Railgun design from Gold Coast. Utilizes electromagnetics to accelerate a 14.5 Anti-Material round from 0 to Mach 3 in under a second. We are not liable for hearing damage caused by extensive use.",
         "rulesText": "Range Modifiers: +1 Bipod | -2C | +1L | +2ELR\n Ammo: 10\nPen: 4\nDamage: 10\n\nRequires a turn of charge-up before firing.\nWill cause characters within the room or round path to become Suppressed."
     },
@@ -536,7 +536,7 @@
         "parentId": "T-ENG",
         "SubMunition": true,
         "class": "Technical Engineer",
-        "cost": 10000,
+        "cost": 13000,
         "description": "Dedicated marksman variant for Long Range Recon and endurance. Strips down the armor much like the stealth variant in favor of an advanced sensor suite.",
         "rulesText": "DMG 6 | PEN 2 | Range: -1 C | +1 L | -1 ELR | 6 turns of ammo | +1 dice to notice checks, AC:0"
     },
@@ -686,7 +686,7 @@
         "parentId": "F-SUP",
         "SubMunition": true,
         "class": "Fire Support",
-        "cost": 0,
+        "cost": 10000,
         "description": "Loads the rounds with some extra spice, or well... Grain. It's basically overpressured and high grain ammunition.",
         "rulesText": "Increases damage by 2 for the magazine."
     },
@@ -945,7 +945,7 @@
         "class": "Trapper",
         "cost": 6000,
         "description": "Jeep stuff's younger, more tech-savvy cousin, M5 SLAMs are AT/Demo charges that can be set to detonate under a variety of circumstances. Easy to program, easy to detonate, and even float in water to act as aquatic mines.",
-        "rulesText": "Can be deployed on any surface with either:\n- Timed detonation (turn count)\n- Attack detonation (automatic)\n- Remote detonation (manual)\n\nHas more firepower than C4, and will take out most tanks from a bottom attack if run over. 3x."
+        "rulesText": "Can be deployed on any surface with either:\n- Timed detonation (turn count)\n- Attack detonation (automatic)\n- Remote detonation (manual)\n\n10 DMG"
     },
     {
         "id": "thinkpad",
@@ -954,7 +954,7 @@
         "class": "Trapper",
         "cost": 0,
         "description": "It’s a ThinkPad. You’re not leaving this job for a while brother, and this thing isn’t breaking unless you shoot it with a tank.",
-        "rulesText": "Provides access to the cyberwarfare suite."
+        "rulesText": "Provides access to the cyberwarfare suite. Useful for hacking."
     },
     {
         "id": "cyb-cldwn",

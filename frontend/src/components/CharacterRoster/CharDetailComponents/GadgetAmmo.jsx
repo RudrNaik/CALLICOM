@@ -260,14 +260,7 @@ export default function GadgetAmmo({
                 ?.split(",")
                 ?.includes("Siberia2022")
             )
-              return null; //Specific to the current campaign where it will filter out gadgets based on cost.
-
-            console.log({
-              optId: opt.id,
-              item: itemById?.[opt.id],
-              rules: itemById?.[opt.id]?.rulesText,
-              cost: itemById?.[opt.id]?.cost,
-            });
+            return null; //Specific to the current campaign where it will filter out gadgets based on cost.
 
             return (
               <div
