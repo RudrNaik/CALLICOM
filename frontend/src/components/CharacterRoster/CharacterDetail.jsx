@@ -20,10 +20,10 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
   const [xpRemaining, setXpRemaining] = useState(character.XP || 0);
   const [editedSkills, setEditedSkills] = useState({ ...character.skills });
   const [emergencyDice, setEmergencyDice] = useState(
-    character.emergencyDice || 0
+    character.emergencyDice || 0,
   );
   const [originalEmergencyDice, setOriginalEmergencyDice] = useState(
-    character.emergencyDice || 0
+    character.emergencyDice || 0,
   );
   const [specializations, setSpecializations] = useState([
     ...character.specializations,
@@ -32,7 +32,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
   const [showXpInput, setShowXpInput] = useState(false);
   const [xpToAdd, setXpToAdd] = useState("");
   const [campaignInput, setCampaignInput] = useState(
-    character.campaignId || ""
+    character.campaignId || "",
   );
   const [charActive, setCharActive] = useState(false);
   const [isEditingAttr, setEditAttr] = useState(false);
@@ -133,7 +133,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(updates),
-        }
+        },
       );
 
       if (res.ok) {
@@ -179,7 +179,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(updates),
-      }
+      },
     );
 
     if (res.ok) {
@@ -225,7 +225,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(updates),
-        }
+        },
       );
 
       if (res.ok) {
@@ -265,7 +265,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(updates),
-        }
+        },
       );
 
       if (res.ok) {
@@ -313,7 +313,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
             XP: newXP,
             attributes: nextAttributes,
           }),
-        }
+        },
       );
 
       if (res.ok) {
@@ -358,7 +358,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(updates),
-      }
+      },
     );
 
     if (res.ok) {
@@ -471,30 +471,10 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
 
       <h2 className=""></h2>
       {/*Stats*/}
-      <Collapsible title={"Stats"}>
+
+      <Collapsible title={"Attributes"} color={"text-orange-400"}>
         {/* Attr */}
         <div>
-          <div className="relative inline-block group">
-            <h2 className="text-xl font-bold text-orange-400 mt-4 mb-0">
-              Attributes{" "}
-              <span className="text-xs font-light text-neutral-400">[?]</span>
-            </h2>
-
-            {/* Tooltip modal */}
-            <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-0">
-              <p>
-                Attributes determine your{" "}
-                <span className="text-orange-500 font-bold">
-                  wound thresholds, system shock,
-                </span>{" "}
-                and other critical attributes of your character via{" "}
-                <span className="text-orange-500 font-bold">
-                  derived attributes
-                </span>
-                .
-              </p>
-            </div>
-          </div>
           <AttributeView
             attributes={attributes}
             xp={xpRemaining}
@@ -516,141 +496,141 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
             )}
           </div>
         </div>
-
-        {/* Skills */}
-        <div className="mt-4">
-          <div className="relative inline-block group">
-            <h2 className="text-xl font-bold text-orange-400 mt-2 mb-1">
-              Skills{" "}
-              <span className="text-xs font-light text-neutral-400">[?]</span>
-            </h2>
-
-            {/* Tooltip modal */}
-            <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-1">
-              <p>
-                Skills determine the amount of dice you{" "}
-                <span className="text-orange-500 font-bold">roll</span> during a{" "}
-                <span className="text-orange-500 font-bold">check</span>. the
-                higher the level, the more dice you roll.
-              </p>
-              <p className="text-neutral-500 text-xs">
-                IE: 0 in a skill is 2d6l, 1 in a skill is 1d6, 2 is 2d6l and so
-                on for a max of 4 levels in a skill.
-              </p>
-            </div>
-          </div>
-
-          {!isEditing ? (
-            <XpControls
-              xpRemaining={xpRemaining}
-              setIsEditing={setIsEditing}
-              patchXP={patchXP}
-              setMulticlass={setMulticlass}
-              patchMulticlass={patchMulticlass}
-            />
-          ) : (
-            <div className="mt-0 flex items-center space-x-2">
-              <br></br>
-              <button
-                onClick={handleSaveChanges}
-                className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded"
-              >
-                Confirm | {xpRemaining} XP Remaining
-              </button>
-
-              {isEditing && !multiClass && (
-                <button
-                  disabled={xpRemaining < 20}
-                  onClick={() => setShowMultiClassModal(true)}
-                  className="bg-orange-600 hover:bg-orange-700 disabled:bg-gray-700 disabled:hover:bg-gray-800 px-4 py-2 rounded"
-                >
-                  Multiclass | 20 XP
-                </button>
-              )}
-            </div>
-          )}
-
-          {showMultiClassModal && xpRemaining >= 20 && (
-            <MultiClassModal
-              onClose={setShowMultiClassModal}
-              patchMulticlass={patchMulticlass}
-              charClass={character}
-            />
-          )}
-
-          <div className="mt-4"></div>
-
-          <SkillsView
-            skillGroups={skillGroups}
-            isEditing={isEditing}
-            editedSkills={editedSkills}
-            character={character}
-            increaseSkill={increaseSkill}
-            decreaseSkill={decreaseSkill}
-          />
-        </div>
-
-        {/* Specializations */}
-        <div className="mt-4">
-          <div className="relative inline-block group">
-            <h2 className="text-xl font-bold text-orange-400">
-              Specializations{" "}
-              <span className="text-xs font-light text-neutral-400">[?]</span>
-            </h2>
-
-            {/* Tooltip modal */}
-            <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-1">
-              <p>
-                Specialiations provide a{" "}
-                <span className="text-orange-500 font-bold">+1</span> to rolls
-                when conditions are met. For example, a specialization in
-                Carbines provides a +1 when rolling to attack with a Carbine.
-              </p>
-            </div>
-          </div>
-
-          {specializations.length > 0 && (
-            <SpecView
-              specializations={specializations}
-              isEditing={isEditing}
-              removeSpec={removeSpecialization}
-            />
-          )}
-
-          {isEditing && xpRemaining >= 5 && (
-            <div className="mt-4">
-              <button
-                onClick={() => setShowSpecModal(true)}
-                className="bg-orange-600 hover:bg-orange-700 px-4 py-1 rounded"
-              >
-                + Add Specialization (−5 XP)
-              </button>
-            </div>
-          )}
-
-          {showSpecModal && (
-            <SpecModal
-              editedSkills={editedSkills}
-              specializations={specializations}
-              xpRemaining={xpRemaining}
-              setSpecializations={setSpecializations}
-              setXpRemaining={setXpRemaining}
-              setShowSpecModal={setShowSpecModal}
-            />
-          )}
-        </div>
-
-        <Edice
-          isEditing={isEditing}
-          emergencyDice={emergencyDice}
-          charEmergencyDice={character.emergencyDice}
-          removeEmergencyDie={removeEmergencyDie}
-          addEmergencyDie={addEmergencyDie}
-        />
       </Collapsible>
 
+      {/* Skills */}
+      <div className="mt-4">
+        <div className="relative inline-block group">
+          <h2 className="text-xl font-bold text-orange-400 mt-2 mb-1">
+            Skills{" "}
+            <span className="text-xs font-light text-neutral-400">[?]</span>
+          </h2>
+
+          {/* Tooltip modal */}
+          <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-1">
+            <p>
+              Skills determine the amount of dice you{" "}
+              <span className="text-orange-500 font-bold">roll</span> during a{" "}
+              <span className="text-orange-500 font-bold">check</span>. the
+              higher the level, the more dice you roll.
+            </p>
+            <p className="text-neutral-500 text-xs">
+              IE: 0 in a skill is 2d6l, 1 in a skill is 1d6, 2 is 2d6l and so on
+              for a max of 4 levels in a skill.
+            </p>
+          </div>
+        </div>
+
+        {!isEditing ? (
+          <XpControls
+            xpRemaining={xpRemaining}
+            setIsEditing={setIsEditing}
+            patchXP={patchXP}
+            setMulticlass={setMulticlass}
+            patchMulticlass={patchMulticlass}
+          />
+        ) : (
+          <div className="mt-0 flex items-center space-x-2">
+            <br></br>
+            <button
+              onClick={handleSaveChanges}
+              className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded"
+            >
+              Confirm | {xpRemaining} XP Remaining
+            </button>
+
+            {isEditing && !multiClass && (
+              <button
+                disabled={xpRemaining < 20}
+                onClick={() => setShowMultiClassModal(true)}
+                className="bg-orange-600 hover:bg-orange-700 disabled:bg-gray-700 disabled:hover:bg-gray-800 px-4 py-2 rounded"
+              >
+                Multiclass | 20 XP
+              </button>
+            )}
+          </div>
+        )}
+
+        {showMultiClassModal && xpRemaining >= 20 && (
+          <MultiClassModal
+            onClose={setShowMultiClassModal}
+            patchMulticlass={patchMulticlass}
+            charClass={character}
+          />
+        )}
+
+        <div className="mt-4"></div>
+
+        <SkillsView
+          skillGroups={skillGroups}
+          isEditing={isEditing}
+          editedSkills={editedSkills}
+          character={character}
+          increaseSkill={increaseSkill}
+          decreaseSkill={decreaseSkill}
+        />
+      </div>
+
+      {/* Specializations */}
+      <div className="mt-4">
+        <div className="relative inline-block group">
+          <h2 className="text-xl font-bold text-orange-400">
+            Specializations{" "}
+            <span className="text-xs font-light text-neutral-400">[?]</span>
+          </h2>
+
+          {/* Tooltip modal */}
+          <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-1">
+            <p>
+              Specialiations provide a{" "}
+              <span className="text-orange-500 font-bold">+1</span> to rolls
+              when conditions are met. For example, a specialization in Carbines
+              provides a +1 when rolling to attack with a Carbine.
+            </p>
+          </div>
+        </div>
+
+        {specializations.length > 0 && (
+          <SpecView
+            specializations={specializations}
+            isEditing={isEditing}
+            removeSpec={removeSpecialization}
+          />
+        )}
+
+        {isEditing && xpRemaining >= 5 && (
+          <div className="mt-4">
+            <button
+              onClick={() => setShowSpecModal(true)}
+              className="bg-orange-600 hover:bg-orange-700 px-4 py-1 rounded"
+            >
+              + Add Specialization (−5 XP)
+            </button>
+          </div>
+        )}
+
+        {showSpecModal && (
+          <SpecModal
+            editedSkills={editedSkills}
+            specializations={specializations}
+            xpRemaining={xpRemaining}
+            setSpecializations={setSpecializations}
+            setXpRemaining={setXpRemaining}
+            setShowSpecModal={setShowSpecModal}
+          />
+        )}
+      </div>
+
+      <Edice
+        isEditing={isEditing}
+        emergencyDice={emergencyDice}
+        charEmergencyDice={character.emergencyDice}
+        removeEmergencyDie={removeEmergencyDie}
+        addEmergencyDie={addEmergencyDie}
+      />
+
       {/* Biography */}
-      <Collapsible title={"Biography"}>
+      <Collapsible title={"Biography"} color={"text-orange-400"}>
         <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-6 rounded shadow col-span-2">
           {isEditingBio ? (
             <textarea
@@ -685,7 +665,11 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
       </Collapsible>
 
       {/* Campaign Assignment */}
-      <Collapsible title={"Assign To Campaign"} className="mt-6">
+      <Collapsible
+        title={"Assign To Campaign"}
+        color={"text-orange-400"}
+        className="mt-6"
+      >
         <div className="flex space-x-2">
           <input
             type="text"
@@ -713,7 +697,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
                     Authorization: `Bearer ${token}`,
                   },
                   body: JSON.stringify({ campaignId: campaignInput }),
-                }
+                },
               );
 
               if (res.ok) {

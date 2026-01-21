@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useRef } from "react";
 
-export default function Collapsible({ title, children }) {
+export default function Collapsible({ title, color, children }) {
   const [open, setOpen] = useState(false);
 
   const ref = useRef(null);
@@ -11,8 +11,8 @@ export default function Collapsible({ title, children }) {
       {/* Header */}
       <div onClick={() => setOpen(!open)} className="">
         <h2 className="text-xl font-bold mb-2">
-          <span className="text-neutral-400">{title}</span>
-          <span className="text-neutral-400"> {`${open ? "🗁" : "🗀"}`}</span>
+          <span className={color}>{title}</span>
+          <span className={color}> {`${open ? "🗁" : "🗀"}`}</span>
         </h2>
       </div>
 
