@@ -37,8 +37,8 @@ function DerivedStats({ character, userId, refreshCharacter }) {
   const FleshWoundThreshold = Math.ceil(Stamina / 2) + (equip.armorClass ?? 0);
   const DeepWoundThreshold = Stamina + (equip.armorClass ?? 0);
   const InstantDeath = Stamina * 2;
-  const UnarmedDamage = Math.max(4, Math.ceil((3 + BDY + Brawl)/1.5));
-  const ArmedDamage = Math.max(4, Math.ceil((3 + BDY + CQC)/1.5));
+  const UnarmedDamage = Math.max(4, Math.ceil((3 + Body + Brawl)/1.5));
+  const ArmedDamage = Math.max(4, Math.ceil((3 + Body + Melee)/1.5));
   const woundMod = fleshWounds + (deepWounds * 2);
 
   // ---- PATCH after debounce (700ms) only if changed ----
