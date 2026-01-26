@@ -366,10 +366,10 @@ function EquipmentSelection({
             <p>
               AC{gear.armorClass}
               {gear.armorClass == 0 && (
-                <p className="text-xs text-neutral-400">
+                <span className="text-xs text-neutral-400">
                   No maluses for sprinting and shooting, +1 to all movement
                   related checks [Acrobatics][Jump][Climb][Endurance]
-                </p>
+                </span>
               )}
               {gear.armorClass == 1 && (
                 <p className="text-xs text-neutral-400">No Bonuses</p>
