@@ -36,6 +36,16 @@ function EquipmentSelection({
     return m;
   }, []);
 
+  const campaignLookupTable = useMemo(() => {
+    const m = {};
+
+    campEquipment.forEach((it) => {
+      m[it.id] = it;
+    });
+
+    return m;
+  })
+
   const [gear, setGear] = useState(defaultGear);
   const [classGadgets, setClassGadgets] = useState([]);
   const [secondaryGadget, setSecGadget] = useState([]);
@@ -486,6 +496,7 @@ function EquipmentSelection({
               charClass={character.class}
               characterCallsign={character.callsign}
               config={activeGadgetConfig}
+              campaignEquipment = {campaignLookupTable}
               campActive={!(!campEquipment || campEquipment == null)}
               campaignId={character?.campaignId}
             />

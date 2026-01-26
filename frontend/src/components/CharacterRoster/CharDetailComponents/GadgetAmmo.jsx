@@ -12,6 +12,7 @@ export default function GadgetAmmo({
   charClass,
   characterCallsign, // for per-character storage key
   campActive,
+  campaignEquipment,
   campaignId,
 }) {
   if (!config) return null;
@@ -30,7 +31,7 @@ export default function GadgetAmmo({
         "demo-dog",
         "ammo-bag",
       ].includes(gadgetId),
-    [gadgetId]
+    [gadgetId],
   );
 
   // Everything that isn't mixed + has a max pool is considered expendable here
@@ -58,7 +59,7 @@ export default function GadgetAmmo({
         "grappling-hook",
         "hydraulic-hook",
       ].includes(gadgetId),
-    [gadgetId]
+    [gadgetId],
   );
 
   // ---- constants / keys ----
@@ -122,7 +123,7 @@ export default function GadgetAmmo({
   // ---- localStorage key ----
   const localStorageKey = useMemo(
     () => `gadgetAmmo_${characterCallsign}_${gadgetId}`,
-    [characterCallsign, gadgetId]
+    [characterCallsign, gadgetId],
   );
 
   // ---- sanitize based on type of munitions ----
@@ -162,7 +163,7 @@ export default function GadgetAmmo({
   const sumNonNeg = (obj) =>
     Object.values(obj || {}).reduce(
       (a, n) => a + Math.max(0, Number(n || 0)),
-      0
+      0,
     );
 
   // ---- Load from localStorage when gadget/callsign changes ----
@@ -251,16 +252,18 @@ export default function GadgetAmmo({
             const count = Number.isFinite(gadgetAmmo?.[opt.id])
               ? gadgetAmmo[opt.id]
               : 0;
+
             if (!isEditing && count <= -1) return null;
             if (
               campActive &&
-              itemById?.[opt.id]?.cost !== 0 &&
+              campaignEquipment?.[opt.id]?.cost !== 0 &&
               campaignId
                 ?.replace(/\s/g, "")
                 ?.split(",")
                 ?.includes("Siberia2022")
             )
-            return null; //Specific to the current campaign where it will filter out gadgets based on cost.
+              return null; //Specific to the current campaign where it will filter out gadgets based on cost.
+            console.log(campaignEquipment);
 
             return (
               <div
@@ -372,7 +375,7 @@ export default function GadgetAmmo({
                 0,
                 Number.isFinite(gadgetAmmo?.[EX_KEY])
                   ? gadgetAmmo[EX_KEY]
-                  : effectiveMax
+                  : effectiveMax,
               )}
             </span>{" "}
             / {effectiveMax}
@@ -394,7 +397,7 @@ export default function GadgetAmmo({
                   try {
                     localStorage.setItem(
                       localStorageKey,
-                      JSON.stringify(sanitize(next))
+                      JSON.stringify(sanitize(next)),
                     );
                   } catch {}
                 }}
@@ -417,7 +420,7 @@ export default function GadgetAmmo({
                   try {
                     localStorage.setItem(
                       localStorageKey,
-                      JSON.stringify(sanitize(next))
+                      JSON.stringify(sanitize(next)),
                     );
                   } catch {}
                 }}
