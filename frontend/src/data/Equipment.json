@@ -284,7 +284,7 @@
         "class": "Rifleman",
         "cost": 17000,
         "description": "Developed from the XM-25 CDTE, the X-50 Programmable Munition Grenade Launcher is a modernized version of the original system. Bringing along thermal optics, auto-rangefinding, and an improved GUI for displaying the trajectory path. \n also: 'THOONK THOONK THOONK GET AIRBURSTED! ",
-        "rulesText": "[H-Wep]\nRange modifier: -3C | +1L | -1ELR\nAmmo: 6\nUses programmable, airburst munitions. Deals 9 damage to infantry and ignores cover. No damage to vehicles."
+        "rulesText": "[H-Wep]\nRange modifier: -3C | +1L | -1ELR\nAmmo: 4\nUses programmable, airburst munitions. Deals 9 damage to infantry and ignores cover. No damage to vehicles."
     },
     {
         "id": "40mm-he",
@@ -790,7 +790,7 @@
         "class": "Sharpshooter",
         "cost": 0,
         "description": "Built off the chassis of the PD-105 Black Hornet, Hummingbird reconnaissance drones are Gold Coast's home brewed modification, also tying in BUDDI spotting software and hardened Datalinks.",
-        "rulesText": "User carried\nSpots traps, gadgets, and more in the encounter area\n2 notice | 1 stealth | 1 investigation"
+        "rulesText": "User carried\nSpots traps, gadgets, vehicles, and more in the encounter area and one hex around\n Uptime: 4 turns\n 3 notice | 2 stealth | 1 investigation"
     },
     {
         "id": "silverbird-uav",
@@ -798,8 +798,17 @@
         "parentId": "Recon",
         "class": "Sharpshooter",
         "cost": 8000,
-        "description": "Built off of the Marine's SUAV, the Silver Bird is an autonomous drone that orbits the user at a high altitude to mark targets. Has only NV. Provides standard pings.",
-        "rulesText": "User Carried\nSpots in a large area, extending to 2 world hexes from the encounter area\n2 notice | 1 acrobatics | 2 investigation"
+        "description": "Built off of the Marine's SUAV, the Silver Bird is an autonomous drone that orbits the user at a high altitude to mark targets. Has only NV. Pings for every turn it is up.",
+        "rulesText": "User Carried\nSpots in a large area, extending to 4 world hexes from the encounter area\n Uptime: 3 turns\n 2 notice | 1 acrobatics | 2 investigation"
+    },
+    {
+        "id": "greybird-uav",
+        "title": "Grey Bird UAV (SUAV)",
+        "parentId": "Recon",
+        "class": "Sharpshooter",
+        "cost": 8000,
+        "description": "Built off of the Marine's SUAV, the Grey Bird is an autonomous drone that orbits the user at a high altitude to mark targets. Has IR and a LAM mounted to lase and designate targets.",
+        "rulesText": "User Carried\nSpots in a large area, extending to 4 world hexes from the encounter area\nUptime: 2 turns\n 2 notice | 1 acrobatics | 1 investigation"
     },
     {
         "id": "bumblebee-echolocator",

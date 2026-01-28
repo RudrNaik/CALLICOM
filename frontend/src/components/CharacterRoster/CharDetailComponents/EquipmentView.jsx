@@ -471,13 +471,13 @@ function EquipmentSelection({
               <p className="whitespace-pre-line">
                 {
                   equipmentData.find((gadget) => gadget.id === gear.gadget)
-                    ?.rulesText
+                    ?.rulesText || "n/a"
                 }
               </p>
               <p className="italic">
                 {
                   equipmentData.find((gadget) => gadget.id === gear.gadget)
-                    ?.description
+                    ?.description || "n/a"
                 }
               </p>
             </div>
