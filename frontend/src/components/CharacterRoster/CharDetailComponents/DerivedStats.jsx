@@ -77,7 +77,7 @@ function DerivedStats({ character, userId, refreshCharacter }) {
 
         if (res.ok) {
           prevWounds.current = { fleshWounds, deepWounds };
-          refreshCharacter?.();
+          //refreshCharacter?.();
         } else {
           console.error("Failed to update wounds:", await res.text());
         }
