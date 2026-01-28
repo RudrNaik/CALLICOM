@@ -651,14 +651,14 @@
         "class": "Fire Support",
         "cost": 16000,
         "description": "Utilizing a backpack feeder and a gyroscopic camera mount, the spitfire allows you to put down an unmatched amount of firepower at the expense of melting barrels and making the logistics officer incredibly angry at you.",
-        "rulesText": "The stabilizer removes the ability to aim in exchange for an extra +1 to the supression saturation threshold. Allows the user to supress a second set of six hexes. Barrels melt at three turns of consequtive supression. reloading in the same turn has no penalty as ammo is fed from pack."
+        "rulesText": "The stabilizer removes the ability to mount in exchange for removing penalties for moving and shooting. Allows the user to supress a second set of six hexes. Barrels melt at three turns of consequtive supression. reloading in the same turn has no penalty as ammo is fed from pack."
     },
     {
         "id": "juggernaut-suit",
         "title": "Juggernaut Suit",
         "parentId": "F-SUP",
         "class": "Fire Support",
-        "cost": 25000,
+        "cost": "[???]",
         "description": "Repurposed EOD suit equipped with a half exo to assist with movement. Provides a two stage armor system, where the outer layer of armor ‘soaks’ damage before it begins to strip and fall apart with further impacts, leaving the user with AC2 armor once it’s shredded.",
         "rulesText": "The suit can soak up to 200 HP (MoS x weapon damage) from enemies.\nWhen shot at, instead of rounds missing when a check is failed, the armor soaks the base damage of the weapon (MoS of 1) and it’s deducted from the health pool.\nWhen this health pool reaches zero, the armor is shredded, and the user now takes damage against their wound thresholds."
     },
@@ -806,7 +806,7 @@
         "title": "Bumblebee Echolocator Micro UAV",
         "parentId": "Recon",
         "class": "Sharpshooter",
-        "cost": 12000,
+        "cost": 16000,
         "description": "Survey drone utilizing echolocation to mark moving enemies. Shakes the ground when activated, but will always provide a ping. Can be shot down easily once noticed, and is kinda fat.",
         "rulesText": "Pre-Deployed\nSpots for 2 turns\n3 Notice \n[Aiborne][Repairable]"
     },
@@ -874,7 +874,7 @@
         "class": "Sharpshooter",
         "cost": 10000,
         "description": "Locks onto a ping and adjusts for bullet drop and windage automatically. Effectively removes the math from shooting, beyond gauging travel time.",
-        "rulesText": "Can only be used on marked targets, increases the dice rolled by 1."
+        "rulesText": "Can only be used on marked targets, provides a +1 bonus and +1 dice."
     },
     {
         "id": "emp-round",
