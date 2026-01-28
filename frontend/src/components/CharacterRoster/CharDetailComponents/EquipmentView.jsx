@@ -44,7 +44,7 @@ function EquipmentSelection({
     });
 
     return m;
-  })
+  });
 
   const [gear, setGear] = useState(defaultGear);
   const [classGadgets, setClassGadgets] = useState([]);
@@ -69,7 +69,7 @@ function EquipmentSelection({
         gadgetAmmo: {},
         armorClass: 0,
         miscGear: "",
-      }
+      },
     );
 
     //filters items based on class, secondary class, and if they are purchased or not.
@@ -87,7 +87,7 @@ function EquipmentSelection({
         (item) =>
           (item.class === character.class ||
             item.class === character.multiClass) &&
-          (!item?.SubMunition || !item?.parentId === "thinkpad")
+          (!item?.SubMunition || !item?.parentId === "thinkpad"),
       );
     } else {
       filtered = campEquipment.filter(
@@ -95,7 +95,7 @@ function EquipmentSelection({
           (item.class === character.class ||
             item.class === character.multiClass) &&
           item.cost === 0 &&
-          (!item?.SubMunition || !item?.parentId === "thinkpad")
+          (!item?.SubMunition || !item?.parentId === "thinkpad"),
       );
     }
     setClassGadgets(filtered);
@@ -128,8 +128,8 @@ function EquipmentSelection({
     }
     const primaryFilter = Object.fromEntries(
       Object.entries(weaponCategories).filter(
-        ([key]) => !excluded.includes(key)
-      )
+        ([key]) => !excluded.includes(key),
+      ),
     );
     setPrimaries(primaryFilter);
 
@@ -158,8 +158,8 @@ function EquipmentSelection({
     ];
     const secondaryFilter = Object.fromEntries(
       Object.entries(weaponCategories).filter(
-        ([key]) => !excluded.includes(key)
-      )
+        ([key]) => !excluded.includes(key),
+      ),
     );
     setSecondary(secondaryFilter);
 
@@ -213,7 +213,7 @@ function EquipmentSelection({
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ equipment: gear }),
-        }
+        },
       );
       if (res.ok) {
         refreshCharacter();
@@ -364,11 +364,11 @@ function EquipmentSelection({
             />
           ) : (
             <p>
-              AC{gear.armorClass}
+              <div>AC{gear.armorClass}</div>
               {gear.armorClass == 0 && (
                 <span className="text-xs text-neutral-400">
                   No maluses for sprinting and shooting, +1 to all movement
-                  related checks [Acrobatics][Jump][Climb][Endurance]
+                  related checks, and stealth [Acrobatics][Jump][Climb][Endurance][Stealth]
                 </span>
               )}
               {gear.armorClass == 1 && (
@@ -397,7 +397,7 @@ function EquipmentSelection({
           {/* Medicine and meds. */}
           {charActive ? (
             <div className="grid sm:grid-cols-1 md:grid-cols-3 gap-4 mt-2">
-              {["AFAK", "IFAK", "Painkiller"].map((med, i) => (
+              {["AFAK", "IFAK"].map((med, i) => (
                 <div key={med} className="text-sm text-white space-y-1">
                   <p>
                     <span className="font-semibold text-orange-300">{med}</span>
@@ -496,7 +496,7 @@ function EquipmentSelection({
               charClass={character.class}
               characterCallsign={character.callsign}
               config={activeGadgetConfig}
-              campaignEquipment = {campaignLookupTable}
+              campaignEquipment={campaignLookupTable}
               campActive={!(!campEquipment || campEquipment == null)}
               campaignId={character?.campaignId}
             />
