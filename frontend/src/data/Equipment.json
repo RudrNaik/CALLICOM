@@ -806,7 +806,7 @@
         "title": "Grey Bird UAV (SUAV)",
         "parentId": "Recon",
         "class": "Sharpshooter",
-        "cost": 8000,
+        "cost": 10000,
         "description": "Built off of the Marine's SUAV, the Grey Bird is an autonomous drone that orbits the user at a high altitude to mark targets. Has IR and a LAM mounted to lase and designate targets.",
         "rulesText": "User Carried\nSpots in a large area, extending to 4 world hexes from the encounter area\nUptime: 2 turns\n 2 notice | 1 acrobatics | 1 investigation"
     },
