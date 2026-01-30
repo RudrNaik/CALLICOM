@@ -171,7 +171,7 @@ function EquipmentSelection({
     }
 
     //Sets the grenades.
-    setGrenadeCounts([3, 3]);
+    setGrenadeCounts([2, 2]);
   }, [character]);
 
   const handleChange = (field, value) => {
@@ -303,7 +303,7 @@ function EquipmentSelection({
                       <div>
                         <div className="px-2 py-1 rounded bg-neutral-900 mb-2">
                           <span className="text-yellow-400">
-                            {grenadeCounts[i]} / 3
+                            {grenadeCounts[i]} / 2
                           </span>{" "}
                           <span className="text-gray-400 italic">
                             remaining
@@ -327,7 +327,7 @@ function EquipmentSelection({
                             onClick={() =>
                               setGrenadeCounts((prev) => {
                                 const updated = [...prev];
-                                updated[i] = 3;
+                                updated[i] = 2;
                                 return updated;
                               })
                             }

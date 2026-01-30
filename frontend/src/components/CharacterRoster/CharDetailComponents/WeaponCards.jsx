@@ -23,7 +23,7 @@ const WeaponSlot = ({
   const pseudoMagSizes = {
     "Light Pistols": 12,
     "Heavy Pistols": 6,
-    SMGs: 30,
+    SMGs: 20,
     Carbines: 30,
     "Assault Rifles": 30,
     "Marksman Rifles": 10,
@@ -85,14 +85,17 @@ const WeaponSlot = ({
     }
   }, [pseudoAmmo]);
 
+  let reserveAmmo;
   let magSize;
   if((weapon?.category == "SMGs") && (isSecondary)){
-    magSize = (categoryData?.totalTurns/2) || 0;
+    reserveAmmo = 4;
+    magSize = 2;
   } else {
-    magSize = categoryData?.totalTurns || 0
+    reserveAmmo = categoryData?.totalTurns || 0
+    magSize = categoryData?.magazineSize || 1;
   }
-  const totalTurns = magSize;
-  const magazineSize = categoryData?.magazineSize || 1;
+  const totalTurns = reserveAmmo;
+  const magazineSize = magSize;
   const turnsRemaining = totalTurns - totalFired;
   const magTurnsLeft = Math.max(0, magazineSize - firedThisMag);
 

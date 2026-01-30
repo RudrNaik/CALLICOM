@@ -734,7 +734,7 @@
         "class": "Medic",
         "cost": 0,
         "description": "Advanced nanomachines automatically help stop bleeding, apply painkillers, and make getting shot a little less un-fun.",
-        "rulesText": "Heal a wound and deep wound every turn\nLasts for 1d6 turns + medical skill level turns"
+        "rulesText": "Heal a flesh wound every turn, if no flesh wounds heal a deep wound every 2 turns.\nLasts for 1d6 turns/2 + medical skill level turns"
     },
     {
         "id": "snk",
@@ -743,8 +743,8 @@
         "SubMunition": true,
         "class": "Medic",
         "cost": 6000,
-        "description": "Retooled for giving one final hurrah, Shock Nanites make the user a bit more hardy for a short while, and stops them from going into system shock.",
-        "rulesText": "Increase System Shock threshold by 5\nLasts for 1d6 + medical skill level turns"
+        "description": "A concoction of nanites from every kind to stave off death and keep someone in the fight. Painkillers, coagulants, and stimulants get someone back on their feet instantly.",
+        "rulesText": "Revives a character from DBNO instantly with only 2 deep wounds. The turn after- mark one flesh wound."
     },
     {
         "id": "tnk",
@@ -754,7 +754,7 @@
         "class": "Medic",
         "cost": 8000,
         "description": "Retooled for killing any and all pain, Truamadol Nanites make the user feel nothing, other than emotion — we didn't disable that just yet.",
-        "rulesText": "Temporarily removes all wounds\nLasts for 2 + 1d6 + medical skill level turns"
+        "rulesText": "Temporarily removes all wounds\nLasts for 1 + 1d6/2 + medical skill level turns"
     },
     {
         "id": "dtnk",
