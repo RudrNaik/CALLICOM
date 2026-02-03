@@ -10,19 +10,22 @@ const DEFAULT_STATE = {
   identity: {
     name: "Enemy",
     class: "",
-    elite: false,
+    firing: false,
     pinged: false,
   },
   stats: {
-    Alertness: 0,
+    Alertness: 1,
     Body: 0,
     Intelligence: 0,
     Spirit: 0,
-    AC: 0,
-    Melee: 0,
+    AC: 1,
+    Melee: 1,
+    Weapon: 1,
+    rng: "",
+    tgt: ""
   },
   loadout: {
-    Primary: "",
+    Primary: "Assault Rifles",
     Gadget: "",
   },
   wounds: {
@@ -105,6 +108,7 @@ function EnemyCard({ id, onDelete }) {
   const instantDeath = Stamina * 2;
 
   const meleeDamage = Math.max(4, Math.ceil((3 + Body + MeleeBonus)/1.5));
+  const WeaponSkill = stats.Weapon;
 
   const weaponInfo = weaponCategories[loadout.Primary] || null;
   const selectedGadget = filteredGadgets.find(
@@ -115,7 +119,7 @@ function EnemyCard({ id, onDelete }) {
      RENDER
   ======================= */
   return (
-    <div className="relative w-64 bg-neutral-900/90 bg-[radial-gradient(circle,_rgba(255,120,0,0.05)_1px,_transparent_1px)] [background-size:8px_8px] rounded-lg p-4 border border-orange-400 hover:border-orange-600 transition">
+    <div className="relative w-66 mb-4 bg-neutral-900/90 bg-[radial-gradient(circle,_rgba(255,120,0,0.05)_1px,_transparent_1px)] [background-size:8px_8px] rounded-lg p-4 border border-orange-400 hover:border-neutral-100 transition">
       {/* DELETE */}
       <button
         onClick={deleteSelf}
@@ -154,13 +158,13 @@ function EnemyCard({ id, onDelete }) {
             }`}
           />
           <button
-            title="Elite Enemy"
-            onClick={() => update(["identity", "elite"], !identity.elite)}
+            title="Firing"
+            onClick={() => update(["identity", "firing"], !identity.firing)}
             className={`text-xs cursor-pointer ${
-              identity.elite ? "text-orange-400" : "text-neutral-500"
+              identity.firing ? "text-red-500" : "text-neutral-500"
             }`}
           >
-            ▲▲
+            {">>>"}
           </button>
         </div>
       </div>
@@ -245,7 +249,7 @@ function EnemyCard({ id, onDelete }) {
         <div className="font-bold text-orange-300">Combat</div>
 
         <div className="flex items-center gap-1 mt-1">
-          <span>Melee:</span>
+          <span>CQC:</span>
           <input
             className="w-10 bg-neutral-800 text-center rounded"
             value={stats.Melee}
@@ -254,6 +258,34 @@ function EnemyCard({ id, onDelete }) {
             }
           />
           <span className="text-orange-300">DMG {meleeDamage}</span>
+        </div>
+        <div className="flex items-center gap-1 mt-1">
+          <span>WPN:</span>
+          <input
+            className="w-10 bg-neutral-800 text-center rounded"
+            value={stats.Weapon}
+            onChange={(e) =>
+              update(["stats", "Weapon"], parseInt(e.target.value) || 0)
+            }
+          />
+          <input
+              className="w-full bg-neutral-800 text-center rounded-xs"
+              value={stats.rng}
+              type="text"
+              placeholder="RNG"
+              onChange={(e) =>
+                update(["stats", "rng"], e.target.value.toUpperCase())
+              }
+            />
+            <input
+              className="w-full bg-neutral-800 text-center rounded-xs"
+              value={stats.tgt}
+              type="text"
+              placeholder="TGT"
+              onChange={(e) =>
+                update(["stats", "tgt"], e.target.value)
+              }
+            />
         </div>
       </div>
 

@@ -128,7 +128,7 @@
         "class": "All",
         "cost": 4000,
         "description": "The power of chemistry once more, now re-engineered and applied to burn at 2000 degrees celsius, and then detonate into a spectacular explosion. Powerful enough to deal damage to vehicles and burn through armor. Not as effective against people unless stuck... But why would you do that?",
-        "rulesText": "[Throw][AT]\n Follows ranged rules. When thrown in combat, prompts [Throw] vs [Armor] or [Acrobatics]. Out of combat,requires an alertness to check if they react.\n Enemies can also [Brace] as a reaction to boost their armor roll at the cost of -1 to all actions for the next turn.\n If defender chooses to roll acrobatics, you move 2 hexes away from where you are. An MOS greater than 2 has the defender still standing, else- they are considered prone until their next turn.\n 8 DMG | 1 hex AOE. \n Destroys cover,soft, and hard walls. Can damage armored vehicles"
+        "rulesText": "[Throw][AT]\n Follows ranged rules. When thrown in combat, prompts [Throw] vs [Armor] or [Acrobatics]. Out of combat,requires an alertness to check if they react.\n If defender chooses to roll acrobatics, you move 2 hexes away from where you are. An MOS greater than 2 has the defender still standing, else- they are considered prone until their next turn.\n 8 DMG | 1 hex AOE. \n Destroys cover,soft, and hard walls. Can damage armored vehicles"
     },
     {
         "id": "smoke",
@@ -474,7 +474,7 @@
         "class": "Combat Engineer",
         "cost": 13000,
         "description": "From the classics of the AW-50 and M107 Barret to modern options such as the Gepard GM6 Lynx, Anti Material rifles come in all shapes and sizes but offer the same capability: big bullet, big penetration, big damage. Anti Material rifles can penetrate heavy armor and disable dedicated vehicle systems permanently. Such as APS, tracks, or engines. On lighter vehicles, they can punch through the armor, killing passengers or gunnners.",
-        "rulesText": "Range Modifiers: +1 Bipod | -2C | +1L | +2ELR\n Ammo: 7\nPen: 3\nDamage: 8"
+        "rulesText": "Range Modifiers: +1 Bipod | -2C | +1L | +2ELR\n Ammo: 5\nPen: 3\nDamage: 8"
     },
     {
         "id": "semenov-railgun",
@@ -483,7 +483,7 @@
         "class": "Combat Engineer",
         "cost": "[???]",
         "description": "Advanced, experimental Railgun design from Gold Coast. Utilizes electromagnetics to accelerate a 14.5 Anti-Material round from 0 to Mach 3 in under a second. We are not liable for hearing damage caused by extensive use.",
-        "rulesText": "Range Modifiers: +1 Bipod | -2C | +1L | +2ELR\n Ammo: 5\nPen: 4\nDamage: 10\n\nRequires a turn of charge-up before firing.\nWill cause characters within the room or round path to become Suppressed."
+        "rulesText": "Range Modifiers: +1 Bipod | -2C | +1L | +2ELR\n Ammo: 3\nPen: 4\nDamage: 10\n\nWill cause characters within the room or round path to become Suppressed."
     },
     {
         "id": "T-ENG",
