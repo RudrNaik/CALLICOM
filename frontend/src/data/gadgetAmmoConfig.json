@@ -1,6 +1,6 @@
 {
   "ugl": {
-    "maxGrenades": 6,
+    "maxGrenades": 4,
     "options": [
       { "id": "40mm-he", "label": "HE" },
       { "id": "40mm-smk", "label": "SMK" },
@@ -10,7 +10,7 @@
     ]
   },
   "x89-ams": {
-    "maxRounds": 8,
+    "maxRounds": 4,
     "options": [
       { "id": "x89-he", "label": "HE" },
       { "id": "x89-acerm", "label": "ACERM" },
@@ -94,22 +94,22 @@
     "max": 3
   },
   "m26-mass":{
-    "max": 6
+    "max": 4
   },
   "rocket-launcher":{
-    "max": 3
+    "max": 2
   },
   "wire-launcher":{
-    "max": 3
+    "max": 2
   },
   "guided-launcher":{
-    "max": 3
+    "max": 2
   },
   "amr":{
-    "max": 7
+    "max": 5
   },
   "semenov-railgun":{
-    "max": 5
+    "max": 3
   },
   "PMGL":{
     "max": 4
