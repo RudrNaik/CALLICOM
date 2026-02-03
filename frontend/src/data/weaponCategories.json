@@ -4,15 +4,15 @@
     "damage": 4,
     "penetration": 1,
     "range": "+1 C | -2 L | -3 ELR",
-    "totalTurns": 6,
+    "totalTurns": 4,
     "magazineSize": 2
   },
   "Heavy Pistols": {
     "class": "L-Weapons",
     "damage": 5,
     "penetration": 2,
-    "range": "+1 C | -1 L | -2 ELR",
-    "totalTurns": 6,
+    "range": "+1 M | -1 L | -2 ELR",
+    "totalTurns": 4,
     "magazineSize": 2
   },
   "SMGs": {
@@ -20,7 +20,7 @@
     "damage": 4,
     "penetration": 1,
     "range": "+1 C | -1 L | -2 ELR",
-    "totalTurns": 12,
+    "totalTurns": 9,
     "magazineSize": 3
   },
   "Carbines": {
@@ -28,7 +28,7 @@
     "damage": 4,
     "penetration": 1,
     "range": "+1 M | -1L | -2 ELR",
-    "totalTurns": 12,
+    "totalTurns": 9,
     "magazineSize": 3
   },
   "Assault Rifles": {
@@ -36,7 +36,7 @@
     "damage": 5,
     "penetration": 1,
     "range": "-1 C | +1 M | -1 ELR",
-    "totalTurns": 12,
+    "totalTurns": 9,
     "magazineSize": 3
   },
   "Marksman Rifles": {
@@ -44,7 +44,7 @@
     "damage": 6,
     "penetration": 2,
     "range": "-1 C | +1 L | -1 ELR",
-    "totalTurns": 10,
+    "totalTurns": 6,
     "magazineSize": 2
   },
   "Shotguns": {
@@ -52,7 +52,7 @@
     "damage": 6,
     "penetration": 1,
     "range": "+2 C | -1 M | -3 L | -4 ELR",
-    "totalTurns": 12,
+    "totalTurns": 6,
     "magazineSize": 3
   },
   "Sniper Rifles": {
@@ -60,23 +60,23 @@
     "damage": 7,
     "penetration": 2,
     "range": "-2 C | +1 L | +2 ELR",
-    "totalTurns": 10,
-    "magazineSize": 5
+    "totalTurns": 6,
+    "magazineSize": 3
   },
   "Machine Guns": {
     "class": "H-Weapons",
     "damage": 5,
     "penetration": 2,
     "range": "+1 Bipod | +1 M | -1 L | -1 ELR",
-    "totalTurns": 12,
-    "magazineSize": 6
+    "totalTurns": 8,
+    "magazineSize": 4
   },
   "Drum Shotguns": {
     "class": "H-Weapons",
     "damage": 6,
     "penetration": 1,
     "range": "+1 C | -1 M | -3 L | -4 ELR",
-    "totalTurns": 12,
-    "magazineSize": 6
+    "totalTurns": 8,
+    "magazineSize": 4
   }
 }

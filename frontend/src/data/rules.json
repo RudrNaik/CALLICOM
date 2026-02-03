@@ -131,11 +131,53 @@
         "description": "If you decide to attempt shoving your opponent, he is entitled to make an Alertness or Body test (opponent’s choice) with a Threshold equal to your original attack to resist it.\n\n If he succeeds nothing happens, but if he fails you may shove him backward up to your Body+1 in meters. You may do a follow-up move, but it is not necessary."
     },
     {
+        "id": "CombatModifiers",
+        "title": "Combat Modifiers",
+        "mechanic": "Combat",
+        "parentId": "",
+        "description": "The following modifiers commonly apply to an attacker’s attempt to hit or affect a target. This list is not exhaustive, and GMs may apply other situational modifiers as needed. Always consider movement, injuries, or environmental effects when resolving actions.\n\nSituational Modifiers:\n\n- Cover — ATK: 0 | DEF: +1  \n  Example: Car doors, rocks, drywall, trees\n\n- Very brightly or poorly lit area — ATK: -1 | DEF: 0  \n  Example: Searchlights, moonlight, flashbangs\n\n- Very dimly lit or extremely brightly lit area — ATK: -2 | DEF: 0  \n  Example: Starlight, fog, smoke, 9-Bangs, strobe lights\n\n- Pitch black — ATK: -3 | DEF: 0  \n  Example: Deep caverns, no lights\n\n- Off hand — ATK: -1 | DEF: 0  \n  Example: Using your non-dominant hand\n\n- Concussed — ATK: -1 | DEF: 0  \n  Example: Winded, stunned, lightly dazed\n\n- Pinged — ATK: +1, DEF: 0  \n  Example: Digitally marked via drone, marked to friendlies, pointed out by a squad leader"
+    },
+    {
+        "id": "Environment",
+        "title": "Environmental Conditions",
+        "mechanic": "Combat Modifiers",
+        "parentId": "CombatModifiers",
+        "description": "Environmental conditions add dynamic factors to missions by affecting visibility and audibility of both friendlies and enemies.\n\nWeather Conditions:\n- Fog: Applies a global 'poorly lit'(-1) modifier for long and extreme long range bands. Countered by Thermal.\n- Heavy Rain: Applies a -1 to all observation checks [Notice][Alertness][Investigate] and includes Fog effects. Thunder can help mask certain noises.\n- Nighttime: Applies a 'poorly lit' modifier globally when outdoors.\n- New Moon: Applies a 'very dimly lit' modifier globally when outdoors.\n- Full Moon: No lighting modifiers.\n\nWhen multiple conditions apply, the highest modifier is used, unless countered by Thermal or NVGs.\n\nExample: If a mission has Fog, Heavy Rain, and Nighttime, only the most severe modifier applies ('poorly lit' [-1] at close-medium range; 'very poorly lit' [-2] at long/ELR)."
+    },
+    {
+        "id": "Vision",
+        "title": "NVG and Thermal",
+        "mechanic": "Combat Modifiers",
+        "parentId": "CombatModifiers",
+        "description": "Night Vision and Thermal optics affect how a contractor is able to see in a variety of lighting conditions.\n\n-NVG (Night Vision Goggles): Normalizes all lighting conditions. Applies a -1 modifier to Extreme Long Range. Ideal for CQB. Counteracts all lighting-based visibility debuffs.\n\n- IR (Thermal Imaging): Also normalizes all lighting and weather conditions. However, imposes a -1 modifier at Close Range. Best suited for long-range spotting roles and can see through smoke. IR must be purchased using the Operational Budget.\n\nNVGs are standard-issue gear. Thermal (IR) must be explicitly acquired through buy periods, or found during a mission."
+    },
+    {
+        "id": "Stances",
+        "title": "Moving and Stances while Shooting",
+        "mechanic": "Combat Modifiers",
+        "parentId": "CombatModifiers",
+        "description": "Operators can move and perform actions (such as shooting or throwing) simultaneously, with accuracy penalties depending on thier movement speed.\n\n- Moving & Shooting: Apply a global -1 modifier to all actions.\n- Sprinting & Shooting: Apply a global -2 modifier to all actions.\n\n If a character opts instead to fire from stationary AFTER moving, the maluses change: \n\n - Moving then shooting: No modifiers \n - Sprinting then shooting: -1 global modifier \n\n Shooting from stationary and then moving has no penalty.\n\n At the same time, Operators can also choose to mount or prone. When mounting or prone., your character gains a +1 to any shooting actions, but cannot sprint the next round."
+    },
+    {
         "id": "Medical",
         "title": "Wounds and Medicine",
         "mechanic": "Core",
         "parentId": "",
-        "description": "Getting shot hurts. As you collect wounds and near a system shock, you become less and less combat effective, making even the action of shooting back become a struggle. However, you can always heal these wounds with all sorts of medical equipment, and the help of a handy-dandy medic nearby. Just don’t get a painkiller addiction.\n\n Flesh wound is a catch-all term for painful but generally non-life- threatening injuries such as minor gunshot wounds, deep cuts or minor concussions. These apply a -1 modifier that stacks for each wound. Depending on the wound, the character can no longer sprint or run.\n\n Deep wounds are more severe injuries: compound fractures, punctured organs, damage to major blood vessels, bad gunshot wounds etc. Characters with a Deep wound can't sprint. Deep wounds apply a -2 modifier that stacks with each wound.\n\n System Shock is how many wounds you can get before tapping out. You will have to do saving throws with a coin toss every turn until stabilized. Three failed tosses, the character dies.\n\n When using medical kits, you cannot fumble an action."
+        "description": "Getting shot hurts. As you collect wounds and near a system shock, you become less and less combat effective, making even the action of shooting back become a struggle. However, you can always heal these wounds with all sorts of medical equipment, and the help of a handy-dandy medic nearby. Just don’t get a painkiller addiction.\n\n Flesh wound is a catch-all term for painful but generally non-life- threatening injuries such as minor gunshot wounds, deep cuts or minor concussions. These apply a -1 modifier that stacks for each wound. Depending on the wound, the character can no longer sprint or run.\n\n Deep wounds are more severe injuries: compound fractures, punctured organs, damage to major blood vessels, bad gunshot wounds etc. Characters with a Deep wound to their legs can't sprint. Deep wounds apply a -2 modifier that stacks with each wound.\n\n System Shock is how high your wound modifier can get before tapping out. You will have to do saving throws with a coin toss every turn until stabilized. Three failed checks, the character is incapacitated or dies.\n\n When using medical kits, you cannot fumble an action."
+    },
+    {
+        "id": "Healing",
+        "title": "Healing and Treatment",
+        "mechanic": "Medical",
+        "parentId": "Medical",
+        "description": "Medical Treatment is used to clear wounds that have been collected over the course of a missiion or fight. To clear wounds- you need to roll your medical skill including your own wound maluses and bonuses, half it, and then round up if necessary.\n\n A quick reference for how many wounds cleared is: \n------------------------------\n 1-2 = 1 wound\n3-4 = 2 wounds\n 5-6 = 3 wounds \n\n You cannot hurt yourself or someone else while using nanites or medical kits. And are always guaranteed at least one wound- even if the roll is negative. \n\n There are 3 methods of treatment \n -Using dedicated nanite stimulants available to the medic class\n -Using an AFAK\n -Using an IFAK \n\n Each of these have different effects, though the specific nanites are covered in the gear section. The IFAK and AFAK are available to anyone and everyone. \n\n -IFAKs are single use, clear only flesh wounds, and can be used twice to get the same effect as AFAKs and clear deep wounds if you have multiple. \n -AFAKs are single use, clear deep and flesh wounds, but will prioritize clearing deep wounds first and then clearing the equivalent of flesh wounds after (2 flesh wounds for every deep)."
+    },
+    {
+        "id": "Reviving",
+        "title": "Critical Medical and Reviving",
+        "mechanic": "Medical",
+        "parentId": "Medical",
+        "description": "When someone goes down in a fight- its a big deal. This can either be caused by someone taking enough damage to pass the instanteous death or DBNO threshold, or by going into system shock by the amount of wounds taken. Either way- if someone takes enough damage to go into these two states- they enter into DBNO. Or 'Down But Not Out'.\n\n In DBNO, characters are down on the ground and are considered prone. They have to either roll their body stat against an MOS of 3 to stay alive, and upon three failed checks, they are considered incapacitated. You can also go into incapacitated upon your fourth down. When reviving someone from DBNO- you can choose to use an AFAK to revive them such that they only have one deep wound and are prone for their next turn, or you can be a medic and use a shock stim on them- which will have the same effect.\n\n Each time a character goes down- they take a permanent malus. \n -1st Down: Nothing\n -2nd Down: -1 dice to all checks \n -3rd down: Permanent flesh wound\n\n These maluses are cleared once you return to base, or patch yourself up at a Bivouac. \n\n When a character is incapacitated. They are incapable of taking any actions and cannot continue the mission without dedicated medical attention from a Medic. This medic will have to revive them once- and for the rest of the mission you will have a permanent deep wound until you return to base. Upon a second incapacitation- you cannot continue any longer or could even die."
     },
     {
         "id": "Armor",
@@ -149,14 +191,14 @@
         "title": "Penetration",
         "mechanic": "Core",
         "parentId": "",
-        "description": "Penetration values are weapon stats that help determine just how much a gun can punch through. For the sake of gameplay, Body armor can tank most rounds within ‘reason’ and are equivalent to Level IV. Someone is obviously not surviving being hit by a tank or a .50 BMG to the chest very easily.\n\n Penetration can be used to hit targets behind cover and walls according to the following rules:\n - When you dont have an LOS on a target, you are shooting with a 'Pitch black' modifier (-3).\n- Upon a successful notice roll for where they may be, apply 'Very Dimly Lit' (-2).\n- Pinged enemies have no negative modifier when shooting through walls. \n- If they are pinged and the weapon will penetrate a targets cover, it negates the cover bonus.\n\n Penetration Values are as follows: \n\n PEN 1: Penetrates everything up to but excluding thick cover. Includes soft walls.\n PEN 2: Penetrates thick cover up to hard walls and metal.\n PEN 3: Penetrates hard walls and up to thick-well reinforced materials and vehicle armor. \n PEN 4: Penetrates everything up to structures, consecutive walls, and terrain."
+        "description": "Penetration values are weapon stats that help determine just how much a gun can punch through. For the sake of gameplay, Body armor can tank most rounds within ‘reason’ and are equivalent to Level IV. Someone is obviously not surviving being hit by a tank or a .50 BMG to the chest very easily.\n\n Penetration can be used to hit targets behind cover and walls according to the following rules:\n - When you dont have an LOS on a target, you are shooting with a 'Very Dimly Lit' modifier (-2).\n- Upon a successful notice roll for where they may be, apply 'poorly Lit' (-1).\n- Pinged enemies have no negative modifier when shooting through walls. \n- If they are pinged and the weapon will penetrate a targets cover, it negates the cover bonus.\n\n Penetration Values are as follows: \n\n PEN 1: Penetrates everything up to but excluding thick cover. Includes soft walls.\n PEN 2: Penetrates thick cover up to hard walls and metal. includes most cover.\n PEN 3: Penetrates hard walls and up to thick-well reinforced materials and vehicle armor. \n PEN 4: Penetrates everything up to structures, consecutive walls, and terrain."
     },
     {
         "id": "Stealth",
         "title": "Stealth",
         "mechanic": "Core",
         "parentId": "",
-        "description": "Stealth checks are done by rolling an attacker’s Stealth against a defender's alertness as an opposed roll. Success provides the attacker a cover defense bonus until they fire their weapon. Stealth checks can also be rolled with disguise if using camouflage or masking, like hiding in a bush or covering yourself in mud or snow to blend in with it. Lighting can also affect stealth, as poor lighting conditions is a +1 to your roll, very poor lighting is +2, and perfect darkness is +3. Stance and cover also affects your stealth, as prone and using cover can increase your bonus by +1.\n\n If attempting to sneak past, or enter an area surreptitiously, you only need to roll stealth once against a defender's alertness for them not to notice you as you move for subsequent turns. However, when interacting with locks, computers, or anything else in that vein, the attacker must re-roll their stealth value against the defender’s alertness for that action. Fumbles while in stealth will cause guards to get suspicious and come investigate."
+        "description": "Stealth at it's core is an character rolling [disguise] or [stealth] against another's [alertness] (if not actively searching for attacker) or their [notice] (if actively searching for the attacker). When rolling disguise- you are considered the defender, and a matched roll will result in your success. When rolling stealth- you are considered the attacker, and a matched roll will result in the opponent's success. Most actions such as interacting with objects, and moving is considered 'stealth' while disguise is staying still and blending in with the environment.\n\nSuccessful stealth and disguise rolls over time will begin to give you a compounding bonus until you make an overt action (such as picking a lock or interacting with objects) or until you attack someone. This stacks to a maximum of +2 when using stealth or disguise. \n\nLighting conditions can also work in your favor. As these conditions will apply maluses to the opponent when they roll alertness or notice against you. However- just like you- they can utilize lighting against you via NVGs, IR, or flashlights.\n\nWhen attacking from stealth- at close range you roll the lower of the two values between [melee] or [cqc], and [stealth]. That is then opposed by the enemy's alertness roll, and the MOS is multiplied by your damage as usual. If attacking from range, you instead roll your normal weapons roll against them. However, depending on if the weapon is a long gun [larger than an SMG] or a pistol [SMG's to Light Pistols] it will cause an alertness check for the shot signature. Long weapons will cause a check for all enemies within and including long range- while pistols will only cause an alertness check at close range from the shot. These can be negated entirely via the use of subsonic ammunition."
     },
     {
         "id": "Squad",
@@ -166,40 +208,11 @@
         "description": "Some checks can be completed with multiple people, for example: opening a bulkhead, boosting another player to a location, carrying heavy things together. When an action is done in tandem with someone else, The highest skilled player will roll, and the skill being checked for the others is added as a flat bonus. If carrying a body for example, and someone has 2 in athletics, and the other has 1, then it will be a 2d6 +1.\n\n As well, Squads can conduct ‘sync shots’. Where every member of a squad finds a target, and fires on a mark. An Initiative check will be started to first determine the initiative queue, and then each player will roll for their shot with a +1 for being aimed.If someone’s initiative check is 5+, then they can pick another target to shoot at that turn as well, without the aimed bonus."
     },
     {
-        "id": "Environment",
-        "title": "Environmental Conditions",
-        "mechanic": "Core",
-        "parentId": "",
-        "description": "Environmental conditions add dynamic factors to missions by affecting visibility and audibility of both friendlies and enemies.\n\nWeather Conditions:\n- Fog: Applies a global 'poorly lit' modifier for medium range and 'very poorly lit' for long and extreme long range bands. Countered by Thermal.\n- Heavy Rain: Applies a -1 to all observation checks [Notice][Alertness][Investigate] and includes Fog effects. Thunder can help mask certain noises.\n- Nighttime: Applies a 'poorly lit' modifier globally when outdoors.\n- New Moon: Applies a 'very dimly lit' modifier globally when outdoors.\n- Full Moon: No lighting modifiers.\n\nWhen multiple conditions apply, the highest modifier is used, unless countered by Thermal or NVGs.\n\nExample: If a mission has Fog, Heavy Rain, and Nighttime, only the most severe modifier applies ('poorly lit' [-1] at close-medium range; 'very poorly lit' [-2] at long/ELR)."
-    },
-    
-    {
-        "id": "Vision",
-        "title": "NVG and Thermal",
-        "mechanic": "Core",
-        "parentId": "",
-        "description": "Night Vision and Thermal optics affect how a contractor is able to see in a variety of lighting conditions.\n\n-NVG (Night Vision Goggles): Normalizes all lighting conditions. Applies a -1 modifier to Extreme Long Range. Ideal for CQB. Counteracts all lighting-based visibility debuffs.\n\n- IR (Thermal Imaging): Also normalizes all lighting and weather conditions. However, imposes a -1 modifier at Close Range. Best suited for long-range spotting roles and can see through smoke. IR must be purchased using the Operational Budget.\n\nNVGs are standard-issue gear. Thermal (IR) must be explicitly acquired through buy periods, or found during a mission."
-    },
-    {
         "id": "EDice",
         "title": "E-Dice",
         "mechanic": "Core",
         "parentId": "",
-        "description": "E-Dice can be used both proactively and retroactively, with limitations.\n\n- Proactive Use: prior to a roll, you can declare that you are going to use E-dice to increase the amount of dice you roll with during a check. For example, if you roll a 2d6k1, you can declare an E-dice and increase it to a 3d6k1. \n- Retroactive Use: After a roll, E-dice can be used to gain a second chance, but only for cognition and intelligence based checks, such as notice, investigate, and trivia.\n\n E-Dice can be replenished. however, it requires 2 EXP to retore one dice, and you can only hold a max of 4."
-    },
-    {
-        "id": "Stances",
-        "title": "Moving and Stances while Shooting",
-        "mechanic": "Core",
-        "parentId": "",
-        "description": "Operators can move and perform actions (such as shooting or throwing) simultaneously, with accuracy penalties depending on thier movement speed.\n\n- Moving & Shooting: Apply a global -1 modifier to all actions.\n- Sprinting & Shooting: Apply a global -2 modifier to all actions.\n\n If a character opts instead to fire from stationary AFTER moving, the maluses change: \n\n - Moving then shooting: No modifiers \n - Sprinting then shooting: -1 global modifier \n\n Shooting from stationary and then moving has no penalty.\n\n At the same time, Operators can also choose to mount or prone. When mounting or prone., your character gains a +1 to any shooting actions, but cannot sprint the next round."
-    },
-    {
-        "id": "CombatModifiers",
-        "title": "Combat Modifiers",
-        "mechanic": "Combat",
-        "parentId": "",
-        "description": "The following modifiers commonly apply to an attacker’s attempt to hit or affect a target. This list is not exhaustive, and GMs may apply other situational modifiers as needed. Always consider movement, injuries, or environmental effects when resolving actions.\n\nSituational Modifiers:\n\n- Cover — ATK: 0 | DEF: +1  \n  Example: Car doors, rocks, drywall, trees\n\n- Very brightly or poorly lit area — ATK: -1 | DEF: 0  \n  Example: Searchlights, moonlight, flashbangs\n\n- Very dimly lit or extremely brightly lit area — ATK: -2 | DEF: 0  \n  Example: Starlight, fog, smoke, 9-Bangs, strobe lights\n\n- Pitch black — ATK: -3 | DEF: 0  \n  Example: Deep caverns, no lights\n\n- Off hand — ATK: -1 | DEF: 0  \n  Example: Using your non-dominant hand\n\n- Concussed — ATK: -1 | DEF: 0  \n  Example: Winded, stunned, lightly dazed\n\n- Pinged — ATK: +1, DEF: 0  \n  Example: Digitally marked via drone, marked to friendlies, pointed out by a squad leader"
+        "description": "E-Dice can be used both proactively and retroactively, with limitations, as well as being a lucky break.\n\n- Proactive Use: prior to a roll, you can declare that you are going to use E-dice to increase the amount of dice you roll with during a check. For example, if you roll a 2d6k1, you can declare an E-dice and increase it to a 3d6k1. \n- Retroactive Use: After a roll, E-dice can be used to gain a second chance, but only for cognition and intelligence based checks, such as notice, investigate, and trivia.\n - As a lucky break: You can burn an E-dice to turn an instant kill into two deep wounds instead. \n\n E-Dice can be replenished. however, it requires 1 EXP to retore one dice, and you can only hold a max of 4."
     },
     {
         "id": "turnCouple",
@@ -207,13 +220,13 @@
         "mechanic": "Core",
         "parentId": "",
         "description": "When initiative is rolled with Combat Sense, and depending on party size, a GM can communicate with their party and choose to couple turns. Essentially, two or more people make their turns at once depending on the initiative queue. They can be considered 'battle buddies' but you dont have to follow that rule specifically. \n\n When turns are coupled, the initative queue is created as normal, but the GM can couple player and enemy turns together if they are adjacent so they happen at the same time. Players can organize amongst themselves to have things happen in a specific order to get certain effects."
-    }, 
+    },
     {
         "id": "GrandOperations",
         "title": "Grand Operations",
         "mechanic": "Core",
         "parentId": "",
-        "description": "In grand operations, maps are much bigger, and encounters are spread across long distances a team needs to trek. These maps are also in a hex grid like others, however- they also now include specific areas marked in different colored hexes that require specific checks to pass, and will increase travel time upon success or failure. To move from one hex to another, it is 2 turns. \n\n>Yellow [inclune/downslope]: Requires an endurance check. upon failure, travel time doubles. Even number inclines in a row have the other half as downslope, odd number inclines are all uphill or downhill. \n>Orange [Climb]: Requires a climb check. Upon failure of the climb per climb rules, travel time doubles, but you also can mark wounds here if you fall.\n>Blue [Water]: Requires an athletics if passing through only one hex. 2+ adjacent requires endurance for each hex, with a malus of -1 per each. Failure doubles travel time.\n>Green [Dense]: Requires navigate and alertness. is considered dense forest/dense urban, can be used to hide from drones and vehicles. Vehicles will have 3 times the travel time through these areas upon a failed navigate check."
+        "description": "In grand operations, maps are much bigger, and encounters are spread across long distances a team needs to trek. These maps are also in a hex grid like others, however- they also now include specific areas marked in different colored hexes that require specific checks to pass, and will increase travel time upon success or failure. To move from one hex to another, it is 1 world tick. \n\n>Yellow [inclune/downslope]: Requires an endurance check. upon failure, travel time doubles. Even number inclines in a row have the other half as downslope, odd number inclines are all uphill or downhill. You can lose or break gear here \n>Orange [Climb]: Requires a climb check. Upon failure of the climb per climb rules, travel time doubles, but you also can mark wounds here if you fall.\n>Blue [Water]: Requires an athletics if passing through only one hex. 2+ adjacent requires endurance for each hex, with a malus of -1 per each. Failure doubles travel time.\n>Green [Dense]: Requires navigate and alertness. is considered dense forest/dense urban, can be used to hide from drones and vehicles. Vehicles will have 3 times the travel time through these areas upon a failed navigate check."
     },
     {
         "id": "GrandOperations",

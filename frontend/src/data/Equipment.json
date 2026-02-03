@@ -13,7 +13,7 @@
         "class": "All",
         "cost": 1200,
         "description": "Light Pistols are handguns shooting conventional pistol calibers such as 9x19, .45 ACP, and 5.7x28. Though light on damage they make up for this with decent-sized magazines and general reliability at short to medium distances",
-        "rulesText": "[Light Weapons][CQC]\nRange modifier: +1 C | -2 L | -3 ELR\n PEN: 1 | DMG: 4 \n RSV: 6 | CAP: 2"
+        "rulesText": "[Light Weapons][CQC]\nRange modifier: +1 C | -2 L | -3 ELR\n PEN: 1 | DMG: 4 \n RSV: 4 | CAP: 2"
     },
     {
         "id": "h-pistols",
@@ -22,7 +22,7 @@
         "class": "All",
         "cost": 1200,
         "description": "Heavy Pistols are handguns and revolvers shooting heavier calibers such as .44 Magnum, .357 Magnum, .50 AE. These weapons trade large magazine sizes and accuracy at longer distances for heavy damage.",
-        "rulesText": "[Light Weapons][Precision]\nRange modifier: +1 C | -1 L | -2 ELR\n PEN: 2 | DMG: 6 \n RSV: 6 | CAP: 2"
+        "rulesText": "[Light Weapons][Precision]\nRange modifier: +1 M | -1 L | -2 ELR\n PEN: 2 | DMG: 6 \n RSV: 4 | CAP: 2"
     },
     {
         "id": "smg",
@@ -31,7 +31,7 @@
         "class": "All",
         "cost": 2000,
         "description": "Submachine Guns are compact weapons shooting conventional pistol calibers such as 9x19, .45 ACP, and 10mm at high rates of fire. These weapons come with the ability to Spray which allows them to saturate anywhere between 1-3 targets in their cone of fire (note this can also include teammates if the player is not careful). When used in the secondary slot- the total ammo is halved.",
-        "rulesText": "[Light Weapons][Spray]\nRange modifier: +1 C | -1 L | -2 ELR\n PEN: 1 | DMG: 4 \n RSV: 12 | CAP: 3"
+        "rulesText": "[Light Weapons][Spray]\nRange modifier: +1 C | -1 L | -2 ELR\n PEN: 1 | DMG: 4 \n RSV: 9 | CAP: 3"
     },
     {
         "id": "carbines",
@@ -40,7 +40,7 @@
         "class": "All",
         "cost": 2600,
         "description": "Carbines and PDWs are the stepping stone from SMG to Assault Rifle, covering weapons that fire intermediate cartridges like 5.56x45, 4.6x30, and 5.7x28. A bit more wieldy than the SMG, the carbine is much more tuned to medium-range engagements and cannot spray or burst like their AR cousins.",
-        "rulesText": "[Light Weapons][Spray]\nRange modifier: +1 M | -1L | -2 ELR\n PEN: 1 | DMG: 4 \n RSV: 12 | CAP: 3"
+        "rulesText": "[Light Weapons][Spray]\nRange modifier: +1 M | -1L | -2 ELR\n PEN: 1 | DMG: 4 \n RSV: 9 | CAP: 3"
     },
     {
         "id": "ar",
@@ -49,7 +49,7 @@
         "class": "All",
         "cost": 3500,
         "description": "Assault Rifles are the big brothers to the carbines, covering weapons that fire intermediate cartridges like 5.56x45, 5.45x39, and 7.62x39. The true middle ground when it comes to weapons, they dominate mid-range engagements but take a hit in CQB. These weapons come with the ability to Burst Fire, enabling them to fire a tight burst towards a single opponent at the expense of less dice, for more damage.",
-        "rulesText": "[Medium Weapons][Burst]\nRange modifier: -1 C | +1 M | -1 ELR\n PEN: 1 | DMG: 5 \n RSV: 12 | CAP: 3"
+        "rulesText": "[Medium Weapons][Burst]\nRange modifier: -1 C | +1 M | -1 ELR\n PEN: 1 | DMG: 5 \n RSV: 9 | CAP: 3"
     },
     {
         "id": "mr",
@@ -58,7 +58,7 @@
         "class": "All",
         "cost": 4300,
         "description": "Marksman rifles are hard-hitting semi-automatic rifles chambered in heavier-hitting calibers such as 7.62x51, 7.62x54, and 6.8x51. Capped with a reduced magazine size and suffering in CQC, these weapons make up for this with their high damage and ranged performance. These weapons come with the ability to Burst Fire, enabling them to fire a tight burst towards a single opponent at the expense of less dice, for more damage.",
-        "rulesText": "[Medium Weapons][Burst][Precision]\nRange modifier: -1 C | +1 L | -1 ELR\n PEN: 2 | DMG: 6 \n RSV: 10 | CAP: 2"
+        "rulesText": "[Medium Weapons][Burst][Precision]\nRange modifier: -1 C | +1 L | -1 ELR\n PEN: 2 | DMG: 6 \n RSV: 6 | CAP: 2"
     },
     {
         "id": "shotgun",
@@ -67,7 +67,7 @@
         "class": "All",
         "cost": 3000,
         "description": "Shotguns are the kings of close quarters, chambered in a variety of 12 gauge shells, and occasionally in 8 gauge, they will annihilate anything foolish enough to stand less than 10 meters in front of them. This high damage potential does come with the caveat of a massive damage drop-off over long distances. These weapons can also be used as makeshift breaching devices and have destructive abilities against soft walls.",
-        "rulesText": "[Medium Weapons]\nRange modifier: +2 C | -1 M | -3 L | -4 ELR\n PEN: 1 | DMG: 6 \n RSV: 12 | CAP: 3"
+        "rulesText": "[Medium Weapons]\nRange modifier: +2 C | -1 M | -3 L | -4 ELR\n PEN: 1 | DMG: 6 \n RSV: 6 | CAP: 3"
     },
     {
         "id": "sr",
@@ -76,7 +76,7 @@
         "class": "Sharpshooter Only",
         "cost": 5100,
         "description": "Undisputed champions of long-range engagements, sniper rifles are a go-to choice for marksmen. Chambered from anything between 7.62x51 AP, 338 Lupua, and .300 Norma these weapons are perfect for dropping individual targets long before they know what hit them, made all the better with their armour-penetrating rounds that can hit targets behind soft walls and cover. The major downside however is drawbacks for trying to use them in CQC and their low ammo count. Make each shot count.",
-        "rulesText": "[Medium Weapons][Sharpshooter][Precision]\nRange modifier: -2 C | +1 L | +2 ELR\n PEN: 2 | DMG: 7 \n RSV: 10 | CAP: 5"
+        "rulesText": "[Medium Weapons][Sharpshooter][Precision]\nRange modifier: -2 C | +1 L | +2 ELR\n PEN: 2 | DMG: 7 \n RSV: 6 | CAP: 3"
     },
     {
         "id": "mg",
@@ -85,7 +85,7 @@
         "class": "Fire Support Only",
         "cost": 4800,
         "description": "Lead spitting machines of the battlefield, machine guns are chambered in a mixture of intermediate and heavier hitting calibers ranging from 5.56,5.8x42, 7.62x51, 6.8x51, and 7.62x39. Despite this mix of calibers, their main purpose isn’t to inflict pinpoint precision damage but to instead shatter the will and the cover of anyone in front of their field of fire. Comes with the ability to Suppress this allows the attacker to choose an area of up to 3 hexes wide to suppress.",
-        "rulesText": "[Heavy Weapons][Fire Support][Suppression]\nRange modifier: +1 Bipod | +1 M | -1 L | -1 ELR\n PEN: 2 | DMG: 5 \n RSV: 12 | CAP: 6"
+        "rulesText": "[Heavy Weapons][Fire Support][Suppression]\nRange modifier: +1 Bipod | +1 M | -1 L | -1 ELR\n PEN: 2 | DMG: 5 \n RSV: 8 | CAP: 4"
     },
     {
         "id": "drum-shotgun",
@@ -94,7 +94,7 @@
         "class": "Fire Support Only",
         "cost": 3300,
         "description": "Like the venerable machine guns of the battlefield, Drum Mag Shotguns fill a similar niche to the machine gun but for close quarters engagements. Packing the punch of the shotgun but lacking the range, these weapons are designed for keeping the enemy’s head down while you rush their position for the kill. Comes with the ability to Suppress, this allows the attacker to choose an area of up to 3 hexes wide to suppress.",
-        "rulesText": "[Heavy Weapons][Fire Support][Suppression]\nRange modifier: +1 C | -1 M | -3 L | -4 ELR\n PEN: 1 | DMG: 6 \n RSV: 12 | CAP: 6"
+        "rulesText": "[Heavy Weapons][Fire Support][Suppression]\nRange modifier: +1 C | -1 M | -3 L | -4 ELR\n PEN: 1 | DMG: 6 \n RSV: 8 | CAP: 4"
     },
     {
         "id": "grenades",
@@ -110,7 +110,7 @@
         "class": "All",
         "cost": 0,
         "description": "A bog standard high explosive fragmentation grenade. Light, easy to carry, easier to throw. Useful for many applications.",
-        "rulesText": "[Throw][DMG]\n Follows ranged rules. When thrown in combat, prompts [Throw] vs [Armor] or [Acrobatics]. Out of combat,requires an alertness to check if they react.\n Enemies can also [Brace] as a reaction to boost their armor roll at the cost of -1 to all actions for the next turn.\n If defender chooses to roll acrobatics, you move 2 hexes away from where you are. An MOS greater than 2 has the defender still standing, else- they are considered prone until their next turn.\n 8 DMG | 1 hex AOE. \n destroys cover and soft walls."
+        "rulesText": "[Throw][DMG]\n Follows ranged rules. When thrown in combat, prompts [Throw] vs [Armor] or [Acrobatics]. Out of combat,requires an alertness to check if they react.\n Enemies can also [Brace] as a reaction to boost their armor roll at the cost of -1 to all actions for the next turn.\n If defender chooses to roll acrobatics, you move 2 hexes away from where you are. An MOS greater than 2 has the defender still standing, else- they are considered prone until their next turn.\n 7 DMG | 1 hex AOE. \n destroys cover and soft walls."
     },
     {
         "id": "flash",
@@ -119,7 +119,7 @@
         "class": "All",
         "cost": 0,
         "description": "The power of chemistry, in the palm of your hand. Useful in dissuading people from choosing to shoot back, or to create an opening and interrupt them.",
-        "rulesText": "[Throw][Interrupt]\n Follows ranged rules. When thrown in combat, prompts [Throw] vs [Alertness] for them to turn away or evade. An MOS greater than 2 has the defender still standing, else- they are considered prone until their next turn.\n 0 DMG | 2 hex AOE. \n Applies 'Concussion' on all targets within the AOE."
+        "rulesText": "[Throw][Interrupt]\n Follows ranged rules. When thrown in combat, prompts [Throw] vs [Spirit] or [Acrobatics] for them to either brace or evade. An MOS greater than 2 has the defender still standing, else- they are considered prone until their next turn if evading.\n 0 DMG | 2 hex AOE. \n Applies 'Concussion' on all afflicted targets within the AOE."
     },
     {
         "id": "thermtex",
@@ -128,7 +128,7 @@
         "class": "All",
         "cost": 4000,
         "description": "The power of chemistry once more, now re-engineered and applied to burn at 2000 degrees celsius, and then detonate into a spectacular explosion. Powerful enough to deal damage to vehicles and burn through armor. Not as effective against people unless stuck... But why would you do that?",
-        "rulesText": "[Throw][AT]\n Follows ranged rules. When thrown in combat, prompts [Throw] vs [Armor] or [Acrobatics]. Out of combat,requires an alertness to check if they react.\n Enemies can also [Brace] as a reaction to boost their armor roll at the cost of -1 to all actions for the next turn.\n If defender chooses to roll acrobatics, you move 2 hexes away from where you are. An MOS greater than 2 has the defender still standing, else- they are considered prone until their next turn.\n 8 DMG | 1 hex AOE. \n Destroys cover,soft, and hard walls. Can damage armored vehicles"
+        "rulesText": "[Throw][AT]\n Follows ranged rules. When thrown in combat, prompts [Throw] vs [Armor] or [Acrobatics]. Out of combat,requires an alertness to check if they react.\n If defender chooses to roll acrobatics, you move 2 hexes away from where you are. An MOS greater than 2 has the defender still standing, else- they are considered prone until their next turn.\n 8 DMG | 1 hex AOE. \n Destroys cover,soft, and hard walls. Can damage armored vehicles"
     },
     {
         "id": "smoke",
@@ -284,7 +284,7 @@
         "class": "Rifleman",
         "cost": 17000,
         "description": "Developed from the XM-25 CDTE, the X-50 Programmable Munition Grenade Launcher is a modernized version of the original system. Bringing along thermal optics, auto-rangefinding, and an improved GUI for displaying the trajectory path. \n also: 'THOONK THOONK THOONK GET AIRBURSTED! ",
-        "rulesText": "[H-Wep]\nRange modifier: -3C | +1L | -1ELR\nAmmo: 6\nUses programmable, airburst munitions. Deals 9 damage to infantry and ignores cover. No damage to vehicles."
+        "rulesText": "[H-Wep]\nRange modifier: -3C | +1L | -1ELR\nAmmo: 4\nUses programmable, airburst munitions. Deals 9 damage to infantry and ignores cover. No damage to vehicles."
     },
     {
         "id": "40mm-he",
@@ -404,7 +404,7 @@
         "class": "Raider",
         "cost": 0,
         "description": "For when compliance wasn't a request. Channels the power of chemistry to dissuade targets from considering shooting back. And also blinds them. And gives them hearing problems.",
-        "rulesText": "Opposed Throw Check\nCauses an extremely brightly lit effect for any enemies caught by the flashbang (-2 on attacking actions) for the turn.\nUpon fail the flashbang misses.\nUpon fumble, the user and anyone around them are affected."
+        "rulesText": "Opposed Throw Check\nCauses an extremely brightly lit effect for any enemies caught by the ninebang (-2) for the turn.\nUpon fail the flashbang misses.\nUpon fumble, the user and anyone around them are affected."
     },
     {
         "id": "emp",
@@ -413,7 +413,7 @@
         "class": "Raider",
         "cost": 5000,
         "description": "Eskola built this in a CAVE. with SCRAPS.",
-        "rulesText": "Disables all electronics and lights around the user.\nIf indoors with no natural lighting, it applies a pitch black effect to the room and any adjacent. If there is natural lighting, it will apply a very dimly lit or poorly lit effect.\nElectronics will return in 3 turns."
+        "rulesText": "Disables all electronics and lights around the user.\nIf indoors with no natural lighting, it applies a pitch black effect to the room and any adjacent. If there is natural lighting, it will apply a very dimly lit or poorly lit effect.\nElectronics will return in 3 turns.\nRequires 2 rapid movement turns to recharge, or 4 normal movement turns.\nCan also use a bonus action to wiggle in place to charge for a normal movement turn."
     },
     {
         "id": "stalker",
@@ -422,7 +422,7 @@
         "class": "Raider",
         "cost": 12000,
         "description": "Erases the user from all cameras and drones while in use by looping an image without them in it. Reduces ambient noise with an active noise control unit.",
-        "rulesText": "+1 dice to stealth rolls while in use. Invisible to all cameras and drones while active. Erases enemy spotting when in combat.\nLasts 4 turns."
+        "rulesText": "+1 dice to stealth rolls while in use. Invisible to all cameras and drones while active. Erases enemy spotting when in combat.\nLasts 4 turns.\nRequires 2 rapid movement turns to recharge, or 4 normal movement turns.\nCan also use a bonus action to wiggle in place to charge for a normal movement turn."
     },
     {
         "id": "octo",
@@ -474,7 +474,7 @@
         "class": "Combat Engineer",
         "cost": 13000,
         "description": "From the classics of the AW-50 and M107 Barret to modern options such as the Gepard GM6 Lynx, Anti Material rifles come in all shapes and sizes but offer the same capability: big bullet, big penetration, big damage. Anti Material rifles can penetrate heavy armor and disable dedicated vehicle systems permanently. Such as APS, tracks, or engines. On lighter vehicles, they can punch through the armor, killing passengers or gunnners.",
-        "rulesText": "Range Modifiers: +1 Bipod | -2C | +1L | +2ELR\n Ammo: 10\nPen: 3\nDamage: 8"
+        "rulesText": "Range Modifiers: +1 Bipod | -2C | +1L | +2ELR\n Ammo: 5\nPen: 3\nDamage: 8"
     },
     {
         "id": "semenov-railgun",
@@ -483,7 +483,7 @@
         "class": "Combat Engineer",
         "cost": "[???]",
         "description": "Advanced, experimental Railgun design from Gold Coast. Utilizes electromagnetics to accelerate a 14.5 Anti-Material round from 0 to Mach 3 in under a second. We are not liable for hearing damage caused by extensive use.",
-        "rulesText": "Range Modifiers: +1 Bipod | -2C | +1L | +2ELR\n Ammo: 10\nPen: 4\nDamage: 10\n\nRequires a turn of charge-up before firing.\nWill cause characters within the room or round path to become Suppressed."
+        "rulesText": "Range Modifiers: +1 Bipod | -2C | +1L | +2ELR\n Ammo: 3\nPen: 4\nDamage: 10\n\nWill cause characters within the room or round path to become Suppressed."
     },
     {
         "id": "T-ENG",
@@ -528,7 +528,7 @@
         "class": "Technical Engineer",
         "cost": 7000,
         "description": "Customized stealth package for the demo-dog. Originally created for the Special Reconaissance teams and SOCOM requirements, the package installs whisper quiet servos, strips unecessary armor, and swaps the standard belt fed GCR-500 for a supressed .300 blackout 'Kitty Kat' version.",
-        "rulesText": "DMG 4 | PEN 1 | Range: +1 C, -1 L, -2 ELR | 6 turns of ammo | +1 dice to stealth checks. AC:0"
+        "rulesText": "DMG 4 | PEN 1 | Range: +1 C, -1 L, -2 ELR | 6 turns of ammo | +2 dice to stealth checks. AC:0"
     },
     {
         "id": "dd-marksman",
@@ -548,7 +548,7 @@
         "class": "Technical Engineer",
         "cost": 15000,
         "description": "Based off of prototypes found in 2018, the Gunner variant offers more firepower and ammo in exchange for poor heat dispersion due to the gimbal mount.",
-        "rulesText": "DMG 5 | PEN 2 | Range: +1 M , -1 L , -1 ELR | 6 turns of ammo | Can supress for at most 3 turns before barrel overheats or belt jams."
+        "rulesText": "DMG 5 | PEN 2 | Range: -1 C | +1 M | -1 L | -1 ELR | 6 turns of ammo | Can supress for at most 3 turns before barrel overheats or belt jams."
     },
     {
         "id": "LMD",
@@ -734,7 +734,7 @@
         "class": "Medic",
         "cost": 0,
         "description": "Advanced nanomachines automatically help stop bleeding, apply painkillers, and make getting shot a little less un-fun.",
-        "rulesText": "Heal a wound and deep wound every turn\nLasts for 1d6 turns + medical skill level turns"
+        "rulesText": "Heal a flesh wound every turn, if no flesh wounds heal a deep wound every 2 turns.\nLasts for 1d6 turns/2 + medical skill level turns"
     },
     {
         "id": "snk",
@@ -743,8 +743,8 @@
         "SubMunition": true,
         "class": "Medic",
         "cost": 6000,
-        "description": "Retooled for giving one final hurrah, Shock Nanites make the user a bit more hardy for a short while, and stops them from going into system shock.",
-        "rulesText": "Increase System Shock threshold by 5\nLasts for 1d6 + medical skill level turns"
+        "description": "A concoction of nanites from every kind to stave off death and keep someone in the fight. Painkillers, coagulants, and stimulants get someone back on their feet instantly.",
+        "rulesText": "Revives a character from DBNO instantly with only 2 deep wounds. The turn after- mark one flesh wound."
     },
     {
         "id": "tnk",
@@ -754,7 +754,7 @@
         "class": "Medic",
         "cost": 8000,
         "description": "Retooled for killing any and all pain, Truamadol Nanites make the user feel nothing, other than emotion — we didn't disable that just yet.",
-        "rulesText": "Temporarily removes all wounds\nLasts for 2 + 1d6 + medical skill level turns"
+        "rulesText": "Temporarily removes all wounds\nLasts for 1 + 1d6/2 + medical skill level turns"
     },
     {
         "id": "dtnk",
@@ -790,7 +790,7 @@
         "class": "Sharpshooter",
         "cost": 0,
         "description": "Built off the chassis of the PD-105 Black Hornet, Hummingbird reconnaissance drones are Gold Coast's home brewed modification, also tying in BUDDI spotting software and hardened Datalinks.",
-        "rulesText": "User carried\nSpots traps, gadgets, and more in the encounter area\n2 notice | 1 stealth | 1 investigation"
+        "rulesText": "User carried\nSpots traps, gadgets, vehicles, and more in the encounter area and one hex around\n Uptime: 4 turns\n 3 notice | 2 stealth | 1 investigation"
     },
     {
         "id": "silverbird-uav",
@@ -798,8 +798,17 @@
         "parentId": "Recon",
         "class": "Sharpshooter",
         "cost": 8000,
-        "description": "Built off of the Marine's SUAV, the Silver Bird is an autonomous drone that orbits the user at a high altitude to mark targets. Has only NV. Provides standard pings.",
-        "rulesText": "User Carried\nSpots in a large area, extending to 2 world hexes from the encounter area\n2 notice | 1 acrobatics | 2 investigation"
+        "description": "Built off of the Marine's SUAV, the Silver Bird is an autonomous drone that orbits the user at a high altitude to mark targets. Has only NV. Pings for every turn it is up.",
+        "rulesText": "User Carried\nSpots in a large area, extending to 4 world hexes from the encounter area\n Uptime: 3 turns\n 2 notice | 1 acrobatics | 2 investigation"
+    },
+    {
+        "id": "greybird-uav",
+        "title": "Grey Bird UAV (SUAV)",
+        "parentId": "Recon",
+        "class": "Sharpshooter",
+        "cost": 10000,
+        "description": "Built off of the Marine's SUAV, the Grey Bird is an autonomous drone that orbits the user at a high altitude to mark targets. Has IR and a LAM mounted to lase and designate targets.",
+        "rulesText": "User Carried\nSpots in a large area, extending to 4 world hexes from the encounter area\nUptime: 2 turns\n 2 notice | 1 acrobatics | 1 investigation"
     },
     {
         "id": "bumblebee-echolocator",
@@ -835,7 +844,7 @@
         "class": "Sharpshooter",
         "cost": 7000,
         "description": "Intended for snipers to be able to scale and move between buildings and walls quickly with a universal tool. However, only the operator can move, and only to adjacent buildings or vertically up to 25 meters.",
-        "rulesText": "1 turn deployment up vertical walls, horizontal gaps, and even into windows.\nRequires an M-weapons check to see if the target is hit. Upon failure the charge is expended.\nWhen used on a vertical surface, shifts the operator into a rappel, allowing them to fire from a suspended position.\n Can be used for overwatch positions in Dense Urban zones, and to skip climb checks.\nUpon success, the hook needs to recharge, which takes three turns.\n3 uses.\nCannot be used by teammates."
+        "rulesText": "Requires an M-weapons check to see if the target is hit. Upon failure the charge is expended.\nCan be used for overwatch positions in Dense Urban zones via providing a rapell, or to skip climb checks.\nUpon success, the hook needs to recharge, which takes two world ticks.\n3 uses.\nCannot be used by teammates."
     },
     {
         "id": "spec-ammo",
@@ -854,7 +863,7 @@
         "class": "Sharpshooter",
         "cost": 0,
         "description": "Lures an enemy towards a specific location. Has a lower drop, and a lower lethality, and makes a cute chirping sound.",
-        "rulesText": "Reduces damage by 3, but makes a ping and a noise that makes enemies investigate."
+        "rulesText": "Reduces damage by 3, but makes a ping and a noise that makes enemies investigate within medium range of it's impact point. Subsonic."
     },
     {
         "id": "ap-round",
@@ -873,8 +882,8 @@
         "SubMunition": true,
         "class": "Sharpshooter",
         "cost": 10000,
-        "description": "Locks onto a ping and adjusts for bullet drop and windage automatically. Effectively removes the math from shooting, beyond gauging travel time.",
-        "rulesText": "Can only be used on marked targets, provides a +1 bonus and +1 dice."
+        "description": "Locks onto a target and adjusts for bullet drop and windage automatically. Effectively removes the math from shooting, beyond gauging travel time.",
+        "rulesText": "Can only be used on marked or pinged targets, Adds a flat +1 to the roll."
     },
     {
         "id": "emp-round",
@@ -884,7 +893,7 @@
         "class": "Sharpshooter",
         "cost": 6000,
         "description": "Creates a small electromagnetic pulse around the impact point.",
-        "rulesText": "Disables and disrupts electronics for 1 turn, reduces damage by 4"
+        "rulesText": "Disables and disrupts electronics for 1 turn, reduces damage by 4. If aimed- can disable specific parts on vehicles such as APS."
     },
     {
         "id": "Trapper",
@@ -900,7 +909,7 @@
         "class": "Trapper",
         "cost": 0,
         "description": "Shock Sticks are quiet, non-lethal traps which can be used to stealthily dispatch guards or patrols, bar the noise of them being tazed.",
-        "rulesText": "Attacker Throw vs Defender Acrobatics [thrown]\nor\nAttacker Disguise/Throw vs Defender Notice [mine]\nUser carried, 3x\nCan be thrown to be deployed in a hard-to-reach place or without breaking the player's concealment."
+        "rulesText": "Attacker Throw vs Defender Acrobatics [thrown]\nor\nAttacker Disguise vs Defender Alertness [mine]\nUser carried, 3x\n 3 hex AOE \n\n Forces a Body check against 4 when caught in the trap.\n -Upon failure, you are tazed, forced prone, and take a flesh wound.\n -Upon success, you can disable the shock stick with an action- or leave its AOE."
     },
     {
         "id": "claymores",
@@ -909,7 +918,7 @@
         "class": "Trapper",
         "cost": 3500,
         "description": "Shotgun in a tin. Riddles a target with ball bearings when triggered, and will auto-detonate by itself whenever something passes by. Don't worry, it won't fire if friendlies are near.",
-        "rulesText": "Attacker Disguise vs Defender Notice\nUser carried, 3x\n8 DMG\nWhen a Claymore’s laser tripwire is activated, it detonates and riddles the target with a combination of shrapnel and ball bearings."
+        "rulesText": "Attacker Disguise vs Defender Notice\nUser carried, 3x\n8 DMG\n 4 hex diagonal AOE\nWhen a Claymore’s laser tripwire is activated, it detonates and riddles the target with a combination of shrapnel and ball bearings."
     },
     {
         "id": "lil-mac",
@@ -918,7 +927,7 @@
         "class": "Trapper",
         "cost": 2500,
         "description": "KNOCKOUT! When activated, the Lil Mac springs up from the ground and smacks into the enemy’s face, knocking them down.",
-        "rulesText": "Attacker Disguise vs Defender Notice\nUser carried, 2x\nWhen triggered, mine props up and knocks investigator out for a total of 4 turns."
+        "rulesText": "Attacker Disguise vs Defender Alertness\nUser carried, 2x\nWhen triggered, mine props up and knocks investigator out for a total of 4 turns. Will not cause an alertness check when activated."
     },
     {
         "id": "ankle-busters",
@@ -927,7 +936,7 @@
         "class": "Trapper",
         "cost": 3000,
         "description": "When activated, enemy movement is disabled as their legs and feet are riddled with shrapnel.\n\n... Somehow this isn't much better than claymores.",
-        "rulesText": "Attacker Disguise vs Defender Notice\nUser carried, simple action to deploy. 2x\nWhen activated the enemy cannot move until they bandage themselves or receive treatment from a medic.\nAttacker Disguise vs Defender Notice"
+        "rulesText": "Attacker Disguise vs Defender Alertness\nUser carried, simple action to deploy. 2x\nWhen activated the enemy cannot move until they bandage themselves or receive treatment from a medic."
     },
     {
         "id": "c4",
@@ -936,7 +945,7 @@
         "class": "Trapper",
         "cost": 4000,
         "description": "Better known as 'jeep stuff', C4 is a malleable material that when introduced to an electric charge—detonates spectacularly. There are a lot of use cases. Get creative.",
-        "rulesText": "Attacker Throw/Disguise vs Defender Acrobatics/Notice\nUser carried, simple action to deploy. x4\nWhen detonated, the C4 creates a massive explosion, capable of wiping out entire groups or a vehicle if they are attached or right on top of the explosive."
+        "rulesText": "Attacker Throw/Disguise vs Defender Acrobatics/Notice\nUser carried, simple action to deploy. x4\nWhen detonated, the C4 creates a massive explosion, capable of wiping out entire groups or a vehicle if they are attached or right on top of the explosive.\n 7 dmg."
     },
     {
         "id": "m5-slam",
@@ -984,7 +993,7 @@
         "class": "Trapper",
         "cost": 0,
         "description": "Accesses local cameras and devices and pings enemies that are visible.",
-        "rulesText": "Pings all enemies within 25 hexes. Can be distrupted if cameras are shot, or if target is obscured. Requires user connection. Ping lasts 1 turn."
+        "rulesText": "[-1 Traceability] Pings all enemies within 25 hexes. Can be distrupted if cameras are shot, or if target is obscured. Requires user connection. Ping lasts 1 turn."
     },
     {
         "id": "cyb-svr",
@@ -1002,8 +1011,8 @@
         "parentId": "thinkpad",
         "SubMunition": true,
         "class": "Trapper",
-        "cost": 10000,
-        "description": "Deafens a target and scrambles their communications system, making them unable to communicate with others through a deafening tone. Very effective in annoying enemies, or disrupting them entirely",
+        "cost": 7000,
+        "description": "Deafens a target and scrambles their communications system, making them unable to communicate with others through a deafening tone. Very effective in annoying enemies to forcefully disable their radios, or disrupting them entirely",
         "rulesText": "[-2 Traceability] Interrupts an enemy for a turn and applies a -1 to all actions. Countered by disabling radio."
     },
     {
@@ -1014,7 +1023,7 @@
         "class": "Trapper",
         "cost": 15000,
         "description": "Ping's bigger brother, penetrates into an enemy datalink to trace it back to everything using it. Pings any and every enemy on the local network.",
-        "rulesText": "[-3 Traceability] Pings all enemies on a network. Works regardless of cameras. Disabled if EMP'd or DL is jammed."
+        "rulesText": "[-3 Traceability] Pings all enemies on a network. Works regardless of cameras. EMP'd or severed targets are immune."
     },
     {
         "id": "cyb-MShck",

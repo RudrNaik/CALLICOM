@@ -106,13 +106,13 @@
     "max": 3
   },
   "amr":{
-    "max": 5
+    "max": 7
   },
   "semenov-railgun":{
     "max": 5
   },
   "PMGL":{
-    "max": 6
+    "max": 4
   },
   "LMD":{
     "max": 3

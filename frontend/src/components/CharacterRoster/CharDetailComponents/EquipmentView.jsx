@@ -44,7 +44,7 @@ function EquipmentSelection({
     });
 
     return m;
-  })
+  });
 
   const [gear, setGear] = useState(defaultGear);
   const [classGadgets, setClassGadgets] = useState([]);
@@ -69,7 +69,7 @@ function EquipmentSelection({
         gadgetAmmo: {},
         armorClass: 0,
         miscGear: "",
-      }
+      },
     );
 
     //filters items based on class, secondary class, and if they are purchased or not.
@@ -87,7 +87,7 @@ function EquipmentSelection({
         (item) =>
           (item.class === character.class ||
             item.class === character.multiClass) &&
-          (!item?.SubMunition || !item?.parentId === "thinkpad")
+          (!item?.SubMunition || !item?.parentId === "thinkpad"),
       );
     } else {
       filtered = campEquipment.filter(
@@ -95,7 +95,7 @@ function EquipmentSelection({
           (item.class === character.class ||
             item.class === character.multiClass) &&
           item.cost === 0 &&
-          (!item?.SubMunition || !item?.parentId === "thinkpad")
+          (!item?.SubMunition || !item?.parentId === "thinkpad"),
       );
     }
     setClassGadgets(filtered);
@@ -128,8 +128,8 @@ function EquipmentSelection({
     }
     const primaryFilter = Object.fromEntries(
       Object.entries(weaponCategories).filter(
-        ([key]) => !excluded.includes(key)
-      )
+        ([key]) => !excluded.includes(key),
+      ),
     );
     setPrimaries(primaryFilter);
 
@@ -158,8 +158,8 @@ function EquipmentSelection({
     ];
     const secondaryFilter = Object.fromEntries(
       Object.entries(weaponCategories).filter(
-        ([key]) => !excluded.includes(key)
-      )
+        ([key]) => !excluded.includes(key),
+      ),
     );
     setSecondary(secondaryFilter);
 
@@ -171,7 +171,7 @@ function EquipmentSelection({
     }
 
     //Sets the grenades.
-    setGrenadeCounts([3, 3]);
+    setGrenadeCounts([2, 2]);
   }, [character]);
 
   const handleChange = (field, value) => {
@@ -213,7 +213,7 @@ function EquipmentSelection({
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ equipment: gear }),
-        }
+        },
       );
       if (res.ok) {
         refreshCharacter();
@@ -303,7 +303,7 @@ function EquipmentSelection({
                       <div>
                         <div className="px-2 py-1 rounded bg-neutral-900 mb-2">
                           <span className="text-yellow-400">
-                            {grenadeCounts[i]} / 3
+                            {grenadeCounts[i]} / 2
                           </span>{" "}
                           <span className="text-gray-400 italic">
                             remaining
@@ -327,7 +327,7 @@ function EquipmentSelection({
                             onClick={() =>
                               setGrenadeCounts((prev) => {
                                 const updated = [...prev];
-                                updated[i] = 3;
+                                updated[i] = 2;
                                 return updated;
                               })
                             }
@@ -349,26 +349,54 @@ function EquipmentSelection({
         <div className="col-span-2 lg:col-span-1 bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-6 rounded shadow">
           <h3 className="font-semibold text-orange-300">Armor Class</h3>
           {isEditing ? (
-            <input
-              type="number"
-              min={0}
-              max={maxArmor}
-              className="w-full bg-neutral-900 border-1 border-orange-400/60 text-white p-2 rounded"
-              value={gear.armorClass}
-              onChange={(e) => {
-                let val = parseInt(e.target.value, 10);
-                if (Number.isNaN(val)) val = 0;
-                if (maxArmor > 0 && val > maxArmor) return; // cap
-                handleChange("armorClass", val);
-              }}
-            />
-          ) : (
-            <p>
-              AC{gear.armorClass}
+            <div>
+              <input
+                type="number"
+                min={0}
+                max={maxArmor}
+                className="w-full bg-neutral-900 border-1 border-orange-400/60 text-white p-2 rounded"
+                value={gear.armorClass}
+                onChange={(e) => {
+                  let val = parseInt(e.target.value, 10);
+                  if (Number.isNaN(val)) val = 0;
+                  if (maxArmor > 0 && val > maxArmor) return; // cap
+                  handleChange("armorClass", val);
+                }}
+              />
               {gear.armorClass == 0 && (
                 <span className="text-xs text-neutral-400">
-                  No maluses for sprinting and shooting, +1 to all movement
-                  related checks [Acrobatics][Jump][Climb][Endurance]
+                  No maluses for sprinting and shooting, +1 to
+                  [Acrobatics][Jump][Climb][Endurance][Stealth]
+                </span>
+              )}
+              {gear.armorClass == 1 && (
+                <p className="text-xs text-neutral-400">No Bonuses</p>
+              )}
+              {gear.armorClass == 2 && (
+                <p className="text-xs text-neutral-400">
+                  -1 to movement related checks
+                  [Acrobatics][Jump][Climb][Endurance]
+                </p>
+              )}
+              {gear.armorClass == 3 && (
+                <p className="text-xs text-neutral-400">
+                  -2 to movement related checks
+                  [Acrobatics][Jump][Climb][Endurance]
+                </p>
+              )}
+              {gear.armorClass >= 4 && (
+                <p className="text-xs text-neutral-400">
+                  [N/A // Cannot have an AC past 3.]
+                </p>
+              )}
+            </div>
+          ) : (
+            <p>
+              <div>AC{gear.armorClass}</div>
+              {gear.armorClass == 0 && (
+                <span className="text-xs text-neutral-400">
+                  No maluses for sprinting and shooting, +1 to
+                  [Acrobatics][Jump][Climb][Endurance][Stealth]
                 </span>
               )}
               {gear.armorClass == 1 && (
@@ -397,7 +425,7 @@ function EquipmentSelection({
           {/* Medicine and meds. */}
           {charActive ? (
             <div className="grid sm:grid-cols-1 md:grid-cols-3 gap-4 mt-2">
-              {["AFAK", "IFAK", "Painkiller"].map((med, i) => (
+              {["AFAK", "IFAK"].map((med, i) => (
                 <div key={med} className="text-sm text-white space-y-1">
                   <p>
                     <span className="font-semibold text-orange-300">{med}</span>
@@ -469,16 +497,12 @@ function EquipmentSelection({
           {gear.gadget && (
             <div className="text-sm text-gray-300 space-y-2 mt-2">
               <p className="whitespace-pre-line">
-                {
-                  equipmentData.find((gadget) => gadget.id === gear.gadget)
-                    ?.rulesText
-                }
+                {equipmentData.find((gadget) => gadget.id === gear.gadget)
+                  ?.rulesText || "n/a"}
               </p>
               <p className="italic">
-                {
-                  equipmentData.find((gadget) => gadget.id === gear.gadget)
-                    ?.description
-                }
+                {equipmentData.find((gadget) => gadget.id === gear.gadget)
+                  ?.description || "n/a"}
               </p>
             </div>
           )}
@@ -496,7 +520,7 @@ function EquipmentSelection({
               charClass={character.class}
               characterCallsign={character.callsign}
               config={activeGadgetConfig}
-              campaignEquipment = {campaignLookupTable}
+              campaignEquipment={campaignLookupTable}
               campActive={!(!campEquipment || campEquipment == null)}
               campaignId={character?.campaignId}
             />
