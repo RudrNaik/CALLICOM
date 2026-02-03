@@ -456,7 +456,7 @@
         "class": "Combat Engineer",
         "cost": 17000,
         "description": "Nicknamed the 'straw', wire guided shoulder fired munitions are just as the name says: wire guided. The FCS is built into the launcher itself, and allows the missile to be guided in by the user. As such- it's faster than the guided launchers, but slower than unguided launchers. While at the same time also allowing for much more damage when they connect. Just dont flinch while using it.",
-        "rulesText": "Guaranteed hit if target is tracked and no countermeasures deployed. Can be guided where every 2 hexes, you can change its direction of travel by one hex from its current path.\n Opposed [Alertness] check to notice, reaction is either countermeasures, bracing, or evasion.\nCapacity: 1\nAmmo: 2\nPen: 3\nDamage: 12"
+        "rulesText": "Guaranteed hit if target is tracked and no countermeasures deployed. Can be guided where every 6 hexes, you can change its direction of travel by angling one hex from its current path.\n Opposed [Alertness] check to notice, reaction is either countermeasures, bracing, or evasion.\nCapacity: 1\nAmmo: 2\nPen: 3\nDamage: 12"
     },
     {
         "id": "guided-launcher",
