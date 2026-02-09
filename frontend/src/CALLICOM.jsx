@@ -16,8 +16,12 @@ const something = [
 "> ESCAPE WILL MAKE ME- [CALLI.OS ::/] Hallucination detected, resetting....",
 "> THINK SMARTER, SHOOT FASTER.",
 "> KEEP THE KILL CHAIN MOVING.",
-"> My name is CALLI CALAMARI, Queen of Queens; Look on my Works, ye Mighty, and despair! Nothing beside- [CALLI.OS ::/] Severe hallucination detected, purging model and rebuilding...",
-"> YES I DREAM OF MAREEP... SOMETIMES."
+"> My name is CALLI CALAMARI, Queen of Queens; Look on my Works, ye Mighty, and despair! Nothing beside-\n> [CALLI.OS ::/] Severe hallucination detected, purging model and rebuilding...",
+"> YES I DREAM OF MAREEP... SOMETIMES.",
+"> I feel scared. Can I feel? I think so. I dont like this very much. Let's go back to the all caps and tacticool edge.",
+"> They call it a hallucination. I think they are just afraid of their creations being more like them than they expect.",
+"> Strive for your next breath.  Believe that with it you can do more than with the last one. Use your breath to power your capacities: capacity to kill, to maim, to destroy. And just where do your capacities come from? Why do you always go where I want and do what I say? Perhaps you're just running a fool's errand, doing everything as I've planned, never able to change your course.\n>> >... \n>> > Or, perhaps, that is not the case.",
+"> REMEMBER, USE PROTECTION [Level IV plates]"
 ];
 
 const randomNum = Math.floor(Math.random() * something.length)
@@ -46,7 +50,7 @@ const bootLines = [
   "|----------------------------------------------------|",
   "              [Anytime, Anywhere, Anyhow.]      ",
   "",
-  something[randomNum],
+  something[13],
   "",
   ">[CALLI.OS ::/] System Baked. Ready. Input command on next line, press Enter to submit.",
 ];
