@@ -52,7 +52,6 @@ function EquipmentSelection({
   const [grenadeCounts, setGrenadeCounts] = useState([3, 3]);
   const [medCounts, setMedCounts] = useState([1, 2, 1]); // [AFAK, IFAK, Painkiller]
   const activeGadgetConfig = GADGET_AMMO_CONFIG[gear.gadget];
-  const [gadgetAmmoBaseline, setGadgetAmmoBaseline] = useState(null);
   const [primaryOptions, setPrimaries] = useState({});
   const [secondaryOptions, setSecondary] = useState({});
   const [maxArmor, setArmor] = useState(1);
@@ -294,11 +293,11 @@ function EquipmentSelection({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {gear.grenades.map((grenade, i) => (
                   <div key={i} className="text-sm text-white space-y-1">
-                    <p>
+                    <div>
                       <span className="font-semibold text-orange-300">
                         {grenade || `Grenade ${i + 1}`}
                       </span>
-                    </p>
+                    </div>
                     {charActive && (
                       <div>
                         <div className="px-2 py-1 rounded bg-neutral-900 mb-2">
@@ -392,7 +391,7 @@ function EquipmentSelection({
             </div>
           ) : (
             <p>
-              <div>AC{gear.armorClass}</div>
+              <span>AC{gear.armorClass}</span>
               {gear.armorClass == 0 && (
                 <span className="text-xs text-neutral-400">
                   No maluses for sprinting and shooting, +1 to

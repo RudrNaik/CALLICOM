@@ -631,9 +631,9 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
       />
 
       {/* Calculator */}
-      <Collapsible title={"Roll Calculator"} color={"text-orange-400"}>
-        <RollCalculator></RollCalculator>
-      </Collapsible>
+      {/* <Collapsible title={"Roll Calculator"} color={"text-orange-400"}>
+        <RollCalculator char={character}></RollCalculator>
+      </Collapsible> */}
 
       {/* Biography */}
       <Collapsible title={"Biography"} color={"text-orange-400"}>
