@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import weaponCategories from "../../../data/weaponCategories.json";
 
-function Calculator({ characterData}) {
+function Calculator({ characterData }) {
   const [character, setCharacter] = useState(null);
   const [primary, setPrimary] = useState(null);
   const [secondary, setSecondary] = useState(null);
@@ -17,6 +17,8 @@ function Calculator({ characterData}) {
   const [newModLabel, setNewModLabel] = useState("");
 
   const [pingEnabled, setPingEnabled] = useState(false);
+  const [fleshWounds, setFleshWounds] = useState(0);
+  const [deepWounds, setDeepWounds] = useState(0);
 
   useEffect(() => {
     if (characterData) {
@@ -24,6 +26,8 @@ function Calculator({ characterData}) {
       setPrimary(characterData?.equipment?.primaryWeapon);
       setSecondary(characterData?.equipment?.secondaryWeapon);
       setSkills(characterData?.skills);
+      setFleshWounds(characterData?.fleshWounds ?? 0);
+      setDeepWounds(characterData?.deepWounds ?? 0);
     }
   }, [characterData]);
 
@@ -67,10 +71,8 @@ function Calculator({ characterData}) {
   };
 
   const woundPenalty = useMemo(() => {
-    const FW = character?.fleshWounds ?? 0;
-    const DW = character?.deepWounds ?? 0;
-    return FW + DW * 2;
-  }, [character]);
+    return fleshWounds + deepWounds * 2;
+  }, [fleshWounds, deepWounds]);
 
   const totalModifierValue = useMemo(() => {
     const namedMods = modifiers.reduce((sum, m) => sum + Number(m.value), 0);
@@ -105,9 +107,7 @@ function Calculator({ characterData}) {
     // Add custom modifiers
     modifiers.forEach((mod) => {
       expr += mod.value > 0 ? ` + ${mod.value}` : ` - ${Math.abs(mod.value)}`;
-      comments.push(
-        `${mod.label} ${mod.value > 0 ? "+" : ""}${mod.value}`,
-      );
+      comments.push(`${mod.label} ${mod.value > 0 ? "+" : ""}${mod.value}`);
     });
 
     // Add wound penalty
@@ -344,10 +344,61 @@ function Calculator({ characterData}) {
         </div>
 
         {/* wounds */}
-        <div className="flex justify-left text-xs text-neutral-400 border border-neutral-800 bg-neutral-850 px-3 py-3 rounded">
-          <span>FW: {character.fleshWounds || 0} // </span>
-          <span>DW: {character.deepWounds || 0} // </span>
-          <span className="text-orange-400">Penalty: -{woundPenalty}</span>
+        <div>
+          <label className="text-xs uppercase text-neutral-500 block mb-2">
+            Wounds
+          </label>
+          <div className="flex gap-3 items-center text-xs text-neutral-400 border border-neutral-800 bg-neutral-850 px-3 py-2 rounded">
+            <div className="flex items-center gap-2">
+              <label>FW:</label>
+              <button
+                onClick={() => setFleshWounds(Math.max(0, fleshWounds - 1))}
+                className="px-2 py-1 bg-neutral-800 border border-neutral-700 text-neutral-400 rounded hover:bg-neutral-700"
+              >
+                -
+              </button>
+              <input
+                type="number"
+                value={fleshWounds}
+                onChange={(e) =>
+                  setFleshWounds(Math.max(0, Number(e.target.value) || 0))
+                }
+                className="w-12 px-2 py-1 bg-neutral-800 border border-neutral-700 rounded text-neutral-300 text-center"
+              />
+              <button
+                onClick={() => setFleshWounds(fleshWounds + 1)}
+                className="px-2 py-1 bg-neutral-800 border border-neutral-700 text-neutral-400 rounded hover:bg-neutral-700"
+              >
+                +
+              </button>
+            </div>
+            <span>//</span>
+            <div className="flex items-center gap-2">
+              <label>DW:</label>
+              <button
+                onClick={() => setDeepWounds(Math.max(0, deepWounds - 1))}
+                className="px-2 py-1 bg-neutral-800 border border-neutral-700 text-neutral-400 rounded hover:bg-neutral-700"
+              >
+                -
+              </button>
+              <input
+                type="number"
+                value={deepWounds}
+                onChange={(e) =>
+                  setDeepWounds(Math.max(0, Number(e.target.value) || 0))
+                }
+                className="w-12 px-2 py-1 bg-neutral-800 border border-neutral-700 rounded text-neutral-300 text-center"
+              />
+              <button
+                onClick={() => setDeepWounds(deepWounds + 1)}
+                className="px-2 py-1 bg-neutral-800 border border-neutral-700 text-neutral-400 rounded hover:bg-neutral-700"
+              >
+                +
+              </button>
+            </div>
+            <span>//</span>
+            <span className="text-orange-400">Penalty: -{woundPenalty}</span>
+          </div>
         </div>
 
         {/* final */}
