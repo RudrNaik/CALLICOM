@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import weaponCategories from "../../../data/weaponCategories.json";
 
-function Calculator({ characterData }) {
+function Calculator({ characterData}) {
   const [character, setCharacter] = useState(null);
   const [primary, setPrimary] = useState(null);
   const [secondary, setSecondary] = useState(null);
@@ -19,6 +19,7 @@ function Calculator({ characterData }) {
   const [pingEnabled, setPingEnabled] = useState(false);
   const [fleshWounds, setFleshWounds] = useState(0);
   const [deepWounds, setDeepWounds] = useState(0);
+  const [navigateRoll, setNavigateRoll] = useState(null);
 
   useEffect(() => {
     if (characterData) {
@@ -70,17 +71,30 @@ function Calculator({ characterData }) {
     return skills?.[weaponData?.class] ?? 0;
   };
 
+  const getNavigateModifier = () => {
+    if (navigateRoll === null || navigateRoll === "") return 0;
+    const roll = Number(navigateRoll);
+    
+    if (roll <= 1) return -2;
+    if (roll <= 3) return -1;
+    if (roll <= 5) return 0;
+    if (roll >= 6) return 1;
+    
+    return 0;
+  };
+
   const woundPenalty = useMemo(() => {
-    return fleshWounds + deepWounds * 2;
+    return fleshWounds + (deepWounds * 2);
   }, [fleshWounds, deepWounds]);
 
   const totalModifierValue = useMemo(() => {
     const namedMods = modifiers.reduce((sum, m) => sum + Number(m.value), 0);
     const rangeMod = rollMode === "weapon" ? getRangeModifier() : 0;
     const ping = pingEnabled ? 1 : 0;
+    const navigate = rollMode === "weapon" && (selectedRange === "ELR" || selectedRange === "EELR") ? getNavigateModifier() : 0;
 
-    return namedMods + rangeMod + ping;
-  }, [modifiers, selectedWeapon, selectedRange, rollMode, pingEnabled]);
+    return namedMods + rangeMod + ping + navigate;
+  }, [modifiers, selectedWeapon, selectedRange, rollMode, pingEnabled, navigateRoll]);
 
   const rollExpression = useMemo(() => {
     const skillLevel = getSkillLevel();
@@ -98,6 +112,15 @@ function Calculator({ characterData }) {
       }
     }
 
+    // Add navigate modifier for ELR/EELR
+    if (rollMode === "weapon" && (selectedRange === "ELR" || selectedRange === "EELR")) {
+      const navMod = getNavigateModifier();
+      if (navMod !== 0) {
+        expr += navMod > 0 ? ` + ${navMod}` : ` - ${Math.abs(navMod)}`;
+        comments.push(`NAV ${navMod > 0 ? "+" : ""}${navMod}`);
+      }
+    }
+
     // Add ping bonus
     if (pingEnabled) {
       expr += " + 1";
@@ -107,7 +130,9 @@ function Calculator({ characterData }) {
     // Add custom modifiers
     modifiers.forEach((mod) => {
       expr += mod.value > 0 ? ` + ${mod.value}` : ` - ${Math.abs(mod.value)}`;
-      comments.push(`${mod.label} ${mod.value > 0 ? "+" : ""}${mod.value}`);
+      comments.push(
+        `${mod.label} ${mod.value > 0 ? "+" : ""}${mod.value}`,
+      );
     });
 
     // Add wound penalty
@@ -131,6 +156,7 @@ function Calculator({ characterData }) {
     modifiers,
     selectedRange,
     pingEnabled,
+    navigateRoll,
   ]);
 
   const addModifier = () => {
@@ -262,6 +288,44 @@ function Calculator({ characterData }) {
                 </button>
               </div>
             </div>
+
+            {/* Navigate Roll for EELR */}
+            {(selectedRange === "EELR") && (
+              <div>
+                <label className="text-xs text-neutral-500 block mb-2">
+                  EELR Navigate Check
+                  <span className="text-xs text-neutral-400 ml-2">
+                    ≤1: -2 | 2-3: -1 | 4-5: +0 | ≥6: +1
+                  </span>
+                </label>
+                <div className="flex gap-2 items-center">
+                  <input
+                    type="number"
+                    value={navigateRoll ?? ""}
+                    onChange={(e) => setNavigateRoll(e.target.value === "" ? null : e.target.value)}
+                    onBlur={(e) => {
+                      const val = e.target.value;
+                      setNavigateRoll(val === "" ? null : Number(val));
+                    }}
+                    placeholder="Enter result"
+                    className="px-2 py-1 bg-neutral-800 border border-neutral-700 rounded text-neutral-300"
+                  />
+                  {navigateRoll !== null && navigateRoll !== "" && (
+                    <span className={`text-sm font-bold ${
+                      getNavigateModifier() >= 0 ? "text-green-400" : "text-red-400"
+                    }`}>
+                      {getNavigateModifier() > 0 ? "+" : ""}{getNavigateModifier()}
+                    </span>
+                  )}
+                  <button
+                    onClick={() => setNavigateRoll(null)}
+                    className="px-2 py-1 text-xs bg-neutral-800 border border-neutral-700 text-neutral-400 rounded hover:bg-neutral-700"
+                  >
+                    Clear
+                  </button>
+                </div>
+              </div>
+            )}
           </>
         )}
 
@@ -357,14 +421,9 @@ function Calculator({ characterData }) {
               >
                 -
               </button>
-              <input
-                type="number"
-                value={fleshWounds}
-                onChange={(e) =>
-                  setFleshWounds(Math.max(0, Number(e.target.value) || 0))
-                }
-                className="w-12 px-2 py-1 bg-neutral-800 border border-neutral-700 rounded text-neutral-300 text-center"
-              />
+              <div
+                className="px-3 py-1 bg-neutral-800 border border-neutral-700 rounded text-neutral-300 text-center"
+              >{fleshWounds}</div>
               <button
                 onClick={() => setFleshWounds(fleshWounds + 1)}
                 className="px-2 py-1 bg-neutral-800 border border-neutral-700 text-neutral-400 rounded hover:bg-neutral-700"
@@ -381,14 +440,9 @@ function Calculator({ characterData }) {
               >
                 -
               </button>
-              <input
-                type="number"
-                value={deepWounds}
-                onChange={(e) =>
-                  setDeepWounds(Math.max(0, Number(e.target.value) || 0))
-                }
-                className="w-12 px-2 py-1 bg-neutral-800 border border-neutral-700 rounded text-neutral-300 text-center"
-              />
+              <div
+                className="px-3 py-1 bg-neutral-800 border border-neutral-700 rounded text-neutral-300 text-center"
+              >{deepWounds}</div>
               <button
                 onClick={() => setDeepWounds(deepWounds + 1)}
                 className="px-2 py-1 bg-neutral-800 border border-neutral-700 text-neutral-400 rounded hover:bg-neutral-700"
@@ -419,6 +473,11 @@ function Calculator({ characterData }) {
               </div>
             )}
             {pingEnabled && <div>Ping: +1</div>}
+            {rollMode === "weapon" && (selectedRange === "ELR" || selectedRange === "EELR") && getNavigateModifier() !== 0 && (
+              <div>
+                Navigate: {getNavigateModifier() > 0 ? "+" : ""}{getNavigateModifier()}
+              </div>
+            )}
             {modifiers.map((mod) => (
               <div key={mod.id}>
                 {mod.label}: {mod.value > 0 ? "+" : ""}
