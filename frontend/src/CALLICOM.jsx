@@ -50,7 +50,7 @@ const bootLines = [
   "|----------------------------------------------------|",
   "              [Anytime, Anywhere, Anyhow.]      ",
   "",
-  something[13],
+  something[randomNum],
   "",
   ">[CALLI.OS ::/] System Baked. Ready. Input command on next line, press Enter to submit.",
 ];

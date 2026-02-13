@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import weaponCategories from "../../../data/weaponCategories.json";
 
-function Calculator({ characterData}) {
+function Calculator({ characterData }) {
   const [character, setCharacter] = useState(null);
   const [primary, setPrimary] = useState(null);
   const [secondary, setSecondary] = useState(null);
@@ -74,27 +74,38 @@ function Calculator({ characterData}) {
   const getNavigateModifier = () => {
     if (navigateRoll === null || navigateRoll === "") return 0;
     const roll = Number(navigateRoll);
-    
+
     if (roll <= 1) return -2;
     if (roll <= 3) return -1;
     if (roll <= 5) return 0;
     if (roll >= 6) return 1;
-    
+
     return 0;
   };
 
   const woundPenalty = useMemo(() => {
-    return fleshWounds + (deepWounds * 2);
+    return fleshWounds + deepWounds * 2;
   }, [fleshWounds, deepWounds]);
 
   const totalModifierValue = useMemo(() => {
     const namedMods = modifiers.reduce((sum, m) => sum + Number(m.value), 0);
     const rangeMod = rollMode === "weapon" ? getRangeModifier() : 0;
     const ping = pingEnabled ? 1 : 0;
-    const navigate = rollMode === "weapon" && (selectedRange === "ELR" || selectedRange === "EELR") ? getNavigateModifier() : 0;
+    const navigate =
+      rollMode === "weapon" &&
+      (selectedRange === "ELR" || selectedRange === "EELR")
+        ? getNavigateModifier()
+        : 0;
 
     return namedMods + rangeMod + ping + navigate;
-  }, [modifiers, selectedWeapon, selectedRange, rollMode, pingEnabled, navigateRoll]);
+  }, [
+    modifiers,
+    selectedWeapon,
+    selectedRange,
+    rollMode,
+    pingEnabled,
+    navigateRoll,
+  ]);
 
   const rollExpression = useMemo(() => {
     const skillLevel = getSkillLevel();
@@ -113,7 +124,10 @@ function Calculator({ characterData}) {
     }
 
     // Add navigate modifier for ELR/EELR
-    if (rollMode === "weapon" && (selectedRange === "ELR" || selectedRange === "EELR")) {
+    if (
+      rollMode === "weapon" &&
+      (selectedRange === "ELR" || selectedRange === "EELR")
+    ) {
       const navMod = getNavigateModifier();
       if (navMod !== 0) {
         expr += navMod > 0 ? ` + ${navMod}` : ` - ${Math.abs(navMod)}`;
@@ -130,9 +144,7 @@ function Calculator({ characterData}) {
     // Add custom modifiers
     modifiers.forEach((mod) => {
       expr += mod.value > 0 ? ` + ${mod.value}` : ` - ${Math.abs(mod.value)}`;
-      comments.push(
-        `${mod.label} ${mod.value > 0 ? "+" : ""}${mod.value}`,
-      );
+      comments.push(`${mod.label} ${mod.value > 0 ? "+" : ""}${mod.value}`);
     });
 
     // Add wound penalty
@@ -290,7 +302,7 @@ function Calculator({ characterData}) {
             </div>
 
             {/* Navigate Roll for EELR */}
-            {(selectedRange === "EELR") && (
+            {selectedRange === "EELR" && (
               <div>
                 <label className="text-xs text-neutral-500 block mb-2">
                   EELR Navigate Check
@@ -302,7 +314,11 @@ function Calculator({ characterData}) {
                   <input
                     type="number"
                     value={navigateRoll ?? ""}
-                    onChange={(e) => setNavigateRoll(e.target.value === "" ? null : e.target.value)}
+                    onChange={(e) =>
+                      setNavigateRoll(
+                        e.target.value === "" ? null : e.target.value,
+                      )
+                    }
                     onBlur={(e) => {
                       const val = e.target.value;
                       setNavigateRoll(val === "" ? null : Number(val));
@@ -311,10 +327,15 @@ function Calculator({ characterData}) {
                     className="px-2 py-1 bg-neutral-800 border border-neutral-700 rounded text-neutral-300"
                   />
                   {navigateRoll !== null && navigateRoll !== "" && (
-                    <span className={`text-sm font-bold ${
-                      getNavigateModifier() >= 0 ? "text-green-400" : "text-red-400"
-                    }`}>
-                      {getNavigateModifier() > 0 ? "+" : ""}{getNavigateModifier()}
+                    <span
+                      className={`text-sm font-bold ${
+                        getNavigateModifier() >= 0
+                          ? "text-green-400"
+                          : "text-red-400"
+                      }`}
+                    >
+                      {getNavigateModifier() > 0 ? "+" : ""}
+                      {getNavigateModifier()}
                     </span>
                   )}
                   <button
@@ -409,10 +430,10 @@ function Calculator({ characterData}) {
 
         {/* wounds */}
         <div>
-          <label className="text-xs uppercase text-neutral-500 block mb-2">
+          <label className="text-xs uppercase text-neutral-500 block mb-1">
             Wounds
           </label>
-          <div className="flex gap-3 items-center text-xs text-neutral-400 border border-neutral-800 bg-neutral-850 px-3 py-2 rounded">
+          <div className="flex gap-1 items-center text-xs text-neutral-400 border border-neutral-800 bg-neutral-850 px-3 py-2 rounded">
             <div className="flex items-center gap-2">
               <label>FW:</label>
               <button
@@ -421,9 +442,9 @@ function Calculator({ characterData}) {
               >
                 -
               </button>
-              <div
-                className="px-3 py-1 bg-neutral-800 border border-neutral-700 rounded text-neutral-300 text-center"
-              >{fleshWounds}</div>
+              <div className="px-3 py-1 bg-neutral-800 border border-neutral-700 rounded text-neutral-300 text-center">
+                {fleshWounds}
+              </div>
               <button
                 onClick={() => setFleshWounds(fleshWounds + 1)}
                 className="px-2 py-1 bg-neutral-800 border border-neutral-700 text-neutral-400 rounded hover:bg-neutral-700"
@@ -440,9 +461,9 @@ function Calculator({ characterData}) {
               >
                 -
               </button>
-              <div
-                className="px-3 py-1 bg-neutral-800 border border-neutral-700 rounded text-neutral-300 text-center"
-              >{deepWounds}</div>
+              <div className="px-3 py-1 bg-neutral-800 border border-neutral-700 rounded text-neutral-300 text-center">
+                {deepWounds}
+              </div>
               <button
                 onClick={() => setDeepWounds(deepWounds + 1)}
                 className="px-2 py-1 bg-neutral-800 border border-neutral-700 text-neutral-400 rounded hover:bg-neutral-700"
@@ -450,13 +471,14 @@ function Calculator({ characterData}) {
                 +
               </button>
             </div>
-            <span>//</span>
-            <span className="text-orange-400">Penalty: -{woundPenalty}</span>
           </div>
+          <div>
+              <span className="text-orange-400 text-xs">Penalty: -{woundPenalty}</span>
+            </div>
         </div>
 
         {/* final */}
-        <div className="px-2 py-2 bg-black border border-orange-500/40 rounded-md">
+        <div className="px-2 py-2 bg-black bg-[radial-gradient(circle,_rgba(255,120,0,0.05)_1px,_transparent_1px)] [background-size:8px_8px] rounded-lg p-4 border border-orange-400 hover:border-neutral-100 transition">
           <p className="text-xs text-neutral-500 uppercase mb-2">Final Roll</p>
 
           <p className="text-2xl font-mono text-orange-400 break-words">
@@ -473,11 +495,14 @@ function Calculator({ characterData}) {
               </div>
             )}
             {pingEnabled && <div>Ping: +1</div>}
-            {rollMode === "weapon" && (selectedRange === "ELR" || selectedRange === "EELR") && getNavigateModifier() !== 0 && (
-              <div>
-                Navigate: {getNavigateModifier() > 0 ? "+" : ""}{getNavigateModifier()}
-              </div>
-            )}
+            {rollMode === "weapon" &&
+              (selectedRange === "ELR" || selectedRange === "EELR") &&
+              getNavigateModifier() !== 0 && (
+                <div>
+                  Navigate: {getNavigateModifier() > 0 ? "+" : ""}
+                  {getNavigateModifier()}
+                </div>
+              )}
             {modifiers.map((mod) => (
               <div key={mod.id}>
                 {mod.label}: {mod.value > 0 ? "+" : ""}
