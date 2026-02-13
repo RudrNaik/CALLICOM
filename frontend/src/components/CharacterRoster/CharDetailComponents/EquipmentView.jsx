@@ -349,76 +349,84 @@ function EquipmentSelection({
           <h3 className="font-semibold text-orange-300">Armor Class</h3>
           {isEditing ? (
             <div>
-              <input
-                type="number"
-                min={0}
-                max={maxArmor}
-                className="w-full bg-neutral-900 border-1 border-orange-400/60 text-white p-2 rounded"
-                value={gear.armorClass}
-                onChange={(e) => {
-                  let val = parseInt(e.target.value, 10);
-                  if (Number.isNaN(val)) val = 0;
-                  if (maxArmor > 0 && val > maxArmor) return; // cap
-                  handleChange("armorClass", val);
-                }}
-              />
-              {gear.armorClass == 0 && (
-                <span className="text-xs text-neutral-400">
-                  No maluses for sprinting and shooting, +1 to
-                  [Acrobatics][Jump][Climb][Endurance][Stealth]
-                </span>
-              )}
-              {gear.armorClass == 1 && (
-                <p className="text-xs text-neutral-400">No Bonuses</p>
-              )}
-              {gear.armorClass == 2 && (
-                <p className="text-xs text-neutral-400">
-                  -1 to movement related checks
-                  [Acrobatics][Jump][Climb][Endurance]
-                </p>
-              )}
-              {gear.armorClass == 3 && (
-                <p className="text-xs text-neutral-400">
-                  -2 to movement related checks
-                  [Acrobatics][Jump][Climb][Endurance]
-                </p>
-              )}
-              {gear.armorClass >= 4 && (
-                <p className="text-xs text-neutral-400">
-                  [N/A // Cannot have an AC past 3.]
-                </p>
-              )}
+              <div>
+                <input
+                  type="number"
+                  min={0}
+                  max={maxArmor}
+                  className="w-full bg-neutral-900 border-1 border-orange-400/60 text-white p-2 rounded"
+                  value={gear.armorClass}
+                  onChange={(e) => {
+                    let val = parseInt(e.target.value, 10);
+                    if (Number.isNaN(val)) val = 0;
+                    if (maxArmor > 0 && val > maxArmor) return; // cap
+                    handleChange("armorClass", val);
+                  }}
+                />
+              </div>
+              <div>
+                {gear.armorClass == 0 && (
+                  <span className="text-xs text-neutral-400">
+                    No maluses for sprinting and shooting, +1 to
+                    [Acrobatics][Jump][Climb][Endurance][Stealth]
+                  </span>
+                )}
+                {gear.armorClass == 1 && (
+                  <p className="text-xs text-neutral-400">No Bonuses</p>
+                )}
+                {gear.armorClass == 2 && (
+                  <p className="text-xs text-neutral-400">
+                    -1 to movement related checks
+                    [Acrobatics][Jump][Climb][Endurance]
+                  </p>
+                )}
+                {gear.armorClass == 3 && (
+                  <p className="text-xs text-neutral-400">
+                    -2 to movement related checks
+                    [Acrobatics][Jump][Climb][Endurance]
+                  </p>
+                )}
+                {gear.armorClass >= 4 && (
+                  <p className="text-xs text-neutral-400">
+                    [N/A // Cannot have an AC past 3.]
+                  </p>
+                )}
+              </div>
             </div>
           ) : (
-            <p>
-              <span>AC{gear.armorClass}</span>
-              {gear.armorClass == 0 && (
-                <span className="text-xs text-neutral-400">
-                  No maluses for sprinting and shooting, +1 to
-                  [Acrobatics][Jump][Climb][Endurance][Stealth]
-                </span>
-              )}
-              {gear.armorClass == 1 && (
-                <p className="text-xs text-neutral-400">No Bonuses</p>
-              )}
-              {gear.armorClass == 2 && (
-                <p className="text-xs text-neutral-400">
-                  -1 to movement related checks
-                  [Acrobatics][Jump][Climb][Endurance]
-                </p>
-              )}
-              {gear.armorClass == 3 && (
-                <p className="text-xs text-neutral-400">
-                  -2 to movement related checks
-                  [Acrobatics][Jump][Climb][Endurance]
-                </p>
-              )}
-              {gear.armorClass >= 4 && (
-                <p className="text-xs text-neutral-400">
-                  [N/A // Cannot have an AC past 3.]
-                </p>
-              )}
-            </p>
+            <div>
+              <p>
+                <span>AC{gear.armorClass}</span>
+              </p>
+              <div>
+                {gear.armorClass == 0 && (
+                  <span className="text-xs text-neutral-400">
+                    No maluses for sprinting and shooting, +1 to
+                    [Acrobatics][Jump][Climb][Endurance][Stealth]
+                  </span>
+                )}
+                {gear.armorClass == 1 && (
+                  <p className="text-xs text-neutral-400">No Bonuses</p>
+                )}
+                {gear.armorClass == 2 && (
+                  <p className="text-xs text-neutral-400">
+                    -1 to movement related checks
+                    [Acrobatics][Jump][Climb][Endurance]
+                  </p>
+                )}
+                {gear.armorClass == 3 && (
+                  <p className="text-xs text-neutral-400">
+                    -2 to movement related checks
+                    [Acrobatics][Jump][Climb][Endurance]
+                  </p>
+                )}
+                {gear.armorClass >= 4 && (
+                  <p className="text-xs text-neutral-400">
+                    [N/A // Cannot have an AC past 3.]
+                  </p>
+                )}
+              </div>
+            </div>
           )}
 
           {/* Medicine and meds. */}
