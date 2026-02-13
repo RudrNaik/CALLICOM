@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 
-export default function Collapsible({ title, color, children }) {
+export default function Collapsible({ title, color, children, autoOpen, headerSize }) {
   const [open, setOpen] = useState(false);
   const [height, setHeight] = useState(0);
   const ref = useRef(null);
@@ -14,6 +14,10 @@ export default function Collapsible({ title, color, children }) {
 
     resizeObserver.observe(ref.current);
 
+    if(autoOpen){
+      setOpen(true);
+    }
+
     return () => resizeObserver.disconnect();
   }, []);
 
@@ -21,9 +25,9 @@ export default function Collapsible({ title, color, children }) {
     <div className="w-full pt-3">
       {/* Header */}
       <div onClick={() => setOpen(!open)} className="cursor-pointer">
-        <h2 className="text-xl font-bold mb-2">
-          <span className={color}>{title}</span>
-          <span className={color}> {`${open ? "🗁" : "🗀"}`}</span>
+        <h2 className={`text-${headerSize} font-bold mb-2 border-${color}`}>
+          <span className={`text-${color}`}>{title}</span>
+          <span className={`text-${color}`}> {`${open ? "🗁" : "🗀"}`}</span>
         </h2>
       </div>
 
@@ -37,6 +41,10 @@ export default function Collapsible({ title, color, children }) {
         <div ref={ref} className="pt-2 pb-3">
           {children}
         </div>
+      </div>
+
+      <div className="relative flexitems-center">
+        <div className="flex-grow border-t border-gray-100/10"></div>
       </div>
     </div>
   );
