@@ -10,6 +10,7 @@ import EquipmentSelection from "./CharDetailComponents/EquipmentView";
 import XpControls from "./CharDetailComponents/XpHandler";
 import MultiClassModal from "./CharDetailComponents/MultiClassModal";
 import Collapsible from "../Collapsible";
+import RollCalculator from "./CharDetailComponents/RollCalculator";
 
 function CharacterDetail({ character, onUpdate, user, equipment }) {
   if (!character) return null;
@@ -628,6 +629,11 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
         removeEmergencyDie={removeEmergencyDie}
         addEmergencyDie={addEmergencyDie}
       />
+
+      {/* Calculator */}
+       <Collapsible title={"Roll Calculator"} color={"text-orange-400"}>
+        <RollCalculator characterData={character}></RollCalculator>
+      </Collapsible>
 
       {/* Biography */}
       <Collapsible title={"Biography"} color={"text-orange-400"}>

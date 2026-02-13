@@ -2,10 +2,6 @@ import React, { useState, useEffect } from "react";
 import EnemyCard from "./EnemyCard";
 import weaponCategories from "../../data/weaponCategories.json";
 
-/* =======================
-   DICE HELPERS
-======================= */
-
 
 function EnemyView() {
   const [enemyIds, setEnemyIds] = useState([]);
@@ -99,7 +95,7 @@ function EnemyView() {
 
     const FW = enemy.wounds?.FW ?? 0;
     const DW = enemy.wounds?.DW ?? 0;
-    const woundPenalty = FW + DW * 2;
+    const woundPenalty = FW + (DW * 2);
 
     const rangeMod = getRangeModifier(enemy, weapon);
 

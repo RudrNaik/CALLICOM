@@ -32,8 +32,7 @@ function DerivedStats({ character, userId, refreshCharacter }) {
   const Health = Math.ceil((Body + Spirit) / 2);
   const Stamina = 5 + Body + Spirit;
   const SystemShock = 5 + Health;
-
-  // IMPORTANT: fix operator precedence; add armor only if present, else 0
+  
   const FleshWoundThreshold = Math.ceil(Stamina / 2) + (equip.armorClass ?? 0);
   const DeepWoundThreshold = Stamina + (equip.armorClass ?? 0);
   const InstantDeath = Stamina * 2;
