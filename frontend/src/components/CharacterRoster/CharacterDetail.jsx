@@ -637,6 +637,23 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
           removeEmergencyDie={removeEmergencyDie}
           addEmergencyDie={addEmergencyDie}
         />
+
+        <div className="mt-4">
+        {/* expcalctesting */}
+        <Collapsible
+          title={"EXP Spent"}
+          color={"orange-400"}
+          autoOpen={false}
+          headerSize={"xl"}
+          bottomMargin={false}
+        >
+          <ExpAddedCalc
+            character={character}
+            userId={user}
+            refreshCharacter={onUpdate}
+          />
+        </Collapsible>
+        </div>
         
       </Collapsible>
       
