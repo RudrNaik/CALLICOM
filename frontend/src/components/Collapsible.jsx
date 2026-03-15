@@ -1,6 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 
-export default function Collapsible({ title, color, children, autoOpen, headerSize }) {
+export default function Collapsible({
+  title,
+  color,
+  children,
+  autoOpen,
+  headerSize,
+  bottomMargin = true,
+}) {
   const [open, setOpen] = useState(false);
   const [height, setHeight] = useState(0);
   const ref = useRef(null);
@@ -14,7 +21,7 @@ export default function Collapsible({ title, color, children, autoOpen, headerSi
 
     resizeObserver.observe(ref.current);
 
-    if(autoOpen){
+    if (autoOpen) {
       setOpen(true);
     }
 
@@ -43,9 +50,12 @@ export default function Collapsible({ title, color, children, autoOpen, headerSi
         </div>
       </div>
 
-      <div className="relative flexitems-center">
-        <div className="flex-grow border-t border-gray-100/10"></div>
-      </div>
+      {bottomMargin && (
+        <div className="relative flexitems-center">
+          <div className="flex-grow border-t border-gray-100/10"></div>
+        </div>
+      )}
+      
     </div>
   );
 }

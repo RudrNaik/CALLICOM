@@ -11,6 +11,7 @@ import XpControls from "./CharDetailComponents/XpHandler";
 import MultiClassModal from "./CharDetailComponents/MultiClassModal";
 import Collapsible from "../Collapsible";
 import RollCalculator from "./CharDetailComponents/RollCalculator";
+import ExpAddedCalc from "./CharDetailComponents/expAddedCalc";
 
 function CharacterDetail({ character, onUpdate, user, equipment }) {
   if (!character) return null;
@@ -473,7 +474,13 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
       <h2 className=""></h2>
       {/*Stats*/}
 
-      <Collapsible title={"Stats"} color={"orange-400"} autoOpen={true} headerSize={"2xl"}>
+      <Collapsible
+        title={"Stats"}
+        color={"orange-400"}
+        autoOpen={true}
+        headerSize={"2xl"}
+      >
+        {/* Attributes */}
         <div>
           <h2 className="text-xl font-bold text-orange-400 mt-2 mb-1">
             Attributes{" "}
@@ -630,10 +637,16 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
           removeEmergencyDie={removeEmergencyDie}
           addEmergencyDie={addEmergencyDie}
         />
+        
       </Collapsible>
+      
 
       {/* Calculator */}
-      <Collapsible title={"Roll Calculator"} color={"orange-400"} headerSize={"2xl"}>
+      <Collapsible
+        title={"Roll Calculator"}
+        color={"orange-400"}
+        headerSize={"2xl"}
+      >
         <RollCalculator characterData={character}></RollCalculator>
       </Collapsible>
 
