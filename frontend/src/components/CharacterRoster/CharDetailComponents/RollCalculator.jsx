@@ -7,7 +7,7 @@ function Calculator({ characterData }) {
   const [secondary, setSecondary] = useState(null);
   const [skills, setSkills] = useState(null);
 
-  const [rollMode, setRollMode] = useState("weapon"); // weapon or skill.
+  const [rollMode, setRollMode] = useState("weapon");
   const [selectedWeapon, setSelectedWeapon] = useState(null);
   const [selectedSkill, setSelectedSkill] = useState(null);
   const [selectedRange, setSelectedRange] = useState("M");
@@ -15,6 +15,11 @@ function Calculator({ characterData }) {
   const [modifiers, setModifiers] = useState([]);
   const [newModValue, setNewModValue] = useState(0);
   const [newModLabel, setNewModLabel] = useState("");
+
+  // NEW: dice modifiers
+  const [diceModifiers, setDiceModifiers] = useState([]);
+  const [newDiceModValue, setNewDiceModValue] = useState(0);
+  const [newDiceModLabel, setNewDiceModLabel] = useState("");
 
   const [pingEnabled, setPingEnabled] = useState(false);
   const [fleshWounds, setFleshWounds] = useState(0);
@@ -40,14 +45,12 @@ function Calculator({ characterData }) {
   const parseRangeProfile = (rangeString) => {
     const profile = {};
     if (!rangeString) return profile;
-
     rangeString.split("|").forEach((part) => {
       const match = part.trim().match(/([+-]?\d+)\s*(C|M|L|ELR|Bipod)/i);
       if (!match) return;
       const [, value, band] = match;
       profile[band.toUpperCase()] = Number(value);
     });
-
     return profile;
   };
 
@@ -55,17 +58,13 @@ function Calculator({ characterData }) {
     if (!selectedWeapon) return 0;
     const weaponData = getWeaponData(selectedWeapon);
     if (!weaponData?.range) return 0;
-
     const profile = parseRangeProfile(weaponData.range);
     if (selectedRange === "EELR") return profile.ELR ?? 0;
     return profile[selectedRange] ?? 0;
   };
 
   const getSkillLevel = () => {
-    if (rollMode === "skill") {
-      return skills?.[selectedSkill] ?? 0;
-    }
-
+    if (rollMode === "skill") return skills?.[selectedSkill] ?? 0;
     if (!selectedWeapon) return 0;
     const weaponData = getWeaponData(selectedWeapon);
     return skills?.[weaponData?.class] ?? 0;
@@ -74,18 +73,34 @@ function Calculator({ characterData }) {
   const getNavigateModifier = () => {
     if (navigateRoll === null || navigateRoll === "") return 0;
     const roll = Number(navigateRoll);
-
     if (roll <= 1) return -2;
     if (roll <= 3) return -1;
     if (roll <= 5) return 0;
     if (roll >= 6) return 1;
-
     return 0;
   };
 
   const woundPenalty = useMemo(() => {
     return fleshWounds + deepWounds * 2;
   }, [fleshWounds, deepWounds]);
+
+  // NEW: total dice delta from all dice modifiers
+  const totalDiceDelta = useMemo(() => {
+    return diceModifiers.reduce((sum, m) => sum + Number(m.value), 0);
+  }, [diceModifiers]);
+
+  // NEW: base pool size before modifiers (unskilled = 2, else skillLevel)
+  const getBaseDiceCount = () => {
+    const skillLevel = getSkillLevel();
+    return skillLevel <= 0 ? 2 : skillLevel;
+  };
+
+  // NEW: effective pool size, clamped to minimum 1
+  const getEffectiveDiceCount = () => {
+    const skillLevel = getSkillLevel();
+    const min = skillLevel <= 0 ? 2 : 1;
+    return Math.max(min, getBaseDiceCount() + totalDiceDelta);
+  };
 
   const totalModifierValue = useMemo(() => {
     const namedMods = modifiers.reduce((sum, m) => sum + Number(m.value), 0);
@@ -96,7 +111,6 @@ function Calculator({ characterData }) {
       (selectedRange === "ELR" || selectedRange === "EELR")
         ? getNavigateModifier()
         : 0;
-
     return namedMods + rangeMod + ping + navigate;
   }, [
     modifiers,
@@ -109,12 +123,14 @@ function Calculator({ characterData }) {
 
   const rollExpression = useMemo(() => {
     const skillLevel = getSkillLevel();
-    const dice = skillLevel <= 0 ? ".r 2d6l" : `.r ${skillLevel}d6k1`;
+    const effectiveCount = getEffectiveDiceCount();
+    // Unskilled = take-lower; skilled = keep-highest
+    const dice =
+      skillLevel <= 0 ? `.r ${effectiveCount}d6l` : `.r ${effectiveCount}d6k1`;
 
     let expr = dice;
     const comments = [];
 
-    // Add range modifier
     if (rollMode === "weapon") {
       const rangeMod = getRangeModifier();
       if (rangeMod !== 0) {
@@ -123,7 +139,6 @@ function Calculator({ characterData }) {
       }
     }
 
-    // Add navigate modifier for ELR/EELR
     if (
       rollMode === "weapon" &&
       (selectedRange === "ELR" || selectedRange === "EELR")
@@ -135,25 +150,26 @@ function Calculator({ characterData }) {
       }
     }
 
-    // Add ping bonus
     if (pingEnabled) {
       expr += " + 1";
       comments.push("PING +1");
     }
 
-    // Add custom modifiers
     modifiers.forEach((mod) => {
       expr += mod.value > 0 ? ` + ${mod.value}` : ` - ${Math.abs(mod.value)}`;
       comments.push(`${mod.label} ${mod.value > 0 ? "+" : ""}${mod.value}`);
     });
 
-    // Add wound penalty
+    // NEW: dice modifier comments (dice count already baked into the expression)
+    diceModifiers.forEach((mod) => {
+      comments.push(`${mod.label} ${mod.value > 0 ? "+" : ""}${mod.value}d`);
+    });
+
     if (woundPenalty > 0) {
       expr += ` - ${woundPenalty}`;
       comments.push(`WND -${woundPenalty}`);
     }
 
-    // Add all comments with # prefix
     if (comments.length > 0) {
       expr += ` # ${comments.map((c) => `(${c})`).join(" ")}`;
     }
@@ -161,11 +177,13 @@ function Calculator({ characterData }) {
     return expr;
   }, [
     totalModifierValue,
+    totalDiceDelta,
     woundPenalty,
     selectedWeapon,
     selectedSkill,
     rollMode,
     modifiers,
+    diceModifiers,
     selectedRange,
     pingEnabled,
     navigateRoll,
@@ -173,27 +191,36 @@ function Calculator({ characterData }) {
 
   const addModifier = () => {
     if (!newModLabel.trim()) return;
-
     setModifiers([
       ...modifiers,
-      {
-        id: Date.now(),
-        value: Number(newModValue),
-        label: newModLabel.trim(),
-      },
+      { id: Date.now(), value: Number(newModValue), label: newModLabel.trim() },
     ]);
-
     setNewModValue(0);
     setNewModLabel("");
   };
 
-  const removeModifier = (id) => {
+  const removeModifier = (id) =>
     setModifiers(modifiers.filter((m) => m.id !== id));
+
+  // NEW
+  const addDiceModifier = () => {
+    if (!newDiceModLabel.trim()) return;
+    setDiceModifiers([
+      ...diceModifiers,
+      {
+        id: Date.now(),
+        value: Number(newDiceModValue),
+        label: newDiceModLabel.trim(),
+      },
+    ]);
+    setNewDiceModValue(0);
+    setNewDiceModLabel("");
   };
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(rollExpression);
-  };
+  const removeDiceModifier = (id) =>
+    setDiceModifiers(diceModifiers.filter((m) => m.id !== id));
+
+  const copyToClipboard = () => navigator.clipboard.writeText(rollExpression);
 
   if (!character) {
     return (
@@ -207,9 +234,7 @@ function Calculator({ characterData }) {
 
   const setMode = (mode) => {
     setRollMode(mode);
-    if (pingEnabled) {
-      setPingEnabled(!pingEnabled);
-    }
+    if (pingEnabled) setPingEnabled(false);
   };
 
   return (
@@ -217,7 +242,6 @@ function Calculator({ characterData }) {
       <div className="px-4 py-2 border-b border-orange-500/30 bg-neutral-850 flex justify-between items-center">
         <h3 className="text-sm tracking-widest text-orange-400 font-bold">
           Mode:
-          {/* mode toggle */}
           {["weapon", "skill"].map((mode) => (
             <button
               key={mode}
@@ -236,7 +260,6 @@ function Calculator({ characterData }) {
       </div>
 
       <div className="p-4 space-y-2">
-        {/* weapon */}
         {rollMode === "weapon" && (
           <>
             <div>
@@ -248,7 +271,6 @@ function Calculator({ characterData }) {
                   </span>
                 )}
               </label>
-
               <div className="flex gap-2">
                 {[primary, secondary].map((w, i) => (
                   <button
@@ -271,7 +293,6 @@ function Calculator({ characterData }) {
               <label className="text-xs uppercase text-neutral-500 block mb-2">
                 Range
               </label>
-
               <div className="flex gap-2">
                 {["C", "M", "L", "ELR", "EELR"].map((range) => (
                   <button
@@ -290,18 +311,17 @@ function Calculator({ characterData }) {
                 <button
                   onClick={() => setPingEnabled(!pingEnabled)}
                   className={`px-3 py-1.5 text-sm rounded-sm border
-              ${
-                pingEnabled
-                  ? "bg-orange-500/20 border-orange-500 text-orange-400"
-                  : "bg-neutral-800 border-neutral-700 text-neutral-400"
-              }`}
+                    ${
+                      pingEnabled
+                        ? "bg-orange-500/20 border-orange-500 text-orange-400"
+                        : "bg-neutral-800 border-neutral-700 text-neutral-400"
+                    }`}
                 >
                   {pingEnabled ? "Pinged (+1)" : "Ping"}
                 </button>
               </div>
             </div>
 
-            {/* Navigate Roll for EELR */}
             {selectedRange === "EELR" && (
               <div>
                 <label className="text-xs text-neutral-500 block mb-2">
@@ -328,11 +348,7 @@ function Calculator({ characterData }) {
                   />
                   {navigateRoll !== null && navigateRoll !== "" && (
                     <span
-                      className={`text-sm font-bold ${
-                        getNavigateModifier() >= 0
-                          ? "text-green-400"
-                          : "text-red-400"
-                      }`}
+                      className={`text-sm font-bold ${getNavigateModifier() >= 0 ? "text-green-400" : "text-red-400"}`}
                     >
                       {getNavigateModifier() > 0 ? "+" : ""}
                       {getNavigateModifier()}
@@ -350,13 +366,11 @@ function Calculator({ characterData }) {
           </>
         )}
 
-        {/* skill */}
         {rollMode === "skill" && (
           <div>
             <label className="text-xs uppercase text-neutral-500 block mb-1">
               Select Skill
             </label>
-
             <select
               value={selectedSkill || ""}
               onChange={(e) => setSelectedSkill(e.target.value)}
@@ -372,12 +386,11 @@ function Calculator({ characterData }) {
           </div>
         )}
 
-        {/* modifiers */}
+        {/* flat modifiers — unchanged */}
         <div>
           <label className="text-xs uppercase text-neutral-500 block mb-2">
             Add Modifier
           </label>
-
           <div className="flex gap-2 mb-3">
             <input
               value={newModValue}
@@ -395,7 +408,6 @@ function Calculator({ characterData }) {
               className="flex-1 px-2 bg-neutral-800 border border-neutral-700 rounded text-neutral-300"
               placeholder="Reason"
             />
-
             <button
               onClick={addModifier}
               className="px-3 py-1 bg-orange-500/20 border border-orange-500 text-orange-400 rounded"
@@ -403,7 +415,6 @@ function Calculator({ characterData }) {
               Add
             </button>
           </div>
-
           {modifiers.length > 0 && (
             <div className="space-y-1 text-xs">
               {modifiers.map((mod) => (
@@ -415,7 +426,6 @@ function Calculator({ characterData }) {
                     {mod.value > 0 ? "+" : ""}
                     {mod.value} [{mod.label}]
                   </span>
-
                   <button
                     onClick={() => removeModifier(mod.id)}
                     className="text-red-400"
@@ -428,7 +438,59 @@ function Calculator({ characterData }) {
           )}
         </div>
 
-        {/* wounds */}
+        {/* NEW: dice modifiers */}
+        <div>
+          <label className="text-xs uppercase text-neutral-500 block mb-2">
+            Add Dice
+          </label>
+          <div className="flex gap-2 mb-3">
+            <input
+              value={newDiceModValue}
+              onChange={(e) => setNewDiceModValue(e.target.value)}
+              onBlur={(e) => {
+                const num = Number(e.target.value);
+                setNewDiceModValue(isNaN(num) ? 0 : num);
+              }}
+              className="w-15 px-2 bg-neutral-800 border border-neutral-700 rounded text-neutral-300"
+            />
+            <input
+              type="text"
+              value={newDiceModLabel}
+              onChange={(e) => setNewDiceModLabel(e.target.value)}
+              className="flex-1 px-2 bg-neutral-800 border border-neutral-700 rounded text-neutral-300"
+              placeholder="Reason"
+            />
+            <button
+              onClick={addDiceModifier}
+              className="px-3 py-1 bg-orange-500/20 border border-orange-500 text-orange-400 rounded"
+            >
+              Add
+            </button>
+          </div>
+          {diceModifiers.length > 0 && (
+            <div className="space-y-1 text-xs">
+              {diceModifiers.map((mod) => (
+                <div
+                  key={mod.id}
+                  className="flex justify-between items-center bg-neutral-850 border border-neutral-800 px-2 rounded"
+                >
+                  <span className="text-neutral-400">
+                    {mod.value > 0 ? "+" : ""}
+                    {mod.value}d [{mod.label}]
+                  </span>
+                  <button
+                    onClick={() => removeDiceModifier(mod.id)}
+                    className="text-red-400"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* wounds — unchanged */}
         <div>
           <label className="text-xs uppercase text-neutral-500 block mb-1">
             Wounds
@@ -473,21 +535,33 @@ function Calculator({ characterData }) {
             </div>
           </div>
           <div>
-              <span className="text-orange-400 text-xs">Penalty: -{woundPenalty}</span>
-            </div>
+            <span className="text-orange-400 text-xs">
+              Penalty: -{woundPenalty}
+            </span>
+          </div>
         </div>
 
         {/* final */}
         <div className="px-2 py-2 bg-black bg-[radial-gradient(circle,_rgba(255,120,0,0.05)_1px,_transparent_1px)] [background-size:8px_8px] rounded-lg p-4 border border-orange-400 hover:border-neutral-100 transition">
           <p className="text-xs text-neutral-500 uppercase mb-2">Final Roll</p>
-
           <p className="text-2xl font-mono text-orange-400 break-words">
             {rollExpression}
           </p>
-
           <div className="text-xs text-neutral-500 mt-3">
             <div>
-              Dice: {getSkillLevel() <= 0 ? "2d6l" : `${getSkillLevel()}d6k1`}
+              Dice: {getEffectiveDiceCount()}d6
+              {getSkillLevel() <= 0 ? "l" : "k1"}
+              {totalDiceDelta !== 0 && (
+                <span
+                  className={
+                    totalDiceDelta > 0 ? "text-green-400" : "text-red-400"
+                  }
+                >
+                  {" "}
+                  ({getBaseDiceCount()} base {totalDiceDelta > 0 ? "+" : ""}
+                  {totalDiceDelta} dice)
+                </span>
+              )}
             </div>
             {rollMode === "weapon" && getRangeModifier() !== 0 && (
               <div>
@@ -509,9 +583,14 @@ function Calculator({ characterData }) {
                 {mod.value}
               </div>
             ))}
+            {diceModifiers.map((mod) => (
+              <div key={mod.id}>
+                {mod.label}: {mod.value > 0 ? "+" : ""}
+                {mod.value}d
+              </div>
+            ))}
             <div>Wounds: -{woundPenalty}</div>
           </div>
-
           <button
             onClick={copyToClipboard}
             className="mt-3 px-3 bg-orange-500/20 border border-orange-500 text-orange-400 rounded"
