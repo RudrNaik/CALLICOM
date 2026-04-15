@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 
 const CACHE_KEY_CHARS = (userId) => `roster_characters_${userId}`;
 const CACHE_KEY_EQUIP = `roster_equipment`;
-const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes — adjust as needed
+const CACHE_TTL_MS = 20 * 1000; // 5 minutes — adjust as needed
 
 function readCache(key) {
   try {
