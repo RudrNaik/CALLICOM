@@ -13,7 +13,6 @@ function readCache(key) {
     const raw = localStorage.getItem(key);
     if (!raw) return null;
     const { data, ts } = JSON.parse(raw);
-    if (Date.now() - ts > CACHE_TTL_MS) return null; // expired
     return data;
   } catch {
     return null;
