@@ -4,13 +4,17 @@ import CharacterDetail from "./CharacterDetail";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
-// ─── Cache Helpers ────────────────────────────────────────────────────────────
 
 const CACHE_KEY_CHARS = (userId) => `roster_characters_${userId}`;
 const CACHE_KEY_EQUIP = `roster_equipment`;
 const COLD_START_THRESHOLD_MS = 3000;
-const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes — adjust as needed
+const CACHE_TTL_MS = 2 * 60 * 1000; // 2 minutes — adjust as needed
 
+/**
+ * Takes an input of the character's key, and then returns the parsed JSON value of the key value.
+ * @param {*} key a Character's key
+ * @returns JSON formatted data for the character.
+ */
 function readCache(key) {
   try {
     const raw = localStorage.getItem(key);
@@ -22,6 +26,11 @@ function readCache(key) {
   }
 }
 
+/**
+ * Writes data and the timestamp of said data into the cache
+ * @param {*} key the key of the character
+ * @param {*} data the data of said character
+ */
 function writeCache(key, data) {
   try {
     localStorage.setItem(key, JSON.stringify({ data, ts: Date.now() }));
@@ -30,6 +39,10 @@ function writeCache(key, data) {
   }
 }
 
+/**
+ * Clears the character's from a user's cache
+ * @param {*} userId the user's username
+ */
 function bustCache(userId) {
   try {
     localStorage.removeItem(CACHE_KEY_CHARS(userId));
@@ -37,8 +50,13 @@ function bustCache(userId) {
   } catch {}
 }
 
-// ─── Fetch Helper ─────────────────────────────────────────────────────────────
-
+/**
+ * Asynchronously communicates with the backend to fetch data, and navigates to login if the JWT token is expired.
+ * @param {*} url the backend URL (usually callicom.render.app)
+ * @param {*} token the JWT token
+ * @param {*} navigate navigation back to the login view.
+ * @returns 
+ */
 async function fetchJSON(url, token, navigate) {
   const res = await fetch(url, {
     method: "GET",
@@ -75,8 +93,10 @@ async function fetchJSON(url, token, navigate) {
   }
 }
 
-// ─── Banner Components ────────────────────────────────────────────────────────
-
+/**
+ * Creates the banner on a cold start for whenever the user logs in, and the backend isnt spooled up. Intended to warn them of there possibly being issues with any values and data saving until the backend is warmed up (thanks render)
+ * @returns React Component for the banner.
+ */
 function ColdStartBanner() {
   return (
     <motion.div
@@ -111,6 +131,10 @@ function ColdStartBanner() {
   );
 }
 
+/**
+ * Creates the banner for whenever the user logs in and there is a mismatch between the data in the backend that is fetched and the data that is on localstorage.
+ * @returns React Component for the banner.
+ */
 function MismatchBanner({ onApply }) {
   return (
     <motion.div
@@ -131,8 +155,11 @@ function MismatchBanner({ onApply }) {
   );
 }
 
-// ─── Main Component ───────────────────────────────────────────────────────────
 
+/**
+ * The main component that's exported.
+ * @param userId the username of the current user.
+ */
 function CharacterRoster({ userId }) {
   const [characters, setCharacters]               = useState([]);
   const [equipment, setEquipment]                 = useState([]);
@@ -149,11 +176,17 @@ function CharacterRoster({ userId }) {
 
   const navigate = useNavigate();
 
+  /**
+   * Triggers an asynchronous refresh of the page by bushing the cache and then setting a refresh flag.
+   */
   const triggerRefresh = () => {
     bustCache(userId);
     setRefreshFlag((prev) => !prev);
   };
 
+  /**
+   * Applies any staged updates into localstorage. staged chars are saved in pendingChars, and once applied resets any mismatches.
+   */
   const applyPendingUpdate = () => {
     if (pendingChars) {
       setCharacters(pendingChars);
@@ -229,6 +262,11 @@ function CharacterRoster({ userId }) {
     });
   }, [userId, refreshFlag]);
 
+  /**
+   * Handles deleting a character via their characterID.
+   * @param {*} id 
+   * @returns nothing if the deletion was a success. Or throws an alert if there was an issue doing so.
+   */
   const handleDeleteCharacter = async (id) => {
     const token = localStorage.getItem("token");
     if (!token) {
