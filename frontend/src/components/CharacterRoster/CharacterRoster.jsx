@@ -1,13 +1,21 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import CharacterCard from "./CharacterCard";
 import CharacterDetail from "./CharacterDetail";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+
 
 const CACHE_KEY_CHARS = (userId) => `roster_characters_${userId}`;
 const CACHE_KEY_EQUIP = `roster_equipment`;
-const CACHE_TTL_MS = 20 * 1000; // 5 minutes — adjust as needed
+const COLD_START_THRESHOLD_MS = 3000;
+const CACHE_TTL_MS = 2 * 60 * 1000; // 2 minutes — adjust as needed
 
+
+/**
+ * Takes an input of the character's key, and then returns the parsed JSON value of the key value.
+ * @param {*} key a Character's key
+ * @returns JSON formatted data for the character.
+ */
 function readCache(key) {
   try {
     const raw = localStorage.getItem(key);
@@ -19,6 +27,11 @@ function readCache(key) {
   }
 }
 
+/**
+ * Writes data and the timestamp of said data into the cache
+ * @param {*} key the key of the character
+ * @param {*} data the data of said character
+ */
 function writeCache(key, data) {
   try {
     localStorage.setItem(key, JSON.stringify({ data, ts: Date.now() }));
@@ -27,6 +40,10 @@ function writeCache(key, data) {
   }
 }
 
+/**
+ * Clears the character's from a user's cache
+ * @param {*} userId the user's username
+ */
 function bustCache(userId) {
   try {
     localStorage.removeItem(CACHE_KEY_CHARS(userId));
@@ -34,6 +51,13 @@ function bustCache(userId) {
   } catch {}
 }
 
+/**
+ * Asynchronously communicates with the backend to fetch data, and navigates to login if the JWT token is expired.
+ * @param {*} url the backend URL (usually callicom.render.app)
+ * @param {*} token the JWT token
+ * @param {*} navigate navigation back to the login view.
+ * @returns 
+ */
 async function fetchJSON(url, token, navigate) {
   const res = await fetch(url, {
     method: "GET",
@@ -47,18 +71,14 @@ async function fetchJSON(url, token, navigate) {
 
   if (res.status === 401 || res.status === 403) {
     const msg = text.toLowerCase();
-    if (
-      msg.includes("token expired") ||
-      msg.includes("jwt expired") ||
-      msg.includes("tokenexpirederror")
-    ) {
-      console.warn("Token expired. Redirecting to login.");
-    } else {
-      console.warn("Access denied. Redirecting to login.");
-    }
+    console.warn(
+      msg.includes("token expired") || msg.includes("jwt expired")
+        ? "Token expired. Redirecting to login."
+        : "Access denied. Redirecting to login."
+    );
     localStorage.removeItem("token");
     navigate("/login");
-    return null; // signal caller to bail
+    return null;
   }
 
   try {
@@ -74,25 +94,124 @@ async function fetchJSON(url, token, navigate) {
   }
 }
 
+/**
+ * Creates the banner on a cold start for whenever the user logs in, and the backend isnt spooled up. Intended to warn them of there possibly being issues with any values and data saving until the backend is warmed up (thanks render)
+ * @returns React Component for the banner.
+ */
+function ColdStartBanner() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -6 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -6 }}
+      transition={{ duration: 0.25 }}
+      className="flex items-center gap-3 px-4 py-2 bg-neutral-900 border-l-4 border-yellow-500 text-sm text-yellow-300"
+    >
+      <svg
+        className="animate-spin h-3 w-3 text-yellow-400 shrink-0"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          className="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          strokeWidth="4"
+        />
+        <path
+          className="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+        />
+      </svg>
+      <span>⚠ Backend is waking up — saves may be delayed. Please wait.</span>
+    </motion.div>
+  );
+}
+
+/**
+ * Creates the banner for whenever the user logs in and there is a mismatch between the data in the backend that is fetched and the data that is on localstorage.
+ * @returns React Component for the banner.
+ */
+function MismatchBanner({ onApply }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -6 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -6 }}
+      transition={{ duration: 0.25 }}
+      className="flex items-center justify-between px-4 py-2 bg-neutral-900 border-l-4 border-orange-500 text-sm text-orange-300"
+    >
+      <span>⚠ Operator data has changed since last sync.</span>
+      <button
+        onClick={onApply}
+        className="ml-4 px-3 py-1 bg-orange-500 hover:bg-orange-400 text-black font-bold text-xs transition-colors"
+      >
+        UPDATE
+      </button>
+    </motion.div>
+  );
+}
+
+
+/**
+ * The main component that's exported.
+ * @param userId the username of the current user.
+ */
 function CharacterRoster({ userId }) {
-  const [characters, setCharacters] = useState([]);
-  const [equipment, setEquipment] = useState([]);
+  const [characters, setCharacters]               = useState([]);
+  const [equipment, setEquipment]                 = useState([]);
   const [selectedCharacter, setSelectedCharacter] = useState();
-  const [isLoading, setIsLoading] = useState(false);
-  const [refreshFlag, setRefreshFlag] = useState(false);
+  const [isLoading, setIsLoading]                 = useState(false);
+  const [refreshFlag, setRefreshFlag]             = useState(false);
+
+  const [pendingChars, setPendingChars]           = useState(null);
+  const [pendingEquip, setPendingEquip]           = useState(null);
+  const [hasMismatch, setHasMismatch]             = useState(false);
+
+  const [backendSleeping, setBackendSleeping]     = useState(false);
+  const sleepTimerRef                             = useRef(null);
+
   const navigate = useNavigate();
 
-  const revalidate = () => setRefreshFlag((prev) => !prev);
-
+  /**
+   * Triggers an asynchronous refresh of the page by bushing the cache and then setting a refresh flag.
+   */
   const triggerRefresh = () => {
     bustCache(userId);
     setRefreshFlag((prev) => !prev);
   };
 
+  /**
+   * Applies any staged updates into localstorage. staged chars are saved in pendingChars, and once applied resets any mismatches.
+   */
+  const applyPendingUpdate = () => {
+    if (pendingChars) {
+      setCharacters(pendingChars);
+      writeCache(CACHE_KEY_CHARS(userId), pendingChars);
+      if (selectedCharacter) {
+        const updated = pendingChars.find((c) => c._id === selectedCharacter._id);
+        if (updated) setSelectedCharacter(updated);
+      }
+    }
+    if (pendingEquip) {
+      setEquipment(pendingEquip);
+      writeCache(CACHE_KEY_EQUIP, pendingEquip);
+    }
+    setPendingChars(null);
+    setPendingEquip(null);
+    setHasMismatch(false);
+  };
+
+  // Cleanup sleep timer on unmount
   useEffect(() => {
-    revalidate();
+    return () => clearTimeout(sleepTimerRef.current);
   }, []);
 
+  // Main data fetch
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -100,54 +219,55 @@ function CharacterRoster({ userId }) {
       return;
     }
 
-    // --- Serve cache immediately (stale-while-revalidate) ---
     const cachedChars = readCache(CACHE_KEY_CHARS(userId));
     const cachedEquip = readCache(CACHE_KEY_EQUIP);
 
-    if (cachedChars) {
-      setCharacters(cachedChars);
-      if (selectedCharacter) {
-        const updated = cachedChars.find(
-          (c) => c._id === selectedCharacter._id,
-        );
-        if (updated) setSelectedCharacter(updated);
-      }
-    }
+    if (cachedChars) setCharacters(cachedChars);
     if (cachedEquip) setEquipment(cachedEquip);
 
-    // If both caches hit, don't show the spinner — revalidate silently
-    const hasBothCached = !!cachedChars && !!cachedEquip;
-    if (!hasBothCached) setIsLoading(true);
+    if (!cachedChars || !cachedEquip) setIsLoading(true);
 
-    // --- Revalidate in background with Promise.all ---
+    sleepTimerRef.current = setTimeout(() => {
+      setBackendSleeping(true);
+    }, COLD_START_THRESHOLD_MS);
+
     Promise.all([
-      fetchJSON(
-        `https://callicom.onrender.com/api/characters/${userId}`,
-        token,
-        navigate,
-      ),
-      fetchJSON(
-        `https://callicom.onrender.com/api/campaignEquipment`,
-        token,
-        navigate,
-      ),
+      fetchJSON(`https://callicom.onrender.com/api/characters/${userId}`, token, navigate),
+      fetchJSON(`https://callicom.onrender.com/api/campaignEquipment`, token, navigate),
     ]).then(([chars, equip]) => {
-      if (chars) {
+      clearTimeout(sleepTimerRef.current);
+      setBackendSleeping(false);
+      setIsLoading(false);
+
+      const charsMismatch = chars && JSON.stringify(chars) !== JSON.stringify(cachedChars);
+      const equipMismatch = equip && JSON.stringify(equip) !== JSON.stringify(cachedEquip);
+
+      if (charsMismatch || equipMismatch) {
+        if (charsMismatch) setPendingChars(chars);
+        if (equipMismatch) setPendingEquip(equip);
+        setHasMismatch(true);
+      } else {
+        if (chars) writeCache(CACHE_KEY_CHARS(userId), chars);
+        if (equip) writeCache(CACHE_KEY_EQUIP, equip);
+      }
+
+      // No cache at all — apply directly without prompting
+      if (!cachedChars && chars) {
         setCharacters(chars);
         writeCache(CACHE_KEY_CHARS(userId), chars);
-        if (selectedCharacter) {
-          const updated = chars.find((c) => c._id === selectedCharacter._id);
-          if (updated) setSelectedCharacter(updated);
-        }
       }
-      if (equip) {
+      if (!cachedEquip && equip) {
         setEquipment(equip);
         writeCache(CACHE_KEY_EQUIP, equip);
       }
-      setIsLoading(false);
     });
   }, [userId, refreshFlag]);
 
+  /**
+   * Handles deleting a character via their characterID.
+   * @param {*} id 
+   * @returns nothing if the deletion was a success. Or throws an alert if there was an issue doing so.
+   */
   const handleDeleteCharacter = async (id) => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -163,13 +283,13 @@ function CharacterRoster({ userId }) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-      },
+      }
     );
 
     if (res.ok) {
       setCharacters((prev) => prev.filter((char) => char._id !== id));
       setSelectedCharacter(false);
-      triggerRefresh(); // busts cache + refetches
+      triggerRefresh();
     } else {
       alert("Failed to delete character.");
     }
@@ -181,6 +301,18 @@ function CharacterRoster({ userId }) {
       style={{ fontFamily: "Geist_Mono" }}
     >
       <h1 className="text-2xl font-bold text-orange-400">Your Characters</h1>
+
+      {/* Status banners */}
+      <div className="space-y-1">
+        <AnimatePresence>
+          {backendSleeping && <ColdStartBanner key="cold-start" />}
+        </AnimatePresence>
+        <AnimatePresence>
+          {hasMismatch && <MismatchBanner key="mismatch" onApply={applyPendingUpdate} />}
+        </AnimatePresence>
+      </div>
+
+      {/* Loading / ready status line */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -195,19 +327,8 @@ function CharacterRoster({ userId }) {
               fill="none"
               viewBox="0 0 24 24"
             >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-              />
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-              />
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
             </svg>
             Fetching Operators...
           </div>
@@ -218,6 +339,7 @@ function CharacterRoster({ userId }) {
         )}
       </motion.div>
 
+      {/* Character grid */}
       <div className="grid sm:grid-cols-2 md:grid-cols-5 gap-4">
         {characters.map((char) => (
           <motion.div
@@ -236,14 +358,13 @@ function CharacterRoster({ userId }) {
         ))}
       </div>
 
+      {/* Detail panel */}
       <div>
         {selectedCharacter ? (
           <div>
             <div className="relative flex py-5 items-center">
               <div className="flex-grow border-t border-gray-100" />
-              <span className="flex-shrink mx-4 text-gray-100">
-                Detailed View
-              </span>
+              <span className="flex-shrink mx-4 text-gray-100">Detailed View</span>
               <div className="flex-grow border-t border-gray-100" />
             </div>
             <div className="min-h[30rem]">
@@ -265,7 +386,7 @@ function CharacterRoster({ userId }) {
           </div>
         ) : (
           <motion.div
-            key={selectedCharacter?._id}
+            key="no-selection"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.2, delay: 0.2 }}
