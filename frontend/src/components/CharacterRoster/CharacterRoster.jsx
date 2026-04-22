@@ -10,6 +10,7 @@ const CACHE_KEY_EQUIP = `roster_equipment`;
 const COLD_START_THRESHOLD_MS = 3000;
 const CACHE_TTL_MS = 2 * 60 * 1000; // 2 minutes — adjust as needed
 
+
 /**
  * Takes an input of the character's key, and then returns the parsed JSON value of the key value.
  * @param {*} key a Character's key
@@ -19,7 +20,7 @@ function readCache(key) {
   try {
     const raw = localStorage.getItem(key);
     if (!raw) return null;
-    const { data } = JSON.parse(raw);
+    const { data, ts } = JSON.parse(raw);
     return data;
   } catch {
     return null;
