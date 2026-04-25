@@ -8,7 +8,6 @@ import { motion, AnimatePresence } from "framer-motion";
 const CACHE_KEY_CHARS = (userId) => `roster_characters_${userId}`;
 const CACHE_KEY_EQUIP = `roster_equipment`;
 const COLD_START_THRESHOLD_MS = 3000;
-const CACHE_TTL_MS = 2 * 60 * 1000; // 2 minutes — adjust as needed
 
 
 /**
@@ -41,7 +40,7 @@ function writeCache(key, data) {
 }
 
 /**
- * Clears the character's from a user's cache
+ * Clears the cache for the user.
  * @param {*} userId the user's username
  */
 function bustCache(userId) {
@@ -211,7 +210,9 @@ function CharacterRoster({ userId }) {
     return () => clearTimeout(sleepTimerRef.current);
   }, []);
 
-  // Main data fetch
+  /**
+   * UseEffect to fetch all of the data needed. Also gathers cached data from localstorage
+   */
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -251,7 +252,7 @@ function CharacterRoster({ userId }) {
         if (equip) writeCache(CACHE_KEY_EQUIP, equip);
       }
 
-      // No cache at all — apply directly without prompting
+      //if there's no cache, proceed to write into the cache the characters fetches and the equipment fetched.
       if (!cachedChars && chars) {
         setCharacters(chars);
         writeCache(CACHE_KEY_CHARS(userId), chars);
@@ -312,7 +313,7 @@ function CharacterRoster({ userId }) {
         </AnimatePresence>
       </div>
 
-      {/* Loading / ready status line */}
+      {/* Loading and status */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -339,7 +340,7 @@ function CharacterRoster({ userId }) {
         )}
       </motion.div>
 
-      {/* Character grid */}
+      {/* Characters */}
       <div className="grid sm:grid-cols-2 md:grid-cols-5 gap-4">
         {characters.map((char) => (
           <motion.div
@@ -358,7 +359,7 @@ function CharacterRoster({ userId }) {
         ))}
       </div>
 
-      {/* Detail panel */}
+      {/* Selected Character */}
       <div>
         {selectedCharacter ? (
           <div>
