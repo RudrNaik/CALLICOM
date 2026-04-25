@@ -21,21 +21,13 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
   const [isEditingEquipment, setIsEditingEquipment] = useState(false);
   const [xpRemaining, setXpRemaining] = useState(character.XP || 0);
   const [editedSkills, setEditedSkills] = useState({ ...character.skills });
-  const [emergencyDice, setEmergencyDice] = useState(
-    character.emergencyDice || 0,
-  );
-  const [originalEmergencyDice, setOriginalEmergencyDice] = useState(
-    character.emergencyDice || 0,
-  );
-  const [specializations, setSpecializations] = useState([
-    ...character.specializations,
-  ]);
+  const [emergencyDice, setEmergencyDice] = useState(character.emergencyDice || 0);
+  const [originalEmergencyDice, setOriginalEmergencyDice] = useState(character.emergencyDice || 0);
+  const [specializations, setSpecializations] = useState([...character.specializations]);
   const [showSpecModal, setShowSpecModal] = useState(false);
   const [showXpInput, setShowXpInput] = useState(false);
   const [xpToAdd, setXpToAdd] = useState("");
-  const [campaignInput, setCampaignInput] = useState(
-    character.campaignId || "",
-  );
+  const [campaignInput, setCampaignInput] = useState(character.campaignId || "");
   const [charActive, setCharActive] = useState(false);
   const [isEditingAttr, setEditAttr] = useState(false);
   const [multiClass, setMulticlass] = useState(character.multiClass || "");
@@ -50,7 +42,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
       setEditedSkills({ ...character.skills });
       setXpRemaining(character.XP || 0);
       setEmergencyDice(character.emergencyDice || 0);
-      setOriginalEmergencyDice(character.emergencyDice || 0); // Initialize original emergency dice
+      setOriginalEmergencyDice(character.emergencyDice || 0);
       setCampaignInput(character.campaignId || "");
       setMulticlass(character.multiClass || "");
       setCharActive(false);
@@ -58,6 +50,11 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
     }
   }, [character]);
 
+  /**
+   * Handles the upgrade cost in terms of EXP needed between levels. You can only level up by being at the previous level, you cant jump from 1 to 4 without being at 2 or 3 along the way.
+   * @param {*} level the specific level the character is at.
+   * @returns upgrade cost to the next level.
+   */
   const getUpgradeCost = (level) => {
     if (level === 0) return 1;
     if (level === 1) return 4;
@@ -66,6 +63,11 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
     return 0;
   };
 
+  /**
+   * Sets the specific skill to the next level.
+   * @param {*} skill selected skill
+   * @returns sets the edited skill in the payload to the level + 1.
+   */
   const increaseSkill = (skill) => {
     const level = editedSkills[skill] || 0;
     if (level >= 4) return;
@@ -76,6 +78,10 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
     }
   };
 
+  /**
+   * Decreases the current skill, sets the edited skill payload to one less than it was currently.
+   * @param {*} skill Selected skill
+   */
   const decreaseSkill = (skill) => {
     const current = editedSkills[skill] || 0;
     const original = character.skills?.[skill] || 0;
@@ -87,13 +93,20 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
     }
   };
 
+  /**
+   * Adds an emergency dice to the character's E-dice count.
+   */
   const addEmergencyDie = () => {
     if (emergencyDice < 4 && xpRemaining >= 1) {
-      setEmergencyDice((prev) => prev + 1); // Update the state directly
+      setEmergencyDice((prev) => prev + 1);
       setXpRemaining((prev) => prev - 1);
     }
   };
 
+  /**
+   * Removes an emergency dice from the user, and differentiates between Edice being removed during editing and edice removed during play.
+   * @returns Nothing
+   */
   const removeEmergencyDie = () => {
     if (isEditing && emergencyDice <= originalEmergencyDice) {
       alert("You can't remove more emergency dice than you originally had.");
@@ -112,6 +125,11 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
     }
   };
 
+  /**
+   * Directly patches the edice -1. Ayncrhonous due to calling the backend.
+   * @param {*} amount The amount of edice being removed.
+   * @returns 
+   */
   const patchRemoveEDice = async (amount) => {
     const updates = {
       emergencyDice: emergencyDice - amount, // Send updated state to backend
@@ -149,6 +167,11 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
     }
   };
 
+  /**
+   * Handles removing a specialization from the character.
+   * @param {*} index index of the specialization.
+   * @returns 
+   */
   const removeSpecialization = (index) => {
     const baseLength = character.specializations.length;
     if (index < baseLength) return;
@@ -159,6 +182,11 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
     setXpRemaining((prev) => prev + 5);
   };
 
+  /**
+   * Patches the exp spent/earned.
+   * @param {*} amount amount of exp.
+   * @returns 
+   */
   const patchXP = async (amount) => {
     const updates = {
       XP: xpRemaining + amount,
@@ -194,10 +222,15 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
     }
   };
 
+  /**
+   * Patches the backend data for the multiclass. Blocked if you have a multiclass already, if you dont have enough EXP, or there isnt any value.
+   * @param {*} secClass 
+   * @returns nothing if blocked.
+   */
   const patchMulticlass = async (secClass) => {
     // Guard: must have enough XP and not already multiclassed
     if (!secClass) return;
-    if (multiClass) return; // or allow replacing if your rules permit
+    if (multiClass) return; // Blocks from being able to re-assign a multiclass. Kinda unecessary but its just a double guard.
     if (xpRemaining < 20) {
       alert("You need at least 20 XP to multiclass.");
       return;
@@ -207,7 +240,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
 
     const updates = {
       multiClass: secClass,
-      XP: newXP, // send the *new* XP in the same PATCH
+      XP: newXP, 
     };
 
     const token = localStorage.getItem("token");
@@ -231,11 +264,10 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
       );
 
       if (res.ok) {
-        // Update local state exactly once
         setMulticlass(secClass);
         setXpRemaining(newXP);
         setShowMultiClassModal(false);
-        onUpdate(); // refresh from server if you like
+        onUpdate(); 
       } else {
         alert("Failed to update multiClass.");
       }
@@ -245,6 +277,11 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
     }
   };
 
+  /**
+   * Patches the backend data for the biography of said character.
+   * @param {*} bio biography string + whitespace. 
+   * @returns 
+   */
   const patchBio = async (bio) => {
     const updates = {
       Bio: bio,
@@ -282,6 +319,11 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
     }
   };
 
+  /**
+   * Patches the attributes (alt, bdy, int, spr) for the backend data.
+   * @param {*} attrKey the key of the attribute.
+   * @returns 
+   */
   const patchAttribute = async (attrKey) => {
     if (!attrKey) return;
     if (xpRemaining < 40) {
@@ -319,7 +361,6 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
       );
 
       if (res.ok) {
-        // Commit locally
         setAttributes(nextAttributes);
         setXpRemaining(newXP);
         onUpdate?.();
@@ -334,6 +375,10 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
     }
   };
 
+  /**
+   * Handles saving the changes so everything is synced up.
+   * @returns 
+   */
   const handleSaveChanges = async () => {
     const updates = {
       XP: xpRemaining,
