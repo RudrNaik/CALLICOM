@@ -30,6 +30,9 @@ function Campaigns() {
   const loadingCampaignData = campaigns.length === 0 || missions.length === 0;
   const isInitialLoading = loadingCampaignData || isLoading;
 
+  /**
+   * UseEffect for login, JWT check, and fetching missions.
+   */
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -66,6 +69,9 @@ function Campaigns() {
       });
   }, []);
 
+  /**
+   * UseEffect for the campaign missions and setting them in the UI
+   */
   useEffect(() => {
     const campaignMissions = missions
       .filter((m) => m.campaignId?.id === currentCampaignId)
@@ -83,6 +89,9 @@ function Campaigns() {
     setCurrentMissionId(current?.id || fallback?.id || null);
   }, [currentCampaignId, missions]);
 
+  /**
+   * Same useEffect as above but specifically for getting the characters and fetching that data.
+   */
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -135,6 +144,9 @@ function Campaigns() {
   const currentCampaign = campaigns.find((c) => c.id === currentCampaignId);
   const currentMission = missions.find((m) => m.id === currentMissionId);
 
+  /**
+   * Refreshes the campaigns when triggered.
+   */
   const refreshCampaigns = () => {
     const token = localStorage.getItem("token");
     fetch("https://callicom.onrender.com/api/campaigns", {
@@ -148,6 +160,9 @@ function Campaigns() {
       .catch((err) => console.error("Error refreshing campaigns:", err));
   };
 
+  /**
+   * Refreshes the misisons when triggered.
+   */
   const refreshMissions = () => {
     const token = localStorage.getItem("token");
 
@@ -162,6 +177,10 @@ function Campaigns() {
       .catch((err) => console.error("Failed to refresh missions:", err));
   };
 
+  /**
+   * Handles adding missions to a payload and sends it to the backend whenever creating a new mission. 
+   * @returns an error if something in the process fails.
+   */
   const handleAddMission = async () => {
     if (isCreatingMission) return;
     setIsCreatingMission(true);
@@ -214,6 +233,10 @@ function Campaigns() {
     }
   };
 
+  /**
+   * Handles deleting missions if the GM decides to do so.
+   * @returns an error if something in the process fails.
+   */
   const handleDeleteMission = async () => {
     if (
       !currentMissionId ||
@@ -294,7 +317,7 @@ function Campaigns() {
       }}
     >
       <div className="py-20 px-10">
-        {/* TOP BANNER */}
+        {/* Deployment banner */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -309,9 +332,9 @@ function Campaigns() {
           />
         </motion.div>
 
-        {/* THREE COLUMN GRID */}
+        {/* Main 3 col grid */}
         <div className="md:flex sm:grid-cols-1 gap-4">
-          {/* CAMPAIGN VIEW */}
+          {/* Campaign View */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -333,7 +356,7 @@ function Campaigns() {
             />
           </motion.div>
 
-          {/* MISSION VIEW */}
+          {/* Mission View */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -349,7 +372,7 @@ function Campaigns() {
             />
           </motion.div>
 
-          {/* CHARACTER ROSTER */}
+          {/* Contra Rosters */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
