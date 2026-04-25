@@ -53,7 +53,7 @@ const Footer = () => {
         <p className="text-xs text-gray-300 px-4 leading-relaxed">
           © 2025 SpinyNA Studios. All rights reserved. Dates and content subject to change. Game is not yet rated.
           <br />
-          SpinyNA, the SpinyNA logo, Calamari, and the Calamari logo are among the trademarks of SpinyNA Studios.
+          SpinyNA, the SpinyNA logo, Calamari, and the Calamari logo are among the trademarks of SpinyNA Studios (Not actually).
         </p>
       </div>
     </footer>

@@ -17,7 +17,7 @@ import { AuthProvider } from "./AuthContext";
 import "./App.css";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import Thing from "./testing";
+import MissingPage from "./MissingPage";
 import Footer from "./components/Footer";
 import Lore from "./Lore";
 
@@ -26,7 +26,7 @@ function ScrollToTop() {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    window.scrollTo({ top: 10, left: 0, behavior: "smooth" }); // or "smooth"
+    window.scrollTo({ top: 10, left: 0, behavior: "smooth" });
   }, [pathname]);
 
   return null;
@@ -67,7 +67,7 @@ export default function App() {
             />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/CALLICOM/lore" element={<Lore/>}/>
-            <Route path="*" element={<Thing />}></Route>
+            <Route path="*" element={<MissingPage />}></Route>
           </Routes>
           <Footer />
         </div>

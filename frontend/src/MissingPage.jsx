@@ -3,7 +3,7 @@ import Dither from "./components/Dither";
 import background from "./assets/Images/4060492.jpg";
 import "./assets/css/cabber.css";
 
-function Testing() {
+function MissingPage() {
   return (
     <div
       className="bg-repeat bg-[length:1920px_1080px] w-full min-h-screen"
@@ -30,4 +30,4 @@ function Testing() {
   );
 }
 
-export default Testing;
+export default MissingPage;
