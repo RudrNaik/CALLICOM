@@ -1,7 +1,7 @@
 
 @import "tailwindcss";
 
-/* === GLOBAL SCROLLBAR THEME === */
+/* global scrollbar themes */
 html {
   /* Firefox scrollbar defaults */
   scrollbar-color: #F97316 #171717;  /* thumb orange-400, track neutral-900 */
@@ -29,7 +29,7 @@ html {
   background-color: #f97316; /* orange-500 */
 }
 
-/* Base look for your numeric inputs */
+/* Base look for numeric inputs */
 input[type="number"].num-themed {
   color: #e5e7eb;                 /* neutral-200 */
   background-color: #0a0a0a;      /* near black */
@@ -45,7 +45,7 @@ input[type="number"].num-themed::-webkit-inner-spin-button {
   margin: 0;
 }
 
-/* Firefox: remove native spinner look */
+/* Remove native spinner for firefox because it's special.*/
 input[type="number"].num-themed {
   -moz-appearance: textfield;
   appearance: textfield;
@@ -55,7 +55,7 @@ button{
   cursor: pointer;
 }
 
-/* Base dark theme for all dropdowns you want to restyle */
+/* Base dark theme for all dropdowns */
 select.select-themed {
   color: #ffffff;                 /* orange-500 text */
   background-color: #171717;      /* black background */
