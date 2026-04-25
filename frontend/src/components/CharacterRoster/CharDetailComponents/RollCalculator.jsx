@@ -84,22 +84,19 @@ function Calculator({ characterData }) {
     return fleshWounds + deepWounds * 2;
   }, [fleshWounds, deepWounds]);
 
-  // NEW: total dice delta from all dice modifiers
-  const totalDiceDelta = useMemo(() => {
+  const totalDiceChange = useMemo(() => {
     return diceModifiers.reduce((sum, m) => sum + Number(m.value), 0);
   }, [diceModifiers]);
 
-  // NEW: base pool size before modifiers (unskilled = 2, else skillLevel)
   const getBaseDiceCount = () => {
     const skillLevel = getSkillLevel();
     return skillLevel <= 0 ? 2 : skillLevel;
   };
 
-  // NEW: effective pool size, clamped to minimum 1
   const getEffectiveDiceCount = () => {
     const skillLevel = getSkillLevel();
-    const min = skillLevel <= 0 ? 2 : 1;
-    return Math.max(min, getBaseDiceCount() + totalDiceDelta);
+    const min = skillLevel <= 0 ? 2 : 0;
+    return Math.max(min, getBaseDiceCount() + totalDiceChange);
   };
 
   const totalModifierValue = useMemo(() => {
@@ -177,7 +174,7 @@ function Calculator({ characterData }) {
     return expr;
   }, [
     totalModifierValue,
-    totalDiceDelta,
+    totalDiceChange,
     woundPenalty,
     selectedWeapon,
     selectedSkill,
@@ -551,15 +548,15 @@ function Calculator({ characterData }) {
             <div>
               Dice: {getEffectiveDiceCount()}d6
               {getSkillLevel() <= 0 ? "l" : "k1"}
-              {totalDiceDelta !== 0 && (
+              {totalDiceChange !== 0 && (
                 <span
                   className={
-                    totalDiceDelta > 0 ? "text-green-400" : "text-red-400"
+                    totalDiceChange > 0 ? "text-green-400" : "text-red-400"
                   }
                 >
                   {" "}
-                  ({getBaseDiceCount()} base {totalDiceDelta > 0 ? "+" : ""}
-                  {totalDiceDelta} dice)
+                  ({getBaseDiceCount()} base {totalDiceChange > 0 ? "+" : ""}
+                  {totalDiceChange} dice)
                 </span>
               )}
             </div>
