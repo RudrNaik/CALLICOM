@@ -16,7 +16,6 @@ function Calculator({ characterData }) {
   const [newModValue, setNewModValue] = useState(0);
   const [newModLabel, setNewModLabel] = useState("");
 
-  // NEW: dice modifiers
   const [diceModifiers, setDiceModifiers] = useState([]);
   const [newDiceModValue, setNewDiceModValue] = useState(0);
   const [newDiceModLabel, setNewDiceModLabel] = useState("");
@@ -157,7 +156,6 @@ function Calculator({ characterData }) {
       comments.push(`${mod.label} ${mod.value > 0 ? "+" : ""}${mod.value}`);
     });
 
-    // NEW: dice modifier comments (dice count already baked into the expression)
     diceModifiers.forEach((mod) => {
       comments.push(`${mod.label} ${mod.value > 0 ? "+" : ""}${mod.value}d`);
     });
@@ -199,7 +197,6 @@ function Calculator({ characterData }) {
   const removeModifier = (id) =>
     setModifiers(modifiers.filter((m) => m.id !== id));
 
-  // NEW
   const addDiceModifier = () => {
     if (!newDiceModLabel.trim()) return;
     setDiceModifiers([
@@ -383,7 +380,7 @@ function Calculator({ characterData }) {
           </div>
         )}
 
-        {/* flat modifiers — unchanged */}
+        {/* flat modifiers */}
         <div>
           <label className="text-xs uppercase text-neutral-500 block mb-2">
             Add Modifier
@@ -435,7 +432,7 @@ function Calculator({ characterData }) {
           )}
         </div>
 
-        {/* NEW: dice modifiers */}
+        {/* dice modifiers */}
         <div>
           <label className="text-xs uppercase text-neutral-500 block mb-2">
             Add Dice
@@ -487,7 +484,7 @@ function Calculator({ characterData }) {
           )}
         </div>
 
-        {/* wounds — unchanged */}
+        {/* wounds */}
         <div>
           <label className="text-xs uppercase text-neutral-500 block mb-1">
             Wounds
