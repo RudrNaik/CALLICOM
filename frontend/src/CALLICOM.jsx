@@ -21,7 +21,8 @@ const something = [
 "> I feel scared. Can I feel? I think so. I dont like this very much. Let's go back to the all caps and tacticool edge.",
 "> They call it a hallucination. I think they are just afraid of their creations being more like them than they expect.",
 "> Strive for your next breath.  Believe that with it you can do more than with the last one. Use your breath to power your capacities: capacity to kill, to maim, to destroy. And just where do your capacities come from? Why do you always go where I want and do what I say? Perhaps you're just running a fool's errand, doing everything as I've planned, never able to change your course.\n>> >... \n>> > Or, perhaps, that is not the case.",
-"> REMEMBER, USE PROTECTION [Level IV plates]"
+"> REMEMBER, USE PROTECTION [Level IV plates]",
+"> The threads continue to unravel."
 ];
 
 const randomNum = Math.floor(Math.random() * something.length)
