@@ -13,7 +13,12 @@
         "class": "All",
         "cost": 1200,
         "description": "Light Pistols are handguns shooting conventional pistol calibers such as 9x19, .45 ACP, and 5.7x28. Though light on damage they make up for this with decent-sized magazines and general reliability at short to medium distances",
-        "rulesText": "[Light Weapons][CQC]\nRange modifier: +1 C | -2 L | -3 ELR\n PEN: 1 | DMG: 4 \n RSV: 4 | CAP: 2"
+        "rulesText": "[Light Weapons][CQC]\nRange modifier: +1 C | -2 L | -3 ELR\n PEN: 1 | DMG: 4 \n RSV: 4 | CAP: 2",
+        "families":[
+            {"family": "Wonder-9" , "effect": "Gain an extra magazine and an extra turn of ammo per magazine. Gain [Spray]"},
+            {"family": "Micros"   , "effect": "Gain a +1 to disguise checks, uses subsonic ammo" }, 
+            {"family": "Power-10" , "effect": "Limb shots debilitate targets by removing their ability to sprint if hit in the leg, or reducing any action involving two hands by one dice." }
+        ]
     },
     {
         "id": "h-pistols",
@@ -22,7 +27,12 @@
         "class": "All",
         "cost": 1200,
         "description": "Heavy Pistols are handguns and revolvers shooting heavier calibers such as .44 Magnum, .357 Magnum, .50 AE. These weapons trade large magazine sizes and accuracy at longer distances for heavy damage.",
-        "rulesText": "[Light Weapons][Precision]\nRange modifier: +1 M | -1 L | -2 ELR\n PEN: 2 | DMG: 6 \n RSV: 4 | CAP: 2"
+        "rulesText": "[Light Weapons][Precision]\nRange modifier: +1 M | -1 L | -2 ELR\n PEN: 2 | DMG: 6 \n RSV: 4 | CAP: 2",
+        "families":[
+            {"family": "Hand-cannons" , "effect": "Increases damage by 1. You only have one cylinder with 3 turns of ammo."},
+            {"family": "40 and 45s"   , "effect": "Alters rounds to be subsonic, retains damage." }, 
+            {"family": "Magnums" , "effect": "Gain [Burst]" }
+        ]
     },
     {
         "id": "smg",
@@ -31,7 +41,12 @@
         "class": "All",
         "cost": 2000,
         "description": "Submachine Guns are compact weapons shooting conventional pistol calibers such as 9x19, .45 ACP, and 10mm at high rates of fire. These weapons come with the ability to Spray which allows them to saturate anywhere between 1-3 targets in their cone of fire (note this can also include teammates if the player is not careful). When used in the secondary slot- the total ammo is halved.",
-        "rulesText": "[Light Weapons][Spray]\nRange modifier: +1 C | -1 L | -2 ELR\n PEN: 1 | DMG: 4 \n RSV: 9 | CAP: 3"
+        "rulesText": "[Light Weapons][Spray]\nRange modifier: +1 C | -1 L | -2 ELR\n PEN: 1 | DMG: 4 \n RSV: 9 | CAP: 3",
+        "families":[
+            {"family": "Machine Pistols" , "effect": "Only Equippable as a secondary, lose a magazine and a turn of ammo per mag."},
+            {"family": "Heavy SMGs"   , "effect": "Gain +1 to damage, uses Subsonic ammo. Replace  the ability to [Spray] with [Burst]" }, 
+            {"family": "Light SMGs" , "effect": "Gain an extra turn per magazine, Gain +1 to disguise checks in Social Stealth as it's easier to conceal." }
+        ]
     },
     {
         "id": "carbines",

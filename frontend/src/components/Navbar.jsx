@@ -103,7 +103,6 @@ const Navbar = ({}) => {
           </svg>
         </button>
         
-
         {/* User profile button */}
         <div
           className="absolute right-4 top-1/2 -translate-y-1/2"

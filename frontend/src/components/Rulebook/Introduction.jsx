@@ -3,7 +3,6 @@ import RuleCard from "./RuleCard";
 import { useState, useEffect } from "react";
 import rules from "../../data/rules.json";
 
-
 const Rules = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
