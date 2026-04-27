@@ -35,7 +35,7 @@ function writeCache(key, data) {
   try {
     localStorage.setItem(key, JSON.stringify({ data, ts: Date.now() }));
   } catch {
-    // localStorage full or unavailable — silently skip
+    // localStorage full or unavailable, silently skip
   }
 }
 
