@@ -4,13 +4,8 @@
     "damage": 4,
     "penetration": 1,
     "range": "+1 C | -2 L | -3 ELR",
-    "totalTurns": 4,
-    "magazineSize": 2,
-    "families":[
-      ["Wonder-9" , "Gain an extra magazine and an extra turn of ammo per magazine. Gain [Spray]"],
-      ["Micros"   , "Gain a +1 to disguise checks, uses subsonic ammo" ], 
-      ["Power-10" , "Limb shots debilitate targets by removing their ability to sprint if hit in the leg, or reducing any action involving two hands by one dice." ]
-    ]
+    "totalTurns": 6,
+    "magazineSize": 3
   },
   "Heavy Pistols": {
     "class": "L-Weapons",
