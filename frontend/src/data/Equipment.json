@@ -55,7 +55,12 @@
         "class": "All",
         "cost": 2600,
         "description": "Carbines and PDWs are the stepping stone from SMG to Assault Rifle, covering weapons that fire intermediate cartridges like 5.56x45, 4.6x30, and 5.7x28. A bit more wieldy than the SMG, the carbine is much more tuned to medium-range engagements and cannot spray or burst like their AR cousins.",
-        "rulesText": "[Light Weapons][Spray]\nRange modifier: +1 M | -1L | -2 ELR\n PEN: 1 | DMG: 4 \n RSV: 9 | CAP: 3"
+        "rulesText": "[Light Weapons][Spray]\nRange modifier: +1 M | -1L | -2 ELR\n PEN: 1 | DMG: 4 \n RSV: 9 | CAP: 3",
+        "families":[
+            {"family": "PDWs" , "effect": "Increases wound threshold division by 1 for center mass. Aiming and hitting center mass now halves the wound threshold."},
+            {"family": "Compact Carbines"   , "effect": "+1 to stealth, can be concealed easier and provides a +1 to Disguise in social stealth" }, 
+            {"family": "Service Carbines" , "effect": "Gain [Burst] alongside [Spray], increase damage by 1." }
+        ]
     },
     {
         "id": "ar",
@@ -64,7 +69,12 @@
         "class": "All",
         "cost": 3500,
         "description": "Assault Rifles are the big brothers to the carbines, covering weapons that fire intermediate cartridges like 5.56x45, 5.45x39, and 7.62x39. The true middle ground when it comes to weapons, they dominate mid-range engagements but take a hit in CQB. These weapons come with the ability to Burst Fire, enabling them to fire a tight burst towards a single opponent at the expense of less dice, for more damage.",
-        "rulesText": "[Medium Weapons][Burst]\nRange modifier: -1 C | +1 M | -1 ELR\n PEN: 1 | DMG: 5 \n RSV: 9 | CAP: 3"
+        "rulesText": "[Medium Weapons][Burst]\nRange modifier: -1 C | +1 M | -1 ELR\n PEN: 1 | DMG: 5 \n RSV: 9 | CAP: 3",
+        "families":[
+            {"family": "Kalashnikovs" , "effect": "All 1's are converted to 2's when rolled. Cannot Jam"},
+            {"family": "Aramlites"   , "effect": "Once per encounter, Aiming is considered a bonus action" }, 
+            {"family": "Bullpups" , "effect": "Gain a +1 to your roll when in Close range of your target." }
+        ]
     },
     {
         "id": "mr",
@@ -73,7 +83,12 @@
         "class": "All",
         "cost": 4300,
         "description": "Marksman rifles are hard-hitting semi-automatic rifles chambered in heavier-hitting calibers such as 7.62x51, 7.62x54, and 6.8x51. Capped with a reduced magazine size and suffering in CQC, these weapons make up for this with their high damage and ranged performance. These weapons come with the ability to Burst Fire, enabling them to fire a tight burst towards a single opponent at the expense of less dice, for more damage.",
-        "rulesText": "[Medium Weapons][Burst][Precision]\nRange modifier: -1 C | +1 L | -1 ELR\n PEN: 2 | DMG: 6 \n RSV: 6 | CAP: 2"
+        "rulesText": "[Medium Weapons][Burst][Precision]\nRange modifier: -1 C | +1 L | -1 ELR\n PEN: 2 | DMG: 6 \n RSV: 6 | CAP: 2",
+        "families":[
+            {"family": "Battle Rifles" , "effect": "Each magazine has an extra turn of ammo"},
+            {"family": "Precision Rifles"   , "effect": "Aiming for limbs no longer takes away a dice." }, 
+            {"family": "Next Generation" , "effect": "Carry 1 extra magazine, +1 when firing from ELR. Does not apply to EELR." }
+        ]
     },
     {
         "id": "shotgun",
@@ -82,7 +97,12 @@
         "class": "All",
         "cost": 3000,
         "description": "Shotguns are the kings of close quarters, chambered in a variety of 12 gauge shells, and occasionally in 8 gauge, they will annihilate anything foolish enough to stand less than 10 meters in front of them. This high damage potential does come with the caveat of a massive damage drop-off over long distances. These weapons can also be used as makeshift breaching devices and have destructive abilities against soft walls.",
-        "rulesText": "[Medium Weapons]\nRange modifier: +2 C | -1 M | -3 L | -4 ELR\n PEN: 1 | DMG: 6 \n RSV: 6 | CAP: 3"
+        "rulesText": "[Medium Weapons]\nRange modifier: +2 C | -1 M | -3 L | -4 ELR\n PEN: 1 | DMG: 6 \n RSV: 6 | CAP: 3",
+        "families":[
+            {"family": "Pump-Action" , "effect": "As a bonus action, you can load a slug round that has a custom range band of -1 C | +1 L | -2 ELR"},
+            {"family": "Semi-Auto"   , "effect": "Firing at a soft wall can turn it into cover. Can be used as a breaching tool for a bonus action instead of a full action." }, 
+            {"family": "Automatic" , "effect": "Firing at a soft wall can turn it into either cover or remove it entirely. Gains the ability to [Spray]." }
+        ]
     },
     {
         "id": "sr",
@@ -91,7 +111,12 @@
         "class": "Sharpshooter Only",
         "cost": 5100,
         "description": "Undisputed champions of long-range engagements, sniper rifles are a go-to choice for marksmen. Chambered from anything between 7.62x51 AP, 338 Lupua, and .300 Norma these weapons are perfect for dropping individual targets long before they know what hit them, made all the better with their armour-penetrating rounds that can hit targets behind soft walls and cover. The major downside however is drawbacks for trying to use them in CQC and their low ammo count. Make each shot count.",
-        "rulesText": "[Medium Weapons][Sharpshooter][Precision]\nRange modifier: -2 C | +1 L | +2 ELR\n PEN: 2 | DMG: 7 \n RSV: 6 | CAP: 3"
+        "rulesText": "[Medium Weapons][Sharpshooter][Precision]\nRange modifier: -2 C | +1 L | +2 ELR\n PEN: 2 | DMG: 7 \n RSV: 6 | CAP: 3",
+        "families":[
+            {"family": "Endurance Rifles" , "effect": "Each magazine has an extra turn of ammo, Gain an extra magazine."},
+            {"family": "High Caliber"   , "effect": "+1 to navigate checks when making a shot from EELR." }, 
+            {"family": "Fun Size" , "effect": "+1 to stealth and disguise checks. Easier to conceal in cases and luggage, +1 to disguise when in social stealth." }
+        ]
     },
     {
         "id": "mg",
@@ -100,16 +125,12 @@
         "class": "Fire Support Only",
         "cost": 4800,
         "description": "Lead spitting machines of the battlefield, machine guns are chambered in a mixture of intermediate and heavier hitting calibers ranging from 5.56,5.8x42, 7.62x51, 6.8x51, and 7.62x39. Despite this mix of calibers, their main purpose isn’t to inflict pinpoint precision damage but to instead shatter the will and the cover of anyone in front of their field of fire. Comes with the ability to Suppress this allows the attacker to choose an area of up to 3 hexes wide to suppress.",
-        "rulesText": "[Heavy Weapons][Fire Support][Suppression]\nRange modifier: +1 Bipod | +1 M | -1 L | -1 ELR\n PEN: 2 | DMG: 5 \n RSV: 8 | CAP: 4"
-    },
-    {
-        "id": "drum-shotgun",
-        "title": "Drum Shotguns",
-        "parentId": "Weapons",
-        "class": "Fire Support Only",
-        "cost": 3300,
-        "description": "Like the venerable machine guns of the battlefield, Drum Mag Shotguns fill a similar niche to the machine gun but for close quarters engagements. Packing the punch of the shotgun but lacking the range, these weapons are designed for keeping the enemy’s head down while you rush their position for the kill. Comes with the ability to Suppress, this allows the attacker to choose an area of up to 3 hexes wide to suppress.",
-        "rulesText": "[Heavy Weapons][Fire Support][Suppression]\nRange modifier: +1 C | -1 M | -3 L | -4 ELR\n PEN: 1 | DMG: 6 \n RSV: 8 | CAP: 4"
+        "rulesText": "[Heavy Weapons][Fire Support][Suppression]\nRange modifier: +1 Bipod | +1 M | -1 L | -1 ELR\n PEN: 2 | DMG: 5 \n RSV: 8 | CAP: 4",
+        "families":[
+            {"family": "LSW" , "effect": "Reduces your capacity to 3 turns, you now have 3 magazines. Gains [Burst]."},
+            {"family": "LMG"   , "effect": "Gain the ability to [Spray]." }, 
+            {"family": "MMG" , "effect": "Increase damage by 1. When in close range of a target, add a malus of -2." }
+        ]
     },
     {
         "id": "grenades",
