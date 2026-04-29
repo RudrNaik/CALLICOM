@@ -52,7 +52,7 @@ const Navbar = ({}) => {
         className="flex items-center relative w-full"
         style={{ fontFamily: "Geist_Mono" }}
       >
-        <img src={SpinyLogo} alt="Logo" className="h-20" />
+        <img src={SpinyLogo} alt="Logo" className="h-20 pl-1" />
         <img src={CalamariLogo} alt="Logo" className="h-20" />
 
         {/* Normal Navigation Links for desktop, hides when less than md in size. */}
