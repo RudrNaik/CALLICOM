@@ -16,7 +16,6 @@ function Calculator({ characterData }) {
   const [newModValue, setNewModValue] = useState(0);
   const [newModLabel, setNewModLabel] = useState("");
 
-  // NEW: dice modifiers
   const [diceModifiers, setDiceModifiers] = useState([]);
   const [newDiceModValue, setNewDiceModValue] = useState(0);
   const [newDiceModLabel, setNewDiceModLabel] = useState("");
@@ -84,22 +83,19 @@ function Calculator({ characterData }) {
     return fleshWounds + deepWounds * 2;
   }, [fleshWounds, deepWounds]);
 
-  // NEW: total dice delta from all dice modifiers
-  const totalDiceDelta = useMemo(() => {
+  const totalDiceChange = useMemo(() => {
     return diceModifiers.reduce((sum, m) => sum + Number(m.value), 0);
   }, [diceModifiers]);
 
-  // NEW: base pool size before modifiers (unskilled = 2, else skillLevel)
   const getBaseDiceCount = () => {
     const skillLevel = getSkillLevel();
     return skillLevel <= 0 ? 2 : skillLevel;
   };
 
-  // NEW: effective pool size, clamped to minimum 1
   const getEffectiveDiceCount = () => {
     const skillLevel = getSkillLevel();
-    const min = skillLevel <= 0 ? 2 : 1;
-    return Math.max(min, getBaseDiceCount() + totalDiceDelta);
+    const min = skillLevel <= 0 ? 2 : 0;
+    return Math.max(min, getBaseDiceCount() + totalDiceChange);
   };
 
   const totalModifierValue = useMemo(() => {
@@ -160,7 +156,6 @@ function Calculator({ characterData }) {
       comments.push(`${mod.label} ${mod.value > 0 ? "+" : ""}${mod.value}`);
     });
 
-    // NEW: dice modifier comments (dice count already baked into the expression)
     diceModifiers.forEach((mod) => {
       comments.push(`${mod.label} ${mod.value > 0 ? "+" : ""}${mod.value}d`);
     });
@@ -177,7 +172,7 @@ function Calculator({ characterData }) {
     return expr;
   }, [
     totalModifierValue,
-    totalDiceDelta,
+    totalDiceChange,
     woundPenalty,
     selectedWeapon,
     selectedSkill,
@@ -202,7 +197,6 @@ function Calculator({ characterData }) {
   const removeModifier = (id) =>
     setModifiers(modifiers.filter((m) => m.id !== id));
 
-  // NEW
   const addDiceModifier = () => {
     if (!newDiceModLabel.trim()) return;
     setDiceModifiers([
@@ -386,7 +380,7 @@ function Calculator({ characterData }) {
           </div>
         )}
 
-        {/* flat modifiers — unchanged */}
+        {/* flat modifiers */}
         <div>
           <label className="text-xs uppercase text-neutral-500 block mb-2">
             Add Modifier
@@ -438,7 +432,7 @@ function Calculator({ characterData }) {
           )}
         </div>
 
-        {/* NEW: dice modifiers */}
+        {/* dice modifiers */}
         <div>
           <label className="text-xs uppercase text-neutral-500 block mb-2">
             Add Dice
@@ -490,7 +484,7 @@ function Calculator({ characterData }) {
           )}
         </div>
 
-        {/* wounds — unchanged */}
+        {/* wounds */}
         <div>
           <label className="text-xs uppercase text-neutral-500 block mb-1">
             Wounds
@@ -551,15 +545,15 @@ function Calculator({ characterData }) {
             <div>
               Dice: {getEffectiveDiceCount()}d6
               {getSkillLevel() <= 0 ? "l" : "k1"}
-              {totalDiceDelta !== 0 && (
+              {totalDiceChange !== 0 && (
                 <span
                   className={
-                    totalDiceDelta > 0 ? "text-green-400" : "text-red-400"
+                    totalDiceChange > 0 ? "text-green-400" : "text-red-400"
                   }
                 >
                   {" "}
-                  ({getBaseDiceCount()} base {totalDiceDelta > 0 ? "+" : ""}
-                  {totalDiceDelta} dice)
+                  ({getBaseDiceCount()} base {totalDiceChange > 0 ? "+" : ""}
+                  {totalDiceChange} dice)
                 </span>
               )}
             </div>

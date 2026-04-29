@@ -1,6 +1,7 @@
 // src/components/Navbar.jsx
 import { useContext, useEffect, useState, useRef } from "react";
-import SpinyLogo from "../assets/Images/SpinyNAStudiosLogo_.png";
+import SpinyLogo from "../assets/Images/SpinyLogoRevamp.png";
+import CalamariLogo from "../assets/Images/Calamari_Logo_inverted.png"
 import { Link } from "react-router-dom";
 import UserIcon from "../assets/Images/UserIcon.png";
 import { AuthContext } from "../AuthContext";
@@ -51,8 +52,8 @@ const Navbar = ({}) => {
         className="flex items-center relative w-full"
         style={{ fontFamily: "Geist_Mono" }}
       >
-        <img src={SpinyLogo} alt="Logo" className="h-20" />
-        <div className="text-xl px-2">SpinyNA Studios</div>
+        <img src={SpinyLogo} alt="Logo" className="h-20 pl-1" />
+        <img src={CalamariLogo} alt="Logo" className="h-20" />
 
         {/* Normal Navigation Links for desktop, hides when less than md in size. */}
         <ul className="hidden md:flex space-x-6 pl-6">
@@ -103,7 +104,6 @@ const Navbar = ({}) => {
           </svg>
         </button>
         
-
         {/* User profile button */}
         <div
           className="absolute right-4 top-1/2 -translate-y-1/2"

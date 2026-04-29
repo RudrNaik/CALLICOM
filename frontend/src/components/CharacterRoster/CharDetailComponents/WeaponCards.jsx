@@ -56,7 +56,7 @@ const WeaponSlot = ({
     }
   }, [weapon?.category, localStorageKey]);
 
-  // Persist to localStorage
+  // Save to localStorage
   useEffect(() => {
     if (!charActive) return;
 
@@ -212,7 +212,7 @@ const WeaponSlot = ({
               </div>
               {charActive && (
                 <div className="flex justify-left items-start gap-5 mt-2">
-                  {/* Left: Counters + Buttons stacked vertically */}
+                  {/* Left: Counters + Buttons */}
                   <div className="flex flex-col">
                     <div className="text-xs text-white">
                       Remaining Ammo: {turnsRemaining} turns

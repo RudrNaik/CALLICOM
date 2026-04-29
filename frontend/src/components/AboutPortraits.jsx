@@ -9,11 +9,11 @@ const AboutPortraits = () => {
         Meet the creators
       </h2>
 
-      <div className="grid grid-cols-2 gap-10">
+      <div className="flex flex-col gap-10">
         {profiles.map((dev, index) => (
           <div
             key={index}
-            className="bg-neutral-800 p-6 rounded-lg shadow-lg flex flex-col items-center text-center"
+            className="bg-neutral-800 p-6 rounded-lg shadow-lg flex flex-col items-center text-center min-w-md"
           >
             {dev.image ? (
               <img

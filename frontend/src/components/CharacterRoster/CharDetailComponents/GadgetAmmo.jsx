@@ -20,7 +20,9 @@ export default function GadgetAmmo({
   const options = config?.options || [];
   const optionIds = useMemo(() => new Set(options.map((o) => o.id)), [options]);
 
-  // ---- classify gadget modes ----
+  /**
+   * Specifies what ammo types are considered mix munitions.
+   */
   const isMixed = useMemo(
     () =>
       [
@@ -62,14 +64,15 @@ export default function GadgetAmmo({
     [gadgetId],
   );
 
-  // ---- constants / keys ----
-  const EX_KEY = "__uses"; // pooled expendable counter
-  const MAG_KEY = "__mag"; // legacy (reloadable)
-  const RES_KEY = "__res"; // legacy (reloadable)
+  const EX_KEY = "__uses"; 
+  const MAG_KEY = "__mag"; 
+  const RES_KEY = "__res"; 
 
   const clamp0 = (n) => (Number.isFinite(n) ? Math.max(0, n) : 0);
 
-  // Effective pool (with Engineer bonus)
+  /**
+   * effective ammo pool, accounts for Combat Engineers having 2x ammo.
+   */
   const effectiveMax = useMemo(() => {
     let base = config.max ?? 0;
     if (
@@ -83,7 +86,9 @@ export default function GadgetAmmo({
     return base;
   }, [isExpendable, charClass, config.max]);
 
-  // ---- title + header ----
+  /**
+   * handles the title and header
+   */
   const { title, max } = useMemo(() => {
     if (gadgetId === "stim-pouch")
       return { title: "Stimulants", max: config.maxStims ?? 0 };
@@ -120,13 +125,17 @@ export default function GadgetAmmo({
     return null;
   }, [config, gadgetId, isExpendable, effectiveMax]);
 
-  // ---- localStorage key ----
+  
   const localStorageKey = useMemo(
     () => `gadgetAmmo_${characterCallsign}_${gadgetId}`,
     [characterCallsign, gadgetId],
   );
 
-  // ---- sanitize based on type of munitions ----
+  /**
+   * sanitzie/fix the localstorage data if theres any possible issues that cna be formed from it.
+   * @param {*} obj 
+   * @returns 
+   */
   const sanitize = (obj) => {
     const out = {};
     if (!obj || typeof obj !== "object") return out;
@@ -148,7 +157,7 @@ export default function GadgetAmmo({
           : 0;
         return out;
       }
-      // Legacy reloadable shape -> migrate to pooled uses
+      
       const mag = clamp0(obj[MAG_KEY]);
       const res = clamp0(obj[RES_KEY]);
       const total = Math.min(mag + res, effectiveMax);
@@ -156,7 +165,6 @@ export default function GadgetAmmo({
       return out;
     }
 
-    // default
     return out;
   };
 
@@ -166,7 +174,9 @@ export default function GadgetAmmo({
       0,
     );
 
-  // ---- Load from localStorage when gadget/callsign changes ----
+  /**
+   * Load new data from localstorage as needed.
+   */
   useEffect(() => {
     try {
       const raw = localStorage.getItem(localStorageKey);
@@ -201,7 +211,9 @@ export default function GadgetAmmo({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [localStorageKey, isMixed, isExpendable, effectiveMax]);
 
-  // ---- Persist to localStorage whenever ammo map changes (only while active) ----
+  /**
+   * if the ammo changes, save to localstorage.
+   */
   useEffect(() => {
     try {
       if (!isActive) return;
@@ -213,7 +225,9 @@ export default function GadgetAmmo({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gadgetAmmo, isActive, localStorageKey, effectiveMax]);
 
-  // ---- Prune unknown keys if options change (mixed munitions) ----
+  /**
+   * get rid of unknown keys when the weapon selection changes.
+   */
   useEffect(() => {
     if (!isMixed) return;
     const pruned = sanitize(gadgetAmmo || {});

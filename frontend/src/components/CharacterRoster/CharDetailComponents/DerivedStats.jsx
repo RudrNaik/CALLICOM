@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 function DerivedStats({ character, userId, refreshCharacter }) {
   const navigate = useNavigate();
 
-  // ---- safe defaults if character is momentarily undefined ----
+  // Safe defaults
   const attrs = character?.attributes ?? {};
   const skills = character?.skills ?? {};
   const equip = character?.equipment ?? {};
@@ -19,7 +19,7 @@ function DerivedStats({ character, userId, refreshCharacter }) {
   const [isSaving, setIsSaving] = useState(false);
   const timerRef = useRef(null);
 
-  // ---- derived stats ----
+  // the 'derivation' of stats
   const Alertness = attrs.Expertise || 0;
   const Body = attrs.Body || 0;
   const Intelligence = attrs.Intelligence || 0;
@@ -40,7 +40,7 @@ function DerivedStats({ character, userId, refreshCharacter }) {
   const ArmedDamage = Math.max(4, Math.ceil((3 + Body + Melee)/1.5));
   const woundMod = fleshWounds + (deepWounds * 2);
 
-  // ---- PATCH after debounce (700ms) only if changed ----
+  // 700ms debounce because rapidly spamming the deep and flesh wounds causes desync with the backend as master so it reverts.
   useEffect(() => {
     if (timerRef.current) {
       clearTimeout(timerRef.current);
@@ -132,7 +132,7 @@ function DerivedStats({ character, userId, refreshCharacter }) {
       </div>
 
       <div className="rounded-md bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-3">
-        {/* ---------------- MOBILE ---------------- */}
+        {/* mobile specific view*/}
         <div className="grid grid-cols-2 gap-3 sm:hidden">
           <StatCard label="Health" value={Health} />
           <StatCard label="Stamina" value={Stamina} />
@@ -153,7 +153,7 @@ function DerivedStats({ character, userId, refreshCharacter }) {
           </div>
         </div>
 
-        {/* ---------------- DESKTOP ---------------- */}
+        {/* desktop */}
         <div className="hidden sm:block space-y-2">
           <StatRow>
             <StatCard label="Health" value={Health} />
@@ -184,7 +184,7 @@ function DerivedStats({ character, userId, refreshCharacter }) {
           </StatRow>
         </div>
 
-        {/* ---------------- COUNTERS ---------------- */}
+        {/* counters. */}
         <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-white/5">
           <CounterCell
             title="Flesh Wounds"

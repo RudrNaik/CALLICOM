@@ -19,6 +19,18 @@ const GearCard = ({ gear }) => {
       <p className="text-xs text-gray-400 whitespace-pre-line">
         {gear.description}
       </p>
+      
+      {/* {gear?.families && (
+        <p className="whitespace-pre-line text-xs mt-2 mb-1">Sub Classes: </p>
+      )}
+      
+      {gear?.families?.map((family) => (
+        <div key={family.id} className="text-xs">
+          <div className="text-orange-400">{family.family}</div>
+          <div className="text-xs italic text-gray-400 whitespace-pre-line">{family.effect}</div>
+        </div>
+      ))} */}
+      
     </section>
   );
 };

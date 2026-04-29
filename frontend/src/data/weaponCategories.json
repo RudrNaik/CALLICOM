@@ -4,8 +4,8 @@
     "damage": 4,
     "penetration": 1,
     "range": "+1 C | -2 L | -3 ELR",
-    "totalTurns": 4,
-    "magazineSize": 2
+    "totalTurns": 6,
+    "magazineSize": 3
   },
   "Heavy Pistols": {
     "class": "L-Weapons",
@@ -68,14 +68,6 @@
     "damage": 5,
     "penetration": 2,
     "range": "+1 Bipod | +1 M | -1 L | -1 ELR",
-    "totalTurns": 8,
-    "magazineSize": 4
-  },
-  "Drum Shotguns": {
-    "class": "H-Weapons",
-    "damage": 6,
-    "penetration": 1,
-    "range": "+1 C | -1 M | -3 L | -4 ELR",
     "totalTurns": 8,
     "magazineSize": 4
   }

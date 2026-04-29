@@ -1,5 +1,4 @@
 import React from "react";
-import Dither from "./components/Dither";
 import background from "./assets/Images/4060492.jpg";
 import "./assets/css/cabber.css";
 
