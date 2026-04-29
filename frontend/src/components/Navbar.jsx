@@ -1,7 +1,7 @@
 // src/components/Navbar.jsx
 import { useContext, useEffect, useState, useRef } from "react";
 import SpinyLogo from "../assets/Images/SpinyLogoRevamp.png";
-import CalamariLogo from "../assets/Images/Calamari_Logo_Inverted.png"
+import CalamariLogo from "../assets/Images/Calamari_Logo_inverted.png"
 import { Link } from "react-router-dom";
 import UserIcon from "../assets/Images/UserIcon.png";
 import { AuthContext } from "../AuthContext";
