@@ -91,7 +91,7 @@
         ]
     },
     {
-        "id": "shotgun",
+        "id": "sht",
         "title": "Shotguns",
         "parentId": "Weapons",
         "class": "All",

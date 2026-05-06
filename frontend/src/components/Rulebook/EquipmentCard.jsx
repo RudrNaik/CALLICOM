@@ -20,7 +20,7 @@ const GearCard = ({ gear }) => {
         {gear.description}
       </p>
       
-      {/* {gear?.families && (
+      {gear?.families && (
         <p className="whitespace-pre-line text-xs mt-2 mb-1">Sub Classes: </p>
       )}
       
@@ -29,7 +29,7 @@ const GearCard = ({ gear }) => {
           <div className="text-orange-400">{family.family}</div>
           <div className="text-xs italic text-gray-400 whitespace-pre-line">{family.effect}</div>
         </div>
-      ))} */}
+      ))} 
       
     </section>
   );
