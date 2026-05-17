@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
 import "../../../assets/css/ammoBlur.css";
+import {
+  applyModifiers,
+  getModifiedWeaponStats,
+  getAbilitiesFromFamily,
+} from "../../../utils/weaponEffectParser";
 
 const WeaponSlot = ({
   slot,
@@ -9,7 +14,7 @@ const WeaponSlot = ({
   handleWeaponChange,
   characterCallsign,
   charActive,
-  isSecondary
+  isSecondary,
 }) => {
   const categoryData = weaponCategories[weapon?.category];
   const localStorageKey = `ammo_${characterCallsign}_${slot}`;
@@ -19,15 +24,16 @@ const WeaponSlot = ({
   const [pseudoAmmo, setPseudoAmmo] = useState(null);
   const [displayedAmmo, setDisplayedAmmo] = useState(null);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [selectedFamily, setSelectedFamily] = useState(null);
 
   const pseudoMagSizes = {
     "Light Pistols": 12,
     "Heavy Pistols": 6,
-    SMGs: 20,
-    Carbines: 30,
+    "SMGs": 20,
+    "Carbines": 30,
     "Assault Rifles": 30,
     "Marksman Rifles": 10,
-    Shotguns: 8,
+    "Shotguns": 8,
     "Drum Shotguns": 20,
     "Sniper Rifles": 5,
     "Machine Guns": 100,
@@ -38,6 +44,13 @@ const WeaponSlot = ({
     const initial = pseudoMagSizes[weapon?.category] || null;
     setPseudoAmmo(initial);
     setDisplayedAmmo(initial);
+
+    // Initialize family from weapon data if it's present
+    if (weapon?.family) {
+      setSelectedFamily(weapon.family);
+    } else {
+      setSelectedFamily(null);
+    }
 
     const saved = localStorage.getItem(localStorageKey);
     if (saved) {
@@ -54,15 +67,35 @@ const WeaponSlot = ({
       setFiredThisMag(0);
       setTotalFired(0);
     }
-  }, [weapon?.category, localStorageKey]);
+  }, [weapon?.category, weapon?.family, localStorageKey]);
 
-  // Save to localStorage
+  // Save ammo to localStorage
   useEffect(() => {
     if (!charActive) return;
 
     const ammoState = { firedThisMag, totalFired, pseudoAmmo };
     localStorage.setItem(localStorageKey, JSON.stringify(ammoState));
   }, [firedThisMag, totalFired, pseudoAmmo, charActive]);
+
+  // Sync family selection to Equipment View
+  useEffect(() => {
+    if (isEditing && selectedFamily) {
+      handleWeaponChange(slot, "family", selectedFamily);
+    }
+  }, [selectedFamily, isEditing, slot, handleWeaponChange]);
+
+  // Force Machine Pistols for secondary SMGs
+  useEffect(() => {
+    if (
+      weapon?.category === "SMGs" &&
+      isSecondary &&
+      isEditing &&
+      selectedFamily !== "Machine Pistols"
+    ) {
+      setSelectedFamily("Machine Pistols");
+      handleWeaponChange(slot, "family", "Machine Pistols");
+    }
+  }, [weapon?.category, isSecondary, isEditing, slot, handleWeaponChange]);
 
   useEffect(() => {
     if (pseudoAmmo === null || displayedAmmo === null) return;
@@ -87,12 +120,23 @@ const WeaponSlot = ({
 
   let reserveAmmo;
   let magSize;
-  if((weapon?.category == "SMGs") && (isSecondary)){
+
+  // Get modified stats if family is selected
+  const selectedFamilyData =
+    selectedFamily && categoryData?.families
+      ? categoryData.families.find((f) => f.family === selectedFamily)
+      : null;
+
+  const modifiedCategoryData = selectedFamilyData
+    ? applyModifiers(categoryData, selectedFamilyData.modifiers)
+    : categoryData;
+
+  if (weapon?.category == "SMGs" && isSecondary) {
     reserveAmmo = 4;
     magSize = 2;
   } else {
-    reserveAmmo = categoryData?.totalTurns || 0
-    magSize = categoryData?.magazineSize || 1;
+    reserveAmmo = modifiedCategoryData?.totalTurns || 0;
+    magSize = modifiedCategoryData?.magazineSize || 1;
   }
   const totalTurns = reserveAmmo;
   const magazineSize = magSize;
@@ -113,12 +157,12 @@ const WeaponSlot = ({
           const expectedPerTurn = fullRounds / magazineSize;
           const variance = Math.max(1, Math.floor(expectedPerTurn * 0.5));
           reduction = Math.floor(
-            expectedPerTurn + (Math.random() * variance - variance / 2)
+            expectedPerTurn + (Math.random() * variance - variance / 2),
           );
         }
 
         setPseudoAmmo((prev) =>
-          firedThisMag + 1 >= magazineSize ? 0 : Math.max(0, prev - reduction)
+          firedThisMag + 1 >= magazineSize ? 0 : Math.max(0, prev - reduction),
         );
       }
     }
@@ -146,7 +190,7 @@ const WeaponSlot = ({
         0,
         estimatedRounds +
           Math.floor(Math.random() * (2 * variance + 1)) -
-          variance
+          variance,
       );
       setPseudoAmmo(randomized);
     }
@@ -184,14 +228,70 @@ const WeaponSlot = ({
             ))}
           </select>
 
+          {categoryData?.families && categoryData.families.length > 0 && (
+            <>
+              {weapon?.category === "SMGs" && isSecondary ? (
+                <>
+                  <select
+                    className="w-full select-themed p-2 rounded mb-2"
+                    value={selectedFamily || ""}
+                    onChange={(e) => {
+                      const value = e.target.value || null;
+                      setSelectedFamily(value);
+                      handleWeaponChange(slot, "family", value);
+                    }}
+                  >
+                    {categoryData.families
+                      .filter((family) => family.family === "Machine Pistols")
+                      .map((family) => (
+                        <option key={family.family} value={family.family}>
+                          {family.family}
+                        </option>
+                      ))}
+                  </select>
+                </>
+              ) : (
+                <select
+                  className="w-full select-themed p-2 rounded mb-2"
+                  value={selectedFamily || ""}
+                  onChange={(e) => {
+                    const value = e.target.value || null;
+                    setSelectedFamily(value);
+                    handleWeaponChange(slot, "family", value);
+                  }}
+                >
+                  <option value="">Default</option>
+                  {categoryData.families.map((family) => (
+                    <option key={family.family} value={family.family}>
+                      {family.family}
+                    </option>
+                  ))}
+                </select>
+              )}
+            </>
+          )}
+
           {categoryData && (
-            <div className="text-sm text-gray-400 bg-neutral-900 p-2 rounded">
+            <div className="text-xs text-gray-400 bg-neutral-900 p-2 rounded">
               <div>Class: {categoryData.class}</div>
               <div>Damage: {categoryData.damage}</div>
               <div>Penetration: {categoryData.penetration}</div>
               <div>Range: {categoryData.range}</div>
               <div>Total Ammo (Turns): {categoryData.totalTurns}</div>
               <div>Magazine Size (Turns): {categoryData.magazineSize}</div>
+              {selectedFamily && categoryData?.families && (
+                <div >
+                  <div>------------------</div>
+                  <div>Family: {selectedFamily}</div>
+                  <div className="text-gray-400 mt-1">
+                    {
+                      categoryData.families.find(
+                        (f) => f.family === selectedFamily,
+                      )?.effect
+                    }
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </>
@@ -204,12 +304,26 @@ const WeaponSlot = ({
           {categoryData && (
             <>
               <div className="text-xs text-gray-400 mt-1">
-                DMG {categoryData.damage} | PEN {categoryData.penetration} |
-                Range: {categoryData.range} | <br></br> Class:{" "}
-                <strong>{categoryData.class}</strong>
+                DMG {modifiedCategoryData.damage} | PEN{" "}
+                {modifiedCategoryData.penetration} | Range:{" "}
+                {modifiedCategoryData.range} | <br></br> Class:{" "}
+                <strong>{modifiedCategoryData.class}</strong>
+                {selectedFamily && categoryData?.families && (
+                <div>
+                  Family: <strong>{selectedFamily}</strong>
+                  <div>
+                    {
+                      categoryData.families.find(
+                        (f) => f.family === selectedFamily,
+                      )?.effect
+                    }
+                  </div>
+                </div>
+              )}
                 <hr />
                 TOTAL: {totalTurns} turns | MAG: {magazineSize} turns
               </div>
+
               {charActive && (
                 <div className="flex justify-left items-start gap-5 mt-2">
                   {/* Left: Counters + Buttons */}
