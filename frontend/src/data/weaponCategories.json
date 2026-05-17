@@ -6,11 +6,23 @@
     "range": "+1 C | -2 L | -3 ELR",
     "totalTurns": 6,
     "magazineSize": 3,
-    "families":[
-            {"family": "Wonder-9" , "effect": "Gain an extra magazine and an extra turn of ammo per magazine. Gain [Spray]"},
-            {"family": "Micros"   , "effect": "Gain a +1 to disguise checks, uses subsonic ammo" }, 
-            {"family": "Power-10" , "effect": "Limb shots debilitate targets by removing their ability to sprint if hit in the leg, or reducing any action involving two hands by one dice." }
-        ]
+    "families": [
+      {
+        "family": "Wonder-9",
+        "effect": "Gain an extra magazine and an extra turn of ammo per magazine. Gain [Spray]",
+        "modifiers": { "magazines": 1, "magazineSize": 1, "abilities": ["Spray"] }
+      },
+      {
+        "family": "Micros",
+        "effect": "Gain a +1 to disguise checks, uses subsonic ammo",
+        "modifiers": {}
+      },
+      {
+        "family": "Power-10",
+        "effect": "Limb shots debilitate targets by removing their ability to sprint if hit in the leg, or reducing any action involving two hands by one dice.",
+        "modifiers": {}
+      }
+    ]
   },
   "Heavy Pistols": {
     "class": "L-Weapons",
@@ -19,11 +31,23 @@
     "range": "+1 M | -1 L | -2 ELR",
     "totalTurns": 4,
     "magazineSize": 2,
-     "families":[
-            {"family": "Hand-cannons" , "effect": "Increases damage by 1. You only have one cylinder with 3 turns of ammo."},
-            {"family": "40 and 45s"   , "effect": "Alters rounds to be subsonic, retains damage." }, 
-            {"family": "Magnums" , "effect": "Gain [Burst]" }
-        ]
+    "families": [
+      {
+        "family": "Hand-cannons",
+        "effect": "Increases damage by 1. You only have one cylinder with 3 turns of ammo.",
+        "modifiers": { "damage": 1, "magazineSize": 1, "magazines": -1}
+      },
+      {
+        "family": "40 and 45s",
+        "effect": "Alters rounds to be subsonic, retains damage.",
+        "modifiers": {}
+      },
+      {
+        "family": "Magnums",
+        "effect": "Gain [Burst]",
+        "modifiers": { "abilities": ["Burst"] }
+      }
+    ]
   },
   "SMGs": {
     "class": "L-Weapons",
@@ -32,11 +56,23 @@
     "range": "+1 C | -1 L | -2 ELR",
     "totalTurns": 9,
     "magazineSize": 3,
-    "families":[
-            {"family": "Machine Pistols" , "effect": "Only Equippable as a secondary, lose a magazine and a turn of ammo per mag."},
-            {"family": "Heavy SMGs"   , "effect": "Gain +1 to damage, uses Subsonic ammo. Replace  the ability to [Spray] with [Burst]" }, 
-            {"family": "Light SMGs" , "effect": "Gain an extra turn per magazine, Gain +1 to disguise checks in Social Stealth as it's easier to conceal." }
-        ]
+    "families": [
+      {
+        "family": "Machine Pistols",
+        "effect": "Only Equippable as a secondary, lose a magazine and a turn of ammo per mag.",
+        "modifiers": { "totalTurns": -3, "magazines": -1 }
+      },
+      {
+        "family": "Heavy SMGs",
+        "effect": "Gain +1 to damage, uses Subsonic ammo. Replace the ability to [Spray] with [Burst]",
+        "modifiers": { "damage": 1, "abilities": ["Burst"] }
+      },
+      {
+        "family": "Light SMGs",
+        "effect": "Gain an extra turn per magazine, Gain +1 to disguise checks in Social Stealth as it's easier to conceal.",
+        "modifiers": { "magazineSize": 1 }
+      }
+    ]
   },
   "Carbines": {
     "class": "L-Weapons",
@@ -45,11 +81,23 @@
     "range": "+1 M | -1L | -2 ELR",
     "totalTurns": 9,
     "magazineSize": 3,
-    "families":[
-            {"family": "PDWs" , "effect": "Increases wound threshold division by 1 for center mass. Aiming and hitting center mass now halves the wound threshold."},
-            {"family": "Compact Carbines"   , "effect": "+1 to stealth, can be concealed easier and provides a +1 to Disguise in social stealth" }, 
-            {"family": "Service Carbines" , "effect": "Gain [Burst] alongside [Spray], increase damage by 1." }
-        ]
+    "families": [
+      {
+        "family": "PDWs",
+        "effect": "Increases wound threshold division by 1 for center mass. Aiming and hitting center mass now halves the wound threshold.",
+        "modifiers": {}
+      },
+      {
+        "family": "Compact Carbines",
+        "effect": "+1 to stealth, can be concealed easier and provides a +1 to Disguise in social stealth",
+        "modifiers": {}
+      },
+      {
+        "family": "Service Carbines",
+        "effect": "Gain [Burst] alongside [Spray], increase damage by 1.",
+        "modifiers": { "damage": 1, "abilities": ["Burst", "Spray"] }
+      }
+    ]
   },
   "Assault Rifles": {
     "class": "M-Weapons",
@@ -58,11 +106,23 @@
     "range": "-1 C | +1 M | -1 ELR",
     "totalTurns": 9,
     "magazineSize": 3,
-    "families":[
-            {"family": "Kalashnikovs" , "effect": "All 1's are converted to 2's when rolled. Cannot Jam"},
-            {"family": "Aramlites"   , "effect": "Once per encounter, Aiming is considered a bonus action" }, 
-            {"family": "Bullpups" , "effect": "Gain a +1 to your roll when in Close range of your target." }
-        ]
+    "families": [
+      {
+        "family": "Kalashnikovs",
+        "effect": "All 1's are converted to 2's when rolled. Cannot Jam",
+        "modifiers": {}
+      },
+      {
+        "family": "Aramlites",
+        "effect": "Once per encounter, Aiming is considered a bonus action",
+        "modifiers": {}
+      },
+      {
+        "family": "Bullpups",
+        "effect": "Gain a +1 to your roll when in Close range of your target.",
+        "modifiers": {}
+      }
+    ]
   },
   "Marksman Rifles": {
     "class": "M-Weapons",
@@ -71,11 +131,23 @@
     "range": "-1 C | +1 L | -1 ELR",
     "totalTurns": 6,
     "magazineSize": 2,
-    "families":[
-            {"family": "Battle Rifles" , "effect": "Each magazine has an extra turn of ammo"},
-            {"family": "Precision Rifles"   , "effect": "Aiming for limbs no longer takes away a dice." }, 
-            {"family": "Next Generation" , "effect": "Carry 1 extra magazine, +1 when firing from ELR. Does not apply to EELR." }
-        ]
+    "families": [
+      {
+        "family": "Battle Rifles",
+        "effect": "Each magazine has an extra turn of ammo",
+        "modifiers": {"magazineSize": 1 }
+      },
+      {
+        "family": "Precision Rifles",
+        "effect": "Aiming for limbs no longer takes away a dice.",
+        "modifiers": {}
+      },
+      {
+        "family": "Next Generation",
+        "effect": "Carry 1 extra magazine, +1 when firing from ELR. Does not apply to EELR.",
+        "modifiers": { "magazines": 1 }
+      }
+    ]
   },
   "Shotguns": {
     "class": "M-Weapons",
@@ -84,11 +156,23 @@
     "range": "+2 C | -1 M | -3 L | -4 ELR",
     "totalTurns": 6,
     "magazineSize": 3,
-    "families":[
-            {"family": "Pump-Action" , "effect": "As a bonus action, you can load a slug round that has a custom range band of -1 C | +1 L | -2 ELR"},
-            {"family": "Semi-Auto"   , "effect": "Firing at a soft wall can turn it into cover. Can be used as a breaching tool for a bonus action instead of a full action." }, 
-            {"family": "Automatic" , "effect": "Firing at a soft wall can turn it into either cover or remove it entirely. Gains the ability to [Spray]." }
-        ]
+    "families": [
+      {
+        "family": "Pump-Action",
+        "effect": "As a bonus action, you can load a slug round that has a custom range band of -1 C | +1 L | -2 ELR",
+        "modifiers": {}
+      },
+      {
+        "family": "Semi-Auto",
+        "effect": "Firing at a soft wall can turn it into cover. Can be used as a breaching tool for a bonus action instead of a full action.",
+        "modifiers": {}
+      },
+      {
+        "family": "Automatic",
+        "effect": "Firing at a soft wall can turn it into either cover or remove it entirely. Gains the ability to [Spray].",
+        "modifiers": { "abilities": ["Spray"] }
+      }
+    ]
   },
   "Sniper Rifles": {
     "class": "M-Weapons",
@@ -97,11 +181,23 @@
     "range": "-2 C | +1 L | +2 ELR",
     "totalTurns": 6,
     "magazineSize": 3,
-    "families":[
-            {"family": "Endurance Rifles" , "effect": "Each magazine has an extra turn of ammo, Gain an extra magazine."},
-            {"family": "High Caliber"   , "effect": "+1 to navigate checks when making a shot from EELR." }, 
-            {"family": "Fun Size" , "effect": "+1 to stealth and disguise checks. Easier to conceal in cases and luggage, +1 to disguise when in social stealth." }
-        ]
+    "families": [
+      {
+        "family": "Endurance Rifles",
+        "effect": "Each magazine has an extra turn of ammo, Gain an extra magazine.",
+        "modifiers": {"magazineSize":1, "magazines": 1 }
+      },
+      {
+        "family": "High Caliber",
+        "effect": "+1 to navigate checks when making a shot from EELR.",
+        "modifiers": {}
+      },
+      {
+        "family": "Fun Size",
+        "effect": "+1 to stealth and disguise checks. Easier to conceal in cases and luggage, +1 to disguise when in social stealth.",
+        "modifiers": {}
+      }
+    ]
   },
   "Machine Guns": {
     "class": "H-Weapons",
@@ -110,10 +206,22 @@
     "range": "+1 Bipod | +1 M | -1 L | -1 ELR",
     "totalTurns": 8,
     "magazineSize": 4,
-    "families":[
-            {"family": "LSW" , "effect": "Reduces your capacity to 3 turns, you now have 3 magazines. Gains [Burst]."},
-            {"family": "LMG"   , "effect": "Gain the ability to [Spray]." }, 
-            {"family": "MMG" , "effect": "Increase damage by 1. When in close range of a target, add a malus of -2." }
-        ]
+    "families": [
+      {
+        "family": "LSW",
+        "effect": "Reduces your capacity to 3 turns, you now have 3 magazines. Gains [Burst].",
+        "modifiers": { "magazineSize": -1, "magazines": 1, "abilities": ["Burst"] }
+      },
+      {
+        "family": "LMG",
+        "effect": "Gain the ability to [Spray].",
+        "modifiers": { "abilities": ["Spray"] }
+      },
+      {
+        "family": "MMG",
+        "effect": "Increase damage by 1. When in close range of a target, add a malus of -2.",
+        "modifiers": { "damage": 1 }
+      }
+    ]
   }
 }

@@ -61,8 +61,8 @@ function EquipmentSelection({
 
     setGear(
       character.equipment ?? {
-        primaryWeapon: { name: "", category: "" },
-        secondaryWeapon: { name: "", category: "" },
+        primaryWeapon: { name: "", category: "", family:"" },
+        secondaryWeapon: { name: "", category: "", family: "" },
         grenades: ["", ""],
         gadget: "",
         gadgetAmmo: {},
