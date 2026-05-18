@@ -84,6 +84,9 @@
   "claymores" : {
     "max" : 3
   },
+  "thermtex":{
+    "max": 3
+  },
   "shock-sticks" : {
     "max" : 3
   },

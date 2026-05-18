@@ -46,6 +46,7 @@ export default function GadgetAmmo({
         "lil-mac",
         "c4",
         "m5-slam",
+        "thermtex",
         "9bangs",
         "snapshot",
         "rocket-launcher",

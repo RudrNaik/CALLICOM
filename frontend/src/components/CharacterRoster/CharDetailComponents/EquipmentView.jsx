@@ -48,6 +48,7 @@ function EquipmentSelection({
 
   const [gear, setGear] = useState(defaultGear);
   const [classGadgets, setClassGadgets] = useState([]);
+  const [grenades, setGrenades] = useState([]);
   const [secondaryGadget, setSecGadget] = useState([]);
   const [grenadeCounts, setGrenadeCounts] = useState([3, 3]);
   const [medCounts, setMedCounts] = useState([1, 2, 1]); // [AFAK, IFAK, Painkiller]
@@ -61,7 +62,7 @@ function EquipmentSelection({
 
     setGear(
       character.equipment ?? {
-        primaryWeapon: { name: "", category: "", family:"" },
+        primaryWeapon: { name: "", category: "", family: "" },
         secondaryWeapon: { name: "", category: "", family: "" },
         grenades: ["", ""],
         gadget: "",
@@ -98,6 +99,12 @@ function EquipmentSelection({
       );
     }
     setClassGadgets(filtered);
+
+    // Filter grenades from equipment data
+    const grenadeList = equipmentData.filter(
+      (item) => item?.parentId == "grenades",
+    );
+    setGrenades(grenadeList);
 
     //Excludes primaries based on main and sub classes
     let excluded;
@@ -278,67 +285,90 @@ function EquipmentSelection({
 
           {isEditing ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {gear.grenades.map((grenade, i) => (
-                <input
-                  key={i}
-                  className="w-full bg-neutral-900 text-white border-1 border-orange-400/60 py-2 px-2 rounded"
-                  placeholder={`Grenade ${i + 1}`}
-                  value={grenade}
-                  onChange={(e) => handleGrenadeChange(i, e.target.value)}
-                />
-              ))}
+              {gear.grenades.map((grenadeId, i) => {
+                const grenadeData = itemById[grenadeId];
+                return (
+                  <div className="flex flex-col">
+                    <select
+                      key={i}
+                      className="w-full bg-neutral-900 text-white border-1 border-orange-400/60 py-2 px-2 rounded"
+                      value={grenadeId || ""}
+                      onChange={(e) => handleGrenadeChange(i, e.target.value)}
+                    >
+                      <option value="">Select Grenade</option>
+                      {grenades.map((grenade) => (
+                        <option key={grenade.id} value={grenade.id}>
+                          {grenade.title}
+                        </option>
+                      ))}
+                    </select>
+
+                    <div className="text-[10px] text-neutral-400 bg-neutral-900 p-2 rounded mt-2 whitespace-pre-line flex flex-grow">
+                      {grenadeData?.rulesText}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {gear.grenades.map((grenade, i) => (
-                  <div key={i} className="text-sm text-white space-y-1">
-                    <div>
-                      <span className="font-semibold text-orange-300">
-                        {grenade || `Grenade ${i + 1}`}
-                      </span>
-                    </div>
-                    {charActive && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4" style={{ gridAutoRows: '1fr' }}>
+                {gear.grenades.map((grenadeId, i) => {
+                  const grenadeData = itemById[grenadeId];
+                  return (
+                    <div key={i} className="text-sm text-white space-y-1 flex flex-col">
                       <div>
-                        <div className="px-2 py-1 rounded bg-neutral-900 mb-2">
-                          <span className="text-yellow-400">
-                            {grenadeCounts[i]} / 2
-                          </span>{" "}
-                          <span className="text-gray-400 italic">
-                            remaining
-                          </span>
-                        </div>
-                        <div className="flex gap-1">
-                          <button
-                            onClick={() =>
-                              setGrenadeCounts((prev) => {
-                                const updated = [...prev];
-                                updated[i] = Math.max(0, updated[i] - 1);
-                                return updated;
-                              })
-                            }
-                            disabled={grenadeCounts[i] === 0}
-                            className="bg-orange-600 hover:bg-orange-700 text-white px-2 py-1 rounded disabled:opacity-40 text-xs"
-                          >
-                            Throw
-                          </button>
-                          <button
-                            onClick={() =>
-                              setGrenadeCounts((prev) => {
-                                const updated = [...prev];
-                                updated[i] = 2;
-                                return updated;
-                              })
-                            }
-                            className="bg-green-700 hover:bg-green-800 text-white px-2 py-1 rounded text-xs"
-                          >
-                            Resupply
-                          </button>
-                        </div>
+                        <span className="font-semibold text-orange-300">
+                          {grenadeData?.title || `Grenade ${i + 1}`}
+                        </span>
                       </div>
-                    )}
-                  </div>
-                ))}
+                      {grenadeData && (
+                        <div className="text-[10px] text-neutral-400 bg-neutral-900 p-2 rounded mb-2 whitespace-pre-line flex-grow">
+                          {grenadeData?.rulesText}
+                        </div>
+                      )}
+                      {charActive && (
+                        <div>
+                          <div className="px-2 py-1 rounded bg-neutral-900 mb-2">
+                            <span className="text-yellow-400">
+                              {grenadeCounts[i]} / 2
+                            </span>{" "}
+                            <span className="text-gray-400 italic">
+                              remaining
+                            </span>
+                          </div>
+                          <div className="flex gap-1">
+                            <button
+                              onClick={() =>
+                                setGrenadeCounts((prev) => {
+                                  const updated = [...prev];
+                                  updated[i] = Math.max(0, updated[i] - 1);
+                                  return updated;
+                                })
+                              }
+                              disabled={grenadeCounts[i] === 0}
+                              className="bg-orange-600 hover:bg-orange-700 text-white px-2 py-1 rounded disabled:opacity-40 text-xs"
+                            >
+                              Throw
+                            </button>
+                            <button
+                              onClick={() =>
+                                setGrenadeCounts((prev) => {
+                                  const updated = [...prev];
+                                  updated[i] = 2;
+                                  return updated;
+                                })
+                              }
+                              className="bg-green-700 hover:bg-green-800 text-white px-2 py-1 rounded text-xs"
+                            >
+                              Resupply
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </>
           )}
