@@ -158,15 +158,6 @@
         "rulesText": "[Throw][Interrupt]\n 0 DMG | 2 hex AOE\n When thrown in combat, prompts [Throw] vs [Spirit] to withstand or [Acrobatics] to dodge. Applies 'Concussion' on all afflicted targets within the AOE, and interrupts aiming and suppressing fire."
     },
     {
-        "id": "thermtex",
-        "title": "Thermtex",
-        "parentId": "grenades",
-        "class": "All",
-        "cost": 4000,
-        "description": "The power of chemistry once more, now re-engineered and applied to burn at 2000 degrees celsius, and then detonate into a spectacular explosion. Powerful enough to deal damage to vehicles and burn through armor. Not as effective against people unless stuck... But why would you do that?",
-        "rulesText": "[Throw][AT]\n8 DMG | 1 hex AOE.\n When thrown in combat, prompts [Throw] vs [Armor] or [Acrobatics]. Requires a turn to detonate. Turns hard walls into cover. Can damage armored vehicles."
-    },
-    {
         "id": "smoke",
         "title": "Smoke",
         "parentId": "grenades",
@@ -991,6 +982,15 @@
         "cost": 6000,
         "description": "Jeep stuff's younger, more tech-savvy cousin, M5 SLAMs are AT/Demo charges that can be set to detonate under a variety of circumstances. Easy to program, easy to detonate, and even float in water to act as aquatic mines.",
         "rulesText": "Can be deployed on any surface with either:\n- Timed detonation (turn count)\n- Attack detonation (automatic)\n- Remote detonation (manual)\n\n10 DMG"
+    },
+    {
+        "id": "thermtex",
+        "title": "Thermtex",
+        "parentId": "Trapper",
+        "class": "Trapper",
+        "cost": 4000,
+        "description": "The power of chemistry once more, now re-engineered and applied to burn at 2000 degrees celsius, and then detonate into a spectacular explosion. Powerful enough to deal damage to vehicles and burn through armor. Not as effective against people unless stuck... But why would you do that?",
+        "rulesText": "[Throw][AT]\n8 DMG | 3 hex AOE.\n When thrown in combat, prompts [Throw] vs [Armor] or [Acrobatics]. Requires a turn to detonate. Turns hard walls into cover. Can damage armored vehicles."
     },
     {
         "id": "thinkpad",
