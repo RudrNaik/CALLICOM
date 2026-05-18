@@ -288,7 +288,7 @@ function EquipmentSelection({
               {gear.grenades.map((grenadeId, i) => {
                 const grenadeData = itemById[grenadeId];
                 return (
-                  <div>
+                  <div className="flex flex-col">
                     <select
                       key={i}
                       className="w-full bg-neutral-900 text-white border-1 border-orange-400/60 py-2 px-2 rounded"
@@ -303,8 +303,8 @@ function EquipmentSelection({
                       ))}
                     </select>
 
-                    <div className="text-[10px] text-neutral-400 bg-neutral-900 p-2 rounded mt-2 whitespace-pre-line">
-                      {grenadeData.rulesText}
+                    <div className="text-[10px] text-neutral-400 bg-neutral-900 p-2 rounded mt-2 whitespace-pre-line flex flex-grow">
+                      {grenadeData?.rulesText}
                     </div>
                   </div>
                 );
@@ -312,19 +312,19 @@ function EquipmentSelection({
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4" style={{ gridAutoRows: '1fr' }}>
                 {gear.grenades.map((grenadeId, i) => {
                   const grenadeData = itemById[grenadeId];
                   return (
-                    <div key={i} className="text-sm text-white space-y-1">
+                    <div key={i} className="text-sm text-white space-y-1 flex flex-col">
                       <div>
                         <span className="font-semibold text-orange-300">
                           {grenadeData?.title || `Grenade ${i + 1}`}
                         </span>
                       </div>
                       {grenadeData && (
-                        <div className="text-[10px] text-neutral-400 bg-neutral-900 p-2 rounded mb-2 whitespace-pre-line">
-                          {grenadeData.rulesText}
+                        <div className="text-[10px] text-neutral-400 bg-neutral-900 p-2 rounded mb-2 whitespace-pre-line flex-grow">
+                          {grenadeData?.rulesText}
                         </div>
                       )}
                       {charActive && (
