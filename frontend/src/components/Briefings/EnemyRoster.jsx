@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import EnemyCard from "./EnemyCard";
 import weaponCategories from "../../data/weaponCategories.json";
+import { applyModifiers } from "../../utils/weaponEffectParser";
 
 
 function EnemyView() {
@@ -129,7 +130,16 @@ function EnemyView() {
         if (!enemy?.identity?.firing) return;
 
         const weaponId = enemy.loadout?.Primary;
-        const weapon = weaponCategories?.[weaponId];
+        const baseWeapon = weaponCategories?.[weaponId];
+        
+        // Apply family modifiers if selected
+        let weapon = baseWeapon;
+        if (baseWeapon && enemy.loadout?.PrimaryFamily && baseWeapon.families) {
+          const family = baseWeapon.families.find(f => f.family === enemy.loadout.PrimaryFamily);
+          if (family) {
+            weapon = applyModifiers(baseWeapon, family.modifiers);
+          }
+        }
 
         const name = enemy.identity.name || id;
         const target = enemy.stats?.tgt;

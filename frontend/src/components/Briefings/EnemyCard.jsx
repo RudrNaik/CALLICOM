@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import weaponCategories from "../../data/weaponCategories.json";
 import gadgetCategories from "../../data/Equipment.json";
 import classes from "../../data/classSkills.json";
+import { applyModifiers } from "../../utils/weaponEffectParser";
 
 /* =======================
    DEFAULT STATE
@@ -26,6 +27,7 @@ const DEFAULT_STATE = {
   },
   loadout: {
     Primary: "Assault Rifles",
+    PrimaryFamily: null,
     Gadget: "",
   },
   wounds: {
@@ -110,7 +112,17 @@ function EnemyCard({ id, onDelete }) {
   const meleeDamage = Math.max(4, Math.ceil((3 + Body + MeleeBonus)/1.5));
   const WeaponSkill = stats.Weapon;
 
-  const weaponInfo = weaponCategories[loadout.Primary] || null;
+  // Get weapon base stats
+  const baseWeaponInfo = weaponCategories[loadout.Primary] || null;
+  
+  // Apply family modifiers if selected
+  const weaponInfo = baseWeaponInfo && loadout.PrimaryFamily && baseWeaponInfo.families
+    ? (() => {
+        const family = baseWeaponInfo.families.find(f => f.family === loadout.PrimaryFamily);
+        return family ? applyModifiers(baseWeaponInfo, family.modifiers) : baseWeaponInfo;
+      })()
+    : baseWeaponInfo;
+
   const selectedGadget = filteredGadgets.find(
     (g) => g.title === loadout.Gadget
   );
@@ -304,6 +316,21 @@ function EnemyCard({ id, onDelete }) {
           ))}
         </select>
 
+        {baseWeaponInfo?.families && baseWeaponInfo.families.length > 0 && (
+          <select
+            className="w-full bg-neutral-900 text-xs mt-1"
+            value={loadout.PrimaryFamily || ""}
+            onChange={(e) => update(["loadout", "PrimaryFamily"], e.target.value || null)}
+          >
+            <option value="">No Family</option>
+            {baseWeaponInfo.families.map((family) => (
+              <option key={family.family} value={family.family}>
+                {family.family}
+              </option>
+            ))}
+          </select>
+        )}
+
         {weaponInfo && (
           <div className="mt-1 text-[10px] text-neutral-400 border border-orange-500/20 rounded p-1">
             <div>
@@ -314,6 +341,14 @@ function EnemyCard({ id, onDelete }) {
             <div>
               <span className="text-orange-300">RNG:</span> {weaponInfo.range}
             </div>
+            {loadout.PrimaryFamily && baseWeaponInfo?.families && (
+              <div className="mt-1 pt-1 border-t border-orange-500/20">
+                <div className="text-orange-300">Family: {loadout.PrimaryFamily}</div>
+                <div className="text-[9px] mt-1">
+                  {baseWeaponInfo.families.find(f => f.family === loadout.PrimaryFamily)?.effect}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
