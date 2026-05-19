@@ -298,13 +298,13 @@ function CharacterRoster({ userId }) {
 
   return (
     <div
-      className="scroll-anchor-none sm:max-w-full md:max-w-10/11 mx-auto p-2 lg:p-6 space-y-1 text-white sm:border-0 md:border-l-6 border-orange-500 bg-neutral-800/30"
+      className="scroll-anchor-none sm:max-w-full md:max-w-95/100 mx-auto space-y-1 text-white bg-neutral-900/70"
       style={{ fontFamily: "Geist_Mono" }}
     >
-      <h1 className="text-2xl font-bold text-orange-400">Your Characters</h1>
+      <h1 className="text-2xl font-bold text-orange-400 px-2">Your Characters</h1>
 
       {/* Status banners */}
-      <div className="space-y-1">
+      <div className="space-y-1 px-2">
         <AnimatePresence>
           {backendSleeping && <ColdStartBanner key="cold-start" />}
         </AnimatePresence>
@@ -321,7 +321,7 @@ function CharacterRoster({ userId }) {
         className="flicker"
       >
         {isLoading ? (
-          <div className="flex items-center text-orange-400 font-bold py-2">
+          <div className="flex items-center text-orange-400 font-bold py-2 px-2">
             <svg
               className="animate-spin h-4 w-4 inline-block text-orange-500 mr-2"
               xmlns="http://www.w3.org/2000/svg"
@@ -334,14 +334,14 @@ function CharacterRoster({ userId }) {
             Fetching Operators...
           </div>
         ) : (
-          <div className="text-gray-400 mb-2 text-xs">
+          <div className="text-gray-400 mb-2 text-xs px-2">
             Operators Updated. {equipment.length}x equipment ready.
           </div>
         )}
       </motion.div>
 
       {/* Characters */}
-      <div className="grid sm:grid-cols-2 md:grid-cols-5 gap-4">
+      <div className="grid sm:grid-cols-2 md:grid-cols-5 gap-4 px-2">
         {characters.map((char) => (
           <motion.div
             key={char._id}
@@ -363,7 +363,7 @@ function CharacterRoster({ userId }) {
       <div>
         {selectedCharacter ? (
           <div>
-            <div className="relative flex py-5 items-center">
+            <div className="relative flex py-5 px-2 items-center">
               <div className="flex-grow border-t border-gray-100" />
               <span className="flex-shrink mx-4 text-gray-100">Detailed View</span>
               <div className="flex-grow border-t border-gray-100" />

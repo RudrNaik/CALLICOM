@@ -34,7 +34,7 @@ const CharManager = () => {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="flicker"
         >
-          <div className="">
+          <div className="px-2">
             <TerminalPanel
               title="Character Creator"
               subtitle="Hiring Portal"
