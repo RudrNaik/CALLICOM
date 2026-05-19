@@ -34,7 +34,6 @@ const WeaponSlot = ({
     "Assault Rifles": 30,
     "Marksman Rifles": 10,
     "Shotguns": 8,
-    "Drum Shotguns": 20,
     "Sniper Rifles": 5,
     "Machine Guns": 100,
   };
@@ -121,7 +120,6 @@ const WeaponSlot = ({
   let reserveAmmo;
   let magSize;
 
-  // Get modified stats if family is selected
   const selectedFamilyData =
     selectedFamily && categoryData?.families
       ? categoryData.families.find((f) => f.family === selectedFamily)
@@ -172,7 +170,6 @@ const WeaponSlot = ({
     setFiredThisMag(0);
     setTotalFired(0);
     setPseudoAmmo(pseudoMagSizes[weapon?.category] || null);
-    localStorage.removeItem(localStorageKey); // optional
   };
 
   const handleReload = () => {

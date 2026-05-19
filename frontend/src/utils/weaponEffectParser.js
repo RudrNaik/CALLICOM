@@ -1,5 +1,45 @@
 
 /**
+ * Parse range string into an object
+ * @param {string} rangeString - Range string like "+1 C | -2 L | -3 ELR"
+ * @returns {object} Range object like { C: 1, L: -2, ELR: -3 }
+ */
+const parseRangeString = (rangeString) => {
+  const rangeObj = {};
+  if (!rangeString) return rangeObj;
+  
+  rangeString.split("|").forEach((part) => {
+    const trimmed = part.trim();
+    const match = trimmed.match(/([+-]?\d+)\s*(C|M|L|ELR|EELR)/i);
+    if (match) {
+      const [, value, band] = match;
+      rangeObj[band.toUpperCase()] = parseInt(value, 10);
+    }
+  });
+  
+  return rangeObj;
+};
+
+/**
+ * Convert range object back to string format
+ * @param {object} rangeObj - Range object like { C: 1, L: -2, ELR: -3 }
+ * @returns {string} Range string like "+1 C | -2 L | -3 ELR"
+ */
+const rangeObjectToString = (rangeObj) => {
+  const bands = ["C", "M", "L", "ELR", "EELR"];
+  const parts = [];
+  
+  bands.forEach((band) => {
+    if (rangeObj[band] !== undefined && rangeObj[band] !== 0) {
+      const sign = rangeObj[band] >= 0 ? "+" : "";
+      parts.push(`${sign}${rangeObj[band]} ${band}`);
+    }
+  });
+  
+  return parts.join(" | ");
+};
+
+/**
  * Apply family modifiers to base weapon stats
  * @param {object} baseStats - Original weapon stats
  * @param {object} modifiers - Modifier object from family definition
@@ -22,7 +62,20 @@ export const applyModifiers = (baseStats, modifiers) => {
     modified.penetration = (modified.penetration || 0) + modifiers.penetration;
   }
 
+  // Handle range band modifiers
+  const rangeModKeys = ["C", "M", "L", "ELR", "EELR"];
+  const hasRangeModifiers = rangeModKeys.some(band => modifiers[band] !== undefined);
   
+  if (hasRangeModifiers && baseStats.range) {
+    const baseParsedRange = parseRangeString(baseStats.range);
+    rangeModKeys.forEach(band => {
+      if (modifiers[band] !== undefined) {
+        baseParsedRange[band] = (baseParsedRange[band] || 0) + modifiers[band];
+      }
+    });
+    modified.range = rangeObjectToString(baseParsedRange);
+  }
+
   if (modifiers.magazineSize) {
     modified.magazineSize = (modified.magazineSize || 0) + modifiers.magazineSize;
   }
