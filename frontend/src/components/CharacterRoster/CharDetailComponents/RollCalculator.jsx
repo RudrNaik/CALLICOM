@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import weaponCategories from "../../../data/weaponCategories.json";
+import { getModifiedWeaponStats } from "../../../utils/weaponEffectParser";
 
 function Calculator({ characterData }) {
   const [character, setCharacter] = useState(null);
@@ -57,7 +58,17 @@ function Calculator({ characterData }) {
     if (!selectedWeapon) return 0;
     const weaponData = getWeaponData(selectedWeapon);
     if (!weaponData?.range) return 0;
-    const profile = parseRangeProfile(weaponData.range);
+    
+    let rangeString = weaponData.range;
+    
+    if (selectedWeapon?.family) {
+      const modifiedStats = getModifiedWeaponStats(selectedWeapon, weaponCategories, selectedWeapon.family);
+      if (modifiedStats?.range) {
+        rangeString = modifiedStats.range;
+      }
+    }
+    
+    const profile = parseRangeProfile(rangeString);
     if (selectedRange === "EELR") return profile.ELR ?? 0;
     return profile[selectedRange] ?? 0;
   };

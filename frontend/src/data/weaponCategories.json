@@ -95,7 +95,7 @@
       {
         "family": "Service Carbines",
         "effect": "Gain [Burst] alongside [Spray], increase damage by 1.",
-        "modifiers": { "damage": 1, "abilities": ["Burst", "Spray"] }
+        "modifiers": { "damage": 1, "abilities": ["Burst"] }
       }
     ]
   },
@@ -109,7 +109,7 @@
     "families": [
       {
         "family": "Kalashnikovs",
-        "effect": "All 1's are converted to 2's when rolled. Cannot Jam",
+        "effect": "All 1's are no longer considered automatic failures. Cannot Jam.",
         "modifiers": {}
       },
       {
@@ -120,7 +120,7 @@
       {
         "family": "Bullpups",
         "effect": "Gain a +1 to your roll when in Close range of your target.",
-        "modifiers": {}
+        "modifiers": { "C": 1 }
       }
     ]
   },
@@ -220,7 +220,7 @@
       {
         "family": "MMG",
         "effect": "Increase damage by 1. When in close range of a target, add a malus of -2.",
-        "modifiers": { "damage": 1 }
+        "modifiers": { "damage": 1, "C": -2 }
       }
     ]
   }
