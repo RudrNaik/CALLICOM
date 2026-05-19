@@ -71,7 +71,7 @@
         "description": "Assault Rifles are the big brothers to the carbines, covering weapons that fire intermediate cartridges like 5.56x45, 5.45x39, and 7.62x39. The true middle ground when it comes to weapons, they dominate mid-range engagements but take a hit in CQB. These weapons come with the ability to Burst Fire, enabling them to fire a tight burst towards a single opponent at the expense of less dice, for more damage.",
         "rulesText": "[Medium Weapons][Burst]\nRange modifier: -1 C | +1 M | -1 ELR\n PEN: 1 | DMG: 5 \n RSV: 9 | CAP: 3",
         "families":[
-            {"family": "Kalashnikovs" , "effect": "All 1's are converted to 2's when rolled. Cannot Jam"},
+            {"family": "Kalashnikovs" , "effect": "All 1's are no longer considered automatic failures. Cannot Jam."},
             {"family": "Aramlites"   , "effect": "Once per encounter, Aiming is considered a bonus action" }, 
             {"family": "Bullpups" , "effect": "Gain a +1 to your roll when in Close range of your target." }
         ]
