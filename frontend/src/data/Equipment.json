@@ -243,7 +243,7 @@
         "class": "Class",
         "cost": 0,
         "description": "The 'Ballistic Universal Distance Demarcation Indicator' HUD integration is a nifty piece of software Gold Coast developed to give snipers an edge in long range engagements. Namely by giving them a lead and drop indicator on pinged targets.",
-        "rulesText": "Big medic bag that restocks all medical supplies when interacted with. Has the same amount of charges as players in the party. Can be picked back up or thrown."
+        "rulesText": "Provides user with an extra +1 bonus on all pinged targets in LR-ELR range bands."
     },
     {
         "id": "counterSpell",
