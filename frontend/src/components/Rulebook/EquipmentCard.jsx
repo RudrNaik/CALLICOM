@@ -26,7 +26,7 @@ const GearCard = ({ gear }) => {
       
       {gear?.families?.map((family) => (
         <div key={family.id} className="text-xs">
-          <div className="text-orange-400">{family.family}</div>
+          <div className="text-orange-400">{family.family} // + ${family.cost}</div>
           <div className="text-xs italic text-gray-400 whitespace-pre-line">{family.effect}</div>
         </div>
       ))} 

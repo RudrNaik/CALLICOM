@@ -100,35 +100,63 @@
         "title": "Hand to hand",
         "mechanic": "Core",
         "parentId": "",
-        "description": "To affect a wary target, the attacker must defeat the defender in an opposed test. For combat, the attacker rolls his skill in the attack form being used (Melee or Brawl). The defender either uses his acrobatics value (to avoid being hit), Melee Skill (to parry with a weapon) or CQC Skill (for unarmed blocks). Attackers should add the appropriate modifier from the modifier list to their roll depending upon environmental and other circumstances.\n\n Attacking unwary targets requires the attacker to pass a standard (not opposed) skill test with a Threshold number of 1 plus the defender's alertness. However, unlike a normal attack, the attacker must roll the lower of two skills: either his chosen attack skill or his Stealth skill. Untrained individuals tend to be noisy or otherwise mess up surprise attacks by alerting the victim at the last moment. \n\n To attack an inanimate object requires a skill test with a Threshold equal to 1 plus any applicable modifier. This assumes that the target is man-sized or larger; if not, refer to the Aiming rule. If the attacker wins the test, the attack hits or, If the defender wins or the result is a tie, the attack misses or the action fails. If the attacker Fumbles, he overshoots or otherwise finds himself open and is subject to a Free Strike in that turn. If the defender Fumbles, he slips or otherwise finds himself in a bad defensive position and is subject to a Free Strike. If both fumble, ineffective blows are exchanged and nothing happens.\n\nIf you are successful, you may either deal damage normally, or attempt one of the following maneuvers:"
+        "description": "To affect a wary target, the attacker must defeat the defender in an opposed test. For combat, the attacker rolls his skill in the attack form being used depending on what they are using (Melee or CQC). The defender either Blocks (uses Body), Parries (uses matching skill), or Dodges (Uses Acrobatics). Attackers should add the appropriate modifier from the modifier list to their roll depending upon environmental and other circumstances.\n\n Attacking unwary targets requires the attacker to pass a standard (not opposed) skill test with a Threshold number of 2 plus the defender's alertness. However, unlike a normal attack, the attacker must roll the lower of two skills: either his chosen attack skill or his Stealth skill. Untrained individuals tend to be noisy or otherwise mess up surprise attacks by alerting the victim at the last moment. \n\n To attack an inanimate object requires a skill test with a Threshold equal to 1 plus any applicable modifier. This assumes that the target is man-sized or larger; if not, refer to the Aiming rule.\n\n On each character's turn they are considered attacking. When attacking they get two actions, and if they land both they get a third. The following actions for attacking and defending are listed below:"
     },
     {
         "id": "Grapple",
         "title": "Grappling",
         "mechanic": "Hand to Hand",
         "parentId": "CQC",
-        "description": "Grappling attempts are always made with Brawl skill. If successful, instead of dealing damage you may choose to start a grapple. The grappling characters cannot move normally, and can’t make attacks against anyone else. \n\n On each grappler's turn, an Opposed Brawl test is made. The winner can deal normal unarmed damage, move the opponent up to half a normal movement turn, or end the grapple. Grappled characters count as being unaware against other attacks made against them."
+        "description": "[Offensive]\nAttacker CQC versus Defender CQC. If attacker wins, attacker has defender in a grapple to varying degrees of control.\n -------------\n MOF 2+: Whiff, Defender punish. \n MOF 1-0: Bunt, no extra action. \n MOS 1/2: Partial, shove \n MOS 3+: Full, attack/shove (now is a guaranteed knockdown that makes them prone if they fail)\n\n If opponent runs within 2 hexes of you while not in CQC with someone else, you are entitled to a grab attempt at them. However, you move to their position immediately and it can drag you out of cover. Upon MOS of 2+, you can drag them towards you instead. \n\n Opponent recieves -1 to all actions while grappled. Goes both ways when they return the favor. When grappled, defenders have a -1 to all defending for that turn until let go."
     },
     {
         "id": "Disarm",
         "title": "Disarming",
         "mechanic": "Hand to Hand",
         "parentId": "CQC",
-        "description": "Disarm attempts are more difficult to pull off. You must have at least 2 MoS, and the opponent may try to counter with a successful Alertness test with a Threshold equal to your original attack.\n\n If the opponent succeeds, nothing happens. If he fails, his weapon leaves his grasp. If you were using Brawl skill in disarming your opponent, you now hold his weapon. If not, the weapon is on the ground."
+        "description": "[Offensive]\nAttacker CQC/Melee vs Defender Alertness. Attacker must have at least 2 MoS to succeed.\n\n If the defender succeeds, nothing happens. if attacker succeeds, the weapon is knocked out of the defender's hands. If using CQC, the weapon is now in the attackers hands"
     },
     {
         "id": "Trip",
         "title": "Tripping",
         "mechanic": "Hand to Hand",
         "parentId": "CQC",
-        "description": "If you decide to attempt tripping your opponent, They are entitled to make an Alertness or Body test (opponent’s choice) with a Threshold equal to your original attack to resist it.\n\n If they succeed nothing happens, but if they fails, they are knocked down, and thus has a -3 defense modifier until they get up, and may not sprint on his next turn."
+        "description": "[Offensive]\nAttacker CQC vs Defender Notice. \n MOS of 2+ required for a knockdown. \n MOS of 1 applies a -1 to defender's next action or check (Off Stance)"
     },
     {
         "id": "Shove",
         "title": "Shoving",
         "mechanic": "Hand to Hand",
         "parentId": "CQC",
-        "description": "If you decide to attempt shoving your opponent, he is entitled to make an Alertness or Body test (opponent’s choice) with a Threshold equal to your original attack to resist it.\n\n If he succeeds nothing happens, but if he fails you may shove him backward up to your Body+1 in meters. You may do a follow-up move, but it is not necessary."
+        "description": "[Offensive]\nAttacker CQC vs Defender Body to resist.\n Shoves the defender up to 3+ body hexes away. If Defender knocked into wall/cover, they recieve a -1 malus on their next defending action.\n if from a full control shove, immediate knockdown. Walls compound.\n if MOS >2 or in a grapple with full control, opponent is knocked down (prone). "
+    },
+    {
+        "id": "Recover",
+        "title": "Recover",
+        "mechanic": "Hand to Hand",
+        "parentId": "CQC",
+        "description": "[Defensive]\nRoll Body. Recover a temporary deep wound, or temporary flesh equivalent based off of the result of your roll on the curve of: \n 1-2 = 0 Deep Wounds\n 2-4 = 1 Deep wounds\n 5-6 = 2 Deep wounds\n -And then end turn immediately."
+    },
+    {
+        "id": "Dodge",
+        "title": "Dodge",
+        "mechanic": "Hand to Hand",
+        "parentId": "CQC",
+        "description": "[Defensive]\n Defender Athletics vs Attacker roll. \nEvery consecutive dodge will incur a -1 dice malus until you Recover. Converts all attacks to flesh wounds if MOF less than 2. Upon MOS of 2+, Defender Punish."
+    },
+    {
+        "id": "Block",
+        "title": "Block",
+        "mechanic": "Hand to Hand",
+        "parentId": "CQC",
+        "description": "[Defensive]\n Defender Body Stat vs Attacker roll.\n Every consecutive block will incur a -1 dice malus until you Recover. Always reduces MOS by 1. negates instant death even when failed, but cases wound overflow instead."
+    },
+    {
+        "id": "Parry",
+        "title": "Parry",
+        "mechanic": "Hand to Hand",
+        "parentId": "CQC",
+        "description": "[Defensive]\n Defender matching stat vs Attacker roll\n Parrying requires an MOS of 2 to succeed, if it fails, the attack goes through with at least MOS of 1. If successful, immediately ends Attacker turn. MOS of 3+ results in a defender punish."
     },
     {
         "id": "CombatModifiers",

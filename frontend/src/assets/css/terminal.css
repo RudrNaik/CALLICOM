@@ -8,15 +8,6 @@
   100% { opacity: 1; }
 }
 
-@keyframes scanline {
-  0% {
-    background-position: 0 0;
-  }
-  100% {
-    background-position: 0 100%;
-  }
-}
-
 .flicker {
   animation: flickerOn 1.2s ease-in-out;
 }

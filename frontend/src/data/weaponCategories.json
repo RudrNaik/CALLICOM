@@ -196,6 +196,11 @@
         "family": "Fun Size",
         "effect": "+1 to stealth and disguise checks. Easier to conceal in cases and luggage, +1 to disguise when in social stealth.",
         "modifiers": {}
+      },
+      {
+        "family": "E-Bolt",
+        "effect": "Spend a turn charging your rifle to negate navigate rolls in exchange for a flat +2. Aim bonuses do not count. Charged rounds have +1 penetration.",
+        "modifiers":{}
       }
     ]
   },
@@ -203,7 +208,7 @@
     "class": "H-Weapons",
     "damage": 5,
     "penetration": 2,
-    "range": "+1 Bipod | +1 M | -1 L | -1 ELR",
+    "range": "+1 M | -1 L | -1 ELR",
     "totalTurns": 8,
     "magazineSize": 4,
     "families": [
