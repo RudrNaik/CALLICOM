@@ -113,8 +113,8 @@
         "modifiers": {}
       },
       {
-        "family": "Aramlites",
-        "effect": "Once per encounter, Aiming is considered a bonus action",
+        "family": "Armalites",
+        "effect": "Aiming can be used as a bonus action, has a cooldown of three turns.",
         "modifiers": {}
       },
       {

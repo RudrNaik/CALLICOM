@@ -72,7 +72,7 @@
         "rulesText": "[Medium Weapons][Burst]\nRange modifier: -1 C | +1 M | -1 ELR\n PEN: 1 | DMG: 5 \n RSV: 9 | CAP: 3",
         "families":[
             {"family": "Kalashnikovs" , "effect": "All 1's are no longer considered automatic failures. Cannot Jam.", "cost": 100},
-            {"family": "Aramlites"   , "effect": "Once every two turns, Aiming is considered a bonus action", "cost": 200 }, 
+            {"family": "Armalites"   , "effect": "Aiming can be used as a bonus action, cannot be used until after 2 turns from use.", "cost": 200 }, 
             {"family": "Bullpups" , "effect": "Gain a +1 to your roll when in Close range of your target.", "cost": 300 }
         ]
     },
