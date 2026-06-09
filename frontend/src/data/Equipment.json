@@ -954,7 +954,7 @@
         "class": "Sharpshooter",
         "cost": 8000,
         "description": "Built off of the Marine's SUAV, the Silver Bird is an autonomous drone that orbits the user at a high altitude to mark targets. Has only NV. Pings for every turn it is up.",
-        "rulesText": "User Carried\nSpots in a large area, extending to 4 world hexes from the encounter area\n Uptime: 3 turns\n 2 notice | 1 acrobatics | 2 investigation"
+        "rulesText": "User Carried\nSpots in a large area, extending to 4 world hexes from the encounter area\n Uptime: 3 turns | Downtime: 1 turn\n 2 notice | 2 acrobatics | 2 investigation"
     },
     {
         "id": "greybird-uav",
@@ -963,7 +963,7 @@
         "class": "Sharpshooter",
         "cost": 10000,
         "description": "Built off of the Marine's SUAV, the Grey Bird is an autonomous drone that orbits the user at a high altitude to mark targets. Has IR and a LAM mounted to lase and designate targets.",
-        "rulesText": "User Carried\nSpots in a large area, extending to 4 world hexes from the encounter area\nUptime: 2 turns\n 2 notice | 1 acrobatics | 1 investigation"
+        "rulesText": "User Carried\nSpots in a large area, extending to 4 world hexes from the encounter area\nUptime: 1 turn | Downtime: 1 turn\n 3 notice | 1 acrobatics | 1 investigation"
     },
     {
         "id": "bumblebee-echolocator",
