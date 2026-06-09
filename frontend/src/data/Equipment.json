@@ -479,7 +479,7 @@
         "class": "Rifleman",
         "cost": 4000,
         "description": "They put a fireball in a 40mm can and set it alight oh god-",
-        "rulesText": "M-Weapons attacker check, Acrobatics defender check\nCreates 8 hex fire AOE that deals 5 damage to all targets within it.\n All deep wounds are converted into 1 flesh and 1 temporary that lasts 2 turns.\nAOE Lasts for 1 turn. \nUpon fumble, no pings."
+        "rulesText": "M-Weapons attacker check, Acrobatics defender check\nCreates 5 hex fire AOE that deals 5 damage to all targets within it.\n All deep wounds are converted into 1 flesh and 1 temporary that lasts 2 turns.\nAOE Lasts for 1 turn. \nUpon fumble, no pings."
     },
     {
         "id": "m26-mass",
@@ -702,7 +702,7 @@
         "class": "Technical Engineer",
         "cost": 0,
         "description": "The whir of electric motors and the buzz of small drones have become the new age stuka siren. Equipped with a shaped charge warhead, 'magic missiles' are guided by their operators onto targets such as tanks or infantry before detonating. Useful against dug in targets and some armored vehicles.",
-        "rulesText": "DMG 8, PEN 2. When deployed, user's turn ends immediately. When attacking an enemy, the defender rolls acrobatics if they wish to dodge, weapons if they want to shoot it out of the sky. Uses a Drive check when deployed. Fumbles pre-detonate the warhead."
+        "rulesText": "DMG 7, PEN 2. When deployed, user's turn ends immediately. When attacking an enemy, the defender rolls acrobatics if they wish to dodge, weapons if they want to shoot it out of the sky. Uses a Drive check when deployed. Fumbles pre-detonate the warhead."
     },
     {
         "id": "F-SUP",
