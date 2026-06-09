@@ -702,7 +702,7 @@
         "class": "Technical Engineer",
         "cost": 0,
         "description": "The whir of electric motors and the buzz of small drones have become the new age stuka siren. Equipped with a shaped charge warhead, 'magic missiles' are guided by their operators onto targets such as tanks or infantry before detonating. Useful against dug in targets and some armored vehicles.",
-        "rulesText": "DMG 8, PEN 3. When deployed, user's turn ends immediately. When attacking an enemy, the defender rolls acrobatics if they wish to dodge, weapons if they want to shoot it out of the sky. Uses a Drive check when deployed. Fumbles pre-detonate the warhead."
+        "rulesText": "DMG 8, PEN 2. When deployed, user's turn ends immediately. When attacking an enemy, the defender rolls acrobatics if they wish to dodge, weapons if they want to shoot it out of the sky. Uses a Drive check when deployed. Fumbles pre-detonate the warhead."
     },
     {
         "id": "F-SUP",
