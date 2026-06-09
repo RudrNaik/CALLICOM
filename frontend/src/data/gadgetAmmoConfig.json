@@ -6,7 +6,8 @@
       { "id": "40mm-smk", "label": "SMK" },
       { "id": "40mm-star", "label": "STR" },
       { "id": "40mm-snap", "label": "SNAP" },
-      { "id": "40mm-lbv", "label": "LBV HE" }
+      { "id": "40mm-lbv", "label": "LBV HE" },
+      { "id": "40mm-fire", "label": "INCEN" }
     ]
   },
   "x89-ams": {
@@ -36,7 +37,8 @@
       { "id": "snk", "label": "Shock" },
       { "id": "tnk", "label": "Traumadol" },
       { "id": "dtnk", "label": "Adrenal" },
-      { "id": "hank", "label": "Nootropic"}
+      { "id": "hank", "label": "Nootropic"},
+      { "id": "metOver", "label": "MetabolicOvr" }
     ]
   },
   "thinkpad": {
