@@ -4,11 +4,9 @@ import CharacterDetail from "./CharacterDetail";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
-
 const CACHE_KEY_CHARS = (userId) => `roster_characters_${userId}`;
 const CACHE_KEY_EQUIP = `roster_equipment`;
 const COLD_START_THRESHOLD_MS = 3000;
-
 
 /**
  * Takes an input of the character's key, and then returns the parsed JSON value of the key value.
@@ -55,7 +53,7 @@ function bustCache(userId) {
  * @param {*} url the backend URL (usually callicom.render.app)
  * @param {*} token the JWT token
  * @param {*} navigate navigation back to the login view.
- * @returns 
+ * @returns
  */
 async function fetchJSON(url, token, navigate) {
   const res = await fetch(url, {
@@ -73,7 +71,7 @@ async function fetchJSON(url, token, navigate) {
     console.warn(
       msg.includes("token expired") || msg.includes("jwt expired")
         ? "Token expired. Redirecting to login."
-        : "Access denied. Redirecting to login."
+        : "Access denied. Redirecting to login.",
     );
     localStorage.removeItem("token");
     navigate("/login");
@@ -155,31 +153,34 @@ function MismatchBanner({ onApply }) {
   );
 }
 
-
 /**
  * The main component that's exported.
  * @param userId the username of the current user.
  */
 function CharacterRoster({ userId }) {
-  const [characters, setCharacters]               = useState([]);
-  const [equipment, setEquipment]                 = useState([]);
+  const [characters, setCharacters] = useState([]);
+  const [equipment, setEquipment] = useState([]);
   const [selectedCharacter, setSelectedCharacter] = useState();
-  const [isLoading, setIsLoading]                 = useState(false);
-  const [refreshFlag, setRefreshFlag]             = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [refreshFlag, setRefreshFlag] = useState(false);
+  const [forceApplyRefresh, setForceApplyRefresh] = useState(false);
 
-  const [pendingChars, setPendingChars]           = useState(null);
-  const [pendingEquip, setPendingEquip]           = useState(null);
-  const [hasMismatch, setHasMismatch]             = useState(false);
+  const [pendingChars, setPendingChars] = useState(null);
+  const [pendingEquip, setPendingEquip] = useState(null);
+  const [hasMismatch, setHasMismatch] = useState(false);
 
-  const [backendSleeping, setBackendSleeping]     = useState(false);
-  const sleepTimerRef                             = useRef(null);
+  const [backendSleeping, setBackendSleeping] = useState(false);
+  const sleepTimerRef = useRef(null);
 
   const navigate = useNavigate();
+  const refreshRequestedRef = useRef(false);
 
   /**
    * Triggers an asynchronous refresh of the page by bushing the cache and then setting a refresh flag.
    */
+
   const triggerRefresh = () => {
+    refreshRequestedRef.current = true;
     bustCache(userId);
     setRefreshFlag((prev) => !prev);
   };
@@ -192,7 +193,9 @@ function CharacterRoster({ userId }) {
       setCharacters(pendingChars);
       writeCache(CACHE_KEY_CHARS(userId), pendingChars);
       if (selectedCharacter) {
-        const updated = pendingChars.find((c) => c._id === selectedCharacter._id);
+        const updated = pendingChars.find(
+          (c) => c._id === selectedCharacter._id,
+        );
         if (updated) setSelectedCharacter(updated);
       }
     }
@@ -215,6 +218,7 @@ function CharacterRoster({ userId }) {
    */
   useEffect(() => {
     const token = localStorage.getItem("token");
+
     if (!token) {
       navigate("/login");
       return;
@@ -226,37 +230,92 @@ function CharacterRoster({ userId }) {
     if (cachedChars) setCharacters(cachedChars);
     if (cachedEquip) setEquipment(cachedEquip);
 
-    if (!cachedChars || !cachedEquip) setIsLoading(true);
+    if (!cachedChars || !cachedEquip) {
+      setIsLoading(true);
+    }
 
     sleepTimerRef.current = setTimeout(() => {
       setBackendSleeping(true);
     }, COLD_START_THRESHOLD_MS);
 
     Promise.all([
-      fetchJSON(`https://callicom.onrender.com/api/characters/${userId}`, token, navigate),
-      fetchJSON(`https://callicom.onrender.com/api/campaignEquipment`, token, navigate),
+      fetchJSON(
+        `https://callicom.onrender.com/api/characters/${userId}`,
+        token,
+        navigate,
+      ),
+      fetchJSON(
+        `https://callicom.onrender.com/api/campaignEquipment`,
+        token,
+        navigate,
+      ),
     ]).then(([chars, equip]) => {
       clearTimeout(sleepTimerRef.current);
+
       setBackendSleeping(false);
       setIsLoading(false);
 
-      const charsMismatch = chars && JSON.stringify(chars) !== JSON.stringify(cachedChars);
-      const equipMismatch = equip && JSON.stringify(equip) !== JSON.stringify(cachedEquip);
+      // Refreshes triggered by this client should immediately apply.
+      if (refreshRequestedRef.current) {
+        refreshRequestedRef.current = false;
 
-      if (charsMismatch || equipMismatch) {
-        if (charsMismatch) setPendingChars(chars);
-        if (equipMismatch) setPendingEquip(equip);
-        setHasMismatch(true);
-      } else {
-        if (chars) writeCache(CACHE_KEY_CHARS(userId), chars);
-        if (equip) writeCache(CACHE_KEY_EQUIP, equip);
+        if (chars) {
+          setCharacters(chars);
+          writeCache(CACHE_KEY_CHARS(userId), chars);
+
+          if (selectedCharacter) {
+            const updated = chars.find((c) => c._id === selectedCharacter._id);
+
+            if (updated) {
+              setSelectedCharacter(updated);
+            }
+          }
+        }
+
+        if (equip) {
+          setEquipment(equip);
+          writeCache(CACHE_KEY_EQUIP, equip);
+        }
+
+        setPendingChars(null);
+        setPendingEquip(null);
+        setHasMismatch(false);
+
+        return;
       }
 
-      //if there's no cache, proceed to write into the cache the characters fetches and the equipment fetched.
+      const charsMismatch =
+        chars && JSON.stringify(chars) !== JSON.stringify(cachedChars);
+
+      const equipMismatch =
+        equip && JSON.stringify(equip) !== JSON.stringify(cachedEquip);
+
+      if (charsMismatch || equipMismatch) {
+        if (charsMismatch) {
+          setPendingChars(chars);
+        }
+
+        if (equipMismatch) {
+          setPendingEquip(equip);
+        }
+
+        setHasMismatch(true);
+      } else {
+        if (chars) {
+          writeCache(CACHE_KEY_CHARS(userId), chars);
+        }
+
+        if (equip) {
+          writeCache(CACHE_KEY_EQUIP, equip);
+        }
+      }
+
+      // First load / no cache case
       if (!cachedChars && chars) {
         setCharacters(chars);
         writeCache(CACHE_KEY_CHARS(userId), chars);
       }
+
       if (!cachedEquip && equip) {
         setEquipment(equip);
         writeCache(CACHE_KEY_EQUIP, equip);
@@ -266,7 +325,7 @@ function CharacterRoster({ userId }) {
 
   /**
    * Handles deleting a character via their characterID.
-   * @param {*} id 
+   * @param {*} id
    * @returns nothing if the deletion was a success. Or throws an alert if there was an issue doing so.
    */
   const handleDeleteCharacter = async (id) => {
@@ -284,7 +343,7 @@ function CharacterRoster({ userId }) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-      }
+      },
     );
 
     if (res.ok) {
@@ -301,7 +360,9 @@ function CharacterRoster({ userId }) {
       className="scroll-anchor-none sm:max-w-full md:max-w-95/100 mx-auto space-y-1 text-white bg-neutral-900/70"
       style={{ fontFamily: "Geist_Mono" }}
     >
-      <h1 className="text-2xl font-bold text-orange-400 px-2">Your Characters</h1>
+      <h1 className="text-2xl font-bold text-orange-400 px-2">
+        Your Characters
+      </h1>
 
       {/* Status banners */}
       <div className="space-y-1 px-2">
@@ -309,7 +370,9 @@ function CharacterRoster({ userId }) {
           {backendSleeping && <ColdStartBanner key="cold-start" />}
         </AnimatePresence>
         <AnimatePresence>
-          {hasMismatch && <MismatchBanner key="mismatch" onApply={applyPendingUpdate} />}
+          {hasMismatch && (
+            <MismatchBanner key="mismatch" onApply={applyPendingUpdate} />
+          )}
         </AnimatePresence>
       </div>
 
@@ -328,8 +391,19 @@ function CharacterRoster({ userId }) {
               fill="none"
               viewBox="0 0 24 24"
             >
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+              />
             </svg>
             Fetching Operators...
           </div>
@@ -365,7 +439,9 @@ function CharacterRoster({ userId }) {
           <div>
             <div className="relative flex py-5 px-2 items-center">
               <div className="flex-grow border-t border-gray-100" />
-              <span className="flex-shrink mx-4 text-gray-100">Detailed View</span>
+              <span className="flex-shrink mx-4 text-gray-100">
+                Detailed View
+              </span>
               <div className="flex-grow border-t border-gray-100" />
             </div>
             <div className="min-h[30rem]">
