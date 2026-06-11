@@ -126,13 +126,17 @@
             },
             {
                 "family": "Armalites",
-                "effect": "Aiming can be used as a bonus action, has a cooldown of three turns.",
+                "effect": "Aiming can be used as a bonus action. Has a cooldown of two turns.",
                 "cost": 200
             },
             {
                 "family": "Bullpups",
                 "effect": "Gain a +1 to your roll when in Close range of your target.",
                 "cost": 300
+            },
+            {
+                "family": "E-Bolt",
+                "effect": "You can Overclock your rifle to gain a +1 to penetration and +2 to damage for one turn during a mission. After an overclock, results below 4 will automatically jam for two turns."
             }
         ]
     },
@@ -152,7 +156,7 @@
             },
             {
                 "family": "Precision Rifles",
-                "effect": "Aiming for limbs no longer takes away a dice.",
+                "effect": "Aiming for limbs doesnt remove a dice. Has a cooldown of two turns.",
                 "cost": 500
             },
             {
@@ -211,6 +215,11 @@
                 "family": "Fun Size",
                 "effect": "+1 to stealth and disguise checks. Easier to conceal in cases and luggage, +1 to disguise when in social stealth.",
                 "cost": 100
+            },
+            {
+                "family": "E-Bolt",
+                "effect": "Spend a turn charging your rifle to negate navigate rolls in exchange for a flat +2. Aim bonuses do not count. Charged rounds have +1 penetration.",
+                "cost": 1000
             }
         ]
     },
@@ -479,7 +488,7 @@
         "class": "Rifleman",
         "cost": 4000,
         "description": "They put a fireball in a 40mm can and set it alight oh god-",
-        "rulesText": "M-Weapons attacker check, Acrobatics defender check\nCreates 5 hex fire AOE that deals 5 damage to all targets within it.\n All deep wounds are converted into 1 flesh and 1 temporary that lasts 2 turns.\nAOE Lasts for 1 turn. \nUpon fumble, no pings."
+        "rulesText": "M-Weapons attacker check, Acrobatics defender check\nCreates 3 hex fire AOE that deals 5 damage to all targets within it.\n All deep wounds are converted into 1 flesh and 1 temporary that lasts 2 turns.\nAOE Lasts for 1 turn. \nUpon fumble, no pings."
     },
     {
         "id": "m26-mass",
