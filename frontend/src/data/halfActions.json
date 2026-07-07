@@ -1,31 +1,58 @@
 [
-    {
-      "name": "Deploy",
-      "color":"bg-neutral-800/80",
-      "type": "Half",
-      "icon": "/Half_Action.svg",
-      "description": "[Offensive]\n Deploy a bipod or use a gadget.\n\nCertain gadgets may end your turn immediately, such as Controlling Drones, Pinging, or Hacking."
-    },
-    {
-      "name": "Reload",
-      "type": "Full",
-      "color":"bg-neutral-800/80",
-      "icon": "/Half_Action.svg",
-      "description": "[Support]\n Reload your selected weapon, restoring your round count to full.\n\n, when reloading with ammunition in the mag, you can shoot again in the same turn. However- it will apply a -1 malus to your shot. \n\n Reloading from empty applies a -1 to all actions that turn."
-    },
-    {
-      "name": "Patch up",
-      "type": "Half",
-      "color":"bg-neutral-800/80",
-      "icon": "/Half_Action.svg",
-      "description": "[Support] [Medical]\n Patch yourself up and remove wounds.\n\nPatching yourself up requires having 1 FAK for a flesh wound, and 2 FAKs or an AFAK for deep wounds. When consumed, these items are removed from your inventory.\n\nYou remove 1 + [Medical skill roll] worth of wounds when consumed. \n\n Alternatively, painkillers do exist, and can be used by rolling your medical skill to nullify wounds for 1+[medical roll] turns."
-    },
-    {
-      "name": "Repair",
-      "color":"bg-neutral-800/80",
-      "type": "Half",
-      "icon": "/Half_Action.svg",
-      "description": "[Support] [Repair Tool]\n Repair vehicles, equipment, and drones \n\n When repairing, roll with tinker to determine the amount of wounds of damage repaired. Prioritizes Critical Damage first, and then fixes minor damage. vehicle crews 'relax' when their vehicles are being repaired.\n\n For drones, multiply the roll by 2 for how much damage repaired."
-    }
-  ]
-  
+  {
+    "name": "Eyes Up",
+    "color": "bg-neutral-800/80",
+    "type": "Half",
+    "icon": "/Half_Action.svg",
+    "description": "[Misc] [Environmental] [Opportunistic]\n Do an action not encompassed by any standard one. The spefic effects and actual action are determined by the GM."
+  },
+  {
+    "name": "Brace",
+    "type": "Half",
+    "color": "bg-neutral-800/80",
+    "icon": "/Half_Action.svg",
+    "description": "[Defensive] [Reaction] [Stance]\n Brace yourself against cover.\n\n When bracing, you get an extra +1 bonus to your armor rolls, however, it reduces your ability to move by one range band the next time you move. Negated by high penetration rifles and a ping. \n\n Can be used out of turn as a reaction, and applies the maluses immediately on your next turn."
+  },
+  {
+    "name": "Mount",
+    "type": "Half",
+    "color": "bg-neutral-800/80",
+    "icon": "/Half_Action.svg",
+    "description": "[Offensive] [Stance]\n Mount your rifle against cover \n\n When mounted onto cover, you get an extra +1 to your weapon rolls. However, mounting restricts your movement by 1 range band until the turn after you unmount or leave cover."
+  },
+  {
+    "name": "Prone",
+    "type": "Movement",
+    "color": "bg-neutral-800/80",
+    "icon": "/Half_Action.svg",
+    "description": "[Defensive] [Reaction] [Stance]\nGet supine/on your belly or mount your rifle on some cover. \n\n While prone you gain the bonuses of being Mounted as well as a +1 bonus to stealth rolls if moving, or a +1 bonus to disguise if still. When prone, the distance you can cover is reduced by one range band\n\n You make little noise while prone, and can easily sneak under vehicles and into vents if need be.\n\n However, you also suffer a -3 to all [CQC] and [Melee] rolls, and a -2 to all movement related rolls [Acrobatics]."
+  },
+  {
+    "name": "Deploy",
+    "color": "bg-neutral-800/80",
+    "type": "Half",
+    "icon": "/Half_Action.svg",
+    "description": "[Offensive]\n Deploy a bipod or use a gadget.\n\n Cyberwarfare hacks will always end your turn immediately."
+  },
+  {
+    "name": "Reload",
+    "type": "Full",
+    "color": "bg-neutral-800/80",
+    "icon": "/Half_Action.svg",
+    "description": "[Support]\n Reload your selected weapon, restoring your round count to full.\n\n, when reloading with ammunition in the mag, it will apply a -1 malus to your shot. \n\n Reloading from empty applies a -1 to all actions that turn."
+  },
+  {
+    "name": "Double Time",
+    "type": "Half",
+    "color": "bg-neutral-800/80",
+    "icon": "/Half_Action.svg",
+    "description": "[Offensive] [Movement] \n Go the extra mile. \n\n Allows you consume your bonus action to move an extra range band (up to long range) in a pinch at the cost of a compounding -1 malus to all rolls taken during or after moving."
+  },
+  {
+    "name": "Patch up/Repair",
+    "type": "Half",
+    "color": "bg-neutral-800/80",
+    "icon": "/Half_Action.svg",
+    "description": "[Support] [Medical] [Repair Tool]\n Patch yourself or someone else up. Or repair vehicles, equipment, and drones\n\nPatching yourself or someone else up requires having 1 FAK for a flesh wound, and 2 FAKs or an AFAK for deep wounds. When consumed, these items are removed from your inventory.\n\nYou remove 1 + [Medical skill roll] worth of wounds when consumed. \n\n When repairing, roll with tinker to determine the amount of wounds of damage repaired. Prioritizes Critical Damage first, and then fixes minor damage. vehicle crews 'relax' when their vehicles are being repaired.\n\n For drones, multiply the roll by 2 for how much damage repaired."
+  }
+]
