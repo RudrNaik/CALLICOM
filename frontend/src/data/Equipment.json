@@ -653,7 +653,7 @@
         "class": "Technical Engineer",
         "cost": 20000,
         "description": "Taking the concept of the RQ-16 T-HAWK and MQ-8 Fire Scout, the Fire Hornet combines the concepts into a smaller, quadcopter platform. Equipped with a gun gimble and BUDDI Spotting software, the Fire Scout offers engineers the flexibility to fight from multiple angles, or flank targets they can't get to from the sky.",
-        "rulesText": "L-wep: 1 | Endurance: 1 | Notice: 2 | Investigation: 1 \nDMG 4 | PEN 1 | Range: +1 C, -1 L, -2 ELR | 6 turns of ammo \n 10 HP | AC:0 \n [Airborne] [Repairable] "
+        "rulesText": "General: 1 | All Weapons: 2 | Endurance: 1 | Notice: 2 | Investigation: 1 \nDMG 4 | PEN 1 | Range: +1 C, -1 L, -2 ELR | 6 turns of ammo \n 10 HP | AC:0 \n [Airborne] [Repairable] "
     },
     {
         "id": "demo-dog",
@@ -662,7 +662,7 @@
         "class": "Technical Engineer",
         "cost": 10000,
         "description": "Developed to solve an ethics concern of K-9 units, and subsequently creating new ones with unmanned drones, the XMQ-88 Demo-Dog is an unmanned, autonomous, quadrapedial robot. It can be equipped with a variety of equipment, from supressed SMGs for a frontline role, marksman rifles as a remote sniper sentry, to even LMGs for supressive fire. It even makes noises when you pet it!",
-        "rulesText": "General-Wep: 1 | Endurance: 2 | Notice: 1 | Stealth: 1 \n 30 HP | AC:1 \n [Ground] [Repairable]"
+        "rulesText": "General: 1 | All Weapons: 2 | Endurance: 2 | Notice: 1 | Stealth: 1 \n 30 HP | AC:1 \n [Ground] [Repairable]"
     },
     {
         "id": "dd-frontliner",
