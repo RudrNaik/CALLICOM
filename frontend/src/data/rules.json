@@ -262,5 +262,26 @@
         "mechanic": "Grand Operations",
         "parentId": "GrandOperations",
         "description": "With the larger size of grand operations, it also leads to vehicles becoming much more useful. Depending on the vehicle commandeered, a team can move a much longer distance in a short amount of time. However- there are limitations. \n\n >Light Vehicles [RSOV][LNDCRUSR][RZR]: Move four hexes instead of 1. Can traverse dense terrain but travel speed reduces to normal. Provides little protection if caught in an ambush. \n>Medium Vehicles [HMMWV][MRAP][JLTV]: Move two hexes instead of 1, can traverse dense terrain but travel speed reduces to normal. Provides protection if caught in an ambush, hit a mine, or more.\n >Heavy Vehicles [M1A2 SEPV2][M3A2 IFV][LAV-88]: Move at the same speed as normal. Cannot traverse dense terrain. Provides impeccable protection, firepower, and more in a fight. \n\n All vehicles are immune to endurance checks. Certain vehicles that are amphibious like BMPs or LAVs can cross water without endurance or athletics checks. No vehicles can traverse mountainous terrain."
+    },
+    {
+        "id": "FireSupport",
+        "title": "CAS and Artillery",
+        "mechanic": "Extras",
+        "parentId": "",
+        "description": "When calling in CAS for aviation, the person requesting rolls their navigate skill on a curve that affects the aircraft's roll against a threshold of 3. If you fail, the aircraft suffers a -1 to their roll. When using a SOFLAM as a rifleman, success adds a +1 to the roll, as well as making the strike occur immediately from aircraft no matter the success or failure. Helicopters are always immediate at the cost of being able to be shot at and marked on the map.\n\nWhen calling in Fire Support from Ground and Naval sources- the person requesting makes the same roll with the same effects. However, the munitions will always take one turn to arrive, and always arrive at the start of the requester's next turn due to the distance."
+    },
+    {
+        "id": "Aviation",
+        "title": "Close Air Support",
+        "mechanic": "Extras",
+        "parentId": "FireSupport",
+        "description": "Aircraft and Helicopters have a certain capacity for attacks that determines how many or each munition they have before they need to leave and re-arm. Re-arming is determined by how much runway they need, allowing them to either re-arm from dedicated airbases, forward strips, or FARPs (Specific to VTOL and Rotor Wing aircraft). Capturing one during Grand Operations allows you to sortie aircraft from that position- and can exponentially speed up the re-arm speed (in turns) as determined before a mission by the GM.\n\n Aircraft and Helicopters also have core attributes to help determine their wound thresholds, and attacking rolls.\n\n -Alertness represents their MAWS, RWR, and other defensive systems, along with the reflex of the pilot.\n -Body is the structural rigidity, as well as the amount of G-force or damage a pilot can take\n -Intelligence is the skill and experience of the pilot with the airframe\n -Spirit represents the pilot's confidence in the aircraft and controlling their nerves under pressure\n\n When attacking, pilots roll Intelligence. When defending against ground fire from infantry or AA guns, they roll Spirit. However, when rolling against guided systems such as SAM launches or enemy air launched missiles, they first roll alertness against a threshold of 3. Upon failure- they recieve a -1 to their Spirit roll.\n\n Some Examples of aircraft statlines are provided below. GMs provide their stats and munitions before a session starts or when they become available.\n\n Example \nA: Alertness | B: Body | I: Intelligence | S: Spirit\n-------------------------------------------\nGuns (X DMG, Stat1, Stat2, Stat3...)\nMunition 1 (X DMG, Stat1, Stat2, Stat3...)\nMunition 2 (X DMG, Stat1, Stat2, Stat3...)\netc...\n\nMultirole Jet:\nA3|B1|I[x]|S[x]\n-------------------------------------------\n20mm Vulcan (7 damage, Strafe)\n2x GBU-24 paveway III (30 Damage, 8 hex splash, 17 suppress, craters to 8 hexes) \n2x AIM-9X/AAMRAAM C-5 (40 damage, Air only)"
+    },
+    {
+        "id": "GroundNaval",
+        "title": "Ground and Naval",
+        "mechanic": "Extras",
+        "parentId": "FireSupport",
+        "description": "Ground and naval works similarly- and as detailed always take one turn to arrive due to distance and travel time. Because of this however- these sources also have some of the more powerful munitions. Including cruise missiles, artillery barrages, and more that deal aburd amounts of damage and can decimate chunks of maps. As well as also not being able to be shot down, or needing to be re-armed.\n\nThere are some exceptions to the one turn delay however. In all cases the stats and mechanics of the fire support will be detailed by the GM in advance."
     }
 ]
