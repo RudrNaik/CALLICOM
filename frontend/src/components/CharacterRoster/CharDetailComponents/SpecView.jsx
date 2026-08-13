@@ -1,4 +1,12 @@
 function SpecView({ specializations, isEditing, removeSpec }) {
+  const handleRemove = (index) => {
+    const ok = window.confirm(
+      "Remove this specialization and return 5 XP?"
+    );
+    if (!ok) return;
+    removeSpec(index);
+  };
+
   return (
     <div>
 
@@ -12,7 +20,7 @@ function SpecView({ specializations, isEditing, removeSpec }) {
 
             {isEditing && (
               <button
-                onClick={() => removeSpec(i)}
+                onClick={() => handleRemove(i)}
                 className="text-red-400 text-xs hover:text-red-600 ml-2"
               >
                 X

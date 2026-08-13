@@ -174,7 +174,8 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
    */
   const removeSpecialization = (index) => {
     const baseLength = character.specializations.length;
-    if (index < baseLength) return;
+    // Allow removing specializations when in editing mode; otherwise block removal
+    if (index < baseLength && !isEditing) return;
 
     const updated = [...specializations];
     updated.splice(index, 1);
