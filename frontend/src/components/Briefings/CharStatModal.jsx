@@ -195,6 +195,7 @@ function LoadoutSection({ char }) {
   const EXP = Number(A.Expertise ?? 0);
   const unrmd = Math.max(4, Math.ceil((3 + BDY + char.skills.CQC)/1.5));
   const armd = Math.max(4, Math.ceil((3 +BDY + char.skills.Melee)/1.5));
+  const inventory = (char.equipment && char.equipment.miscGear)
 
   return (
     <div className="mt-4 flex gap-4 justify-center">
@@ -255,6 +256,16 @@ function LoadoutSection({ char }) {
               }`}
             />
           </div>
+        </div>
+
+        {/* Inventory */}
+        <div className="rounded-xl border border-orange-500/50 bg-neutral-900/60 p-4 mt-4">
+          <p className="text-orange-300 text-xs font-bold mb-2">INVENTORY</p>
+          {typeof inventory === "string" && inventory ? (
+            <p className="text-neutral-100 text-sm whitespace-pre-line">{inventory}</p>
+          ) : (
+            <p className="text-neutral-400 text-xs">No items in inventory.</p>
+          )}
         </div>
 
         <div className="mt-4 text-[10px] text-neutral-500 tracking-wide">
