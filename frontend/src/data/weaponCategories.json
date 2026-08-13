@@ -81,7 +81,7 @@
       },
       {
         "family": "Heavy SMGs",
-        "effect": "Gain +1 to damage, uses Subsonic ammo. Replace the ability to [Spray] with [Burst]",
+        "effect": "Gain +1 to damage, uses Subsonic ammo. Gain [Burst]",
         "modifiers": {
           "damage": 1,
           "abilities": [
@@ -108,8 +108,10 @@
     "families": [
       {
         "family": "PDWs",
-        "effect": "Increases wound threshold division by 1 for center mass. Aiming and hitting center mass now halves the wound threshold.",
-        "modifiers": {}
+        "effect": "Increases wound threshold division by 1 for center mass. Increase Penetration by 1",
+        "modifiers": {
+          "penetration": 1
+        }
       },
       {
         "family": "Compact Carbines",
@@ -118,7 +120,7 @@
       },
       {
         "family": "Service Carbines",
-        "effect": "Gain [Burst] alongside [Spray], increase damage by 1.",
+        "effect": "Increase Damage by 1, Replace [Spray] with [Burst]",
         "modifiers": {
           "damage": 1,
           "abilities": [
@@ -143,7 +145,7 @@
       },
       {
         "family": "Armalites",
-        "effect": "Aiming can be used as a bonus action, has a cooldown of two turns.",
+        "effect": "Can expend a bonus action to gain the effects of having aimed for one turn already, has a cooldown of two turns.",
         "modifiers": {}
       },
       {
