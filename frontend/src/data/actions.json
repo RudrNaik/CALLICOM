@@ -18,7 +18,7 @@
     "type": "Full",
     "color": "bg-neutral-800/80",
     "icon": "/Full_Action.svg",
-    "description": "[Offensive] [CQC]\nAttacker CQC/Melee vs Defender choice of action.\n Attackers get 2 offensive actions per turn inlcuding attacking normally. If attacker lands both hits in their turn, they get a third action for free. This attack can be either undodgeable or unblockable.\n Attackers can also make a heavy attack via applying a -1 dice to their roll in exchange for adding 1 to their damage if lands.\n\n All attacks with hands are CQC, all attacks utilizing an object as a weapon are Melee."
+    "description": "[Offensive] [CQC]\nAttacker CQC/Melee vs Defender choice of action.\n Attackers get 2 offensive actions per turn inlcuding attacking normally. If attacker lands both hits in their turn, they get a third action for free. This attack can be either undodgeable or unblockable.\n Attackers can also make a heavy attack via applying a -[x] dice to their roll in exchange for adding [x] to their damage if lands.\n\n All attacks with hands are CQC, all attacks utilizing an object as a weapon are Melee.\n\n CQC Rolls inflict temporary wounds that can be removed using Recover."
   },
   {
     "name": "Ready",
