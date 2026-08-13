@@ -74,7 +74,7 @@
             },
             {
                 "family": "Heavy SMGs",
-                "effect": "Gain +1 to damage, uses Subsonic ammo. Replace  the ability to [Spray] with [Burst]",
+                "effect": "Gain +1 to damage, uses Subsonic ammo. Gain [Burst]",
                 "cost": 300
             },
             {
@@ -95,7 +95,7 @@
         "families": [
             {
                 "family": "PDWs",
-                "effect": "Increases wound threshold division by 1 for center mass. Aiming and hitting center mass now halves the wound threshold.",
+                "effect": "Increases wound threshold division by 1 for center mass. Increase Penetration by 1",
                 "cost": 400
             },
             {
@@ -105,7 +105,7 @@
             },
             {
                 "family": "Service Carbines",
-                "effect": "Gain [Burst] alongside [Spray], increase damage by 1.",
+                "effect": "Increase Damage by 1, Replace [Spray] with [Burst]",
                 "cost": 200
             }
         ]
@@ -126,7 +126,7 @@
             },
             {
                 "family": "Armalites",
-                "effect": "Aiming can be used as a bonus action. Has a cooldown of two turns.",
+                "effect": "Can expend a bonus action to gain the effects of having aimed for one turn already, has a cooldown of two turns.",
                 "cost": 200
             },
             {
@@ -898,7 +898,7 @@
         "class": "Medic",
         "cost": 6000,
         "description": "A concoction of nanites from every kind to stave off death and keep someone in the fight. Painkillers, coagulants, and stimulants get someone back on their feet instantly.",
-        "rulesText": "Revives a character from DBNO instantly with only 2 deep wounds. The turn after- mark one flesh wound."
+        "rulesText": "Revives a character from DBNO instantly with only a flesh wound. The turn after- remove a flesh wound."
     },
     {
         "id": "tnk",
@@ -908,7 +908,7 @@
         "class": "Medic",
         "cost": 8000,
         "description": "Retooled for killing any and all pain, Truamadol Nanites make the user feel nothing, other than emotion — we didn't disable that just yet.",
-        "rulesText": "Temporarily removes all wounds\nLasts for 1 + 1d6/2 + medical skill level turns"
+        "rulesText": "Temporarily removes all wounds\nLasts for 1d6 + medical skill level turns divided by 2"
     },
     {
         "id": "dtnk",
@@ -945,7 +945,7 @@
         "title": "Sharpshooter",
         "class": "None",
         "rulesText": "Expert marksman, the Sharpshooter Class focuses on eliminating targets of opportunity or high-threat enemies with DMRs and Sniper Rifles. Sharpshooters get exclusive access to sniper rifles and equipment such as BUDDI HUD integrations, SOFLAMs, and EXACTO rounds for extreme distances.",
-        "description": "Boom. Headshot. [Trumpets begin playing intro]"
+        "description": "Boom. Headshot. [Trumpets begin playing]"
     },
     {
         "id": "hummingbird-drone",
