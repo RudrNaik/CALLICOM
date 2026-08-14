@@ -39,14 +39,14 @@
         "type": "Half",
         "color": "bg-neutral-800/80",
         "icon": "/Half_Action.svg",
-        "description": "[Defensive]\n Defender Athletics vs Attacker roll.\n\nEvery consecutive dodge will incur a -1 dice malus until you Recover.\n\n Converts all attacks to flesh wounds if MOF less than 2. MOS of 2+ results in a defender punish.\n\n Punishing allows the Defender to immediately return an attack and end the attacker's turn. This attack has a -1 to the defender's check and isnt counted in the 2 standard CQC Actions a character would have in a turn."
+        "description": "[Defensive]\n Defender Athletics vs Attacker roll.\n\nEvery dodge after the first will incur a compounding -1 malus until you Recover.\n\n Converts all attacks to flesh wounds if MOF less than 2. MOS of 2+ results in a defender punish.\n\n Punishing allows the Defender to immediately return an attack and end the attacker's turn. This attack has a -1 to the defender's check and isnt counted in the 2 standard CQC Actions a character would have in a turn."
     },
     {
         "name": "Block",
         "type": "Half",
         "color": "bg-neutral-800/80",
         "icon": "/Half_Action.svg",
-        "description": "[Defensive]\n Defender Body Stat vs Attacker roll.\n\nEvery consecutive block will incur a -1 dice malus until you Recover.\n\n Always reduces opponent MOS by 1. Negates instant death even when failed, but causes Wound Overflow instead.\n\n Wound Overflow causes the attacker to take the excess damage from an attack that would cause instant death, and instead convert them into further flesh and deep wounds."
+        "description": "[Defensive]\n Defender Body Stat vs Attacker roll.\n\nEvery block after the first will incur a compounding -1 malus until you Recover.\n\n Always reduces opponent MOS by 1. Negates instant death even when failed, but causes Wound Overflow instead.\n\n Wound Overflow causes the attacker to take the excess damage from an attack that would cause instant death, and instead convert them into further flesh and deep wounds."
     },
     {
         "name": "Parry",
