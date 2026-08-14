@@ -18,7 +18,7 @@
         "type": "Half",
         "color": "bg-neutral-800/80",
         "icon": "/Half_Action.svg",
-        "description": "[Offensive]\nAttacker CQC vs Defender Notice. \n MOS of 2+ required for a knockdown. \n MOS of 1 applies a -1 to defender's next action or check (Off Stance)"
+        "description": "[Offensive]\nAttacker CQC vs Defender Notice and Acrobatics. \n\n Defenders rolls notice first, if it suceeds against the attack, then roll acrobatics to dodge.\n\n MOS of 1 applies a -1 to defender's next action or check (Off Stance)\n MOS of 2+ knocks the opponent down (prone)."
     },
     {
         "name": "Shove",
@@ -32,27 +32,27 @@
         "type": "Half",
         "color": "bg-neutral-800/80",
         "icon": "/Half_Action.svg",
-        "description": "[Defensive]\nRoll Body. Recover a temporary deep wound, or temporary flesh equivalent based off of the result of your roll on the curve of: \n 1-2 = 0 Deep Wounds\n 2-4 = 1 Deep wounds\n 5-6 = 2 Deep wounds\n -And then end turn immediately."
+        "description": "[Defensive]\n You can use Recover for one of three actions: \n\nTo restore temporary wounds:\n-------------\nRoll Body. Recover a temporary deep wound, or temporary flesh equivalent based off of the result of your roll on the curve of: \n 1 = 0 Deep Wounds\n 2-4 = 1 Deep wounds\n 5-6 = 2 Deep wounds\n -And then end turn immediately.\n\n To get up from being prone:\n-------------\nConsumes one CQC action.\n\n To improve your defensive stance.\n-------------\n Consumes one CQC action, improves your next defensive check by 1 dice."
     },
     {
         "name": "Dodge",
         "type": "Half",
         "color": "bg-neutral-800/80",
         "icon": "/Half_Action.svg",
-        "description": "[Defensive]\n Defender Athletics vs Attacker roll. \nEvery consecutive dodge will incur a -1 dice malus until you Recover. Converts all attacks to flesh wounds if MOF less than 2. Upon MOS of 2+, Defender Punish."
+        "description": "[Defensive]\n Defender Athletics vs Attacker roll.\n\nEvery consecutive dodge will incur a -1 dice malus until you Recover.\n\n Converts all attacks to flesh wounds if MOF less than 2. MOS of 2+ results in a defender punish.\n\n Punishing allows the Defender to immediately return an attack and end the attacker's turn. This attack has a -1 to the defender's check and isnt counted in the 2 standard CQC Actions a character would have in a turn."
     },
     {
         "name": "Block",
         "type": "Half",
         "color": "bg-neutral-800/80",
         "icon": "/Half_Action.svg",
-        "description": "[Defensive]\n Defender Body Stat vs Attacker roll.\n Every consecutive block will incur a -1 dice malus until you Recover. Always reduces MOS by 1. negates instant death even when failed, but cases wound overflow instead."
+        "description": "[Defensive]\n Defender Body Stat vs Attacker roll.\n\nEvery consecutive dodge will incur a -1 dice malus until you Recover.\n\n Always reduces opponent MOS by 1. Negates instant death even when failed, but causes Wound Overflow instead.\n\n Wound Overflow causes the attacker to take the excess damage from an attack that would cause instant death, and instead convert them into further flesh and deep wounds."
     },
     {
         "name": "Parry",
         "type": "Half",
         "color": "bg-neutral-800/80",
         "icon": "/Half_Action.svg",
-        "description": "[Defensive]\n Defender matching stat vs Attacker roll\n Parrying requires an MOS of 2 to succeed, if it fails, the attack goes through with at least MOS of 1. If successful, immediately ends Attacker turn. MOS of 3+ results in a defender punish."
+        "description": "[Defensive]\n Defender matching stat vs Attacker roll\n Parrying requires an MOS of 2 to succeed, if it fails, the attack goes through with at least MOS of 1. If successful, immediately ends Attacker turn. MOS of 3+ results in a defender punish.\n\n Punishing allows the Defender to immediately return an attack and end the attacker's turn. This attack has a -1 to the opposing roll, and isnt counted in the 2 standard CQC Actions a character would have in a turn."
     }
 ]
