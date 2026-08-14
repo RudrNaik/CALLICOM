@@ -46,7 +46,7 @@
         "type": "Half",
         "color": "bg-neutral-800/80",
         "icon": "/Half_Action.svg",
-        "description": "[Defensive]\n Defender Body Stat vs Attacker roll.\n\nEvery consecutive dodge will incur a -1 dice malus until you Recover.\n\n Always reduces opponent MOS by 1. Negates instant death even when failed, but causes Wound Overflow instead.\n\n Wound Overflow causes the attacker to take the excess damage from an attack that would cause instant death, and instead convert them into further flesh and deep wounds."
+        "description": "[Defensive]\n Defender Body Stat vs Attacker roll.\n\nEvery consecutive block will incur a -1 dice malus until you Recover.\n\n Always reduces opponent MOS by 1. Negates instant death even when failed, but causes Wound Overflow instead.\n\n Wound Overflow causes the attacker to take the excess damage from an attack that would cause instant death, and instead convert them into further flesh and deep wounds."
     },
     {
         "name": "Parry",

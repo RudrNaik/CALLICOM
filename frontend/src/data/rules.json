@@ -121,7 +121,7 @@
         "title": "Tripping",
         "mechanic": "Hand to Hand",
         "parentId": "CQC",
-        "description": "[Offensive]\nAttacker CQC vs Defender Notice. \n MOS of 2+ required for a knockdown. \n MOS of 1 applies a -1 to defender's next action or check (Off Stance)"
+        "description": "[Offensive]\nAttacker CQC vs Defender Notice and Acrobatics. \n\n Defenders rolls notice first, if it suceeds against the attack, then roll acrobatics to dodge.\n\n MOS of 1 applies a -1 to defender's next action or check (Off Stance)\n MOS of 2+ knocks the opponent down (prone)."
     },
     {
         "id": "Shove",
@@ -135,7 +135,7 @@
         "title": "Recover",
         "mechanic": "Hand to Hand",
         "parentId": "CQC",
-        "description": "[Defensive]\nRoll Body. Recover a temporary deep wound, or temporary flesh equivalent based off of the result of your roll on the curve of: \n 1-2 = 0 Deep Wounds\n 2-4 = 1 Deep wounds\n 5-6 = 2 Deep wounds\n -And then end turn immediately."
+        "description": "[Defensive]\nYou can use Recover for one of three actions: \n\nTo restore temporary wounds:\n-------------\nRoll Body. Recover a temporary deep wound, or temporary flesh equivalent based off of the result of your roll on the curve of: \n 1 = 0 Deep Wounds\n 2-4 = 1 Deep wounds\n 5-6 = 2 Deep wounds\n -And then end turn immediately.\n\n To get up from being prone:\n-------------\nConsumes one CQC action.\n\n To improve your defensive stance.\n-------------\n Consumes one CQC action, improves your next defensive check by 1 dice."
     },
     {
         "id": "Dodge",
