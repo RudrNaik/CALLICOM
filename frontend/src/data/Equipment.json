@@ -492,12 +492,12 @@
     },
     {
         "id": "m26-mass",
-        "title": "Masterkey M26 MASS",
+        "title": "SkeletonKey MSS",
         "parentId": "Rifleman",
         "class": "Rifleman",
         "cost": 6600,
-        "description": "For when you want a shotgun on hand, but can’t be bothered to carry one yourself.",
-        "rulesText": "M-Weapons attacker check, Acrobatics defender check\nRange Modifier: +2C | -3M -> -4ELR"
+        "description": "For when you want a shotgun on hand, but can’t be bothered to forego something with a bit more range.",
+        "rulesText": "M-Weapons check, abides by ranged combat rules.\nRange modifier: +2 C | -1 M | -3 L | -4 ELR\n PEN: 1 | DMG: 6\n CAP: 3"
     },
     {
         "id": "Raider",
