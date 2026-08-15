@@ -253,7 +253,7 @@
         "id": "grenades",
         "title": "Grenades",
         "class": "None",
-        "rulesText": "Handy little tools in a pinch, throwables come in a variety of shapes and sizes with each one designed to carry out a specific task. These tasks range from stealth assassination, infantry removal, concealment, disorientation and anti-armour.\n\n When most grenades are thrown in combat, it prompts an opposed roll of the attacker's [Throw] against a defender's choice of action depending on the grenade. When out of combat, it requires an [Alertness] check to react in time, and then roll for their defensive action.\n\n Grenades can be thrown to a maximum of Long range unless listed otherwise. \n\n When rolling for acrobatics to evade, An MOS greater than 2 has the defender still standing, else- they are considered prone at the start of their next turn. When bracing as a reaction, the character is considered bracing at the start of their next turn.",
+        "rulesText": "Handy little tools in a pinch, throwables come in a variety of shapes and sizes with each one designed to carry out a specific task. These tasks range from stealth assassination, infantry removal, concealment, disorientation and anti-armour.\n\n When most grenades are thrown in combat, it prompts an opposed roll of the attacker's [Throw] against a defender's choice of action depending on the grenade. When out of combat, it requires an [Alertness] check to react in time, and then roll for their defensive action.\n\n Grenades can be thrown to medium range without issues, but at long range take a -1 malus. \n\n When rolling for acrobatics to evade, An MOS greater than 2 has the defender still standing, else- they are considered prone at the start of their next turn if they succeed. When bracing as a reaction, the character is considered bracing at the start of their next turn.",
         "description": "Shit's rigged to blow get the fuck back-"
     },
     {
@@ -272,7 +272,7 @@
         "class": "All",
         "cost": 0,
         "description": "The power of chemistry, in the palm of your hand. Useful in dissuading people from choosing to shoot back, or to create an opening and interrupt them.",
-        "rulesText": "[Throw][Interrupt]\n 0 DMG | 2 hex AOE\n When thrown in combat, prompts [Throw] vs [Spirit] to withstand or [Acrobatics] to dodge. Applies 'Concussion' on all afflicted targets within the AOE, and interrupts aiming and suppressing fire."
+        "rulesText": "[Throw][Interrupt]\n 0 DMG | 3 hex AOE\n When thrown in combat, prompts [Throw] vs [Spirit] to withstand or [Acrobatics] to dodge. Applies -1 malus on all afflicted targets within the AOE. Interrupts readied, aiming, and suppression if within the AOE and they fail the check. If used before combat starts, will cause friendlies to have initaitive first instead of enemies."
     },
     {
         "id": "smoke",
@@ -281,7 +281,7 @@
         "class": "All",
         "cost": 0,
         "description": "Creates a plume of smoke around a designated location. Perfect for slipping away from enemies, or covering an advance.",
-        "rulesText": "[Throw][Obscure]\n When thrown in combat, prompts [Throw].\n 0 DMG | 3 hex AOE. \n Applies very dimly lit [-2] to the area and areas beyond it when attempting to look through the smoke for 2 turns starting when it was deployed."
+        "rulesText": "[Throw][Obscure]\n When thrown in combat, prompts [Throw] against a threshold of 2.\n 0 DMG | 3 hex AOE. \n Applies very dimly lit [-2] to the area and areas behind it when attempting to look through the smoke. Lasts for 2 turns starting when it was deployed."
     },
     {
         "id": "knife",
@@ -548,8 +548,8 @@
         "parentId": "Raider",
         "class": "Raider",
         "cost": 7000,
-        "description": "Spotters, stupid fucking box grenades, wallhacks, they go by many names but do the same thing. You throw them into an area or room, everyone gets pinged.\nFollow ups vary.",
-        "rulesText": "Opposed Throw Check\nPings all enemies in an area and provides a live outline of them. (+2 spotted bonus)\nLasts for 1 turn.\nUpon fail or fumble, the snapshot will tag no targets."
+        "description": "Spotters, wallhacks, they go by many names but do the same thing. You throw them into an area or room, everyone gets pinged.\nFollow ups vary on user execution.",
+        "rulesText": "[Throw][Spot]\n 0 DMG | 8 hex AOE\n When thrown in combat, prompts [Throw] vs [Stealth] or [Disguise] against targets not within line of sight and within the AOE, when it lands. Defenders within line of sight of the grenade when it lands automatically fail. Defenders that fail within the AOE are [Pinged] for one turn."
     },
     {
         "id": "9bangs",
@@ -558,7 +558,7 @@
         "class": "Raider",
         "cost": 0,
         "description": "For when compliance wasn't a request. Channels the power of chemistry to dissuade targets from considering shooting back. And also blinds them. And gives them hearing problems.",
-        "rulesText": "Opposed Throw Check\nCauses an extremely brightly lit effect for any enemies caught by the ninebang (-2) for the turn.\nUpon fail the flashbang misses.\nUpon fumble, the user and anyone around them are affected."
+        "rulesText": "[Throw][Interrupt][Stun]\n 0 DMG | 3 hex AOE\n When thrown in combat, prompts [Throw] vs [Spirit] to withstand or [Acrobatics] to dodge.\n Applies -2 malus on all afflicted targets within the AOE. Interrupts readied, aiming, and suppression if within the AOE and they fail the check. Upon defender MOF of 2, they are [Stunned] and lose their turn. If used before combat starts, will cause friendlies to have initaitive first instead of enemies."
     },
     {
         "id": "emp",
@@ -567,7 +567,7 @@
         "class": "Raider",
         "cost": 5000,
         "description": "Eskola built this in a CAVE. with SCRAPS.",
-        "rulesText": "Disables all electronics and lights around the user.\nIf indoors with no natural lighting, it applies a pitch black effect to the room and any adjacent. If there is natural lighting, it will apply a very dimly lit or poorly lit effect.\nElectronics will return in 3 turns.\nRequires 2 rapid movement turns to recharge, or 4 normal movement turns.\nCan also use a bonus action to wiggle in place to charge for a normal movement turn."
+        "rulesText": "[EMP][Disable]\nDisables all electronics and lights around the user.\nIf indoors with no natural lighting, it applies a pitch black effect to the room and any adjacent. If there is natural lighting, it will apply a very dimly lit or poorly lit effect.\nElectronics will return in 3 turns.\nRequires 2 rapid movement turns to recharge, or 4 normal movement turns.\nCan also use a bonus action to wiggle in place to charge for a normal movement turn."
     },
     {
         "id": "stalker",
@@ -576,7 +576,7 @@
         "class": "Raider",
         "cost": 12000,
         "description": "Erases the user from all cameras and drones while in use by looping an image without them in it. Reduces ambient noise with an active noise control unit.",
-        "rulesText": "+1 dice to stealth rolls while in use. Invisible to all cameras and drones while active. Erases enemy spotting. Actions no longer cause noise and wont cause notice checks when not in line of sight.\nLasts 3 turns.\nRequires 2 rapid movement turns to recharge, or 4 normal movement turns.\nCan also use a bonus action to wiggle in place to charge for a normal movement turn."
+        "rulesText": "[Stealth]\n+1 dice to stealth rolls while in use. Invisible to all cameras and drones while active. Unspottable while active. Actions no longer cause noise and wont cause notice checks when not in line of sight.\nLasts 3 turns.\nRequires 2 rapid movement turns to recharge, or 4 normal movement turns.\nCan also use a bonus action to wiggle in place to charge for a normal movement turn."
     },
     {
         "id": "octo",
@@ -585,7 +585,7 @@
         "class": "Raider",
         "cost": 25000,
         "description": "Renders the user Invisible via an advanced particle refraction display simulating light flowing around them. Makes their silhouette just a shimmer, and almost invisible in low light conditions.",
-        "rulesText": "Render's the user translucent with a slightly fuzzy sihlouette. Cloak breaks when firing non-subsonic rounds or engaging in CQC. When broken- it creates an afterimage trail behind the user which applies -1 dice to all attacks against them.\n\n All attacking or notice rolls have to flip a coin. Upon tails, they can attack or try to notice. When enemies know that you have camoflague, they no longer have to roll notice to attack.\n\n When active, provides an extra dice to stealth and disguise rolls.\nLasts 2 turns, breaks at the end of the second turn. Afterimage lasts until user's next turn.\nRequires 2 rapid movement turns to recharge, or 4 normal movement turns.\nCan also use a bonus action to wiggle in place to charge for a normal movement turn."
+        "rulesText": "[Stealth][Disguise]\nRender's the user translucent with a slightly fuzzy sihlouette. Cloak breaks when firing non-subsonic rounds or engaging in CQC.\n\n All attacking or notice rolls have to flip a coin. Upon tails, they can attack or try to notice. When enemies know that you have camoflague, they no longer have to roll notice to attack.\n\n When active, provides an extra dice to stealth and disguise rolls.\nLasts 2 turns, breaks at the end of the second turn.\nRequires 2 rapid movement turns to recharge, or 4 normal movement turns.\nCan also use a bonus action to wiggle in place to charge for a normal movement turn."
     },
     {
         "id": "C-ENG",
@@ -601,7 +601,7 @@
         "class": "Combat Engineer",
         "cost": 0,
         "description": "A staple of Green Berets, Rangers, and other Special Forces units who don’t need to clear rooms like Delta. AT launchers are shoulder fired munitions that can blow up vehicles, destroy walls, and take down buildings if aimed right.",
-        "rulesText": "Range Modifiers: -1NS | -100C | +1M | -1ELR\nCapacity: 1\nAmmo: 3\nPen: 3\nDamage: 10"
+        "rulesText": "[Heavy Weapons]\nRange Modifiers: -1NS | -100C | +1M | -1ELR\nCapacity: 1\nAmmo: 3\nPen: 3\nDamage: 10.\n Against infantry, abides by grenade rules. Against Ground Vehicles, abides by ranged rules. Against Air Vehicles, causes an opposed [Alertness] check, and then an [Intelligence] check to evade."
     },
     {
         "id": "wire-launcher",
@@ -610,7 +610,7 @@
         "class": "Combat Engineer",
         "cost": 17000,
         "description": "Nicknamed the 'straw', wire guided shoulder fired munitions are just as the name says: wire guided. The FCS is built into the launcher itself, and allows the missile to be guided in by the user. As such- it's faster than the guided launchers, but slower than unguided launchers. While at the same time also allowing for much more damage when they connect. Just dont flinch while using it.",
-        "rulesText": "Guaranteed hit if target is tracked and no countermeasures deployed. Can be guided where every 6 hexes, you can change its direction of travel by angling one hex from its current path.\n Opposed [Alertness] check to notice, reaction is either countermeasures, bracing, or evasion.\nCapacity: 1\nAmmo: 2\nPen: 3\nDamage: 12"
+        "rulesText": "Can be guided where every 6 hexes, you can change its direction of travel by angling one hex from its current path.\n Opposed [Alertness] check to notice, reaction is either countermeasures, bracing, or evasion.\nCapacity: 1\nAmmo: 2\nPen: 3\nDamage: 12"
     },
     {
         "id": "guided-launcher",
@@ -653,7 +653,7 @@
         "class": "Technical Engineer",
         "cost": 20000,
         "description": "Taking the concept of the RQ-16 T-HAWK and MQ-8 Fire Scout, the Fire Hornet combines the concepts into a smaller, quadcopter platform. Equipped with a gun gimble and BUDDI Spotting software, the Fire Scout offers engineers the flexibility to fight from multiple angles, or flank targets they can't get to from the sky.",
-        "rulesText": "General: 1 | All Weapons: 2 | Endurance: 1 | Notice: 2 | Investigation: 1 \nDMG 4 | PEN 1 | Range: +1 C, -1 L, -2 ELR | 6 turns of ammo \n 10 HP | AC:0 \n [Airborne] [Repairable] "
+        "rulesText": "[Airborne] [Repairable]\nGeneral: 1 | All Weapons: 2 | Endurance: 1 | Notice: 2 | Investigation: 1 \nDMG 4 | PEN 1 | Range: +1 C, -1 L, -2 ELR | 6 turns of ammo \n 10 HP | AC:0 "
     },
     {
         "id": "demo-dog",
@@ -662,7 +662,7 @@
         "class": "Technical Engineer",
         "cost": 10000,
         "description": "Developed to solve an ethics concern of K-9 units, and subsequently creating new ones with unmanned drones, the XMQ-88 Demo-Dog is an unmanned, autonomous, quadrapedial robot. It can be equipped with a variety of equipment, from supressed SMGs for a frontline role, marksman rifles as a remote sniper sentry, to even LMGs for supressive fire. It even makes noises when you pet it!",
-        "rulesText": "General: 1 | All Weapons: 2 | Endurance: 2 | Notice: 1 | Stealth: 1 \n 30 HP | AC:1 \n [Ground] [Repairable]"
+        "rulesText": "[Ground] [Repairable]\nGeneral: 1 | All Weapons: 2 | Endurance: 2 | Notice: 1 | Stealth: 1 \n 30 HP | AC:1"
     },
     {
         "id": "dd-frontliner",
@@ -710,8 +710,17 @@
         "parentId": "T-ENG",
         "class": "Technical Engineer",
         "cost": 0,
-        "description": "The whir of electric motors and the buzz of small drones have become the new age stuka siren. Equipped with a shaped charge warhead, 'magic missiles' are guided by their operators onto targets such as tanks or infantry before detonating. Useful against dug in targets and some armored vehicles.",
-        "rulesText": "DMG 7, PEN 2. When deployed, user's turn ends immediately. When attacking an enemy, the defender rolls acrobatics if they wish to dodge, weapons if they want to shoot it out of the sky. Uses a Drive check when deployed. Fumbles pre-detonate the warhead."
+        "description": "The whir of electric motors and the buzz of small drones have become the new age stuka siren. Equipped with an anti-infantry warhead, 'magic missiles' are guided by their operators onto targets such as tanks or infantry before detonating. Useful against dug in targets and some armored vehicles.",
+        "rulesText": "DMG 7, PEN 1. When deployed, user's turn ends immediately. When attacking an enemy, the defender rolls acrobatics if they wish to dodge, or their respective weapons with disadvantage if they want to shoot it out of the sky. Uses a Drive check when deployed. Fumbles pre-detonate the warhead."
+    },
+    {
+        "id": "LMDAT",
+        "title": "XMQ-18 UCAV-AT 'Bigger Magic Missile'",
+        "parentId": "T-ENG",
+        "class": "Technical Engineer",
+        "cost": 9000,
+        "description": "The whir of electric motors and the buzz of small drones have become the new age stuka siren. Equipped with a shaped charge warhead for vehicles, 'magic missiles' are guided by their operators onto targets such as tanks or infantry before detonating. Useful against dug in targets and some armored vehicles.",
+        "rulesText": "DMG 8, PEN 3. When deployed, user's turn ends immediately. When attacking an enemy, the defender rolls acrobatics if they wish to dodge, or their respective weapons with disadvantage if they want to shoot it out of the sky. Uses a Drive check when deployed. Fumbles pre-detonate the warhead."
     },
     {
         "id": "F-SUP",
