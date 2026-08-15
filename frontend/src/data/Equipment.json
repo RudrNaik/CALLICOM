@@ -253,7 +253,7 @@
         "id": "grenades",
         "title": "Grenades",
         "class": "None",
-        "rulesText": "Handy little tools in a pinch, throwables come in a variety of shapes and sizes with each one designed to carry out a specific task. These tasks range from stealth assassination, infantry removal, concealment, disorientation and anti-armour.\n\n When most grenades are thrown in combat, it prompts an opposed roll of the attacker's [Throw] against a defender's choice of action depending on the grenade. When out of combat, it requires an [Alertness] check to react in time, and then roll for their defensive action.\n\n Grenades can be thrown to medium range without issues, but at long range take a -1 malus. \n\n When rolling for acrobatics to evade, An MOS greater than 2 has the defender still standing, else- they are considered prone at the start of their next turn if they succeed. When bracing as a reaction, the character is considered bracing at the start of their next turn.",
+        "rulesText": "Handy little tools in a pinch, throwables come in a variety of shapes and sizes with each one designed to carry out a specific task. These tasks range from stealth assassination, infantry removal, concealment, disorientation and anti-armour.\n\n When most grenades are thrown in combat, it prompts an opposed roll of the attacker's [Throw] against a defender's choice of action depending on the grenade. When out of combat, it requires an [Alertness] check to react in time, and then roll for their defensive action.\n\n Grenades can be thrown to medium range without issues, but at long range take a -1 malus and cannot be thrown further. \n\n When rolling for acrobatics to evade, An MOS greater than 2 has the defender still standing, else- they are considered prone at the start of their next turn if they succeed. When bracing as a reaction, the character is considered bracing at the start of their next turn.",
         "description": "Shit's rigged to blow get the fuck back-"
     },
     {
@@ -711,7 +711,7 @@
         "class": "Technical Engineer",
         "cost": 0,
         "description": "The whir of electric motors and the buzz of small drones have become the new age stuka siren. Equipped with an anti-infantry warhead, 'magic missiles' are guided by their operators onto targets such as tanks or infantry before detonating. Useful against dug in targets and some armored vehicles.",
-        "rulesText": "DMG 7, PEN 1. When deployed, user's turn ends immediately. When attacking an enemy, the defender rolls acrobatics if they wish to dodge, or their respective weapons with disadvantage if they want to shoot it out of the sky. Uses a Drive check when deployed. Fumbles pre-detonate the warhead."
+        "rulesText": "DMG 7, PEN 1. AOE 2.\n When deployed, user's turn ends immediately. When attacking an enemy, the defender rolls acrobatics if they wish to dodge, or their respective weapons with a -1 dice malus if they want to shoot it out of the sky. Uses a Drive check when deployed. Fumbles pre-detonate the warhead."
     },
     {
         "id": "LMDAT",
@@ -720,7 +720,7 @@
         "class": "Technical Engineer",
         "cost": 9000,
         "description": "The whir of electric motors and the buzz of small drones have become the new age stuka siren. Equipped with a shaped charge warhead for vehicles, 'magic missiles' are guided by their operators onto targets such as tanks or infantry before detonating. Useful against dug in targets and some armored vehicles.",
-        "rulesText": "DMG 8, PEN 3. When deployed, user's turn ends immediately. When attacking an enemy, the defender rolls acrobatics if they wish to dodge, or their respective weapons with disadvantage if they want to shoot it out of the sky. Uses a Drive check when deployed. Fumbles pre-detonate the warhead."
+        "rulesText": "DMG 8, PEN 3, AOE 0\n When deployed, user's turn ends immediately. When attacking an enemy, the defender rolls acrobatics if they wish to dodge, or their respective weapons with a -1 dice malus if they want to shoot it out of the sky. Uses a Drive check when deployed. Fumbles pre-detonate the warhead."
     },
     {
         "id": "F-SUP",
