@@ -306,7 +306,7 @@
         "class": "Class",
         "cost": 0,
         "description": "Equipped with a laser desginator, laser mic, rangefinder, and an integrated datalink module to stream information directly to CAS and Indirect Fire systems, the SOFLAM allows Riflemen to observe, designate, and destroy targets with fast air or artillery.",
-        "rulesText": "Lased targets are both pinged and designated. Fire support munitions are guaranteed hits against vehicles unless countermeasures are deployed. Uses a full action to desginate. Can ping large swaths of targets if in FOV (area between hex diagonals in a certain direction)."
+        "rulesText": "[Datalink][Spot]\nLased targets are both pinged and designated. Fire support munitions are guaranteed hits against vehicles unless countermeasures are deployed. Uses a full action to desginate. Can ping large swaths of targets if in FOV (area between hex diagonals in a certain direction)."
     },
     {
         "id": "halligan",
@@ -315,7 +315,7 @@
         "class": "Class",
         "cost": 0,
         "description": "A Halligan bar",
-        "rulesText": "Athletics Check\nOpens most hinged doors (cannot open bulkheads and heavily reinforced doors)\nMakes minimal noise, however it breaks the door."
+        "rulesText": "[Breach][Deploy]\nAthletics Check\nOpens most hinged doors (cannot open bulkheads and heavily reinforced doors)\nMakes minimal noise, however it breaks the door."
     },
     {
         "id": "xtraRounds",
@@ -332,7 +332,7 @@
         "parentId": "passives",
         "class": "Class",
         "cost": 0,
-        "description": "Wrenches, Impact Drills, Blowtorches and more. Repair tools let Technical Engineers to fix up drones and vehicles, or more creatively seal off doors and destroy enemy infrastructure.",
+        "description": "[Repair]\nWrenches, Impact Drills, Blowtorches and more. Repair tools let Technical Engineers to fix up drones and vehicles, or more creatively seal off doors and destroy enemy infrastructure.",
         "rulesText": "Vehicle equivalent of an AFAK, uses a tinker roll to fix vehicle critical damage and minor damage. Can be used to damage or sabotage enemy vehicles or infrastructure. Unlimited uses. Can also do the opposite."
     },
     {
@@ -342,7 +342,7 @@
         "class": "Class",
         "cost": 0,
         "description": "Deployable shields create instant cover wherever, whenever. perfect for when you just dont have a fortified position, or are too lazy to get into one.",
-        "rulesText": "Creates deployable cover adjacent to the contractor. can be picked back up for re-use. Will be destroyed with rocket launchers and above. 2 hexes wide."
+        "rulesText": "[Deploy]\nCreates deployable cover adjacent to the contractor. can be picked back up for re-use. Will be destroyed with rocket launchers and above. 2 hexes wide."
     },
     {
         "id": "medicBag",
@@ -351,7 +351,7 @@
         "class": "Class",
         "cost": 0,
         "description": "One cannot carry all the medicine they need on them at all times. However, the revolutionary idea of ‘stuff everything else into another bag and carry it too was invented, which the Medic Bag utilizes.",
-        "rulesText": "Big medic bag that restocks all medical supplies when interacted with. Has the same amount of charges as players in the party. Can be picked back up or thrown."
+        "rulesText": "[Deploy]\nBig medic bag that restocks all medical supplies when interacted with. Has the same amount of charges as players in the party. Can be picked back up or thrown."
     },
     {
         "id": "BUDDI",
@@ -360,7 +360,7 @@
         "class": "Class",
         "cost": 0,
         "description": "The 'Ballistic Universal Distance Demarcation Indicator' HUD integration is a nifty piece of software Gold Coast developed to give snipers an edge in long range engagements. Namely by giving them a lead and drop indicator on pinged targets.",
-        "rulesText": "Provides user with an extra +1 bonus on all pinged targets in LR-ELR range bands."
+        "rulesText": "[Datalink]\nProvides user with an extra +1 bonus on all pinged targets in LR-ELR range bands."
     },
     {
         "id": "counterSpell",
@@ -369,7 +369,7 @@
         "class": "Class",
         "cost": 0,
         "description": "Developed from the STALKER PRD, the X-55 'Counterspell' infiltration device is a specialized signal jammer to deny the enemy a 'ping' or mark on where you are.",
-        "rulesText": "Cannot trigger digitally triggered traps, and cannot be digitally pinged by drones."
+        "rulesText": "[Datalink]\nCannot trigger digitally triggered traps, and cannot be digitally pinged by drones."
     },
     {
         "id": "misc",
@@ -438,7 +438,7 @@
         "class": "Rifleman",
         "cost": 0,
         "description": "Frag grenade in a 40mm can. Detonates on impact.",
-        "rulesText": "7 DMG\nM-Weapons attacker check, Acrobatics defender check. 1 hex AOE."
+        "rulesText": "[Explosive]\n7 DMG\nM-Weapons attacker check, Acrobatics defender check. 1 hex AOE."
     },
     {
         "id": "40mm-smk",
@@ -448,7 +448,7 @@
         "class": "Rifleman",
         "cost": 0,
         "description": "Smoke grenades in a 40mm can",
-        "rulesText": "No DMG\nApplies ‘very dimly lit’ (-2 attack to/through smoke) with a 3 hex AOE.\nPings from visual sources such as cameras are erased if obscured by smoke."
+        "rulesText": "[Obscure]\nNo DMG\nApplies ‘very dimly lit’ (-2 attack to/through smoke) with a 3 hex AOE.\nPings from visual sources such as cameras are erased if obscured by smoke."
     },
     {
         "id": "40mm-star",
@@ -458,7 +458,7 @@
         "class": "Rifleman",
         "cost": 5500,
         "description": "Apparently it’s the sun, in a 40mm can. Blinds anyone looking at it.",
-        "rulesText": "M-Weapons attacker check, Acrobatics defender check.\n Applies very harshly lit (-2) towards a target. Interrupts actions."
+        "rulesText": "[Interrupt]\nM-Weapons attacker check, Acrobatics defender check.\n Applies very harshly lit (-2) towards a target. Interrupts actions."
     },
     {
         "id": "40mm-snap",
@@ -468,7 +468,7 @@
         "class": "Rifleman",
         "cost": 3600,
         "description": "Spotter grenades, and you won't believe it, in a 40mm can.",
-        "rulesText": "M-Weapons attacker check, Acrobatics defender check\nPings all enemies in an area. \nLasts for 1 turn. \nUpon fumble, no pings."
+        "rulesText": "[Spot]\nM-Weapons attacker check, Acrobatics defender check\nPings all enemies in an area. \nLasts for 1 turn. \nUpon fumble, no pings."
     },
     {
         "id": "40mm-lbv",
@@ -478,7 +478,7 @@
         "class": "Rifleman",
         "cost": 2550,
         "description": "Bounceable 40mm HE",
-        "rulesText": "7 DMG.\n M-Weapons attacker check, Acrobatics defender check\n Able to be bounced off walls. 1 hex AOE"
+        "rulesText": "[Explosive]\n7 DMG.\n M-Weapons attacker check, Acrobatics defender check\n Able to be bounced off walls. 1 hex AOE"
     },
     {
         "id": "40mm-fire",
@@ -488,7 +488,7 @@
         "class": "Rifleman",
         "cost": 4000,
         "description": "They put a fireball in a 40mm can and set it alight oh god-",
-        "rulesText": "M-Weapons attacker check, Acrobatics defender check\nCreates 3 hex fire AOE that deals 5 damage to all targets within it.\n All deep wounds are converted into 1 flesh and 1 temporary that lasts 2 turns.\nAOE Lasts for 1 turn. \nUpon fumble, no pings."
+        "rulesText": "[Incendiary]\nM-Weapons attacker check, Acrobatics defender check\nCreates 3 hex fire AOE that deals 5 damage to all targets within it.\n All deep wounds are converted into 1 flesh and 1 temporary that lasts 2 turns.\nAOE Lasts for 1 turn. \nUpon fumble, no pings."
     },
     {
         "id": "m26-mass",
@@ -497,7 +497,7 @@
         "class": "Rifleman",
         "cost": 6600,
         "description": "For when you want a shotgun on hand, but can’t be bothered to forego something with a bit more range.",
-        "rulesText": "M-Weapons check, abides by ranged combat rules.\nRange modifier: +2 C | -1 M | -3 L | -4 ELR\n PEN: 1 | DMG: 6\n CAP: 3"
+        "rulesText": "[M-wep][Breach][Deploy]\nRange modifier: +2 C | -1 M | -3 L | -4 ELR\n PEN: 1 | DMG: 6\n CAP: 3\n Can be used as a breaching tool against doors as a Deploy action."
     },
     {
         "id": "Raider",
@@ -513,7 +513,7 @@
         "class": "Raider",
         "cost": 1500,
         "description": "A concoction of metal oxide, metal powders, and god knows what else that superheats to over 2,000 degrees celsius and burns through almost everything. Steel, Concrete, or locks. All in the form of a stick.",
-        "rulesText": "Tinker check\nOpens all doors up to heavily reinforced ones.\nCan create shootable holes in any wall.\nMakes a light hissing noise that can be masked by other noises. Will melt through the door’s lock or hinges. Provides a bright light that can attract attention."
+        "rulesText": "[Breach]\nTinker check\nOpens all doors up to heavily reinforced ones.\nCan create shootable holes in any wall.\nMakes a light hissing noise that can be masked by other noises. Will melt through the door’s lock or hinges. Provides a bright light that can attract attention."
     },
     {
         "id": "breachcharge",
@@ -522,7 +522,7 @@
         "class": "Raider",
         "cost": 0,
         "description": "'clack clack' - BOOM\n♪♫I'm coming down on the stereo, put me on the radio-♪♬",
-        "rulesText": "Opens all doors up to ones heavily reinforced, blows through soft walls.\nCauses a loud explosion, gives guaranteed initiative to the team upon entry."
+        "rulesText": "[Breach][Explosive]\nOpens all doors up to ones heavily reinforced, blows through soft walls.\nCauses a loud explosion, gives guaranteed initiative to the team upon entry."
     },
     {
         "id": "quickiesaw",
@@ -531,7 +531,7 @@
         "class": "Raider",
         "cost": 2000,
         "description": "vRRRRRrrrrrrRRRRRRRRRRRrrrrRRRRRRRRRRR\nEEEEEEEEEEEEeeeeeeeeEEEEEEEEEEE-\nClang\nDoor open.",
-        "rulesText": "H-Weapons Check\nTakes one turn to open most doors. Heavily reinforced doors require accumulated successes (2).\nCan cut through most walls easily, and make new doorways or angles to shoot at enemies from.\nMakes less noise than a breaching charge. However, it is louder than a halligan.\nUpon fumble, the blade can break."
+        "rulesText": "[Breach][H-wep]\nH-Weapons Check\nTakes one turn to open most doors. Heavily reinforced doors require accumulated successes (2).\nCan cut through most walls easily, and make new doorways or angles to shoot at enemies from.\nMakes less noise than a breaching charge. However, it is louder than a halligan.\nUpon fumble, the blade can break."
     },
     {
         "id": "thermite",
@@ -540,7 +540,7 @@
         "class": "Raider",
         "cost": 5000,
         "description": "The breach pen's bigger brother, now with genetics of the breaching charge.\nA really big fucking hole. Coming right up.",
-        "rulesText": "Opens all doors and walls, without exception.\nCauses a loud explosion, gives guaranteed initiative to the team upon entry."
+        "rulesText": "[Breach][Explosive]\nOpens all doors and walls, without exception.\nCauses a loud explosion, gives guaranteed initiative to the team upon entry."
     },
     {
         "id": "snapshot",
@@ -601,7 +601,7 @@
         "class": "Combat Engineer",
         "cost": 0,
         "description": "A staple of Green Berets, Rangers, and other Special Forces units who don’t need to clear rooms like Delta. AT launchers are shoulder fired munitions that can blow up vehicles, destroy walls, and take down buildings if aimed right.",
-        "rulesText": "[Heavy Weapons]\nRange Modifiers: -1NS | -100C | +1M | -1ELR\nCapacity: 1\nAmmo: 3\nPen: 3\nDamage: 10.\n Against infantry, abides by grenade rules. Against Ground Vehicles, abides by ranged rules. Against Air Vehicles, causes an opposed [Alertness] check, and then an [Intelligence] check to evade."
+        "rulesText": "[H-Wep]\nRange Modifiers: -1NS | -100C | +1M | -1ELR\nCapacity: 1\nAmmo: 3\nPen: 3\nDamage: 10.\n Against infantry, abides by grenade rules. Against Ground Vehicles, abides by ranged rules. Against Air Vehicles, causes an opposed [Alertness] check, and then an [Intelligence] check to evade."
     },
     {
         "id": "wire-launcher",
@@ -610,7 +610,7 @@
         "class": "Combat Engineer",
         "cost": 17000,
         "description": "Nicknamed the 'straw', wire guided shoulder fired munitions are just as the name says: wire guided. The FCS is built into the launcher itself, and allows the missile to be guided in by the user. As such- it's faster than the guided launchers, but slower than unguided launchers. While at the same time also allowing for much more damage when they connect. Just dont flinch while using it.",
-        "rulesText": "Can be guided where every 6 hexes, you can change its direction of travel by angling one hex from its current path.\n Opposed [Alertness] check to notice, reaction is either countermeasures, bracing, or evasion.\nCapacity: 1\nAmmo: 2\nPen: 3\nDamage: 12"
+        "rulesText": "[H-Wep]\nCan be guided where every 6 hexes, you can change its direction of travel by angling one hex from its current path.\n Opposed [Alertness] check to notice, reaction is either countermeasures, bracing, or evasion.\nCapacity: 1\nAmmo: 2\nPen: 3\nDamage: 12"
     },
     {
         "id": "guided-launcher",
@@ -619,7 +619,7 @@
         "class": "Combat Engineer",
         "cost": 19000,
         "description": "Top attack, PLOS, and others. Guided rocket launchers are able to be much better controlled for the expense of being a bit slower and much more expensive. However, they hit harder, and will take out most vehicles easily.",
-        "rulesText": "Guaranteed hit if target is locked and no countermeasures deployed, Opposed [Alertness] check to notice, reaction is either countermeasures, bracing, or evasion.\nCapacity: 1\nAmmo: 2\nPen: 3\nDamage: 15"
+        "rulesText": "[H-Wep][Datalink]\nGuaranteed hit if target is locked and no countermeasures deployed, Opposed [Alertness] check to notice, reaction is either countermeasures, bracing, or evasion.\nCapacity: 1\nAmmo: 2\nPen: 3\nDamage: 15"
     },
     {
         "id": "amr",
@@ -628,7 +628,7 @@
         "class": "Combat Engineer",
         "cost": 13000,
         "description": "From the classics of the AW-50 and M107 Barret to modern options such as the Gepard GM6 Lynx, Anti Material rifles come in all shapes and sizes but offer the same capability: big bullet, big penetration, big damage. Anti Material rifles can penetrate heavy armor and disable dedicated vehicle systems permanently. Such as APS, tracks, or engines. On lighter vehicles, they can punch through the armor, killing passengers or gunnners.",
-        "rulesText": "Range Modifiers: +1 Bipod | -2C | +1L | +2ELR\n Ammo: 5\nPen: 3\nDamage: 8"
+        "rulesText": "[H-Wep]\nRange Modifiers: -2C | +1L | +2ELR\n Ammo: 5\nPen: 3\nDamage: 8"
     },
     {
         "id": "semenov-railgun",
@@ -637,7 +637,7 @@
         "class": "Combat Engineer",
         "cost": "[???]",
         "description": "Advanced, experimental Railgun design from Gold Coast. Utilizes electromagnetics to accelerate a 14.5 Anti-Material round from 0 to Mach 3 in under a second. We are not liable for hearing damage caused by extensive use.",
-        "rulesText": "Range Modifiers: +1 Bipod | -2C | +1L | +2ELR\n Ammo: 3\nPen: 4\nDamage: 10\n\nWill cause characters within the room or round path to become Suppressed."
+        "rulesText": "[H-Wep]\nRange Modifiers: -2C | +1L | +2ELR\n Ammo: 3\nPen: 4\nDamage: 10\n\nWill cause characters within the room its fired in or one hex from the round path to become Suppressed."
     },
     {
         "id": "T-ENG",
@@ -653,7 +653,7 @@
         "class": "Technical Engineer",
         "cost": 20000,
         "description": "Taking the concept of the RQ-16 T-HAWK and MQ-8 Fire Scout, the Fire Hornet combines the concepts into a smaller, quadcopter platform. Equipped with a gun gimble and BUDDI Spotting software, the Fire Scout offers engineers the flexibility to fight from multiple angles, or flank targets they can't get to from the sky.",
-        "rulesText": "[Airborne] [Repairable]\nGeneral: 1 | All Weapons: 2 | Endurance: 1 | Notice: 2 | Investigation: 1 \nDMG 4 | PEN 1 | Range: +1 C, -1 L, -2 ELR | 6 turns of ammo \n 10 HP | AC:0 "
+        "rulesText": "[Airborne][Repairable][Deploy][Datalink]\nGeneral: 1 | All Weapons: 2 | Endurance: 1 | Notice: 2 | Investigation: 1 \nDMG 4 | PEN 1 | Range: +1 C, -1 L, -2 ELR | 6 turns of ammo \n 10 HP | AC:0 "
     },
     {
         "id": "demo-dog",
@@ -662,7 +662,7 @@
         "class": "Technical Engineer",
         "cost": 10000,
         "description": "Developed to solve an ethics concern of K-9 units, and subsequently creating new ones with unmanned drones, the XMQ-88 Demo-Dog is an unmanned, autonomous, quadrapedial robot. It can be equipped with a variety of equipment, from supressed SMGs for a frontline role, marksman rifles as a remote sniper sentry, to even LMGs for supressive fire. It even makes noises when you pet it!",
-        "rulesText": "[Ground] [Repairable]\nGeneral: 1 | All Weapons: 2 | Endurance: 2 | Notice: 1 | Stealth: 1 \n 30 HP | AC:1"
+        "rulesText": "[Ground][Repairable][Deploy][Datalink]\nGeneral: 1 | All Weapons: 2 | Endurance: 2 | Notice: 1 | Stealth: 1 \n 30 HP | AC:1"
     },
     {
         "id": "dd-frontliner",
@@ -711,7 +711,7 @@
         "class": "Technical Engineer",
         "cost": 0,
         "description": "The whir of electric motors and the buzz of small drones have become the new age stuka siren. Equipped with an anti-infantry warhead, 'magic missiles' are guided by their operators onto targets such as tanks or infantry before detonating. Useful against dug in targets and some armored vehicles.",
-        "rulesText": "DMG 7, PEN 1. AOE 2.\n When deployed, user's turn ends immediately. When attacking an enemy, the defender rolls acrobatics if they wish to dodge, or their respective weapons with a -1 dice malus if they want to shoot it out of the sky. Uses a Drive check when deployed. Fumbles pre-detonate the warhead."
+        "rulesText": "[Airborne][Explosive][Deploy][Datalink]\nDMG 7, PEN 1. AOE 2.\n When deployed, user's turn ends immediately. When attacking an enemy, the defender rolls acrobatics if they wish to dodge, or their respective weapons with a -1 dice malus if they want to shoot it out of the sky. Uses a Drive check when deployed. Fumbles pre-detonate the warhead."
     },
     {
         "id": "LMDAT",
@@ -720,7 +720,7 @@
         "class": "Technical Engineer",
         "cost": 9000,
         "description": "The whir of electric motors and the buzz of small drones have become the new age stuka siren. Equipped with a shaped charge warhead for vehicles, 'magic missiles' are guided by their operators onto targets such as tanks or infantry before detonating. Useful against dug in targets and some armored vehicles.",
-        "rulesText": "DMG 8, PEN 3, AOE 0\n When deployed, user's turn ends immediately. When attacking an enemy, the defender rolls acrobatics if they wish to dodge, or their respective weapons with a -1 dice malus if they want to shoot it out of the sky. Uses a Drive check when deployed. Fumbles pre-detonate the warhead."
+        "rulesText": "[Airborne][Explosive][Deploy][Datalink]\nDMG 8, PEN 3, AOE 0\n When deployed, user's turn ends immediately. When attacking an enemy, the defender rolls acrobatics if they wish to dodge, or their respective weapons with a -1 dice malus if they want to shoot it out of the sky. Uses a Drive check when deployed. Fumbles pre-detonate the warhead."
     },
     {
         "id": "F-SUP",
@@ -736,7 +736,7 @@
         "class": "Fire Support",
         "cost": 0,
         "description": "Simplifies the math of indirect fire into a 'point and click' adventure game. Allows the user to set up a remote mortar, designate targets, and then deliver ordnance from anywhere within an AO accurately.",
-        "rulesText": "H-Weapons attacking roll vs Acrobatics defender roll\nRequires a line of sight to the sky, along with minimal obstruction. One turn setup.\nCannot hit targets inside of buildings or with strong overhead cover.\n Ammo: 4"
+        "rulesText": "[Deploy][Datalink]\nH-Weapons attacking roll vs Acrobatics defender roll\nRequires a line of sight to the sky, along with minimal obstruction. One turn setup.\nCannot hit targets inside of buildings or with strong overhead cover.\n Ammo: 4"
     },
     {
         "id": "x89-he",
@@ -756,7 +756,7 @@
         "class": "Fire Support",
         "cost": 5000,
         "description": "Guided rounds that change trajectory mid air to strike a target accurately.",
-        "rulesText": "Adds an extra dice to your attacking roll, increases Pen to 2. 8 DMG | 1 hex AOE"
+        "rulesText": "Adds an extra dice to your attacking roll, increases Pen to 2.\n 8 DMG | 1 hex AOE"
     },
     {
         "id": "x89-smk",
@@ -805,7 +805,7 @@
         "class": "Fire Support",
         "cost": 0,
         "description": "A bag of assorted ammo types. Includes auto-feeders to rapidly refill magazines with them.",
-        "rulesText": "Resupplies all ammo and grenades.\nHas same amount of charges as team members."
+        "rulesText": "[Deploy][Resupply]\nResupplies all ammo and grenades.\nHas same amount of charges as team members."
     },
     {
         "id": "spitfire-feeder",
@@ -814,7 +814,7 @@
         "class": "Fire Support",
         "cost": 16000,
         "description": "Utilizing a backpack feeder and a gyroscopic camera mount, the spitfire allows you to put down an unmatched amount of firepower at the expense of melting barrels and making the logistics officer incredibly angry at you.",
-        "rulesText": "The stabilizer removes the ability to mount in exchange for removing penalties for moving and shooting. Allows the user to supress a second set of six hexes. Barrels melt at three turns of consequtive supression. reloading in the same turn has no penalty as ammo is fed from pack."
+        "rulesText": "[Suppression]\nThe stabilizer removes the ability to mount in exchange for removing penalties for moving and shooting. Allows the user to supress a second set of six hexes. Barrels melt at three turns of consequtive supression. reloading in the same turn has no penalty as ammo is fed from pack."
     },
     {
         "id": "juggernaut-suit",
@@ -823,7 +823,7 @@
         "class": "Fire Support",
         "cost": "[???]",
         "description": "Repurposed EOD suit equipped with a half exo to assist with movement. Provides a two stage armor system, where the outer layer of armor ‘soaks’ damage before it begins to strip and fall apart with further impacts, leaving the user with AC2 armor once it’s shredded.",
-        "rulesText": "The suit can soak up to 200 HP (MoS x weapon damage) from enemies.\nWhen shot at, instead of rounds missing when a check is failed, the armor soaks the base damage of the weapon (MoS of 1) and it’s deducted from the health pool.\nWhen this health pool reaches zero, the armor is shredded, and the user now takes damage against their wound thresholds."
+        "rulesText": "[Armor]\nThe suit can soak up to 200 HP (MoS x weapon damage) from enemies.\nWhen shot at, instead of rounds missing when a check is failed, the armor soaks the base damage of the weapon (MoS of 1) and it’s deducted from the health pool.\nWhen this health pool reaches zero, the armor is shredded, and the user now takes damage against their wound thresholds."
     },
     {
         "id": "mp-aps",
@@ -832,7 +832,7 @@
         "class": "Fire Support",
         "cost": 13000,
         "description": "A man portable version of the Active Protection System. A hard kill countermeasure for defeating most munitions such as 40mms, grenades, rockets, and even drones. When deployed, it shines a brght green light on areas it is protecting when active.",
-        "rulesText": "Deployable on most terrain, benefits from cover bonuses. Destroys all munitions from UCAVs, 40mms, Rockets, and grenades in a five hex radius. Won't destroy friendly munitions, but does lead to enemy munitions detonating pre-maturely. Has 3 consequtive charges. One charge will protect the area for the turn."
+        "rulesText": "[Deploy][Intercept]\nDeployable on most terrain, benefits from cover bonuses. Destroys all munitions from UCAVs, 40mms, Rockets, and grenades in a five hex radius. Won't destroy friendly munitions, but does lead to enemy munitions detonating pre-maturely. Has 3 consequtive charges. One charge will protect the area for the turn."
     },
     {
         "id": "ammo-bag",
@@ -841,7 +841,7 @@
         "class": "Fire Support",
         "cost": 5000,
         "description": "Get your ammo, fresh off the press. Its a bag filled with Stopping Power, Subsonic, or High Velocity rounds. Each with their own effects when loaded.",
-        "rulesText": "When loading out, choose an amount of charges for each ammo type when unlocked. When deployed, or given by a support using this specific ammo bag, you automatically reload your weapon with the new ammo type and gain its benefits for that magazine only. when reloading, the ammo is lost."
+        "rulesText": "[Deploy][Resupply]\nWhen loading out, choose an amount of charges for each ammo type when unlocked. When deployed, or given by a support using this specific ammo bag, you automatically reload your weapon with the new ammo type and gain its benefits for that magazine only. when reloading, the ammo is lost."
     },
     {
         "id": "stp-power",
@@ -887,7 +887,7 @@
         "class": "Medic",
         "cost": 0,
         "description": "Contains all the stims a medic can carry, from regenerative nanites that heal you, to performance enhancing ones that let you react faster. Just dont get too reliant on them. Don't need junkies in the company. ",
-        "rulesText": "Holds all of the nanite stims for a medic. A medic can carry up to 4 stims of assorted types. Each has their own rules."
+        "rulesText": "[Deploy][Medical]\nHolds all of the nanite stims for a medic. A medic can carry up to 4 stims of assorted types. Each has their own rules."
     },
     {
         "id": "rnk",
@@ -963,7 +963,7 @@
         "class": "Sharpshooter",
         "cost": 0,
         "description": "Built off the chassis of the PD-105 Black Hornet, Hummingbird reconnaissance drones are Gold Coast's home brewed modification, also tying in BUDDI spotting software and hardened Datalinks.",
-        "rulesText": "User carried\nSpots traps, gadgets, vehicles, and more in the encounter area and one hex around\n Uptime: 4 turns\n 3 notice | 2 stealth | 1 investigation"
+        "rulesText": "[Deploy][Spot][Datalink]\nUser carried\nSpots traps, gadgets, vehicles, and more in the encounter area and one hex around\n Uptime: 4 turns\n 3 notice | 2 stealth | 1 investigation"
     },
     {
         "id": "silverbird-uav",
@@ -972,7 +972,7 @@
         "class": "Sharpshooter",
         "cost": 8000,
         "description": "Built off of the Marine's SUAV, the Silver Bird is an autonomous drone that orbits the user at a high altitude to mark targets. Has only NV. Pings for every turn it is up.",
-        "rulesText": "User Carried\nSpots in a large area, extending to 4 world hexes from the encounter area\n Uptime: 3 turns | Downtime: 1 turn\n 2 notice | 2 acrobatics | 2 investigation"
+        "rulesText": "[Deploy][Spot][Datalink]\nUser Carried\nSpots in a large area, extending to 4 world hexes from the encounter area\n Uptime: 3 turns | Downtime: 1 turn\n 2 notice | 2 acrobatics | 2 investigation"
     },
     {
         "id": "greybird-uav",
@@ -981,7 +981,7 @@
         "class": "Sharpshooter",
         "cost": 10000,
         "description": "Built off of the Marine's SUAV, the Grey Bird is an autonomous drone that orbits the user at a high altitude to mark targets. Has IR and a LAM mounted to lase and designate targets.",
-        "rulesText": "User Carried\nSpots in a large area, extending to 4 world hexes from the encounter area\nUptime: 1 turn | Downtime: 1 turn\n 3 notice | 1 acrobatics | 1 investigation"
+        "rulesText": "[Deploy][Spot][Datalink]\nUser Carried\nSpots in a large area, extending to 4 world hexes from the encounter area\nUptime: 1 turn | Downtime: 1 turn\n 3 notice | 1 acrobatics | 1 investigation"
     },
     {
         "id": "bumblebee-echolocator",
@@ -990,7 +990,7 @@
         "class": "Sharpshooter",
         "cost": 16000,
         "description": "Survey drone utilizing echolocation to mark moving enemies. Shakes the ground when activated, but will always provide a ping. Can be shot down easily once noticed, and is kinda fat.",
-        "rulesText": "Pre-Deployed\nSpots for 2 turns\n3 Notice \n[Aiborne][Repairable]"
+        "rulesText": "[Deploy][Spot][Datalink]\nPre-Deployed\nSpots for 2 turns\n3 Notice \n[Aiborne][Repairable]"
     },
     {
         "id": "grappling-hook",
@@ -999,7 +999,7 @@
         "class": "Sharpshooter",
         "cost": 0,
         "description": "Intended to help scale vertical walls and buildings. Can be daisy chained up to three times and 75 meters total.",
-        "rulesText": "1 turn deployment on vertical surfaces. This allows players to climb up any building as if on a makeshift ladder.\nRequires a throw check for if the target is hooked. Upon failure, charge is returned to the player.\n Can be used to gain overwatch positions in Dense Urban terrain, and negate many movement checks.\n3 uses.\nCan be used by teammates."
+        "rulesText": "[Deploy][Traversal]\n1 turn deployment on vertical surfaces. This allows players to climb up any building as if on a makeshift ladder.\nRequires a throw check for if the target is hooked. Upon failure, charge is returned to the player.\n Can be used to gain overwatch positions in Dense Urban terrain, and negate many movement checks.\n3 uses.\nCan be used by teammates."
     },
     {
         "id": "zipline",
@@ -1008,7 +1008,7 @@
         "class": "Sharpshooter",
         "cost": 3000,
         "description": "Intended to help traverse large gaps between buildings. Cannot be daisy chained, however can also be used to scale vertically if given enough distance. Very fun to ride, but make sure to hook in.",
-        "rulesText": "1 turn deployment across large gaps. This allows players to create a zipline between adjacent buildings.\nRequires an M-weapons check to see if the target is hit. Upon failure, charge is expended.\nCan be used to skip certain movement checks,on downhill or from climb zones. downhill creates 3 hex movement, climb creates 5 hex movement.\n2 uses.\nCan be used by teammates."
+        "rulesText": "[Deploy][Traversal]\n1 turn deployment across large gaps. This allows players to create a zipline between adjacent buildings.\nRequires an M-weapons check to see if the target is hit. Upon failure, charge is expended.\nCan be used to skip certain movement checks,on downhill or from climb zones. downhill creates 3 hex movement, climb creates 5 hex movement.\n2 uses.\nCan be used by teammates."
     },
     {
         "id": "hydraulic-hook",
@@ -1017,7 +1017,7 @@
         "class": "Sharpshooter",
         "cost": 7000,
         "description": "Intended for snipers to be able to scale and move between buildings and walls quickly with a universal tool. However, only the operator can move, and only to adjacent buildings or vertically up to 25 meters.",
-        "rulesText": "Requires an M-weapons check to see if the target is hit. Upon failure the charge is expended.\nCan be used for overwatch positions in Dense Urban zones via providing a rapell, or to skip climb checks.\nUpon success, the hook needs to recharge, which takes two world ticks.\n3 uses.\nCannot be used by teammates."
+        "rulesText": "[Deploy][Traversal]\nRequires an M-weapons check to see if the target is hit. Upon failure the charge is expended.\nCan be used for overwatch positions in Dense Urban zones via providing a rapell, or to skip climb checks.\nUpon success, the hook needs to recharge, which takes two world ticks.\n3 uses.\nCannot be used by teammates."
     },
     {
         "id": "spec-ammo",
@@ -1026,7 +1026,7 @@
         "class": "Sharpshooter",
         "cost": 0,
         "description": "Special ammo allows for sharpshooters to have a greater effect with their bullets than just killing people. From disabling electronics with a low power EMP round, to punching through even the heaviest of body armor with AP rounds, Gold Coast's special ammo provides snipers unmatched flexibility on the field.",
-        "rulesText": "Special ammo rules are detailed below. EMP, Lure, AP, and Smart Rounds."
+        "rulesText": "[Deploy]\nSpecial ammo rules are detailed below. EMP, Lure, AP, and Smart Rounds. Requires a Deploy action to load."
     },
     {
         "id": "lre-round",
@@ -1082,7 +1082,7 @@
         "class": "Trapper",
         "cost": 0,
         "description": "Shock Sticks are quiet, non-lethal traps which can be used to stealthily dispatch guards or patrols, bar the noise of them being tazed.",
-        "rulesText": "Attacker Throw vs Defender Acrobatics [thrown]\nor\nAttacker Disguise vs Defender Alertness [mine]\nUser carried, 3x\n 3 hex AOE \n\n Forces a Body check against 4 when caught in the trap.\n -Upon failure, you are tazed, forced prone, and take a flesh wound.\n -Upon success, you can disable the shock stick with an action- or leave its AOE."
+        "rulesText": "[Deploy][Throw][Electric]\nAttacker Throw vs Defender Acrobatics [thrown]\nor\nAttacker Disguise vs Defender Alertness [mine]\nUser carried, 3x\n 3 hex AOE \n\n Forces a Body check against 4 when caught in the trap.\n -Upon failure, you are tazed, forced prone, and take a flesh wound.\n -Upon success, you can disable the shock stick with an action- or leave its AOE."
     },
     {
         "id": "claymores",
@@ -1091,7 +1091,7 @@
         "class": "Trapper",
         "cost": 3500,
         "description": "Shotgun in a tin. Riddles a target with ball bearings when triggered, and will auto-detonate by itself whenever something passes by. Don't worry, it won't fire if friendlies are near.",
-        "rulesText": "Attacker Disguise vs Defender Notice\nUser carried, 3x\n8 DMG\n 4 hex diagonal AOE\nWhen a Claymore’s laser tripwire is activated, it detonates and riddles the target with a combination of shrapnel and ball bearings."
+        "rulesText": "[Deploy][Explosive]\nAttacker Disguise vs Defender Notice\nUser carried, 3x\n8 DMG\n 4 hex diagonal AOE\nWhen a Claymore’s laser tripwire is activated, it detonates and riddles the target with a combination of shrapnel and ball bearings."
     },
     {
         "id": "lil-mac",
@@ -1100,7 +1100,7 @@
         "class": "Trapper",
         "cost": 2500,
         "description": "KNOCKOUT! When activated, the Lil Mac springs up from the ground and smacks into the enemy’s face, knocking them down.",
-        "rulesText": "Attacker Disguise vs Defender Alertness\nUser carried, 2x\nWhen triggered, mine props up and knocks investigator out for a total of 4 turns. Will not cause an alertness check when activated."
+        "rulesText": "[Deploy]\nAttacker Disguise vs Defender Alertness\nUser carried, 2x\nWhen triggered, mine props up and knocks investigator out for a total of 4 turns. Will not cause an alertness check when activated."
     },
     {
         "id": "ankle-busters",
@@ -1109,7 +1109,7 @@
         "class": "Trapper",
         "cost": 3000,
         "description": "When activated, enemy movement is disabled as their legs and feet are riddled with shrapnel.\n\n... Somehow this isn't much better than claymores.",
-        "rulesText": "Attacker Disguise vs Defender Alertness\nUser carried, simple action to deploy. 2x\nWhen activated the enemy cannot move until they bandage themselves or receive treatment from a medic."
+        "rulesText": "[Deploy]\nAttacker Disguise vs Defender Alertness\nUser carried, simple action to deploy. 2x\nWhen activated the enemy cannot move until they bandage themselves or receive treatment from a medic."
     },
     {
         "id": "c4",
@@ -1118,7 +1118,7 @@
         "class": "Trapper",
         "cost": 4000,
         "description": "Better known as 'jeep stuff', C4 is a malleable material that when introduced to an electric charge—detonates spectacularly. There are a lot of use cases. Get creative.",
-        "rulesText": "Attacker Throw/Disguise vs Defender Acrobatics/Notice\nUser carried, simple action to deploy. x4\nWhen detonated, the C4 creates a massive explosion, capable of wiping out entire groups or a vehicle if they are attached or right on top of the explosive.\n 7 dmg."
+        "rulesText": "[Deploy][Throw][Explosive]\nAttacker Throw/Disguise vs Defender Acrobatics/Notice\nUser carried, simple action to deploy. x4\nWhen detonated, the C4 creates a massive explosion, capable of wiping out entire groups or a vehicle if they are attached or right on top of the explosive.\n 7 dmg."
     },
     {
         "id": "m5-slam",
@@ -1127,7 +1127,7 @@
         "class": "Trapper",
         "cost": 6000,
         "description": "Jeep stuff's younger, more tech-savvy cousin, M5 SLAMs are AT/Demo charges that can be set to detonate under a variety of circumstances. Easy to program, easy to detonate, and even float in water to act as aquatic mines.",
-        "rulesText": "Can be deployed on any surface with either:\n- Timed detonation (turn count)\n- Attack detonation (automatic)\n- Remote detonation (manual)\n\n10 DMG"
+        "rulesText": "[Deploy][Throw][Explosive]\nAttacker Throw/Disguise vs Defender Acrobatics/Notice. Can be deployed on any surface with either:\n- Timed detonation (turn count)\n- Attack detonation (automatic)\n- Remote detonation (manual)\n\n10 DMG"
     },
     {
         "id": "thermtex",
@@ -1136,7 +1136,7 @@
         "class": "Trapper",
         "cost": 4000,
         "description": "The power of chemistry once more, now re-engineered and applied to burn at 2000 degrees celsius, and then detonate into a spectacular explosion. Powerful enough to deal damage to vehicles and burn through armor. Not as effective against people unless stuck... But why would you do that?",
-        "rulesText": "[Throw][AT]\n8 DMG | 3 hex AOE.\n When thrown in combat, prompts [Throw] vs [Armor] or [Acrobatics]. Requires a turn to detonate. Turns hard walls into cover. Can damage armored vehicles."
+        "rulesText": "[Throw][Explosive]\n8 DMG | 3 hex AOE.\n When thrown in combat, prompts [Throw] vs [Armor] or [Acrobatics]. Requires a turn to detonate. Turns hard walls into cover. Can damage armored vehicles."
     },
     {
         "id": "thinkpad",
@@ -1145,7 +1145,7 @@
         "class": "Trapper",
         "cost": 0,
         "description": "It’s a ThinkPad. You’re not leaving this job for a while brother, and this thing isn’t breaking unless you shoot it with a tank.",
-        "rulesText": "Provides access to the cyberwarfare suite. Useful for hacking."
+        "rulesText": "[Datalink][Deploy]\nProvides access to the cyberwarfare suite. Useful for hacking. Upon usage ends your turn."
     },
     {
         "id": "cyb-cldwn",
