@@ -263,7 +263,7 @@
         "class": "All",
         "cost": 0,
         "description": "A bog standard high explosive fragmentation grenade. Light, easy to carry, easier to throw. Useful for many applications.",
-        "rulesText": "[Throw][DMG]\n 7 Damage. | 1 hex AOE\n When thrown in combat, prompts [Throw] vs [Armor] to brace or [Acrobatics] to dodge. Out of combat, requires an [Alertness] roll check if they react, and then their reaction."
+        "rulesText": "[Throw][Explosive]\n 7 Damage. | 1 hex AOE\n When thrown in combat, prompts [Throw] vs [Armor] to brace or [Acrobatics] to dodge. Out of combat, requires an [Alertness] roll check if they react, and then their reaction."
     },
     {
         "id": "flash",
@@ -478,7 +478,7 @@
         "class": "Rifleman",
         "cost": 2550,
         "description": "Bounceable 40mm HE",
-        "rulesText": "[Explosive]\n7 DMG.\n M-Weapons attacker check, Acrobatics defender check\n Able to be bounced off walls. 1 hex AOE"
+        "rulesText": "[Explosive]\n7 DMG.\n M-Weapons attacker check, Acrobatics defender check\n Able to be bounced off walls. 1 hex AOE. When bounced off of a wall, roll a d6 for the exact hex the 40mm lands on in a 1 hex radius of the target, starting clockwise at the top right most hex as a result of 1, and exactly where it was aimed on 6."
     },
     {
         "id": "40mm-fire",
@@ -567,7 +567,7 @@
         "class": "Raider",
         "cost": 5000,
         "description": "Eskola built this in a CAVE. with SCRAPS.",
-        "rulesText": "[EMP][Disable]\nDisables all electronics and lights around the user.\nIf indoors with no natural lighting, it applies a pitch black effect to the room and any adjacent. If there is natural lighting, it will apply a very dimly lit or poorly lit effect.\nElectronics will return in 3 turns.\nRequires 2 rapid movement turns to recharge, or 4 normal movement turns.\nCan also use a bonus action to wiggle in place to charge for a normal movement turn."
+        "rulesText": "[EMP]\nDisables all electronics and lights around the user.\nIf indoors with no natural lighting, it applies a pitch black effect to the room and any adjacent. If there is natural lighting, it will apply a very dimly lit or poorly lit effect.\nElectronics will return in 3 turns.\nRequires 2 rapid movement turns to recharge, or 4 normal movement turns.\nCan also use a bonus action to wiggle in place to charge for a normal movement turn."
     },
     {
         "id": "stalker",
