@@ -478,7 +478,7 @@
         "class": "Rifleman",
         "cost": 2550,
         "description": "Bounceable 40mm HE",
-        "rulesText": "[Explosive]\n7 DMG.\n M-Weapons attacker check, Acrobatics defender check\n Able to be bounced off walls. 1 hex AOE. When bounced off of a wall, roll a d6 for the exact hex the 40mm lands on in a 1 hex radius of the target, starting clockwise at the top right most hex as a result of 1, and exactly where it was aimed on 6."
+        "rulesText": "[Explosive]\n7 DMG.\n M-Weapons attacker check, Acrobatics defender check\n Able to be bounced off walls. 1 hex AOE. When bounced off of a wall, roll a d7 for the exact hex the 40mm lands on in a 1 hex radius of the target, starting clockwise at the top right most hex as a result of 1, and exactly where it was aimed on 7."
     },
     {
         "id": "40mm-fire",
