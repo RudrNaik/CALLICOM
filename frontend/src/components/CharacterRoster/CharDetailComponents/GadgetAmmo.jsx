@@ -1,5 +1,5 @@
 // src/components/GadgetAmmo.jsx
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import {
   MIXED_GADGETS,
   EXPENDABLE_GADGETS,
@@ -74,11 +74,15 @@ export default function GadgetAmmo({
     () => getGadgetAmmoKey(characterCallsign, gadgetId),
     [characterCallsign, gadgetId],
   );
+  const hasLoadedStorage = useRef(false);
+  const skipSaveAfterLoad = useRef(false);
 
   /**
    * Load new data from localstorage as needed.
    */
   useEffect(() => {
+    hasLoadedStorage.current = false;
+
     try {
       const raw = getMemory(localStorageKey);
       if (raw) {
@@ -86,12 +90,15 @@ export default function GadgetAmmo({
 
         // Back-compat: if someone stored a bare number for expendables, convert to { __uses: n } and cap
         if (isExpendable && typeof parsed === "number") {
+          skipSaveAfterLoad.current = true;
           setGadgetAmmo({
             [EX_KEY]: Math.max(0, Math.min(parsed, effectiveMax)),
           });
+          hasLoadedStorage.current = true;
           return;
         }
 
+        skipSaveAfterLoad.current = true;
         setGadgetAmmo(sanitize(parsed));
       } else {
         // init parent state
@@ -104,10 +111,12 @@ export default function GadgetAmmo({
           setGadgetAmmo({});
         }
       }
+      hasLoadedStorage.current = true;
     } catch (e) {
       console.error("GadgetAmmo parse error:", e);
       if (isExpendable) setGadgetAmmo({ [EX_KEY]: effectiveMax });
       else setGadgetAmmo({});
+      hasLoadedStorage.current = true;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [localStorageKey, isMixed, isExpendable, effectiveMax]);
@@ -117,7 +126,11 @@ export default function GadgetAmmo({
    */
   useEffect(() => {
     try {
-      if (!isActive) return;
+      if (!hasLoadedStorage.current) return;
+      if (skipSaveAfterLoad.current) {
+        skipSaveAfterLoad.current = false;
+        return;
+      }
       const clean = sanitize(gadgetAmmo || {});
       setJsonMemory(localStorageKey, clean);
     } catch (e) {
@@ -147,9 +160,7 @@ export default function GadgetAmmo({
 
     setGadgetAmmo(next);
     try {
-      if (isActive) {
-        setJsonMemory(localStorageKey, sanitize(next));
-      }
+      setJsonMemory(localStorageKey, sanitize(next));
     } catch {}
   };
 
