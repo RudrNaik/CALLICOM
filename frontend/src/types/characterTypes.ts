@@ -5,6 +5,23 @@ export interface Attributes {
   Spirit: number;
 }
 
+export interface WeaponSlot {
+  name: string;
+  category: string;
+  family?: string;
+}
+
+export interface Equipment {
+  primaryWeapon?: WeaponSlot;
+  secondaryWeapon?: WeaponSlot;
+  grenades?: string[];
+  gadget?: string;
+  gadgetAmmo?: Record<string, number>;
+  armorClass?: number;
+  miscGear?: string;
+  [key: string]: unknown;
+}
+
 export interface Specialization {
   skill: string;
   label: string;
@@ -21,26 +38,16 @@ export interface Character {
   attributes: Attributes;
   skills: Record<string, number>;
   specializations: Specialization[];
-  equipment: {
-    primaryWeapon?: {
-      name: string;
-      category: string;
-      family: string;
-    };
-    secondaryWeapon?: {
-      name: string;
-      category: string;
-      family: string;
-    };
-    armorClass?: number;
-    [key: string]: any;
-  };
+  equipment: Equipment;
   fleshWounds: number;
   deepWounds: number;
   XP: number;
+  emergencyDice?: number;
   multiClass?: string;
   createdAt?: string;
   campaignId?: string;
+  Bio?: string;
+  [key: string]: unknown;
 }
 
 export interface DerivedStats {
@@ -56,3 +63,4 @@ export interface DerivedStats {
   armedDamage: number;
   woundMod: number;
 }
+

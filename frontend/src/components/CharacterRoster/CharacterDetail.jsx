@@ -19,6 +19,7 @@ import MultiClassModal from "./CharDetailComponents/MultiClassModal";
 import Collapsible from "../Collapsible";
 import RollCalculator from "./CharDetailComponents/RollCalculator";
 import ExpAddedCalc from "./CharDetailComponents/expAddedCalc";
+import { normalizeCharacterData } from "../../engine/characterDataHandler";
 
 function CharacterDetail({ character, onUpdate, user, equipment }) {
   const navigate = useNavigate();
@@ -384,14 +385,14 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
    * @returns 
    */
   const handleSaveChanges = async () => {
-    const updates = {
+    const updates = normalizeCharacterData({
       XP: xpRemaining,
       skills: editedSkills,
       specializations,
       emergencyDice,
       multiClass,
       attributes,
-    };
+    });
 
     const token = getToken();
     if (!token) {

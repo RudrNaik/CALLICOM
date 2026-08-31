@@ -4,6 +4,11 @@ import CharacterDetail from "./CharacterDetail";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
+  isCharacter,
+  normalizeCharacterData,
+  repairLegacyCharacterData,
+} from "../../engine/characterDataHandler";
+import {
   getMemory,
   setJsonMemory,
   clearMemory,
@@ -29,7 +34,8 @@ const COLD_START_THRESHOLD_MS = 3000;
 function readCache(key) {
   try {
     const cached = getJsonMemory(key);
-    return cached?.data ?? cached ?? null;
+    const value = cached?.data ?? cached ?? null;
+    return value ? normalizeCharacterData(value) : null;
   } catch {
     return null;
   }
@@ -42,10 +48,49 @@ function readCache(key) {
  */
 function writeCache(key, data) {
   try {
-    setJsonMemory(key, { data, ts: Date.now() });
+    setJsonMemory(key, { data: normalizeCharacterData(data), ts: Date.now() });
   } catch {
     // localStorage full or unavailable, silently skip
   }
+}
+
+async function syncNormalizedCharacters(userId, rawChars, normalizedChars, token, navigate) {
+  if (!Array.isArray(rawChars) || !Array.isArray(normalizedChars) || !token) return;
+
+  const syncOps = normalizedChars.map(async (char) => {
+    const repaired = repairLegacyCharacterData(char);
+    const original = rawChars.find(
+      (entry) => entry?._id === repaired?._id || (entry?.callsign === repaired?.callsign && entry?.userId === userId),
+    );
+
+    if (!original) return;
+
+    const originalJson = JSON.stringify(repairLegacyCharacterData(original));
+    const normalizedJson = JSON.stringify(repaired);
+    if (originalJson === normalizedJson) return;
+
+    try {
+      const res = await fetch(
+        `https://callicom.onrender.com/api/characters/${userId}/${repaired.callsign}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(repaired),
+        },
+      );
+
+      if (!res.ok) {
+        console.warn("Failed to normalize legacy BSON values for character:", repaired.callsign, res.status);
+      }
+    } catch (error) {
+      console.warn("Error normalizing character payload:", repaired.callsign, error);
+    }
+  });
+
+  await Promise.all(syncOps);
 }
 
 /**
@@ -94,7 +139,7 @@ async function fetchJSON(url, token, navigate) {
       console.error("Unexpected data format:", data);
       return null;
     }
-    return data;
+    return data.map(normalizeCharacterData);
   } catch {
     console.error("Invalid JSON response:", text);
     return null;
@@ -236,9 +281,11 @@ function CharacterRoster({ userId }) {
 
     const cachedChars = readCache(CACHE_KEY_CHARS(userId));
     const cachedEquip = readCache(CACHE_KEY_EQUIP);
+    const normalizedCachedChars = cachedChars ? normalizeCharacterData(cachedChars) : null;
+    const normalizedCachedEquip = cachedEquip ? normalizeCharacterData(cachedEquip) : null;
 
-    if (cachedChars) setCharacters(cachedChars);
-    if (cachedEquip) setEquipment(cachedEquip);
+    if (normalizedCachedChars) setCharacters(normalizedCachedChars);
+    if (normalizedCachedEquip) setEquipment(normalizedCachedEquip);
 
     if (!cachedChars || !cachedEquip) {
       setIsLoading(true);
@@ -259,8 +306,18 @@ function CharacterRoster({ userId }) {
         token,
         navigate,
       ),
-    ]).then(([chars, equip]) => {
+    ]).then(async ([chars, equip]) => {
       clearTimeout(sleepTimerRef.current);
+
+      const normalizedChars = Array.isArray(chars)
+        ? chars.map(normalizeCharacterData)
+        : [];
+      const validChars = normalizedChars.filter(isCharacter);
+      const validEquip = Array.isArray(equip)
+        ? equip.map((entry) => normalizeCharacterData(entry))
+        : [];
+
+      await syncNormalizedCharacters(userId, chars ?? [], validChars, token, navigate);
 
       setBackendSleeping(false);
       setIsLoading(false);
@@ -269,12 +326,12 @@ function CharacterRoster({ userId }) {
       if (refreshRequestedRef.current) {
         refreshRequestedRef.current = false;
 
-        if (chars) {
-          setCharacters(chars);
-          writeCache(CACHE_KEY_CHARS(userId), chars);
+        if (validChars.length > 0) {
+          setCharacters(validChars);
+          writeCache(CACHE_KEY_CHARS(userId), validChars);
 
           if (selectedCharacter) {
-            const updated = chars.find((c) => c._id === selectedCharacter._id);
+            const updated = validChars.find((c) => c._id === selectedCharacter._id);
 
             if (updated) {
               setSelectedCharacter(updated);
@@ -282,9 +339,9 @@ function CharacterRoster({ userId }) {
           }
         }
 
-        if (equip) {
-          setEquipment(equip);
-          writeCache(CACHE_KEY_EQUIP, equip);
+        if (validEquip.length > 0) {
+          setEquipment(validEquip);
+          writeCache(CACHE_KEY_EQUIP, validEquip);
         }
 
         setPendingChars(null);
@@ -294,41 +351,46 @@ function CharacterRoster({ userId }) {
         return;
       }
 
+      const normalizedCachedCharsForCompare = normalizedCachedChars ?? cachedChars;
+      const normalizedCachedEquipForCompare = normalizedCachedEquip ?? cachedEquip;
+
       const charsMismatch =
-        chars && JSON.stringify(chars) !== JSON.stringify(cachedChars);
+        validChars.length > 0 &&
+        JSON.stringify(validChars) !== JSON.stringify(normalizedCachedCharsForCompare);
 
       const equipMismatch =
-        equip && JSON.stringify(equip) !== JSON.stringify(cachedEquip);
+        validEquip.length > 0 &&
+        JSON.stringify(validEquip) !== JSON.stringify(normalizedCachedEquipForCompare);
 
       if (charsMismatch || equipMismatch) {
         if (charsMismatch) {
-          setPendingChars(chars);
+          setPendingChars(validChars);
         }
 
         if (equipMismatch) {
-          setPendingEquip(equip);
+          setPendingEquip(validEquip);
         }
 
         setHasMismatch(true);
       } else {
-        if (chars) {
-          writeCache(CACHE_KEY_CHARS(userId), chars);
+        if (validChars.length > 0) {
+          writeCache(CACHE_KEY_CHARS(userId), validChars);
         }
 
-        if (equip) {
-          writeCache(CACHE_KEY_EQUIP, equip);
+        if (validEquip.length > 0) {
+          writeCache(CACHE_KEY_EQUIP, validEquip);
         }
       }
 
       // First load / no cache case
-      if (!cachedChars && chars) {
-        setCharacters(chars);
-        writeCache(CACHE_KEY_CHARS(userId), chars);
+      if (!normalizedCachedChars && validChars.length > 0) {
+        setCharacters(validChars);
+        writeCache(CACHE_KEY_CHARS(userId), validChars);
       }
 
-      if (!cachedEquip && equip) {
-        setEquipment(equip);
-        writeCache(CACHE_KEY_EQUIP, equip);
+      if (!normalizedCachedEquip && validEquip.length > 0) {
+        setEquipment(validEquip);
+        writeCache(CACHE_KEY_EQUIP, validEquip);
       }
     });
   }, [userId, refreshFlag]);
