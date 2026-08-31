@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
-import weaponCategories from "../../../data/weaponCategories.json";
-import { getModifiedWeaponStats } from "../../../engine/equipmentEngine";
+import equipmentData from "../../../data/Equipment.json";
+import { getModifiedWeaponStats, getWeaponCategoriesLookup } from "../../../engine/equipmentEngine";
 
 function Calculator({ characterData }) {
   const [character, setCharacter] = useState(null);
@@ -21,7 +21,13 @@ function Calculator({ characterData }) {
   const [newDiceModValue, setNewDiceModValue] = useState(0);
   const [newDiceModLabel, setNewDiceModLabel] = useState("");
 
+  const weaponCatsLookup = useMemo(
+    () => getWeaponCategoriesLookup(equipmentData),
+    [],
+  );
+
   const [pingEnabled, setPingEnabled] = useState(false);
+
   const [fleshWounds, setFleshWounds] = useState(0);
   const [deepWounds, setDeepWounds] = useState(0);
   const [navigateRoll, setNavigateRoll] = useState(null);
@@ -39,7 +45,7 @@ function Calculator({ characterData }) {
 
   const getWeaponData = (weapon) => {
     if (!weapon?.category) return null;
-    return weaponCategories[weapon.category] || null;
+    return weaponCatsLookup[weapon.category] || null;
   };
 
   const parseRangeProfile = (rangeString) => {
@@ -62,7 +68,7 @@ function Calculator({ characterData }) {
     let rangeString = weaponData.range;
     
     if (selectedWeapon?.family) {
-      const modifiedStats = getModifiedWeaponStats(selectedWeapon, weaponCategories, selectedWeapon.family);
+      const modifiedStats = getModifiedWeaponStats(selectedWeapon, weaponCatsLookup, selectedWeapon.family);
       if (modifiedStats?.range) {
         rangeString = modifiedStats.range;
       }

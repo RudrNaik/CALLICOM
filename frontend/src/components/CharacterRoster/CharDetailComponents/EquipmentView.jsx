@@ -1,15 +1,17 @@
 import { useEffect, useState, useMemo } from "react";
 import equipmentData from "../../../data/Equipment.json";
-import weaponCategories from "../../../data/weaponCategories.json";
 import secondaryGadgets from "../../../data/classSkills.json";
 import WeaponSlot from "./WeaponCards";
 import GadgetAmmo from "./GadgetAmmo";
-import GADGET_AMMO_CONFIG from "../../../data/gadgetAmmoConfig.json";
 import {
   getJsonMemory,
   getToken,
   setJsonMemory,
 } from "../../../engine/memoryEngine";
+import {
+  getGadgetAmmoConfig,
+  getWeaponCategoriesLookup,
+} from "../../../engine/equipmentEngine";
 
 function EquipmentSelection({
   character,
@@ -61,7 +63,14 @@ function EquipmentSelection({
     () => `equipment_runtime_${character?.callsign ?? "unknown"}`,
     [character?.callsign],
   );
-  const activeGadgetConfig = GADGET_AMMO_CONFIG[gear.gadget];
+  const activeGadgetConfig = useMemo(
+    () => getGadgetAmmoConfig(gear.gadget, equipmentData),
+    [gear.gadget],
+  );
+  const weaponCatsLookup = useMemo(
+    () => getWeaponCategoriesLookup(equipmentData),
+    [],
+  );
   const [primaryOptions, setPrimaries] = useState({});
   const [secondaryOptions, setSecondary] = useState({});
   const [maxArmor, setArmor] = useState(1);
@@ -144,7 +153,6 @@ function EquipmentSelection({
     ) {
       excluded = [
         "Machine Guns",
-        "Drum Shotguns",
         "Light Pistols",
         "Heavy Pistols",
       ];
@@ -163,7 +171,7 @@ function EquipmentSelection({
       ];
     }
     const primaryFilter = Object.fromEntries(
-      Object.entries(weaponCategories).filter(
+      Object.entries(weaponCatsLookup).filter(
         ([key]) => !excluded.includes(key),
       ),
     );
@@ -193,7 +201,7 @@ function EquipmentSelection({
       "Carbines",
     ];
     const secondaryFilter = Object.fromEntries(
-      Object.entries(weaponCategories).filter(
+      Object.entries(weaponCatsLookup).filter(
         ([key]) => !excluded.includes(key),
       ),
     );

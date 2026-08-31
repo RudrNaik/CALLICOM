@@ -3,6 +3,56 @@
  * Centralizes all weapon and gadget ammo logic.
  */
 
+/**
+ * Transforms the equipment list into a lookup object for weapon categories using IDs.
+ * @param {Array} equipmentData - The equipment data array
+ * @returns {object} Mapping of category IDs to their data
+ */
+export const getWeaponCategoriesByIdLookup = (equipmentData) => {
+  const lookup = {};
+  equipmentData.forEach(item => {
+    if (item.categoryName) {
+      lookup[item.id] = item;
+    }
+  });
+  return lookup;
+};
+
+/**
+ * Retrieves gadget ammo configuration from the equipment list.
+ * @param {string} gadgetId - ID of the gadget
+ * @param {Array} equipmentData - The equipment data array
+ * @returns {object|null} Configuration object
+ */
+export const getGadgetAmmoConfig = (gadgetId, equipmentData) => {
+  return equipmentData.find(item => item.id === gadgetId) || null;
+};
+
+/**
+ * Retrieves weapon category data from the equipment list by category name.
+ * @param {string} categoryName - Name of the category (e.g., "Light Pistols")
+ * @param {Array} equipmentData - The equipment data array
+ * @returns {object|null} Category data
+ */
+export const getWeaponCategoryData = (categoryName, equipmentData) => {
+  return equipmentData.find(item => item.categoryName === categoryName) || null;
+};
+
+/**
+ * Transforms the equipment list into a lookup object for weapon categories.
+ * @param {Array} equipmentData - The equipment data array
+ * @returns {object} Mapping of category names to their data
+ */
+export const getWeaponCategoriesLookup = (equipmentData) => {
+  const lookup = {};
+  equipmentData.forEach(item => {
+    if (item.categoryName) {
+      lookup[item.categoryName] = item;
+    }
+  });
+  return lookup;
+};
+
 // --- Weapon Logic ---
 
 /**
@@ -356,4 +406,3 @@ export const useExpendableGadget = (currentAmmo, effectiveMax) => {
 export const resupplyExpendableGadget = (currentAmmo, effectiveMax) => {
   return { ...(currentAmmo || {}), [EX_KEY]: effectiveMax };
 };
-
