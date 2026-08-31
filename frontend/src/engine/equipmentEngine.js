@@ -201,46 +201,46 @@ export const MIXED_GADGETS = [
   "ammo-bag",
 ];
 
-export const EXPENDABLE_GADGETS = [
-  "shock-sticks",
-  "claymores",
-  "ankle-busters",
-  "lil-mac",
-  "c4",
-  "m5-slam",
-  "thermtex",
-  "9bangs",
-  "snapshot",
-  "rocket-launcher",
-  "wire-launcher",
-  "guided-launcher",
-  "amr",
-  "semenov-railgun",
-  "m26-mass",
-  "PMGL",
-  "LMD",
-  "mp-aps",
-  "zipline",
-  "grappling-hook",
-  "hydraulic-hook",
-];
-
 export const EX_KEY = "__uses";
 export const MAG_KEY = "__mag";
 export const RES_KEY = "__res";
 
 export const isMixedGadget = (gadgetId) => MIXED_GADGETS.includes(gadgetId);
-export const isExpendableGadget = (gadgetId) => EXPENDABLE_GADGETS.includes(gadgetId);
+export const isExpendableGadget = (gadgetId, config = null) => {
+  if (!config || typeof config !== "object") return false;
+  const max = getGadgetAmmoMax(config);
+  return Number.isFinite(max) && max > 0;
+};
 
 export const clamp0 = (n) => (Number.isFinite(n) ? Math.max(0, n) : 0);
+
+export const getGadgetAmmoMax = (config = {}) => {
+  const directMax = [
+    config.max,
+    config.maxGrenades,
+    config.maxRounds,
+    config.maxStims,
+    config.maxSpecAmmo,
+    config.maxBatches,
+    config.maxStowedAmmo,
+  ].find((value) => Number.isFinite(value) && Number(value) > 0);
+
+  if (Number.isFinite(directMax)) {
+    return Number(directMax);
+  }
+
+  const rulesText = typeof config.rulesText === "string" ? config.rulesText : "";
+  const match = rulesText.match(/(?:Ammo|Charges|Rounds?|Uses|Capacity)\s*:?\s*(\d+)/i);
+  return match ? Number(match[1]) : 0;
+};
 
 /**
  * Calculates effective ammo pool, accounts for Combat Engineers having 2x ammo.
  */
 export const getEffectiveMax = (gadgetId, charClass, config) => {
-  let base = config?.max ?? 0;
+  let base = getGadgetAmmoMax(config) || config?.max || 0;
   if (
-    isExpendableGadget(gadgetId) &&
+    isExpendableGadget(gadgetId, config) &&
     charClass === "Combat Engineer" &&
     (gadgetId === "rocket-launcher" ||
       gadgetId === "wire-launcher" ||
@@ -269,7 +269,22 @@ export const getGadgetAmmoHeader = (gadgetId, config, isExpendable, effectiveMax
   if (gadgetId === "ammo-bag")
     return { title: "Type", max: config?.maxBatches ?? 0 };
   if (isExpendable) return { title: "Munitions", max: effectiveMax };
-  return { title: "Consumables", max: 0 };
+  return { title: "", max: 0 };
+};
+
+export const hasExplicitGadgetAmmo = (gadgetId, config, isMixed, isExpendable) => {
+  if (!config || typeof config !== "object") return false;
+  if (isMixed || isExpendable) return true;
+
+  if (Array.isArray(config.options) && config.options.length > 0) {
+    return true;
+  }
+
+  if (Number.isFinite(getGadgetAmmoMax(config)) && getGadgetAmmoMax(config) > 0) {
+    return true;
+  }
+
+  return false;
 };
 
 /**
@@ -348,7 +363,7 @@ export const sumNonNeg = (obj) =>
  */
 export const getInitialGadgetAmmo = (gadgetId, charClass, config, parsedStorage = null, currentAmmo = {}) => {
   const isMixed = isMixedGadget(gadgetId);
-  const isExpendable = isExpendableGadget(gadgetId);
+  const isExpendable = isExpendableGadget(gadgetId, config);
   const effectiveMax = getEffectiveMax(gadgetId, charClass, config);
   const options = config?.options || [];
   const optionIds = new Set(options.map((o) => o.id));
@@ -361,7 +376,7 @@ export const getInitialGadgetAmmo = (gadgetId, charClass, config, parsedStorage 
   }
 
   if (isExpendable) {
-    return { [EX_KEY]: effectiveMax };
+    return {};
   } else if (isMixed) {
     return sanitizeGadgetAmmo(currentAmmo, isMixed, isExpendable, optionIds, effectiveMax);
   }

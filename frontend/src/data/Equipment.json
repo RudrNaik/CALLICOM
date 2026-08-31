@@ -691,6 +691,7 @@
         "parentId": "Raider",
         "class": "Raider",
         "cost": 0,
+        "max": 3,
         "description": "'clack clack' - BOOM\n♪♫I'm coming down on the stereo, put me on the radio-♪♬",
         "rulesText": "[Breach][Explosive]\nOpens all doors up to ones heavily reinforced, blows through soft walls.\nCauses a loud explosion, gives guaranteed initiative to the team upon entry."
     },
@@ -700,6 +701,7 @@
         "parentId": "Raider",
         "class": "Raider",
         "cost": 2000,
+        "max": 2,
         "description": "vRRRRRrrrrrrRRRRRRRRRRRrrrrRRRRRRRRRRR\nEEEEEEEEEEEEeeeeeeeeEEEEEEEEEEE-\nClang\nDoor open.",
         "rulesText": "[Breach][H-wep]\nH-Weapons Check\nTakes one turn to open most doors. Heavily reinforced doors require accumulated successes (2).\nCan cut through most walls easily, and make new doorways or angles to shoot at enemies from.\nMakes less noise than a breaching charge. However, it is louder than a halligan.\nUpon fumble, the blade can break."
     },
@@ -709,6 +711,7 @@
         "parentId": "Raider",
         "class": "Raider",
         "cost": 5000,
+        "max": 3,
         "description": "The breach pen's bigger brother, now with genetics of the breaching charge.\nA really big fucking hole. Coming right up.",
         "rulesText": "[Breach][Explosive]\nOpens all doors and walls, without exception.\nCauses a loud explosion, gives guaranteed initiative to the team upon entry."
     },

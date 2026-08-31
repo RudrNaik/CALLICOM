@@ -2,7 +2,6 @@
 import { useEffect, useMemo, useRef } from "react";
 import {
   MIXED_GADGETS,
-  EXPENDABLE_GADGETS,
   EX_KEY,
   MAG_KEY,
   RES_KEY,
@@ -18,6 +17,7 @@ import {
   updateMixedGadgetAmmo,
   useExpendableGadget,
   resupplyExpendableGadget,
+  hasExplicitGadgetAmmo,
 } from "../../../engine/equipmentEngine";
 import {
   getMemory,
@@ -56,13 +56,22 @@ export default function GadgetAmmo({
 
   // Everything that isn't mixed + has a max pool is considered expendable here
   const isExpendable = useMemo(
-    () => isExpendableGadget(gadgetId),
-    [gadgetId],
+    () => isExpendableGadget(gadgetId, config),
+    [gadgetId, config],
   );
 
   const effectiveMax = useMemo(() => getEffectiveMax(gadgetId, charClass, config), [gadgetId, charClass, config]);
 
   const sanitize = (obj) => sanitizeGadgetAmmo(obj, isMixed, isExpendable, optionIds, effectiveMax);
+
+  const shouldRender = useMemo(
+    () => hasExplicitGadgetAmmo(gadgetId, config, isMixed, isExpendable),
+    [config, gadgetId, isExpendable, isMixed],
+  );
+
+  if (!shouldRender) return null;
+
+  const currentUses = Number.isFinite(gadgetAmmo?.[EX_KEY]) ? gadgetAmmo[EX_KEY] : null;
 
   const { title, max } = useMemo(
     () => getGadgetAmmoHeader(gadgetId, config, isExpendable, effectiveMax),
@@ -286,14 +295,9 @@ export default function GadgetAmmo({
         <div className="flex items-center justify-between gap-3">
           <div className="text-2xl px-2 py-1 rounded bg-neutral-900 text-yellow-400 shadow">
             <span>
-              {Math.max(
-                0,
-                Number.isFinite(gadgetAmmo?.[EX_KEY])
-                  ? gadgetAmmo[EX_KEY]
-                  : effectiveMax,
-              )}
-            </span>{" "}
-            / {effectiveMax}
+              {currentUses === null ? "" : Math.max(0, currentUses)}
+            </span>
+            {currentUses !== null && <> / {effectiveMax}</>}
             <div className="text-[10px] text-gray-400 italic">Uses</div>
           </div>
 

@@ -10,6 +10,7 @@ import {
 } from "../../../engine/memoryEngine";
 import {
   getGadgetAmmoConfig,
+  getGadgetAmmoMax,
   getWeaponCategoriesLookup,
 } from "../../../engine/equipmentEngine";
 
@@ -231,6 +232,19 @@ function EquipmentSelection({
 
   const handleChange = (field, value) => {
     setGear((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleGadgetChange = (nextGadgetId) => {
+    const nextConfig = equipmentData.find((item) => item.id === nextGadgetId) || null;
+    const isMixed = !!nextConfig?.options?.length;
+    const inferredMax = nextConfig ? getGadgetAmmoMax(nextConfig) : 0;
+    const nextAmmo = {};
+
+    setGear((prev) => ({
+      ...prev,
+      gadget: nextGadgetId,
+      gadgetAmmo: nextAmmo,
+    }));
   };
 
   const handleWeaponChange = (slot, subfield, value) => {
@@ -564,7 +578,7 @@ function EquipmentSelection({
             <select
               className="w-full select-themed p-2 rounded"
               value={gear.gadget}
-              onChange={(e) => handleChange("gadget", e.target.value)}
+              onChange={(e) => handleGadgetChange(e.target.value)}
             >
               <option value="">Select Gadget</option>
               {classGadgets.map((gadget) => (
