@@ -2,6 +2,14 @@ import { useState, useEffect } from "react";
 import skillGroups from "../../data/skills.json";
 import classStartingSkills from "../../data/classSkills.json";
 import SpecModal from "../CharacterRoster/CharDetailComponents/SpecModal";
+import {
+  initializeCharacterSkills,
+  upgradeSkill,
+  downgradeSkill,
+  upgradeAttribute,
+  downgradeAttribute,
+  getSkillUpgradeCost
+} from "../../engine/characterEngine";
 
 const attributeList = ["Expertise", "Body", "Intelligence", "Spirit"];
 
@@ -21,41 +29,14 @@ const SkillCreator = ({ formData, setFormData, onNext, onBack }) => {
   const [remainingXP, setRemainingXP] = useState(15);
   const [remainingAttrPoints, setRemainingAttrPoints] = useState(5);
 
-  const getUpgradeCost = (currentLevel) => {
-    switch (currentLevel) {
-      case 0:
-        return 1; // 0 → 1 (pool of 1)
-      case 1:
-        return 4; // 1 → 2 (pool of 5)
-      case 2:
-        return 10; // 2 → 3 (pool of 15)
-      case 3:
-        return 15; // 3 → 4 (pool of 30)
-      default:
-        return 0;
-    }
-  };
-
   useEffect(() => {
-    const base = {};
-    const config = classStartingSkills[formData.class];
-    if (!config) return;
-
-    const allSkills = Object.values(skillGroups).flat();
-
-    allSkills.forEach((skill) => {
-      base[skill] = 0;
-    });
-
-    config.level2.forEach((skill) => (base[skill] = 2));
-    config.level1.forEach((skill) => (base[skill] = 1));
-
+    const base = initializeCharacterSkills(formData.class, skillGroups, classStartingSkills);
     setSkills(base);
   }, [formData.class]);
 
   const increaseSkill = (skill) => {
     const currentLevel = skills[skill] || 0;
-    const cost = getUpgradeCost(currentLevel);
+    const cost = getSkillUpgradeCost(currentLevel);
 
     if (currentLevel < 4 && remainingXP >= cost) {
       setSkills({ ...skills, [skill]: currentLevel + 1 });
@@ -66,6 +47,7 @@ const SkillCreator = ({ formData, setFormData, onNext, onBack }) => {
   const decreaseSkill = (skill) => {
     const currentLevel = skills[skill] || 0;
     const starting = classStartingSkills[formData.class];
+    if (!starting) return;
     const min = starting.level2.includes(skill)
       ? 2
       : starting.level1.includes(skill)
@@ -73,7 +55,7 @@ const SkillCreator = ({ formData, setFormData, onNext, onBack }) => {
       : 0;
 
     if (currentLevel > min) {
-      const refund = getUpgradeCost(currentLevel - 1);
+      const refund = getSkillUpgradeCost(currentLevel - 1);
       setSkills({ ...skills, [skill]: currentLevel - 1 });
       setRemainingXP(remainingXP + refund);
     }
@@ -240,7 +222,7 @@ const SkillCreator = ({ formData, setFormData, onNext, onBack }) => {
                       </div>
                       {skills[skill] < 4 && (
                         <div className="text-xs text-orange-300">
-                          +{getUpgradeCost(skills[skill] || 0)}
+                          +{getSkillUpgradeCost(skills[skill] || 0)}
                         </div>
                       )}
                     </div>

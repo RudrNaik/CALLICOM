@@ -3,6 +3,19 @@ import CharacterCard from "./CharacterCard";
 import CharacterDetail from "./CharacterDetail";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import {
+  getMemory,
+  setJsonMemory,
+  clearMemory,
+  getJsonMemory,
+  getRosterCharactersCache,
+  setRosterCharactersCache,
+  getRosterEquipmentCache,
+  setRosterEquipmentCache,
+  clearRosterCache,
+  getToken,
+  clearToken,
+} from "../../engine/memoryEngine";
 
 const CACHE_KEY_CHARS = (userId) => `roster_characters_${userId}`;
 const CACHE_KEY_EQUIP = `roster_equipment`;
@@ -15,10 +28,8 @@ const COLD_START_THRESHOLD_MS = 3000;
  */
 function readCache(key) {
   try {
-    const raw = localStorage.getItem(key);
-    if (!raw) return null;
-    const { data, ts } = JSON.parse(raw);
-    return data;
+    const cached = getJsonMemory(key);
+    return cached?.data ?? cached ?? null;
   } catch {
     return null;
   }
@@ -31,7 +42,7 @@ function readCache(key) {
  */
 function writeCache(key, data) {
   try {
-    localStorage.setItem(key, JSON.stringify({ data, ts: Date.now() }));
+    setJsonMemory(key, { data, ts: Date.now() });
   } catch {
     // localStorage full or unavailable, silently skip
   }
@@ -43,8 +54,7 @@ function writeCache(key, data) {
  */
 function bustCache(userId) {
   try {
-    localStorage.removeItem(CACHE_KEY_CHARS(userId));
-    localStorage.removeItem(CACHE_KEY_EQUIP);
+    clearRosterCache(userId);
   } catch {}
 }
 
@@ -73,7 +83,7 @@ async function fetchJSON(url, token, navigate) {
         ? "Token expired. Redirecting to login."
         : "Access denied. Redirecting to login.",
     );
-    localStorage.removeItem("token");
+    clearToken();
     navigate("/login");
     return null;
   }
@@ -217,7 +227,7 @@ function CharacterRoster({ userId }) {
    * UseEffect to fetch all of the data needed. Also gathers cached data from localstorage
    */
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = getToken();
 
     if (!token) {
       navigate("/login");
@@ -329,7 +339,7 @@ function CharacterRoster({ userId }) {
    * @returns nothing if the deletion was a success. Or throws an alert if there was an issue doing so.
    */
   const handleDeleteCharacter = async (id) => {
-    const token = localStorage.getItem("token");
+    const token = getToken();
     if (!token) {
       navigate("/login");
       return;

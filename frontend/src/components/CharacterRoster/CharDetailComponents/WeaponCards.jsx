@@ -1,10 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import "../../../assets/css/ammoBlur.css";
 import {
   applyModifiers,
   getModifiedWeaponStats,
   getAbilitiesFromFamily,
-} from "../../../utils/weaponEffectParser";
+} from "../../../engine/equipmentEngine";
+import {
+  getMemory,
+  setMemory,
+  getJsonMemory,
+  setJsonMemory,
+  getWeaponAmmoKey,
+} from "../../../engine/memoryEngine";
 
 const WeaponSlot = ({
   slot,
@@ -17,7 +24,10 @@ const WeaponSlot = ({
   isSecondary,
 }) => {
   const categoryData = weaponCategories[weapon?.category];
-  const localStorageKey = `ammo_${characterCallsign}_${slot}`;
+  const localStorageKey = useMemo(
+    () => getWeaponAmmoKey(characterCallsign, slot),
+    [characterCallsign, slot],
+  );
 
   const [firedThisMag, setFiredThisMag] = useState(0);
   const [totalFired, setTotalFired] = useState(0);
@@ -51,10 +61,10 @@ const WeaponSlot = ({
       setSelectedFamily(null);
     }
 
-    const saved = localStorage.getItem(localStorageKey);
+    const saved = getJsonMemory(localStorageKey);
     if (saved) {
       try {
-        const { firedThisMag, totalFired, pseudoAmmo } = JSON.parse(saved);
+        const { firedThisMag, totalFired, pseudoAmmo } = saved;
         setFiredThisMag(firedThisMag ?? 0);
         setTotalFired(totalFired ?? 0);
         setPseudoAmmo(pseudoAmmo ?? initial);
@@ -73,8 +83,8 @@ const WeaponSlot = ({
     if (!charActive) return;
 
     const ammoState = { firedThisMag, totalFired, pseudoAmmo };
-    localStorage.setItem(localStorageKey, JSON.stringify(ammoState));
-  }, [firedThisMag, totalFired, pseudoAmmo, charActive]);
+    setJsonMemory(localStorageKey, ammoState);
+  }, [firedThisMag, totalFired, pseudoAmmo, charActive, localStorageKey]);
 
   // Sync family selection to Equipment View
   useEffect(() => {

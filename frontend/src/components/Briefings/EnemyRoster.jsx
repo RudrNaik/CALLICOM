@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import EnemyCard from "./EnemyCard";
 import weaponCategories from "../../data/weaponCategories.json";
-import { applyModifiers } from "../../utils/weaponEffectParser";
+import { applyModifiers } from "../../engine/equipmentEngine";
 
 
 function EnemyView() {
