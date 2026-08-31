@@ -14,6 +14,10 @@ import {
   sumNonNeg,
   isMixedGadget,
   isExpendableGadget,
+  getInitialGadgetAmmo,
+  updateMixedGadgetAmmo,
+  useExpendableGadget,
+  resupplyExpendableGadget,
 } from "../../../engine/equipmentEngine";
 import {
   getMemory,
@@ -85,37 +89,25 @@ export default function GadgetAmmo({
 
     try {
       const raw = getMemory(localStorageKey);
+      const parsed = raw ? getJsonMemory(localStorageKey) : null;
+
+      const initial = getInitialGadgetAmmo(
+        gadgetId,
+        charClass,
+        config,
+        parsed,
+        gadgetAmmo
+      );
+
       if (raw) {
-        const parsed = getJsonMemory(localStorageKey);
-
-        // Back-compat: if someone stored a bare number for expendables, convert to { __uses: n } and cap
-        if (isExpendable && typeof parsed === "number") {
-          skipSaveAfterLoad.current = true;
-          setGadgetAmmo({
-            [EX_KEY]: Math.max(0, Math.min(parsed, effectiveMax)),
-          });
-          hasLoadedStorage.current = true;
-          return;
-        }
-
         skipSaveAfterLoad.current = true;
-        setGadgetAmmo(sanitize(parsed));
-      } else {
-        // init parent state
-        if (isExpendable) {
-          setGadgetAmmo({ [EX_KEY]: effectiveMax });
-        } else if (isMixed) {
-          // keep whatever parent has but drop unknown ids
-          setGadgetAmmo(sanitize(gadgetAmmo || {}));
-        } else {
-          setGadgetAmmo({});
-        }
       }
+
+      setGadgetAmmo(initial);
       hasLoadedStorage.current = true;
     } catch (e) {
       console.error("GadgetAmmo parse error:", e);
-      if (isExpendable) setGadgetAmmo({ [EX_KEY]: effectiveMax });
-      else setGadgetAmmo({});
+      setGadgetAmmo(getInitialGadgetAmmo(gadgetId, charClass, config, null, {}));
       hasLoadedStorage.current = true;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -154,9 +146,8 @@ export default function GadgetAmmo({
   //console.log(max)
 
   const setMixedValue = (id, nextVal) => {
-    const next = { ...(gadgetAmmo || {}), [id]: nextVal };
-
-    if (max > 0 && sumNonNeg(next) > max) return; // pool cap
+    const next = updateMixedGadgetAmmo(gadgetAmmo, id, nextVal, max);
+    if (!next) return;
 
     setGadgetAmmo(next);
     try {
@@ -310,13 +301,8 @@ export default function GadgetAmmo({
             <div className="flex gap-2">
               <button
                 onClick={() => {
-                  const cur =
-                    Number.isFinite(gadgetAmmo?.[EX_KEY]) &&
-                    gadgetAmmo[EX_KEY] >= 0
-                      ? gadgetAmmo[EX_KEY]
-                      : effectiveMax;
-                  if (cur <= 0) return;
-                  const next = { ...(gadgetAmmo || {}), [EX_KEY]: cur - 1 };
+                  const next = useExpendableGadget(gadgetAmmo, effectiveMax);
+                  if (!next) return;
                   setGadgetAmmo(next);
                   try {
                     setJsonMemory(localStorageKey, sanitize(next));
@@ -335,8 +321,7 @@ export default function GadgetAmmo({
 
               <button
                 onClick={() => {
-                  const refill = effectiveMax;
-                  const next = { ...(gadgetAmmo || {}), [EX_KEY]: refill };
+                  const next = resupplyExpendableGadget(gadgetAmmo, effectiveMax);
                   setGadgetAmmo(next);
                   try {
                     setJsonMemory(localStorageKey, sanitize(next));

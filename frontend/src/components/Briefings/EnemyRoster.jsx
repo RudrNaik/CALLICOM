@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import EnemyCard from "./EnemyCard";
-import weaponCategories from "../../data/weaponCategories.json";
-import { applyModifiers } from "../../engine/equipmentEngine";
+import equipmentData from "../../data/Equipment.json";
+import { applyModifiers, getWeaponCategoriesByIdLookup } from "../../engine/equipmentEngine";
 
 
 function EnemyView() {
@@ -56,7 +56,11 @@ function EnemyView() {
   const increaseTurn = () => setTurnCount((t) => t + 1);
   const resetTurns = () => setTurnCount(0);
 
-  // Range and weapon managment.
+  const weaponCatsLookup = useMemo(
+    () => getWeaponCategoriesByIdLookup(equipmentData),
+    [],
+  );
+
   const parseRangeProfile = (rangeString = "") => {
     // Example input: "-1 C | +1 M | -1 ELR"
     const profile = {};
@@ -130,8 +134,8 @@ function EnemyView() {
         if (!enemy?.identity?.firing) return;
 
         const weaponId = enemy.loadout?.Primary;
-        const baseWeapon = weaponCategories?.[weaponId];
-        
+        const baseWeapon = weaponCatsLookup?.[weaponId];
+
         // Apply family modifiers if selected
         let weapon = baseWeapon;
         if (baseWeapon && enemy.loadout?.PrimaryFamily && baseWeapon.families) {

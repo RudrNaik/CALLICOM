@@ -3,6 +3,56 @@
  * Centralizes all weapon and gadget ammo logic.
  */
 
+/**
+ * Transforms the equipment list into a lookup object for weapon categories using IDs.
+ * @param {Array} equipmentData - The equipment data array
+ * @returns {object} Mapping of category IDs to their data
+ */
+export const getWeaponCategoriesByIdLookup = (equipmentData) => {
+  const lookup = {};
+  equipmentData.forEach(item => {
+    if (item.categoryName) {
+      lookup[item.id] = item;
+    }
+  });
+  return lookup;
+};
+
+/**
+ * Retrieves gadget ammo configuration from the equipment list.
+ * @param {string} gadgetId - ID of the gadget
+ * @param {Array} equipmentData - The equipment data array
+ * @returns {object|null} Configuration object
+ */
+export const getGadgetAmmoConfig = (gadgetId, equipmentData) => {
+  return equipmentData.find(item => item.id === gadgetId) || null;
+};
+
+/**
+ * Retrieves weapon category data from the equipment list by category name.
+ * @param {string} categoryName - Name of the category (e.g., "Light Pistols")
+ * @param {Array} equipmentData - The equipment data array
+ * @returns {object|null} Category data
+ */
+export const getWeaponCategoryData = (categoryName, equipmentData) => {
+  return equipmentData.find(item => item.categoryName === categoryName) || null;
+};
+
+/**
+ * Transforms the equipment list into a lookup object for weapon categories.
+ * @param {Array} equipmentData - The equipment data array
+ * @returns {object} Mapping of category names to their data
+ */
+export const getWeaponCategoriesLookup = (equipmentData) => {
+  const lookup = {};
+  equipmentData.forEach(item => {
+    if (item.categoryName) {
+      lookup[item.categoryName] = item;
+    }
+  });
+  return lookup;
+};
+
 // --- Weapon Logic ---
 
 /**
@@ -286,3 +336,73 @@ export const sumNonNeg = (obj) =>
     (a, n) => a + Math.max(0, Number(n || 0)),
     0,
   );
+
+/**
+ * Determines the initial ammo state for a gadget.
+ * @param {string} gadgetId - ID of the gadget
+ * @param {string} charClass - Character class
+ * @param {object} config - Gadget configuration
+ * @param {any} parsedStorage - Data loaded from storage (if any)
+ * @param {object} currentAmmo - Current ammo state (if any)
+ * @returns {object} The initial ammo object
+ */
+export const getInitialGadgetAmmo = (gadgetId, charClass, config, parsedStorage = null, currentAmmo = {}) => {
+  const isMixed = isMixedGadget(gadgetId);
+  const isExpendable = isExpendableGadget(gadgetId);
+  const effectiveMax = getEffectiveMax(gadgetId, charClass, config);
+  const options = config?.options || [];
+  const optionIds = new Set(options.map((o) => o.id));
+
+  if (parsedStorage !== null) {
+    if (isExpendable && typeof parsedStorage === "number") {
+      return { [EX_KEY]: Math.max(0, Math.min(parsedStorage, effectiveMax)) };
+    }
+    return sanitizeGadgetAmmo(parsedStorage, isMixed, isExpendable, optionIds, effectiveMax);
+  }
+
+  if (isExpendable) {
+    return { [EX_KEY]: effectiveMax };
+  } else if (isMixed) {
+    return sanitizeGadgetAmmo(currentAmmo, isMixed, isExpendable, optionIds, effectiveMax);
+  }
+  return {};
+};
+
+/**
+ * Updates the ammo value for a mixed gadget and enforces the pool cap.
+ * @param {object} currentAmmo - Current ammo state
+ * @param {string} id - Ammo type ID
+ * @param {number} nextVal - New ammo count
+ * @param {number} max - Total pool capacity
+ * @returns {object|null} New ammo state or null if update exceeds pool cap
+ */
+export const updateMixedGadgetAmmo = (currentAmmo, id, nextVal, max) => {
+  const next = { ...(currentAmmo || {}), [id]: nextVal };
+  if (max > 0 && sumNonNeg(next) > max) return null;
+  return next;
+};
+
+/**
+ * Decrements the use count for an expendable gadget.
+ * @param {object} currentAmmo - Current ammo state
+ * @param {number} effectiveMax - The max allowed uses
+ * @returns {object|null} New ammo state or null if ammo is 0
+ */
+export const useExpendableGadget = (currentAmmo, effectiveMax) => {
+  const cur =
+    Number.isFinite(currentAmmo?.[EX_KEY]) && currentAmmo[EX_KEY] >= 0
+      ? currentAmmo[EX_KEY]
+      : effectiveMax;
+  if (cur <= 0) return null;
+  return { ...(currentAmmo || {}), [EX_KEY]: cur - 1 };
+};
+
+/**
+ * Resets the use count for an expendable gadget to max.
+ * @param {object} currentAmmo - Current ammo state
+ * @param {number} effectiveMax - The max allowed uses
+ * @returns {object} New ammo state
+ */
+export const resupplyExpendableGadget = (currentAmmo, effectiveMax) => {
+  return { ...(currentAmmo || {}), [EX_KEY]: effectiveMax };
+};

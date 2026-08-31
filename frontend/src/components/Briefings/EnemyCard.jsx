@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
-import weaponCategories from "../../data/weaponCategories.json";
-import gadgetCategories from "../../data/Equipment.json";
+import React, { useState, useEffect, useMemo } from "react";
+import equipmentData from "../../data/Equipment.json";
 import classes from "../../data/classSkills.json";
-import { applyModifiers } from "../../engine/equipmentEngine";
+import { applyModifiers, getWeaponCategoriesByIdLookup } from "../../engine/equipmentEngine";
 
 /* =======================
    DEFAULT STATE
@@ -41,9 +40,11 @@ function EnemyCard({ id, onDelete }) {
   const [loaded, setLoaded] = useState(false);
   const [filteredGadgets, setFilteredGadgets] = useState([]);
 
-  /* =======================
-     LOAD / SAVE
-  ======================= */
+  const weaponCatsLookup = useMemo(
+    () => getWeaponCategoriesByIdLookup(equipmentData),
+    [],
+  );
+
   useEffect(() => {
     try {
       const saved = localStorage.getItem(`enemy-${id}`);
@@ -64,7 +65,7 @@ function EnemyCard({ id, onDelete }) {
   ======================= */
   useEffect(() => {
     setFilteredGadgets(
-      gadgetCategories.filter((g) => g.class === state.identity.class)
+      equipmentData.filter((g) => g.class === state.identity.class)
     );
   }, [state.identity.class]);
 
@@ -113,8 +114,8 @@ function EnemyCard({ id, onDelete }) {
   const WeaponSkill = stats.Weapon;
 
   // Get weapon base stats
-  const baseWeaponInfo = weaponCategories[loadout.Primary] || null;
-  
+  const baseWeaponInfo = weaponCatsLookup[loadout.Primary] || null;
+
   // Apply family modifiers if selected
   const weaponInfo = baseWeaponInfo && loadout.PrimaryFamily && baseWeaponInfo.families
     ? (() => {
@@ -311,8 +312,10 @@ function EnemyCard({ id, onDelete }) {
           onChange={(e) => update(["loadout", "Primary"], e.target.value)}
         >
           <option value="">Select Weapon</option>
-          {Object.keys(weaponCategories).map((w) => (
-            <option key={w}>{w}</option>
+          {Object.entries(weaponCatsLookup).map(([weaponId, weapon]) => (
+            <option key={weaponId} value={weaponId}>
+              {weapon?.categoryName || weaponId}
+            </option>
           ))}
         </select>
 

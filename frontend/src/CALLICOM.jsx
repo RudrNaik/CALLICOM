@@ -203,8 +203,8 @@ const TerminalPage = () => {
           </motion.div>
         </div>
 
-        <div className="h-full">
-          <TerminalFeed logs={logs}/>
+        <div className="hidden h-full md:block">
+          <TerminalFeed logs={logs} />
         </div>
       </div>
     </div>
