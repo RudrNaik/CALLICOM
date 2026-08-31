@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import skillGroups from "../../data/skills.json";
+import {
+  getSkillUpgradeCost,
+  ATTR_EXP_COST,
+  upgradeAttribute,
+} from "../../engine/characterEngine";
+import { getToken } from "../../engine/memoryEngine";
 import Edice from "./CharDetailComponents/EDice";
 import SpecModal from "./CharDetailComponents/SpecModal";
 import SpecView from "./CharDetailComponents/SpecView";
@@ -12,8 +19,11 @@ import MultiClassModal from "./CharDetailComponents/MultiClassModal";
 import Collapsible from "../Collapsible";
 import RollCalculator from "./CharDetailComponents/RollCalculator";
 import ExpAddedCalc from "./CharDetailComponents/expAddedCalc";
+import { normalizeCharacterData } from "../../engine/characterDataHandler";
 
 function CharacterDetail({ character, onUpdate, user, equipment }) {
+  const navigate = useNavigate();
+
   if (!character) return null;
 
   const [isEditing, setIsEditing] = useState(false);
@@ -55,13 +65,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
    * @param {*} level the specific level the character is at.
    * @returns upgrade cost to the next level.
    */
-  const getUpgradeCost = (level) => {
-    if (level === 0) return 1;
-    if (level === 1) return 4;
-    if (level === 2) return 10;
-    if (level === 3) return 15;
-    return 0;
-  };
+  const handleGetUpgradeCost = (level) => getSkillUpgradeCost(level);
 
   /**
    * Sets the specific skill to the next level.
@@ -71,7 +75,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
   const increaseSkill = (skill) => {
     const level = editedSkills[skill] || 0;
     if (level >= 4) return;
-    const cost = getUpgradeCost(level);
+    const cost = handleGetUpgradeCost(level);
     if (xpRemaining >= cost) {
       setEditedSkills({ ...editedSkills, [skill]: level + 1 });
       setXpRemaining(xpRemaining - cost);
@@ -87,7 +91,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
     const original = character.skills?.[skill] || 0;
 
     if (current > original) {
-      const refund = getUpgradeCost(current - 1);
+      const refund = handleGetUpgradeCost(current - 1);
       setEditedSkills({ ...editedSkills, [skill]: current - 1 });
       setXpRemaining(xpRemaining + refund);
     }
@@ -135,7 +139,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
       emergencyDice: emergencyDice - amount, // Send updated state to backend
     };
 
-    const token = localStorage.getItem("token");
+    const token = getToken();
 
     if (!token) {
       console.log("No token found, redirecting to login.");
@@ -193,7 +197,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
       XP: xpRemaining + amount,
     };
 
-    const token = localStorage.getItem("token");
+    const token = getToken();
 
     if (!token) {
       console.log("No token found, redirecting to login.");
@@ -244,7 +248,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
       XP: newXP, 
     };
 
-    const token = localStorage.getItem("token");
+    const token = getToken();
     if (!token) {
       console.log("No token found, redirecting to login.");
       navigate("/login");
@@ -288,7 +292,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
       Bio: bio,
     };
 
-    const token = localStorage.getItem("token");
+    const token = getToken();
     if (!token) {
       console.log("No token found, redirecting to login.");
       navigate("/login");
@@ -327,12 +331,12 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
    */
   const patchAttribute = async (attrKey) => {
     if (!attrKey) return;
-    if (xpRemaining < 40) {
-      alert("You need 40 XP for an attribute increase.");
+    if (xpRemaining < ATTR_EXP_COST) {
+      alert(`You need ${ATTR_EXP_COST} XP for an attribute increase.`);
       return;
     }
 
-    const token = localStorage.getItem("token");
+    const token = getToken();
     if (!token) {
       console.log("No token found, redirecting to login.");
       navigate("/login");
@@ -343,7 +347,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
       ...attributes,
       [attrKey]: (attributes?.[attrKey] ?? 0) + 1,
     };
-    const newXP = xpRemaining - 40;
+    const newXP = xpRemaining - ATTR_EXP_COST;
 
     try {
       const res = await fetch(
@@ -381,16 +385,16 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
    * @returns 
    */
   const handleSaveChanges = async () => {
-    const updates = {
+    const updates = normalizeCharacterData({
       XP: xpRemaining,
       skills: editedSkills,
       specializations,
       emergencyDice,
       multiClass,
       attributes,
-    };
+    });
 
-    const token = localStorage.getItem("token");
+    const token = getToken();
     if (!token) {
       console.log("No token found, redirecting to login.");
       navigate("/login");
@@ -766,7 +770,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
           <button
             className="bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded"
             onClick={async () => {
-              const token = localStorage.getItem("token");
+              const token = getToken();
               if (!token) {
                 console.log("No token found, redirecting to login.");
                 navigate("/login");

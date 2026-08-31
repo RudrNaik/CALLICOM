@@ -1,5 +1,27 @@
 // src/components/GadgetAmmo.jsx
 import { useEffect, useMemo } from "react";
+import {
+  MIXED_GADGETS,
+  EXPENDABLE_GADGETS,
+  EX_KEY,
+  MAG_KEY,
+  RES_KEY,
+  clamp0,
+  getEffectiveMax,
+  getGadgetAmmoHeader,
+  getGadgetAmmoText,
+  sanitizeGadgetAmmo,
+  sumNonNeg,
+  isMixedGadget,
+  isExpendableGadget,
+} from "../../../engine/equipmentEngine";
+import {
+  getMemory,
+  setMemory,
+  getJsonMemory,
+  setJsonMemory,
+  getGadgetAmmoKey,
+} from "../../../engine/memoryEngine";
 
 export default function GadgetAmmo({
   isEditing,
@@ -24,165 +46,43 @@ export default function GadgetAmmo({
    * Specifies what ammo types are considered mix munitions.
    */
   const isMixed = useMemo(
-    () =>
-      [
-        "spec-ammo",
-        "stim-pouch",
-        "x89-ams",
-        "ugl",
-        "demo-dog",
-        "ammo-bag",
-      ].includes(gadgetId),
+    () => isMixedGadget(gadgetId),
     [gadgetId],
   );
 
   // Everything that isn't mixed + has a max pool is considered expendable here
   const isExpendable = useMemo(
-    () =>
-      [
-        "shock-sticks",
-        "claymores",
-        "ankle-busters",
-        "lil-mac",
-        "c4",
-        "m5-slam",
-        "thermtex",
-        "9bangs",
-        "snapshot",
-        "rocket-launcher",
-        "wire-launcher",
-        "guided-launcher",
-        "amr",
-        "semenov-railgun",
-        "m26-mass",
-        "PMGL",
-        "LMD",
-        "mp-aps",
-        "zipline",
-        "grappling-hook",
-        "hydraulic-hook",
-      ].includes(gadgetId),
+    () => isExpendableGadget(gadgetId),
     [gadgetId],
   );
 
-  const EX_KEY = "__uses"; 
-  const MAG_KEY = "__mag"; 
-  const RES_KEY = "__res"; 
+  const effectiveMax = useMemo(() => getEffectiveMax(gadgetId, charClass, config), [gadgetId, charClass, config]);
 
-  const clamp0 = (n) => (Number.isFinite(n) ? Math.max(0, n) : 0);
+  const sanitize = (obj) => sanitizeGadgetAmmo(obj, isMixed, isExpendable, optionIds, effectiveMax);
 
-  /**
-   * effective ammo pool, accounts for Combat Engineers having 2x ammo.
-   */
-  const effectiveMax = useMemo(() => {
-    let base = config.max ?? 0;
-    if (
-      isExpendable &&
-      charClass === "Combat Engineer" &&
-      (gadgetId === "rocket-launcher" ||
-        gadgetId === "wire-launcher" ||
-        gadgetId === "guided-launcher")
-    )
-      base *= 2;
-    return base;
-  }, [isExpendable, charClass, config.max]);
-
-  /**
-   * handles the title and header
-   */
-  const { title, max } = useMemo(() => {
-    if (gadgetId === "stim-pouch")
-      return { title: "Stimulants", max: config.maxStims ?? 0 };
-    if (gadgetId === "ugl")
-      return { title: "40mm Rounds", max: config.maxGrenades ?? 0 };
-    if (gadgetId === "x89-ams")
-      return { title: "Mortar Shells", max: config.maxRounds ?? 0 };
-    if (gadgetId === "spec-ammo")
-      return { title: "Special Ammo", max: config.maxSpecAmmo ?? 0 };
-    if (gadgetId === "thinkpad") return { title: "Hacks", max: 0 };
-    if (gadgetId === "demo-dog")
-      return { title: "Variant", max: config.maxStowedAmmo ?? 0 };
-    if (gadgetId === "ammo-bag")
-      return { title: "Type", max: config.maxBatches ?? 0 };
-    if (isExpendable) return { title: "Munitions", max: effectiveMax };
-    return { title: "Consumables", max: 0 };
-  }, [gadgetId, config, isExpendable, effectiveMax]);
-
-  const headerText = useMemo(() => {
-    if (!config) return null;
-    if (gadgetId === "ugl" && config.maxGrenades != null)
-      return `Max ${config.maxGrenades} rounds.`;
-    if (gadgetId === "x89-ams" && config.maxRounds != null)
-      return `Choose up to ${config.maxRounds} shells.`;
-    if (gadgetId === "stim-pouch" && config.maxStims != null)
-      return `Choose up to ${config.maxStims} stims. `;
-    if (gadgetId === "spec-ammo" && config.maxSpecAmmo != null)
-      return `Choose up to ${config.maxSpecAmmo} rounds `;
-    if (gadgetId === "demo-dog")
-      return `Select a variant. [increase to magazine size for selected variant.]`;
-    if (gadgetId === "ammo-bag" && config.maxBatches != null)
-      return `Choose up to ${config.maxBatches} charges`;
-    if (isExpendable) return `Max: ${effectiveMax}x rounds/grenades/charges.`;
-    return null;
-  }, [config, gadgetId, isExpendable, effectiveMax]);
-
-  
-  const localStorageKey = useMemo(
-    () => `gadgetAmmo_${characterCallsign}_${gadgetId}`,
-    [characterCallsign, gadgetId],
+  const { title, max } = useMemo(
+    () => getGadgetAmmoHeader(gadgetId, config, isExpendable, effectiveMax),
+    [gadgetId, config, isExpendable, effectiveMax]
   );
 
-  /**
-   * sanitzie/fix the localstorage data if theres any possible issues that cna be formed from it.
-   * @param {*} obj 
-   * @returns 
-   */
-  const sanitize = (obj) => {
-    const out = {};
-    if (!obj || typeof obj !== "object") return out;
+  const headerText = useMemo(
+    () => getGadgetAmmoText(gadgetId, config, isExpendable, effectiveMax),
+    [config, gadgetId, isExpendable, effectiveMax]
+  );
 
-    if (isMixed) {
-      for (const [k, v] of Object.entries(obj)) {
-        if (!optionIds.has(k)) continue;
-        const n = Number(v);
-        out[k] = Number.isFinite(n) ? n : -1; // -1 check to hide in non-edit mode
-      }
-      return out;
-    }
-
-    if (isExpendable) {
-      if (Object.prototype.hasOwnProperty.call(obj, EX_KEY)) {
-        const n = Number(obj[EX_KEY]);
-        out[EX_KEY] = Number.isFinite(n)
-          ? clamp0(Math.min(n, effectiveMax))
-          : 0;
-        return out;
-      }
-      
-      const mag = clamp0(obj[MAG_KEY]);
-      const res = clamp0(obj[RES_KEY]);
-      const total = Math.min(mag + res, effectiveMax);
-      out[EX_KEY] = total;
-      return out;
-    }
-
-    return out;
-  };
-
-  const sumNonNeg = (obj) =>
-    Object.values(obj || {}).reduce(
-      (a, n) => a + Math.max(0, Number(n || 0)),
-      0,
-    );
+  const localStorageKey = useMemo(
+    () => getGadgetAmmoKey(characterCallsign, gadgetId),
+    [characterCallsign, gadgetId],
+  );
 
   /**
    * Load new data from localstorage as needed.
    */
   useEffect(() => {
     try {
-      const raw = localStorage.getItem(localStorageKey);
+      const raw = getMemory(localStorageKey);
       if (raw) {
-        const parsed = JSON.parse(raw);
+        const parsed = getJsonMemory(localStorageKey);
 
         // Back-compat: if someone stored a bare number for expendables, convert to { __uses: n } and cap
         if (isExpendable && typeof parsed === "number") {
@@ -219,7 +119,7 @@ export default function GadgetAmmo({
     try {
       if (!isActive) return;
       const clean = sanitize(gadgetAmmo || {});
-      localStorage.setItem(localStorageKey, JSON.stringify(clean));
+      setJsonMemory(localStorageKey, clean);
     } catch (e) {
       console.error("GadgetAmmo save error:", e);
     }
@@ -248,7 +148,7 @@ export default function GadgetAmmo({
     setGadgetAmmo(next);
     try {
       if (isActive) {
-        localStorage.setItem(localStorageKey, JSON.stringify(sanitize(next)));
+        setJsonMemory(localStorageKey, sanitize(next));
       }
     } catch {}
   };
@@ -408,10 +308,7 @@ export default function GadgetAmmo({
                   const next = { ...(gadgetAmmo || {}), [EX_KEY]: cur - 1 };
                   setGadgetAmmo(next);
                   try {
-                    localStorage.setItem(
-                      localStorageKey,
-                      JSON.stringify(sanitize(next)),
-                    );
+                    setJsonMemory(localStorageKey, sanitize(next));
                   } catch {}
                 }}
                 disabled={
@@ -431,10 +328,7 @@ export default function GadgetAmmo({
                   const next = { ...(gadgetAmmo || {}), [EX_KEY]: refill };
                   setGadgetAmmo(next);
                   try {
-                    localStorage.setItem(
-                      localStorageKey,
-                      JSON.stringify(sanitize(next)),
-                    );
+                    setJsonMemory(localStorageKey, sanitize(next));
                   } catch {}
                 }}
                 className="bg-green-700 hover:bg-green-800 text-white px-3 py-1 rounded text-sm"

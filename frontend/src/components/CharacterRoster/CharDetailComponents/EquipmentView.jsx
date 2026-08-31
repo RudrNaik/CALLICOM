@@ -5,6 +5,11 @@ import secondaryGadgets from "../../../data/classSkills.json";
 import WeaponSlot from "./WeaponCards";
 import GadgetAmmo from "./GadgetAmmo";
 import GADGET_AMMO_CONFIG from "../../../data/gadgetAmmoConfig.json";
+import {
+  getJsonMemory,
+  getToken,
+  setJsonMemory,
+} from "../../../engine/memoryEngine";
 
 function EquipmentSelection({
   character,
@@ -52,6 +57,10 @@ function EquipmentSelection({
   const [secondaryGadget, setSecGadget] = useState([]);
   const [grenadeCounts, setGrenadeCounts] = useState([3, 3]);
   const [medCounts, setMedCounts] = useState([1, 2, 1]); // [AFAK, IFAK, Painkiller]
+  const equipmentRuntimeKey = useMemo(
+    () => `equipment_runtime_${character?.callsign ?? "unknown"}`,
+    [character?.callsign],
+  );
   const activeGadgetConfig = GADGET_AMMO_CONFIG[gear.gadget];
   const [primaryOptions, setPrimaries] = useState({});
   const [secondaryOptions, setSecondary] = useState({});
@@ -59,6 +68,27 @@ function EquipmentSelection({
 
   useEffect(() => {
     if (!character) return;
+
+    const savedRuntime = getJsonMemory(equipmentRuntimeKey);
+    const defaultGrenades = [2, 2];
+    const defaultMeds = [1, 2, 1];
+
+    if (savedRuntime) {
+      if (Array.isArray(savedRuntime.grenadeCounts) && savedRuntime.grenadeCounts.length === 2) {
+        setGrenadeCounts(savedRuntime.grenadeCounts);
+      } else {
+        setGrenadeCounts(defaultGrenades);
+      }
+
+      if (Array.isArray(savedRuntime.medCounts) && savedRuntime.medCounts.length === 3) {
+        setMedCounts(savedRuntime.medCounts);
+      } else {
+        setMedCounts(defaultMeds);
+      }
+    } else {
+      setGrenadeCounts(defaultGrenades);
+      setMedCounts(defaultMeds);
+    }
 
     setGear(
       character.equipment ?? {
@@ -177,8 +207,19 @@ function EquipmentSelection({
     }
 
     //Sets the grenades.
-    setGrenadeCounts([2, 2]);
-  }, [character]);
+    if (!getJsonMemory(equipmentRuntimeKey)) {
+      setGrenadeCounts([2, 2]);
+    }
+  }, [character, equipmentRuntimeKey]);
+
+  useEffect(() => {
+    if (!character || !charActive) return;
+
+    setJsonMemory(equipmentRuntimeKey, {
+      grenadeCounts,
+      medCounts,
+    });
+  }, [character, charActive, grenadeCounts, medCounts, equipmentRuntimeKey]);
 
   const handleChange = (field, value) => {
     setGear((prev) => ({ ...prev, [field]: value }));
@@ -200,7 +241,7 @@ function EquipmentSelection({
   };
 
   const saveToDatabase = async () => {
-    const token = localStorage.getItem("token");
+    const token = getToken();
 
     if (!token) {
       console.log("No token found, redirecting to login.");

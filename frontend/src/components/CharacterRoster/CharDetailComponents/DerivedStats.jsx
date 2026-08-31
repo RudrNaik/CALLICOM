@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { calculateDerivedStats } from "../../../engine/characterEngine";
+import { getToken } from "../../../engine/memoryEngine";
 
 function DerivedStats({ character, userId, refreshCharacter }) {
   const navigate = useNavigate();
@@ -20,25 +22,25 @@ function DerivedStats({ character, userId, refreshCharacter }) {
   const timerRef = useRef(null);
 
   // the 'derivation' of stats
-  const Alertness = attrs.Expertise || 0;
-  const Body = attrs.Body || 0;
-  const Intelligence = attrs.Intelligence || 0;
-  const Spirit = attrs.Spirit || 0;
-  const Brawl = skills.CQC || 0;
-  const Melee = skills.Melee || 0;
+  const stats = calculateDerivedStats({
+    ...character,
+    fleshWounds,
+    deepWounds,
+  });
 
-  const Defense = 1 + Alertness + Body;
-  const CombatSense = 1 + Intelligence + Spirit;
-  const Health = Math.ceil((Body + Spirit) / 2);
-  const Stamina = 5 + Body + Spirit;
-  const SystemShock = 5 + Health;
-  
-  const FleshWoundThreshold = Math.ceil(Stamina / 2) + (equip.armorClass ?? 0);
-  const DeepWoundThreshold = Stamina + (equip.armorClass ?? 0);
-  const InstantDeath = Stamina * 2;
-  const UnarmedDamage = Math.max(4, Math.ceil((3 + Body + Brawl)/1.5));
-  const ArmedDamage = Math.max(4, Math.ceil((3 + Body + Melee)/1.5));
-  const woundMod = fleshWounds + (deepWounds * 2);
+  const {
+    defense: Defense,
+    combatSense: CombatSense,
+    health: Health,
+    stamina: Stamina,
+    systemShock: SystemShock,
+    fleshThreshold: FleshWoundThreshold,
+    deepThreshold: DeepWoundThreshold,
+    instantDeath: InstantDeath,
+    unarmedDamage: UnarmedDamage,
+    armedDamage: ArmedDamage,
+    woundMod: woundMod,
+  } = stats;
 
   // 700ms debounce because rapidly spamming the deep and flesh wounds causes desync with the backend as master so it reverts.
   useEffect(() => {
@@ -47,7 +49,7 @@ function DerivedStats({ character, userId, refreshCharacter }) {
     }
 
     timerRef.current = setTimeout(async () => {
-      const token = localStorage.getItem("token");
+      const token = getToken();
       if (!token) {
         console.log("No token found, redirecting to login.");
         navigate("/login");

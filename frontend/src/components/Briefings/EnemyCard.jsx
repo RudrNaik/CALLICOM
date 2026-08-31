@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import weaponCategories from "../../data/weaponCategories.json";
 import gadgetCategories from "../../data/Equipment.json";
 import classes from "../../data/classSkills.json";
-import { applyModifiers } from "../../utils/weaponEffectParser";
+import { applyModifiers } from "../../engine/equipmentEngine";
 
 /* =======================
    DEFAULT STATE

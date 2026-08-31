@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import weaponCategories from "../../../data/weaponCategories.json";
-import { getModifiedWeaponStats } from "../../../utils/weaponEffectParser";
+import { getModifiedWeaponStats } from "../../../engine/equipmentEngine";
 
 function Calculator({ characterData }) {
   const [character, setCharacter] = useState(null);
