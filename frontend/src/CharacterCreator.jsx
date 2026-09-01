@@ -21,6 +21,16 @@ const CharacterCreator = () => {
   const handleSubmit = async () => {
     const fullCharacter = {
       ...formData,
+      XP: 0,
+      equipment: {
+        primaryWeapon: { name: "", category: "", family: "" },
+        secondaryWeapon: { name: "", category: "", family: "" },
+        grenades: ["", ""],
+        gadget: "",
+        gadgetAmmo: {},
+        armorClass: 0,
+        miscGear: "",
+      },
       userId: user.userName,
       createdAt: new Date().toISOString(),
     };

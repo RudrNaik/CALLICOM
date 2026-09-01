@@ -16,7 +16,7 @@ export function calculateDerivedStats(character) {
   const fleshWounds = character?.fleshWounds ?? 0;
   const deepWounds = character?.deepWounds ?? 0;
 
-  const Alertness = attrs.Expertise || 0;
+  const Alertness = attrs.Alertness ?? attrs.Expertise ?? 0;
   const Body = attrs.Body || 0;
   const Intelligence = attrs.Intelligence || 0;
   const Spirit = attrs.Spirit || 0;

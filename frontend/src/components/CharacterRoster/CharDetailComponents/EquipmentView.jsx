@@ -55,6 +55,8 @@ function EquipmentSelection({
   });
 
   const [gear, setGear] = useState(defaultGear);
+
+  const safeGrenades = Array.isArray(gear?.grenades) ? gear.grenades : ["", ""];
   const [classGadgets, setClassGadgets] = useState([]);
   const [grenades, setGrenades] = useState([]);
   const [secondaryGadget, setSecGadget] = useState([]);
@@ -100,17 +102,30 @@ function EquipmentSelection({
       setMedCounts(defaultMeds);
     }
 
-    setGear(
-      character.equipment ?? {
-        primaryWeapon: { name: "", category: "", family: "" },
-        secondaryWeapon: { name: "", category: "", family: "" },
-        grenades: ["", ""],
-        gadget: "",
-        gadgetAmmo: {},
-        armorClass: 0,
-        miscGear: "",
+    const normalizedEquipment = {
+      ...(character.equipment ?? {}),
+      primaryWeapon: {
+        name: "",
+        category: "",
+        family: "",
+        ...(character.equipment?.primaryWeapon ?? {}),
       },
-    );
+      secondaryWeapon: {
+        name: "",
+        category: "",
+        family: "",
+        ...(character.equipment?.secondaryWeapon ?? {}),
+      },
+      grenades: Array.isArray(character.equipment?.grenades)
+        ? character.equipment.grenades
+        : ["", ""],
+      gadget: character.equipment?.gadget ?? "",
+      gadgetAmmo: character.equipment?.gadgetAmmo ?? {},
+      armorClass: character.equipment?.armorClass ?? 0,
+      miscGear: character.equipment?.miscGear ?? "",
+    };
+
+    setGear(normalizedEquipment);
 
     //filters items based on class, secondary class, and if they are purchased or not.
     let filtered = null;
@@ -348,7 +363,7 @@ function EquipmentSelection({
 
           {isEditing ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {gear.grenades.map((grenadeId, i) => {
+              {safeGrenades.map((grenadeId, i) => {
                 const grenadeData = itemById[grenadeId];
                 return (
                   <div className="flex flex-col">
@@ -376,7 +391,7 @@ function EquipmentSelection({
           ) : (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4" style={{ gridAutoRows: '1fr' }}>
-                {gear.grenades.map((grenadeId, i) => {
+                {safeGrenades.map((grenadeId, i) => {
                   const grenadeData = itemById[grenadeId];
                   return (
                     <div key={i} className="text-sm text-white space-y-1 flex flex-col">
