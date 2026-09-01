@@ -367,7 +367,20 @@ app.post("/api/characters", async (req, res) => {
     await client.connect();
     const db = client.db(dbName);
 
-    const character = req.body;
+    const character = {
+      ...req.body,
+      XP: req.body.XP ?? 0,
+      equipment: req.body.equipment ?? {
+        primaryWeapon: { name: "", category: "", family: "" },
+        secondaryWeapon: { name: "", category: "", family: "" },
+        grenades: ["", ""],
+        gadget: "",
+        gadgetAmmo: {},
+        armorClass: 0,
+        miscGear: "",
+      },
+    };
+
     if (!character.userId) {
       return res.status(400).send({ error: "Missing user ID" });
     }

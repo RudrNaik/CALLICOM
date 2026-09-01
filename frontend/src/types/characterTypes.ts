@@ -1,8 +1,10 @@
 export interface Attributes {
-  Expertise: number;
+  Alertness: number;
   Body: number;
   Intelligence: number;
   Spirit: number;
+  /** @deprecated Legacy field retained for backwards compatibility with older saved data. */
+  Expertise?: number;
 }
 
 export interface WeaponSlot {

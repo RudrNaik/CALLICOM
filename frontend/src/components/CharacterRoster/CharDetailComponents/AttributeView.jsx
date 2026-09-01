@@ -1,6 +1,6 @@
 function AttributeView({ attributes, xp, isEditing, onBuy }) {
   const items = [
-    { key: "Expertise", label: "Alertness" },
+    { key: "Alertness", label: "Alertness" },
     { key: "Body", label: "Body" },
     { key: "Intelligence", label: "Intelligence" },
     { key: "Spirit", label: "Spirit" },

@@ -192,7 +192,7 @@ function LoadoutSection({ char }) {
   const INT = Number(A.Intelligence ?? 0);
   const SPR = Number(A.Spirit ?? 0);
   const BDY = Number(A.Body ?? 0);
-  const EXP = Number(A.Expertise ?? 0);
+  const EXP = Number(A.Alertness ?? A.Expertise ?? 0);
   const unrmd = Math.max(4, Math.ceil((3 + BDY + char.skills.CQC)/1.5));
   const armd = Math.max(4, Math.ceil((3 +BDY + char.skills.Melee)/1.5));
   const inventory = (char.equipment && char.equipment.miscGear)

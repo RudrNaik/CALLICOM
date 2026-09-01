@@ -20,17 +20,17 @@ const CharCreator = ({ formData, setFormData, onNext }) => {
     }`;
 
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-6 bg-neutral-900/80" style={{ fontFamily: 'Geist_Mono' }}>
-      <div className="bg-neutral-800/60 border-l-8 border-orange-500 p-6 rounded shadow">
-        <h1 className="text-4xl font-bold p-2 bg-orange-500">
+    <div className="max-w-6xl mx-auto p-6 space-y-6" style={{ fontFamily: 'Geist_Mono' }}>
+      <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-6 rounded shadow">
+        <h1 className="inline-block text-4xl font-bold px-3 py-2 bg-orange-500">
           New Employee Registration ::/
         </h1>
-        <h2 class="text-sm">
-          <span className="text-orange-500 ">CALLI/COM</span> UNCC IDENT SERVICE
+        <h2 className="mt-4 text-sm text-white">
+          <span className="text-orange-500">CALLI/COM</span> UNCC IDENT SERVICE
           // <span className="text-blue-300">BLUE-4</span> PERSONNEL::
           [SRG/LRRC] OPERATOR (C)
         </h2>
-        <p class="italic text-sm py-2 text-neutral-400/80">
+        <p className="italic text-sm py-2 text-neutral-400/80">
           Welcome to the United Nations Contracting Council IDENT registration
           service. IDENT is the contractor certification system that helps
           ensure contractors meet regulatory and policy requirements through the
@@ -38,7 +38,7 @@ const CharCreator = ({ formData, setFormData, onNext }) => {
           been issued an IDENT-BFTC tag should not complete this form unless
           instructed to by a UNCC representative or liason.
         </p>
-        <p class="text-sm py-2 px-3 text-orange-400/80 border-l-4 border-orange-400">
+        <p className="text-sm py-2 px-3 text-orange-400/80 border-l-4 border-orange-400">
           By submitting this form you attest that your responses are truthful
           and accurate to the best of your knowledge. Knowingly providing false
           or or incomplete information is punishable under Article 20, paragraph
@@ -46,7 +46,7 @@ const CharCreator = ({ formData, setFormData, onNext }) => {
         </p>
         <div className="grid sm:grid-cols-2 gap-4 py-2">
           <div>
-            <p class="text-sm text-orange-400/80"> LC-218-A // Full Name</p>
+            <p className="text-sm text-orange-400/80"> LC-218-A // Full Name</p>
             <input
               type="text"
               placeholder="Name"
@@ -63,7 +63,7 @@ const CharCreator = ({ formData, setFormData, onNext }) => {
           </div>
 
           <div>
-            <p class="text-sm text-orange-400/80"> LC-218-B // BFTC CALLSIGN</p>
+            <p className="text-sm text-orange-400/80"> LC-218-B // BFTC CALLSIGN</p>
             <input
               type="text"
               placeholder="Callsign"
@@ -80,7 +80,7 @@ const CharCreator = ({ formData, setFormData, onNext }) => {
           </div>
 
           <div>
-            <p class="text-sm text-orange-400/80">
+            <p className="text-sm text-orange-400/80">
               {" "}
               LC-218-C // Current Affiliation
             </p>
@@ -101,30 +101,28 @@ const CharCreator = ({ formData, setFormData, onNext }) => {
         </div>
       </div>
 
-      <div className="">
-        <div className="bg-neutral-800/60 border-l-8 border-orange-500 p-6 rounded shadow">
-          <h1 className="text-4xl font-bold p-2 bg-orange-500">
-            Contractor Skillsets ::/
-          </h1>
-          <h2 class="text-sm">
-            <span className="text-orange-500 ">CALLI/COM</span> UNCC IDENT
-            SERVICE // LC-218-D Skills Assessment
-          </h2>
-          <p class="italic text-sm py-2 text-neutral-400/80">
-            Per Article 15, Paragraph 2, the UNCC IDENT registration service
-            provides a quick skill assessment, created and curated via
-            background information from various participating intelligence
-            services. The UNCC IDENT services have generated a selection of
-            Combat Roles based on your prior experience. Each of these will
-            populate most of your UNCC LC-218 form based off of your prior
-            experience.
-          </p>
-          <p class="text-sm py-3 px-3 text-orange-400/80 border-l-4 border-orange-400">
-            Selecting a class will complete most of your LC-218 skills
-            assessment and start your Contractor with a curated set of skills,
-            tailored to the class selected below
-          </p>
-        </div>
+      <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-6 rounded shadow">
+        <h1 className="inline-block text-4xl font-bold px-3 py-2 bg-orange-500">
+          Contractor Skillsets ::/
+        </h1>
+        <h2 className="mt-4 text-sm text-white">
+          <span className="text-orange-500">CALLI/COM</span> UNCC IDENT
+          SERVICE // LC-218-D Skills Assessment
+        </h2>
+        <p className="italic text-sm py-2 text-neutral-400/80">
+          Per Article 15, Paragraph 2, the UNCC IDENT registration service
+          provides a quick skill assessment, created and curated via
+          background information from various participating intelligence
+          services. The UNCC IDENT services have generated a selection of
+          Combat Roles based on your prior experience. Each of these will
+          populate most of your UNCC LC-218 form based off of your prior
+          experience.
+        </p>
+        <p className="text-sm py-3 px-3 text-orange-400/80 border-l-4 border-orange-400">
+          Selecting a class will complete most of your LC-218 skills
+          assessment and start your Contractor with a curated set of skills,
+          tailored to the class selected below
+        </p>
       </div>
 
       <ClassCard
@@ -141,10 +139,10 @@ const CharCreator = ({ formData, setFormData, onNext }) => {
         <button
           disabled={!isValid}
           onClick={onNext}
-          className={`px-4 py-2 rounded ${
+          className={`px-4 py-2 rounded transition-colors ${
             isValid
               ? "bg-orange-500 hover:bg-orange-600"
-              : "bg-gray-600 cursor-not-allowed"
+              : "bg-neutral-700 cursor-not-allowed text-neutral-400"
           } text-white`}
         >
           Continue to Skills

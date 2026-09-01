@@ -36,6 +36,22 @@ const isNumberLike = (value) => {
   return unwrapNumberLike(value) !== undefined;
 };
 
+export const normalizeCharacterAttributes = (value) => {
+  if (!isRecord(value)) return value;
+
+  const normalized = Object.fromEntries(
+    Object.entries(value).map(([key, item]) => [key, normalizeValue(item)]),
+  );
+
+  if (normalized.Alertness === undefined && normalized.Expertise !== undefined) {
+    normalized.Alertness = normalized.Expertise;
+  }
+
+  delete normalized.Expertise;
+
+  return normalized;
+};
+
 export const normalizeValue = (value) => {
   if (Array.isArray(value)) {
     return value.map(normalizeValue);
@@ -47,9 +63,15 @@ export const normalizeValue = (value) => {
       return unwrappedNumber;
     }
 
-    return Object.fromEntries(
+    const normalizedRecord = Object.fromEntries(
       Object.entries(value).map(([key, item]) => [key, normalizeValue(item)]),
     );
+
+    if (normalizedRecord.attributes && isRecord(normalizedRecord.attributes)) {
+      normalizedRecord.attributes = normalizeCharacterAttributes(normalizedRecord.attributes);
+    }
+
+    return normalizedRecord;
   }
 
   return unwrapNumberLike(value) ?? value;
@@ -82,6 +104,7 @@ export const isWeaponSlot = (value) => {
 };
 
 export const isEquipment = (value) => {
+  if (value === undefined) return true;
   if (!isRecord(value)) return false;
 
   const primaryWeapon = value.primaryWeapon;
@@ -100,7 +123,7 @@ export const isEquipment = (value) => {
 export const isCharacter = (value) => {
   if (!isRecord(value)) return false;
 
-  const attributes = value.attributes;
+  const attributes = normalizeCharacterAttributes(value.attributes ?? {});
   const skills = value.skills;
   const specializations = value.specializations;
   const equipment = value.equipment;
@@ -124,7 +147,7 @@ export const isCharacter = (value) => {
     typeof value.callsign === "string" &&
     typeof value.background === "string" &&
     typeof value.class === "string" &&
-    isNumberLike(attributes.Expertise) &&
+    isNumberLike(attributes.Alertness) &&
     isNumberLike(attributes.Body) &&
     isNumberLike(attributes.Intelligence) &&
     isNumberLike(attributes.Spirit) &&
@@ -132,7 +155,7 @@ export const isCharacter = (value) => {
     (specializations === undefined || Array.isArray(specializations)) &&
     hasLegacyWounds &&
     hasLegacyDeepWounds &&
-    isNumberLike(value.XP) &&
+    (value.XP === undefined || isNumberLike(value.XP)) &&
     (value.emergencyDice === undefined || isNumberLike(value.emergencyDice))
   );
 };
