@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import skillGroups from "../../data/skills.json";
 import {
   getSkillUpgradeCost,
   ATTR_EXP_COST,
   upgradeAttribute,
 } from "../../engine/characterEngine";
-import { getToken } from "../../engine/memoryEngine";
 import Edice from "./CharDetailComponents/EDice";
 import SpecModal from "./CharDetailComponents/SpecModal";
 import SpecView from "./CharDetailComponents/SpecView";
@@ -21,9 +19,23 @@ import RollCalculator from "./CharDetailComponents/RollCalculator";
 import ExpAddedCalc from "./CharDetailComponents/expAddedCalc";
 import { normalizeCharacterData } from "../../engine/characterDataHandler";
 
-function CharacterDetail({ character, onUpdate, user, equipment }) {
-  const navigate = useNavigate();
+const biographyFields = [
+  ["bio", "Biography"],
+  ["age", "Age"],
+  ["height", "Height"],
+  ["weight", "Weight"],
+  ["gender", "Gender"],
+  ["famRelations", "Family Relations"],
+  ["normRelations", "Normal Relations"],
+  ["psych", "Psychological Profile"],
+  ["notes", "Notes"],
+];
 
+const emptyBiography = Object.fromEntries(
+  biographyFields.map(([field]) => [field, ""]),
+);
+
+function CharacterDetail({ character, onUpdate, user, equipment }) {
   if (!character) return null;
 
   const [isEditing, setIsEditing] = useState(false);
@@ -56,7 +68,11 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
       setCampaignInput(character.campaignId || "");
       setMulticlass(character.multiClass || "");
       setCharActive(false);
-      setBio(character?.Bio || "N/A");
+      setBio(
+        character?.Bio && typeof character.Bio === "object"
+          ? { ...emptyBiography, ...character.Bio }
+          : character?.Bio || "",
+      );
     }
   }, [character]);
 
@@ -134,41 +150,12 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
    * @param {*} amount The amount of edice being removed.
    * @returns 
    */
-  const patchRemoveEDice = async (amount) => {
+  const patchRemoveEDice = (amount) => {
     const updates = {
       emergencyDice: emergencyDice - amount, // Send updated state to backend
     };
 
-    const token = getToken();
-
-    if (!token) {
-      console.log("No token found, redirecting to login.");
-      navigate("/login");
-      return;
-    }
-
-    try {
-      const res = await fetch(
-        `https://callicom.onrender.com/api/characters/${user}/${character.callsign}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(updates),
-        },
-      );
-
-      if (res.ok) {
-        onUpdate();
-      } else {
-        alert("Failed to update emergency dice.");
-      }
-    } catch (err) {
-      console.error("Error updating emergency dice:", err);
-      alert("Error updating emergency dice.");
-    }
+    onUpdate(updates);
   };
 
   /**
@@ -192,39 +179,15 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
    * @param {*} amount amount of exp.
    * @returns 
    */
-  const patchXP = async (amount) => {
+  const patchXP = (amount) => {
     const updates = {
       XP: xpRemaining + amount,
     };
 
-    const token = getToken();
-
-    if (!token) {
-      console.log("No token found, redirecting to login.");
-      navigate("/login");
-      return;
-    }
-
-    const res = await fetch(
-      `https://callicom.onrender.com/api/characters/${user}/${character.callsign}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(updates),
-      },
-    );
-
-    if (res.ok) {
-      setXpRemaining((prev) => prev + amount);
-      setXpToAdd("");
-      setShowXpInput(false);
-      onUpdate();
-    } else {
-      alert("Failed to update XP.");
-    }
+    setXpRemaining((prev) => prev + amount);
+    setXpToAdd("");
+    setShowXpInput(false);
+    onUpdate(updates);
   };
 
   /**
@@ -248,38 +211,10 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
       XP: newXP, 
     };
 
-    const token = getToken();
-    if (!token) {
-      console.log("No token found, redirecting to login.");
-      navigate("/login");
-      return;
-    }
-
-    try {
-      const res = await fetch(
-        `https://callicom.onrender.com/api/characters/${user}/${character.callsign}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(updates),
-        },
-      );
-
-      if (res.ok) {
-        setMulticlass(secClass);
-        setXpRemaining(newXP);
-        setShowMultiClassModal(false);
-        onUpdate(); 
-      } else {
-        alert("Failed to update multiClass.");
-      }
-    } catch (err) {
-      console.error("Error updating multiClass:", err);
-      alert("Error updating multiClass.");
-    }
+    setMulticlass(secClass);
+    setXpRemaining(newXP);
+    setShowMultiClassModal(false);
+    onUpdate(updates);
   };
 
   /**
@@ -292,36 +227,8 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
       Bio: bio,
     };
 
-    const token = getToken();
-    if (!token) {
-      console.log("No token found, redirecting to login.");
-      navigate("/login");
-      return;
-    }
-
-    try {
-      const res = await fetch(
-        `https://callicom.onrender.com/api/characters/${user}/${character.callsign}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(updates),
-        },
-      );
-
-      if (res.ok) {
-        setIsEditingBio(false);
-        onUpdate(); // refresh from server if you like
-      } else {
-        alert("Failed to update Bio.");
-      }
-    } catch (err) {
-      console.error("Error updating Bio:", err);
-      alert("Error updating Bio.");
-    }
+    setIsEditingBio(false);
+    onUpdate(updates);
   };
 
   /**
@@ -336,48 +243,16 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
       return;
     }
 
-    const token = getToken();
-    if (!token) {
-      console.log("No token found, redirecting to login.");
-      navigate("/login");
-      return;
-    }
-
     const nextAttributes = {
       ...attributes,
       [attrKey]: (attributes?.[attrKey] ?? 0) + 1,
     };
     const newXP = xpRemaining - ATTR_EXP_COST;
 
-    try {
-      const res = await fetch(
-        `https://callicom.onrender.com/api/characters/${user}/${character.callsign}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            XP: newXP,
-            attributes: nextAttributes,
-          }),
-        },
-      );
-
-      if (res.ok) {
-        setAttributes(nextAttributes);
-        setXpRemaining(newXP);
-        onUpdate?.();
-      } else {
-        alert("Failed to purchase attribute.");
-      }
-    } catch (err) {
-      console.error("Error updating attribute:", err);
-      alert("Error updating attribute.");
-    } finally {
-      setEditAttr(false);
-    }
+    setAttributes(nextAttributes);
+    setXpRemaining(newXP);
+    onUpdate?.({ XP: newXP, attributes: nextAttributes });
+    setEditAttr(false);
   };
 
   /**
@@ -394,32 +269,9 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
       attributes,
     });
 
-    const token = getToken();
-    if (!token) {
-      console.log("No token found, redirecting to login.");
-      navigate("/login");
-      return;
-    }
-
-    const res = await fetch(
-      `https://callicom.onrender.com/api/characters/${user}/${character.callsign}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(updates),
-      },
-    );
-
-    if (res.ok) {
-      setIsEditing(false);
-      setIsEditingEquipment(false);
-      onUpdate();
-    } else {
-      alert("Failed to update character.");
-    }
+    setIsEditing(false);
+    setIsEditingEquipment(false);
+    onUpdate(updates);
   };
 
   return (
@@ -721,16 +573,44 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
       <Collapsible title={"Biography"} color={"orange-400"} headerSize={"2xl"}>
         <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-6 rounded shadow col-span-2">
           {isEditingBio ? (
-            <textarea
-              className="w-full bg-neutral-900 text-white p-2 rounded resize-y min-h-[100px]"
-              placeholder="UNCC LC-514-A 'Formal Background'"
-              value={Biography}
-              onInput={(e) => setBio(e.target.value)}
-            />
+            typeof Biography === "object" ? (
+              <div className="grid sm:grid-cols-2 gap-3">
+                {biographyFields.map(([field, label]) => (
+                  <label key={field} className={field === "bio" || field === "notes" ? "sm:col-span-2" : ""}>
+                    <span className="block text-xs text-orange-400 mb-1">{label}</span>
+                    <textarea
+                      className="w-full bg-neutral-900 text-white p-2 rounded resize-y min-h-[60px]"
+                      value={Biography[field] || ""}
+                      onInput={(event) =>
+                        setBio({ ...Biography, [field]: event.target.value })
+                      }
+                    />
+                  </label>
+                ))}
+              </div>
+            ) : (
+              <textarea
+                className="w-full bg-neutral-900 text-white p-2 rounded resize-y min-h-[100px]"
+                placeholder="UNCC LC-514-A 'Formal Background'"
+                value={Biography}
+                onInput={(event) => setBio(event.target.value)}
+              />
+            )
           ) : (
-            <p className="whitespace-pre-wrap text-xs mt-1">
-              {Biography || "..."}
-            </p>
+            typeof Biography === "object" ? (
+              <div className="grid sm:grid-cols-2 gap-3 text-xs">
+                {biographyFields.map(([field, label]) => (
+                  <div key={field} className={field === "bio" || field === "notes" ? "sm:col-span-2" : ""}>
+                    <span className="block text-orange-400">{label}</span>
+                    <p className="whitespace-pre-wrap">{Biography[field] || "..."}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="whitespace-pre-wrap text-xs mt-1">
+                {Biography || "..."}
+              </p>
+            )
           )}
         </div>
         <div className="mt-2">
@@ -769,32 +649,9 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
           />
           <button
             className="bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded"
-            onClick={async () => {
-              const token = getToken();
-              if (!token) {
-                console.log("No token found, redirecting to login.");
-                navigate("/login");
-                return;
-              }
-
-              const res = await fetch(
-                `https://callicom.onrender.com/api/characters/${user}/${character.callsign}`,
-                {
-                  method: "PATCH",
-                  headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                  },
-                  body: JSON.stringify({ campaignId: campaignInput }),
-                },
-              );
-
-              if (res.ok) {
-                alert("Campaign assigned.");
-                onUpdate();
-              } else {
-                alert("Failed to assign campaign.");
-              }
+            onClick={() => {
+              onUpdate({ campaignId: campaignInput });
+              alert("Campaign assigned.");
             }}
           >
             Assign

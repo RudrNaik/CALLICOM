@@ -5,64 +5,116 @@ import CharCreator from "./components/CharacterCreator/CharCreator";
 import { useState } from "react";
 import SkillCreator from "./components/CharacterCreator/SkillCreator";
 import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "./AuthContext";
 
-const CharacterCreator = () => {
-  const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({
-    name: "",
-    callsign: "",
-    background: "",
-    class: "",
-    skills: {},
-  });
-  const { isLoggedIn, user } = useContext(AuthContext);
+const createCharacterId = () => {
+  if (typeof crypto !== "undefined" && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
 
-  const handleSubmit = async () => {
+  return `char-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+};
+
+const createBiographyDraft = () => ({
+  bio: "",
+  age: "",
+  height: "",
+  weight: "",
+  gender: "",
+  famRelations: "",
+  normRelations: "",
+  psych: "",
+  notes: "",
+});
+
+/** @returns {import("./types/improvedCharTypes").Character} */
+const createCharacterDraft = (userName) => ({
+  uniqueId: createCharacterId(),
+  _id: undefined,
+  userId: userName,
+  name: "",
+  callsign: "",
+  background: "",
+  class: "",
+  attributes: {
+    Alertness: 0,
+    Body: 0,
+    Intelligence: 0,
+    Spirit: 0,
+  },
+  skills: {},
+  specializations: [],
+  equipment: {
+    primaryWeapon: { name: "", category: "", family: "" },
+    secondaryWeapon: { name: "", category: "", family: "" },
+    classGadget: "",
+    grenades: ["", ""],
+    gadget: "",
+    gadgetAmmo: {},
+    armorClass: 0,
+    miscGear: "",
+    gearSlots: {},
+  },
+  fleshWounds: 0,
+  deepWounds: 0,
+  XP: 0,
+  emergencyDice: 0,
+  createdAt: new Date().toISOString(),
+  Bio: createBiographyDraft(),
+});
+
+const CharacterCreator = () => {
+  const navigate = useNavigate();
+  const [step, setStep] = useState(1);
+  const [formData, setFormData] = useState(() =>
+    createCharacterDraft(
+      JSON.parse(localStorage.getItem("user") || "null")?.userName || ""
+    )
+  );
+  const { user } = useContext(AuthContext);
+
+  const handleSubmit = () => {
     const fullCharacter = {
+      ...createCharacterDraft(user?.userName || ""),
       ...formData,
-      XP: 0,
+      uniqueId: formData.uniqueId || createCharacterId(),
+      XP: Number(formData.XP || 0),
+      userId: user?.userName || formData.userId || "",
+      createdAt: formData.createdAt || new Date().toISOString(),
       equipment: {
-        primaryWeapon: { name: "", category: "", family: "" },
-        secondaryWeapon: { name: "", category: "", family: "" },
-        grenades: ["", ""],
-        gadget: "",
-        gadgetAmmo: {},
-        armorClass: 0,
-        miscGear: "",
+        ...createCharacterDraft(user?.userName || "").equipment,
+        ...formData.equipment,
       },
-      userId: user.userName,
-      createdAt: new Date().toISOString(),
+      attributes: {
+        Alertness: 0,
+        Body: 0,
+        Intelligence: 0,
+        Spirit: 0,
+        ...formData.attributes,
+      },
+      skills: formData.skills || {},
+      specializations: formData.specializations || [],
+      Bio: {
+        ...createBiographyDraft(),
+        ...(formData.Bio && typeof formData.Bio === "object" ? formData.Bio : {}),
+      },
+      fleshWounds: Number(formData.fleshWounds || 0),
+      deepWounds: Number(formData.deepWounds || 0),
+      emergencyDice: Number(formData.emergencyDice || 0),
     };
 
-    const token = localStorage.getItem("token");
-    console.log(token)
-
-    if (!token) {
-      console.log("No token found, redirecting to login.");
-      navigate("/login");
-      setIsLoading(false);
-      return;
-    }
-
-    try {
-      const response = await fetch(
-        "https://callicom.onrender.com/api/characters",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(fullCharacter),
-        }
-      );
-
-      if (!response.ok) throw new Error("Failed to create character");
-    } catch (err) {
-      console.error("Submit error:", err);
-      alert("Error creating character");
-    }
+    const storageKey = `roster_characters_${fullCharacter.userId}`;
+    const cachedCharacters = JSON.parse(
+      localStorage.getItem(storageKey) || "[]",
+    );
+    const storedCharacters = Array.isArray(cachedCharacters)
+      ? cachedCharacters
+      : Array.isArray(cachedCharacters?.data)
+        ? cachedCharacters.data
+        : [];
+    localStorage.setItem(storageKey, JSON.stringify([...storedCharacters, fullCharacter]));
+    navigate("/CALLICOM/CharacterManager");
   };
 
   return (

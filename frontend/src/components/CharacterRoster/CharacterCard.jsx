@@ -10,13 +10,14 @@ function CharCard({ character, onSelect, onDelete }) {
     >
       {/* Delete button */}
       <button
-        onClick={() => {
+        onClick={(event) => {
+          event.stopPropagation();
           if (
             window.confirm(
               `Are you sure you want to delete ${character.callsign}?`
             )
           ) {
-            onDelete(character.callsign);
+            onDelete(character._id || character.uniqueId || character.callsign);
           }
         }}
         className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-sm"

@@ -5,7 +5,6 @@ import WeaponSlot from "./WeaponCards";
 import GadgetAmmo from "./GadgetAmmo";
 import {
   getJsonMemory,
-  getToken,
   setJsonMemory,
 } from "../../../engine/memoryEngine";
 import {
@@ -17,7 +16,6 @@ import {
 function EquipmentSelection({
   character,
   isEditing,
-  userId,
   refreshCharacter,
   setIsEditing,
   charActive,
@@ -277,37 +275,9 @@ function EquipmentSelection({
     });
   };
 
-  const saveToDatabase = async () => {
-    const token = getToken();
-
-    if (!token) {
-      console.log("No token found, redirecting to login.");
-      navigate("/login");
-      setIsLoading(false);
-      return;
-    }
-
-    try {
-      const res = await fetch(
-        `https://callicom.onrender.com/api/characters/${userId}/${character.callsign}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ equipment: gear }),
-        },
-      );
-      if (res.ok) {
-        refreshCharacter();
-        setIsEditing(false);
-      } else {
-        alert("Failed to save equipment.");
-      }
-    } catch (err) {
-      console.error("Equipment PATCH error:", err);
-    }
+  const saveToDatabase = () => {
+    refreshCharacter({ equipment: gear });
+    setIsEditing(false);
   };
 
   // console.log(

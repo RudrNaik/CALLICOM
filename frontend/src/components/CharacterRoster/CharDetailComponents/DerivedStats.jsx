@@ -1,11 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { calculateDerivedStats } from "../../../engine/characterEngine";
-import { getToken } from "../../../engine/memoryEngine";
 
 function DerivedStats({ character, userId, refreshCharacter }) {
-  const navigate = useNavigate();
-
   // Safe defaults
   const attrs = character?.attributes ?? {};
   const skills = character?.skills ?? {};
@@ -49,13 +45,6 @@ function DerivedStats({ character, userId, refreshCharacter }) {
     }
 
     timerRef.current = setTimeout(async () => {
-      const token = getToken();
-      if (!token) {
-        console.log("No token found, redirecting to login.");
-        navigate("/login");
-        return;
-      }
-
       const changed =
         fleshWounds !== prevWounds.current.fleshWounds ||
         deepWounds !== prevWounds.current.deepWounds;
@@ -64,24 +53,8 @@ function DerivedStats({ character, userId, refreshCharacter }) {
 
       setIsSaving(true);
       try {
-        const res = await fetch(
-          `https://callicom.onrender.com/api/characters/${userId}/${character?.callsign}`,
-          {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({ fleshWounds, deepWounds }),
-          }
-        );
-
-        if (res.ok) {
-          prevWounds.current = { fleshWounds, deepWounds };
-          //refreshCharacter?.();
-        } else {
-          console.error("Failed to update wounds:", await res.text());
-        }
+        refreshCharacter?.({ fleshWounds, deepWounds });
+        prevWounds.current = { fleshWounds, deepWounds };
       } catch (err) {
         console.error("Error updating wounds:", err);
       } finally {
@@ -97,7 +70,6 @@ function DerivedStats({ character, userId, refreshCharacter }) {
     deepWounds,
     userId,
     character?.callsign,
-    navigate,
     refreshCharacter,
   ]);
 
