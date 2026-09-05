@@ -53,6 +53,6 @@
         "type": "Half",
         "color": "bg-neutral-800/80",
         "icon": "/Half_Action.svg",
-        "description": "[Defensive]\n Defender matching stat vs Attacker roll\n Parrying requires an MOS of 2 to succeed, if it fails, the attack goes through with at least MOS of 1. If successful, immediately ends Attacker turn. MOS of 3+ results in a defender punish.\n\n Punishing allows the Defender to immediately return an attack and end the attacker's turn. This attack has a -1 to the opposing roll, and isnt counted in the 2 standard CQC Actions a character would have in a turn."
+        "description": "[Defensive]\n Defender matching stat vs Attacker roll\n\n Every parry after the first will incur a compounding -1 malus until you Recover.\n\n Parrying requires an MOS of 2 to succeed, if it fails, the attack goes through with at least MOS of 2. If successful, immediately ends Attacker turn. MOS of 3+ results in a defender punish.\n\n Punishing allows the Defender to immediately return an attack and end the attacker's turn. This attack has a -1 to the opposing roll, and isnt counted in the 2 standard CQC Actions a character would have in a turn."
     }
 ]
