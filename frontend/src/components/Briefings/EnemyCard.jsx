@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import equipmentData from "../../data/Equipment.json";
 import classes from "../../data/classSkills.json";
-import { applyModifiers, getWeaponCategoriesByIdLookup } from "../../engine/equipmentEngine";
+import { applyModifiers, getWeaponCategoriesByIdLookup } from "../../engine/weaponEngine";
 
 /* =======================
    DEFAULT STATE

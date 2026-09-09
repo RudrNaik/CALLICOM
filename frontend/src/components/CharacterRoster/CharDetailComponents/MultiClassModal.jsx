@@ -1,5 +1,6 @@
 import { useState } from "react";
 import classData from "../../../data/classSkills.json";
+import { getAvailableMulticlassOptions } from "../../../engine/characterEngine";
 
 function MultiClassModal({
   onClose,
@@ -7,9 +8,7 @@ function MultiClassModal({
   charClass
 }) {
   const [multiClassSpec, setMulticlass] = useState("");
-  const filtered = Object.keys(classData).filter(
-    (spec) => spec != charClass.class
-  );
+  const filtered = getAvailableMulticlassOptions(classData, charClass.class);
 
 
   return (

@@ -5,8 +5,18 @@ import WeaponSlot from "./WeaponCards";
 import GadgetAmmo from "./GadgetAmmo";
 import {
   getGadgetAmmoConfig,
-  getWeaponCategoriesLookup,
+  getItemByIdLookup,
+  getAvailableClassGadgets,
+  getArmorClassCap,
+  getSecondaryGadgetForClass,
+  getArmorClassDescription,
 } from "../../../engine/equipmentEngine";
+import {
+  getWeaponCategoriesLookup,
+  getExcludedPrimaryCategories,
+  getExcludedSecondaryCategories,
+} from "../../../engine/weaponEngine";
+import { normalizeEquipmentForView } from "../../../engine/characterDataHandler";
 
 const DEFAULT_GRENADE_COUNTS = [2, 2];
 const DEFAULT_MED_COUNTS = [1, 2, 1]; // [AFAK, IFAK, Painkiller]
@@ -23,10 +33,8 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
   },
   ref,
 ) {
-  // Prefer a stable unique identity over callsign (user-editable, not
-  // guaranteed unique) so per-character effects/keys can't collide between
-  // two characters that happen to share a callsign.
-  const characterId = character._id || character.uniqueId || character.callsign;
+  
+  const characterId = character.uniqueId;
 
   const defaultGear = {
     primaryWeapon: { name: "", category: "" },
@@ -41,25 +49,12 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
   };
 
   //percolates items from the equipment data into an easy to use lookup table.
-  const itemById = useMemo(() => {
-    const m = {};
+  const itemById = useMemo(() => getItemByIdLookup(equipmentData), []);
 
-    equipmentData.forEach((it) => {
-      m[it.id] = it;
-    });
-
-    return m;
-  }, []);
-
-  const campaignLookupTable = useMemo(() => {
-    const m = {};
-
-    campEquipment.forEach((it) => {
-      m[it.id] = it;
-    });
-
-    return m;
-  }, [campEquipment]);
+  const campaignLookupTable = useMemo(
+    () => getItemByIdLookup(campEquipment),
+    [campEquipment],
+  );
 
   const [gear, setGear] = useState(defaultGear);
 
@@ -90,67 +85,12 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
   useEffect(() => {
     if (!character) return;
 
-    const normalizedEquipment = {
-      ...(character.equipment ?? {}),
-      primaryWeapon: {
-        name: "",
-        category: "",
-        family: "",
-        ...(character.equipment?.primaryWeapon ?? {}),
-      },
-      secondaryWeapon: {
-        name: "",
-        category: "",
-        family: "",
-        ...(character.equipment?.secondaryWeapon ?? {}),
-      },
-      grenades: Array.isArray(character.equipment?.grenades)
-        ? character.equipment.grenades
-        : ["", ""],
-      grenadeCounts:
-        Array.isArray(character.equipment?.grenadeCounts) &&
-        character.equipment.grenadeCounts.length === 2
-          ? character.equipment.grenadeCounts
-          : DEFAULT_GRENADE_COUNTS,
-      gadget: character.equipment?.gadget ?? "",
-      gadgetAmmo: character.equipment?.gadgetAmmo ?? {},
-      armorClass: character.equipment?.armorClass ?? 0,
-      medCounts:
-        Array.isArray(character.equipment?.medCounts) &&
-        character.equipment.medCounts.length === 3
-          ? character.equipment.medCounts
-          : DEFAULT_MED_COUNTS,
-      miscGear: character.equipment?.miscGear ?? "",
-    };
+    const normalizedEquipment = normalizeEquipmentForView(character);
 
     setGear(normalizedEquipment);
 
     //filters items based on class, secondary class, and if they are purchased or not.
-    let filtered = null;
-    if (
-      character?.campaignId == undefined ||
-      character?.campaignId == null ||
-      !character?.campaignId
-        ?.replace(/\s/g, "")
-        ?.split(",")
-        ?.includes("Siberia2022") ||
-      !campEquipment
-    ) {
-      filtered = equipmentData.filter(
-        (item) =>
-          (item.class === character.class ||
-            item.class === character.multiClass) &&
-          (!item?.SubMunition || !item?.parentId === "thinkpad"),
-      );
-    } else {
-      filtered = campEquipment.filter(
-        (item) =>
-          (item.class === character.class ||
-            item.class === character.multiClass) &&
-          item.cost === 0 &&
-          (!item?.SubMunition || !item?.parentId === "thinkpad"),
-      );
-    }
+    const filtered = getAvailableClassGadgets(character, campEquipment, equipmentData);
     setClassGadgets(filtered);
 
     // Filter grenades from equipment data
@@ -160,73 +100,28 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
     setGrenades(grenadeList);
 
     //Excludes primaries based on main and sub classes
-    let excluded;
-    if (
-      character.class === "Sharpshooter" ||
-      character.multiClass === "Sharpshooter"
-    ) {
-      excluded = [
-        "Machine Guns",
-        "Light Pistols",
-        "Heavy Pistols",
-      ];
-    } else if (
-      character.class === "Fire Support" ||
-      character.multiClass === "Fire Support"
-    ) {
-      excluded = ["Sniper Rifles", "Light Pistols", "Heavy Pistols"];
-    } else {
-      excluded = [
-        "Sniper Rifles",
-        "Machine Guns",
-        "Drum Shotguns",
-        "Light Pistols",
-        "Heavy Pistols",
-      ];
-    }
+    const excludedPrimary = getExcludedPrimaryCategories(character);
     const primaryFilter = Object.fromEntries(
       Object.entries(weaponCatsLookup).filter(
-        ([key]) => !excluded.includes(key),
+        ([key]) => !excludedPrimary.includes(key),
       ),
     );
     setPrimaries(primaryFilter);
 
     //Restrics Armor per SUPP getting AC3 as max (to use the juggernaut suit), everyone else has max of AC1
-    if (
-      character.class === "Combat Engineer" ||
-      character.class === "Technical Engineer" ||
-      character.class === "Medic"
-    ) {
-      setArmor(2);
-    } else if (character.class === "Fire Support") {
-      setArmor(3);
-    } else {
-      setArmor(1);
-    }
+    setArmor(getArmorClassCap(character));
 
     //Excludes secondaries universally.
-    excluded = [
-      "Sniper Rifles",
-      "Machine Guns",
-      "Drum Shotguns",
-      "Marksman Rifles",
-      "Assault Rifles",
-      "Shotguns",
-      "Carbines",
-    ];
+    const excludedSecondary = getExcludedSecondaryCategories();
     const secondaryFilter = Object.fromEntries(
       Object.entries(weaponCatsLookup).filter(
-        ([key]) => !excluded.includes(key),
+        ([key]) => !excludedSecondary.includes(key),
       ),
     );
     setSecondary(secondaryFilter);
 
     //Grabs secondary gadget (class gadget) and assigns it.
-    if (secondaryGadgets[character.class]) {
-      setSecGadget(secondaryGadgets[character.class].classGadget);
-    } else {
-      setSecGadget(null);
-    }
+    setSecGadget(getSecondaryGadgetForClass(secondaryGadgets, character));
 
   }, [character, campEquipment, weaponCatsLookup]);
 
@@ -296,6 +191,26 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
     if (charActive) {
       refreshCharacter({ equipment: next });
     }
+  };
+
+  // Renders the armor-class flavor text; shared between the editing and
+  // non-editing branches below (they previously duplicated this verbatim).
+  const renderArmorClassDescription = (armorClass) => {
+    if (armorClass == 0) {
+      return (
+        <span className="text-xs text-neutral-400">
+          {getArmorClassDescription(armorClass)}
+        </span>
+      );
+    }
+    if (armorClass == 1 || armorClass == 2 || armorClass == 3 || armorClass >= 4) {
+      return (
+        <p className="text-xs text-neutral-400">
+          {getArmorClassDescription(armorClass)}
+        </p>
+      );
+    }
+    return null;
   };
 
   const handleGrenadeChange = (index, value) => {
@@ -474,32 +389,7 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
                 />
               </div>
               <div>
-                {gear.armorClass == 0 && (
-                  <span className="text-xs text-neutral-400">
-                    No maluses for sprinting and shooting, +1 to
-                    [Acrobatics][Jump][Climb][Endurance][Stealth]
-                  </span>
-                )}
-                {gear.armorClass == 1 && (
-                  <p className="text-xs text-neutral-400">No Bonuses</p>
-                )}
-                {gear.armorClass == 2 && (
-                  <p className="text-xs text-neutral-400">
-                    -1 to movement related checks
-                    [Acrobatics][Jump][Climb][Endurance]
-                  </p>
-                )}
-                {gear.armorClass == 3 && (
-                  <p className="text-xs text-neutral-400">
-                    -2 to movement related checks
-                    [Acrobatics][Jump][Climb][Endurance]
-                  </p>
-                )}
-                {gear.armorClass >= 4 && (
-                  <p className="text-xs text-neutral-400">
-                    [N/A // Cannot have an AC past 3.]
-                  </p>
-                )}
+                {renderArmorClassDescription(gear.armorClass)}
               </div>
             </div>
           ) : (
@@ -508,32 +398,7 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
                 <span>AC{gear.armorClass}</span>
               </p>
               <div>
-                {gear.armorClass == 0 && (
-                  <span className="text-xs text-neutral-400">
-                    No maluses for sprinting and shooting, +1 to
-                    [Acrobatics][Jump][Climb][Endurance][Stealth]
-                  </span>
-                )}
-                {gear.armorClass == 1 && (
-                  <p className="text-xs text-neutral-400">No Bonuses</p>
-                )}
-                {gear.armorClass == 2 && (
-                  <p className="text-xs text-neutral-400">
-                    -1 to movement related checks
-                    [Acrobatics][Jump][Climb][Endurance]
-                  </p>
-                )}
-                {gear.armorClass == 3 && (
-                  <p className="text-xs text-neutral-400">
-                    -2 to movement related checks
-                    [Acrobatics][Jump][Climb][Endurance]
-                  </p>
-                )}
-                {gear.armorClass >= 4 && (
-                  <p className="text-xs text-neutral-400">
-                    [N/A // Cannot have an AC past 3.]
-                  </p>
-                )}
+                {renderArmorClassDescription(gear.armorClass)}
               </div>
             </div>
           )}

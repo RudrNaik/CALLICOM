@@ -6,6 +6,37 @@ export const MULTICLASS_EXP_COST = 20;
 export const BASE_ATTR_POINTS = 5;
 
 /**
+ * Computes the wound penalty from flesh/deep wound counts.
+ */
+export function getWoundPenalty(fleshWounds, deepWounds) {
+  return (fleshWounds || 0) + (deepWounds || 0) * 2;
+}
+
+/**
+ * Sums the roll calculator's ad-hoc dice modifiers into a single delta.
+ */
+export function getTotalDiceChange(diceModifiers) {
+  return diceModifiers.reduce((sum, m) => sum + Number(m.value), 0);
+}
+
+/**
+ * Base dice pool for a given skill level: unskilled (<=0) rolls 2 dice and
+ * takes the lower, otherwise rolls `skillLevel` dice and keeps the highest.
+ */
+export function getBaseDiceCount(skillLevel) {
+  return skillLevel <= 0 ? 2 : skillLevel;
+}
+
+/**
+ * Effective dice pool after applying ad-hoc dice modifiers, floored so an
+ * unskilled roll can never drop below 2 dice (skilled rolls can drop to 0).
+ */
+export function getEffectiveDiceCount(skillLevel, totalDiceChange) {
+  const min = skillLevel <= 0 ? 2 : 0;
+  return Math.max(min, getBaseDiceCount(skillLevel) + totalDiceChange);
+}
+
+/**
  * Calculates derived stats based on character attributes and skills.
  * Ported from DerivedStats.jsx
  */
@@ -34,7 +65,7 @@ export function calculateDerivedStats(character) {
   const instantDeath = stamina * 2;
   const unarmedDamage = Math.max(4, Math.ceil((3 + Body + CQC) / 1.5));
   const armedDamage = Math.max(4, Math.ceil((3 + Body + Melee) / 1.5));
-  const woundMod = fleshWounds + deepWounds * 2;
+  const woundMod = getWoundPenalty(fleshWounds, deepWounds);
 
   return {
     defense,
@@ -52,10 +83,10 @@ export function calculateDerivedStats(character) {
 }
 
 /**
- * Calculates the total XP spent by a character.
+ * Computes the full XP breakdown for a character (total spent + sub-totals).
  * Ported from expAddedCalc.jsx
  */
-export function calculateTotalSpentXP(character) {
+export function getXPBreakdown(character) {
   const skills = character?.skills ?? {};
   const attrs = character?.attributes ?? {};
   const specializations = character?.specializations ?? [];
@@ -73,7 +104,29 @@ export function calculateTotalSpentXP(character) {
   const specXP = specializations.length * SPEC_EXP_COST;
   const multiclassXP = hasMulticlass ? MULTICLASS_EXP_COST : 0;
 
-  return totalSkillXP + attrXP + specXP + multiclassXP;
+  const totalSpent = totalSkillXP + attrXP + specXP + multiclassXP;
+
+  // Matches expAddedCalc.jsx's original display math: the base class package
+  // (BASE_CLASS_XP) is shown as its own line item, so it's carved back out
+  // of the raw skill-level XP total here.
+  const skillsXp = Math.max(0, totalSpent - BASE_CLASS_XP - multiclassXP - specXP - attrXP);
+
+  return {
+    totalSpent,
+    skillsXp,
+    attrXP,
+    specXP,
+    multiclassXP,
+    purchasedAttrPoints,
+  };
+}
+
+/**
+ * Calculates the total XP spent by a character.
+ * Ported from expAddedCalc.jsx
+ */
+export function calculateTotalSpentXP(character) {
+  return getXPBreakdown(character).totalSpent;
 }
 
 /**
@@ -111,6 +164,14 @@ export function initializeCharacterSkills(characterClass, skillGroups, classStar
   config.level1.forEach((skill) => (base[skill] = 1));
 
   return base;
+}
+
+/**
+ * Returns the list of classes a character may multiclass into (every class
+ * except their current primary class).
+ */
+export function getAvailableMulticlassOptions(classData, currentClass) {
+  return Object.keys(classData).filter((spec) => spec != currentClass);
 }
 
 /**
@@ -197,5 +258,61 @@ export function downgradeAttribute(character, attribute) {
       XP: character.XP + refund,
     },
     refund,
+  };
+}
+
+/**
+ * Pure variant of upgradeSkill that operates on the separate skills/xp tuple
+ * shape CharacterDetail.jsx tracks while editing, rather than a whole
+ * character object. Mirrors CharacterDetail's increaseSkill exactly.
+ * @returns {{skills: object, xp: number}|null} null if blocked
+ */
+export function applySkillIncrease(skills, xp, skill) {
+  const level = skills[skill] || 0;
+  if (level >= 4) return null;
+
+  const cost = getSkillUpgradeCost(level);
+  if (xp < cost) return null;
+
+  return {
+    skills: { ...skills, [skill]: level + 1 },
+    xp: xp - cost,
+  };
+}
+
+/**
+ * Pure variant of downgradeSkill for CharacterDetail.jsx's skills/xp tuple
+ * shape. Mirrors CharacterDetail's decreaseSkill exactly.
+ * @returns {{skills: object, xp: number}|null} null if blocked
+ */
+export function applySkillDecrease(skills, xp, skill, originalSkills) {
+  const current = skills[skill] || 0;
+  const original = originalSkills?.[skill] || 0;
+
+  if (current <= original) return null;
+
+  const refund = getSkillUpgradeCost(current - 1);
+
+  return {
+    skills: { ...skills, [skill]: current - 1 },
+    xp: xp + refund,
+  };
+}
+
+/**
+ * Pure variant of upgradeAttribute for CharacterDetail.jsx's attributes/xp
+ * tuple shape. Mirrors CharacterDetail's patchAttribute math (the alert()
+ * call stays in the component).
+ * @returns {{attributes: object, xp: number}|null} null if blocked
+ */
+export function applyAttributeIncrease(attributes, xp, attrKey) {
+  if (xp < ATTR_EXP_COST) return null;
+
+  return {
+    attributes: {
+      ...attributes,
+      [attrKey]: (attributes?.[attrKey] ?? 0) + 1,
+    },
+    xp: xp - ATTR_EXP_COST,
   };
 }

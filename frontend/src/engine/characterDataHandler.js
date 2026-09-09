@@ -126,6 +126,51 @@ export const repairLegacyCharacterData = (value) => {
   return normalizeCharacterData(value);
 };
 
+const DEFAULT_GRENADE_COUNTS = [2, 2];
+const DEFAULT_MED_COUNTS = [1, 2, 1]; // [AFAK, IFAK, Painkiller]
+
+/**
+ * Normalizes a character's `equipment` shape for the Equipment view,
+ * defaulting/filling in weapons, grenades, gadget, armorClass, medCounts, and
+ * misc gear so the view always has a fully-shaped object to render from.
+ * @param {object} character
+ * @returns {object} normalized equipment object
+ */
+export const normalizeEquipmentForView = (character) => {
+  return {
+    ...(character.equipment ?? {}),
+    primaryWeapon: {
+      name: "",
+      category: "",
+      family: "",
+      ...(character.equipment?.primaryWeapon ?? {}),
+    },
+    secondaryWeapon: {
+      name: "",
+      category: "",
+      family: "",
+      ...(character.equipment?.secondaryWeapon ?? {}),
+    },
+    grenades: Array.isArray(character.equipment?.grenades)
+      ? character.equipment.grenades
+      : ["", ""],
+    grenadeCounts:
+      Array.isArray(character.equipment?.grenadeCounts) &&
+      character.equipment.grenadeCounts.length === 2
+        ? character.equipment.grenadeCounts
+        : DEFAULT_GRENADE_COUNTS,
+    gadget: character.equipment?.gadget ?? "",
+    gadgetAmmo: character.equipment?.gadgetAmmo ?? {},
+    armorClass: character.equipment?.armorClass ?? 0,
+    medCounts:
+      Array.isArray(character.equipment?.medCounts) &&
+      character.equipment.medCounts.length === 3
+        ? character.equipment.medCounts
+        : DEFAULT_MED_COUNTS,
+    miscGear: character.equipment?.miscGear ?? "",
+  };
+};
+
 export const isWeaponSlot = (value) => {
   if (!isRecord(value)) return false;
 

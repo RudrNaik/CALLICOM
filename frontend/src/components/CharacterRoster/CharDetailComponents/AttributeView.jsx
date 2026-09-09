@@ -1,3 +1,5 @@
+import { ATTR_EXP_COST } from "../../../engine/characterEngine";
+
 function AttributeView({ attributes, xp, isEditing, onBuy }) {
   const items = [
     { key: "Alertness", label: "Alertness" },
@@ -10,7 +12,7 @@ function AttributeView({ attributes, xp, isEditing, onBuy }) {
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
       {items.map(({ key, label }) => {
         const val = attributes?.[key] ?? 0;
-        const canBuy = isEditing && xp >= 40;
+        const canBuy = isEditing && xp >= ATTR_EXP_COST;
         return (
           <div
             key={key}

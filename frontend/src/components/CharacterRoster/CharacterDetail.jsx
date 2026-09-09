@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import skillGroups from "../../data/skills.json";
 import {
-  getSkillUpgradeCost,
   ATTR_EXP_COST,
+  applySkillIncrease,
+  applySkillDecrease,
+  applyAttributeIncrease,
 } from "../../engine/characterEngine";
 import Edice from "./CharDetailComponents/EDice";
 import SpecModal from "./CharDetailComponents/SpecModal";
@@ -141,25 +143,15 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
   const handleIncreaseDeepWounds = () => setDeepWounds((v) => v + 1);
 
   /**
-   * Handles the upgrade cost in terms of EXP needed between levels. You can only level up by being at the previous level, you cant jump from 1 to 4 without being at 2 or 3 along the way.
-   * @param {*} level the specific level the character is at.
-   * @returns upgrade cost to the next level.
-   */
-  const handleGetUpgradeCost = (level) => getSkillUpgradeCost(level);
-
-  /**
    * Sets the specific skill to the next level.
    * @param {*} skill selected skill
    * @returns sets the edited skill in the payload to the level + 1.
    */
   const increaseSkill = (skill) => {
-    const level = editedSkills[skill] || 0;
-    if (level >= 4) return;
-    const cost = handleGetUpgradeCost(level);
-    if (xpRemaining >= cost) {
-      setEditedSkills({ ...editedSkills, [skill]: level + 1 });
-      setXpRemaining(xpRemaining - cost);
-    }
+    const result = applySkillIncrease(editedSkills, xpRemaining, skill);
+    if (!result) return;
+    setEditedSkills(result.skills);
+    setXpRemaining(result.xp);
   };
 
   /**
@@ -167,14 +159,10 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
    * @param {*} skill Selected skill
    */
   const decreaseSkill = (skill) => {
-    const current = editedSkills[skill] || 0;
-    const original = character.skills?.[skill] || 0;
-
-    if (current > original) {
-      const refund = handleGetUpgradeCost(current - 1);
-      setEditedSkills({ ...editedSkills, [skill]: current - 1 });
-      setXpRemaining(xpRemaining + refund);
-    }
+    const result = applySkillDecrease(editedSkills, xpRemaining, skill, character.skills);
+    if (!result) return;
+    setEditedSkills(result.skills);
+    setXpRemaining(result.xp);
   };
 
   /**
@@ -300,20 +288,16 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
    */
   const patchAttribute = async (attrKey) => {
     if (!attrKey) return;
-    if (xpRemaining < ATTR_EXP_COST) {
+
+    const result = applyAttributeIncrease(attributes, xpRemaining, attrKey);
+    if (!result) {
       alert(`You need ${ATTR_EXP_COST} XP for an attribute increase.`);
       return;
     }
 
-    const nextAttributes = {
-      ...attributes,
-      [attrKey]: (attributes?.[attrKey] ?? 0) + 1,
-    };
-    const newXP = xpRemaining - ATTR_EXP_COST;
-
-    setAttributes(nextAttributes);
-    setXpRemaining(newXP);
-    onUpdate?.({ XP: newXP, attributes: nextAttributes });
+    setAttributes(result.attributes);
+    setXpRemaining(result.xp);
+    onUpdate?.({ XP: result.xp, attributes: result.attributes });
   };
 
   /**

@@ -1,4 +1,5 @@
 import {useState} from "react";
+import { SPEC_EXP_COST } from "../../../engine/characterEngine";
 
 function SpecModal({
   editedSkills,
@@ -62,7 +63,7 @@ function SpecModal({
                 ...specializations,
                 { skill: specSkill, label: specLabel, details: specDetails},
               ]);
-              setXpRemaining(xpRemaining - 5);
+              setXpRemaining(xpRemaining - SPEC_EXP_COST);
               setSpecSkill("");
               setSpecLabel("");
               setShowSpecModal(false);

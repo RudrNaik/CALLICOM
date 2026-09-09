@@ -1,22 +1,8 @@
 /**
  * Equipment Engine
- * Centralizes all weapon and gadget ammo logic.
+ * Centralizes gadget ammo logic and general equipment/gear rules.
+ * Weapon-stat logic (category lookups, range/modifier math) lives in weaponEngine.js.
  */
-
-/**
- * Transforms the equipment list into a lookup object for weapon categories using IDs.
- * @param {Array} equipmentData - The equipment data array
- * @returns {object} Mapping of category IDs to their data
- */
-export const getWeaponCategoriesByIdLookup = (equipmentData) => {
-  const lookup = {};
-  equipmentData.forEach(item => {
-    if (item.categoryName) {
-      lookup[item.id] = item;
-    }
-  });
-  return lookup;
-};
 
 /**
  * Retrieves gadget ammo configuration from the equipment list.
@@ -29,165 +15,134 @@ export const getGadgetAmmoConfig = (gadgetId, equipmentData) => {
 };
 
 /**
- * Retrieves weapon category data from the equipment list by category name.
- * @param {string} categoryName - Name of the category (e.g., "Light Pistols")
- * @param {Array} equipmentData - The equipment data array
- * @returns {object|null} Category data
+ * Generic id-keyed lookup builder for an array of items with an `id` field.
+ * @param {Array} items
+ * @returns {object} Mapping of item id to item
  */
-export const getWeaponCategoryData = (categoryName, equipmentData) => {
-  return equipmentData.find(item => item.categoryName === categoryName) || null;
-};
-
-/**
- * Transforms the equipment list into a lookup object for weapon categories.
- * @param {Array} equipmentData - The equipment data array
- * @returns {object} Mapping of category names to their data
- */
-export const getWeaponCategoriesLookup = (equipmentData) => {
+export const getItemByIdLookup = (items) => {
   const lookup = {};
-  equipmentData.forEach(item => {
-    if (item.categoryName) {
-      lookup[item.categoryName] = item;
-    }
+  (items || []).forEach((it) => {
+    lookup[it.id] = it;
   });
   return lookup;
 };
 
-// --- Weapon Logic ---
-
 /**
- * Parse range string into an object
- * @param {string} rangeString - Range string like "+1 C | -2 L | -3 ELR"
- * @returns {object} Range object like { C: 1, L: -2, ELR: -3 }
+ * Filters the available class gadgets for a character, accounting for the
+ * Siberia2022 campaign restriction (only free/cost===0 campaign items) and
+ * excluding SubMunition items parented to "thinkpad".
+ * @param {object} character
+ * @param {Array} campEquipment - campaign-specific equipment list (may be undefined/null)
+ * @param {Array} equipmentData - full equipment data list
+ * @returns {Array}
  */
-export const parseRangeString = (rangeString) => {
-  const rangeObj = {};
-  if (!rangeString) return rangeObj;
+export const getAvailableClassGadgets = (character, campEquipment, equipmentData) => {
+  const isSiberia2022 =
+    character?.campaignId
+      ?.replace(/\s/g, "")
+      ?.split(",")
+      ?.includes("Siberia2022");
 
-  rangeString.split("|").forEach((part) => {
-    const trimmed = part.trim();
-    const match = trimmed.match(/([+-]?\d+)\s*(C|M|L|ELR|EELR)/i);
-    if (match) {
-      const [, value, band] = match;
-      rangeObj[band.toUpperCase()] = parseInt(value, 10);
-    }
-  });
-
-  return rangeObj;
-};
-
-/**
- * Convert range object back to string format
- * @param {object} rangeObj - Range object like { C: 1, L: -2, ELR: -3 }
- * @returns {string} Range string like "+1 C | -2 L | -3 ELR"
- */
-export const rangeObjectToString = (rangeObj) => {
-  const bands = ["C", "M", "L", "ELR", "EELR"];
-  const parts = [];
-
-  bands.forEach((band) => {
-    if (rangeObj[band] !== undefined && rangeObj[band] !== 0) {
-      const sign = rangeObj[band] >= 0 ? "+" : "";
-      parts.push(`${sign}${rangeObj[band]} ${band}`);
-    }
-  });
-
-  return parts.join(" | ");
-};
-
-/**
- * Apply family modifiers to base weapon stats
- * @param {object} baseStats - Original weapon stats
- * @param {object} modifiers - Modifier object from family definition
- * @returns {object} Modified stats
- */
-export const applyModifiers = (baseStats, modifiers) => {
-  if (!modifiers || Object.keys(modifiers).length === 0) {
-    return baseStats;
+  if (
+    character?.campaignId == undefined ||
+    character?.campaignId == null ||
+    !isSiberia2022 ||
+    !campEquipment
+  ) {
+    return equipmentData.filter(
+      (item) =>
+        (item.class === character.class ||
+          item.class === character.multiClass) &&
+        (!item?.SubMunition || !item?.parentId === "thinkpad"),
+    );
   }
 
-  const modified = { ...baseStats };
-
-  // Calculate original magazine count from base stats
-  const baselineMagazineCount = Math.floor((baseStats.totalTurns || 0) / (baseStats.magazineSize || 1));
-
-  if (modifiers.damage) {
-    modified.damage = (modified.damage || 0) + modifiers.damage;
-  }
-  if (modifiers.penetration) {
-    modified.penetration = (modified.penetration || 0) + modifiers.penetration;
-  }
-
-  // Handle range band modifiers
-  const rangeModKeys = ["C", "M", "L", "ELR", "EELR"];
-  const hasRangeModifiers = rangeModKeys.some(band => modifiers[band] !== undefined);
-
-  if (hasRangeModifiers && baseStats.range) {
-    const baseParsedRange = parseRangeString(baseStats.range);
-    rangeModKeys.forEach(band => {
-      if (modifiers[band] !== undefined) {
-        baseParsedRange[band] = (baseParsedRange[band] || 0) + modifiers[band];
-      }
-    });
-    modified.range = rangeObjectToString(baseParsedRange);
-  }
-
-  if (modifiers.magazineSize) {
-    modified.magazineSize = (modified.magazineSize || 0) + modifiers.magazineSize;
-  }
-
-  // Recalculate totalTurns with original magazine count and new magazineSize
-  modified.totalTurns = baselineMagazineCount * (modified.magazineSize || 1);
-
-  // Apply totalTurns modifier
-  if (modifiers.totalTurns) {
-    modified.totalTurns = (modified.totalTurns || 0) + modifiers.totalTurns;
-  }
-
-  // Apply additional magazine count modifiers using new magazineSize
-  if (modifiers.magazines) {
-    modified.totalTurns = (modified.totalTurns || 0) + (modifiers.magazines * (modified.magazineSize || 1));
-  }
-
-  return modified;
-};
-
-/**
- * Get the complete modified stats for a weapon with family selected
- * @param {object} weapon - Weapon object with category
- * @param {object} weaponCategories - All weapon category definitions
- * @param {string} selectedFamilyName - Name of selected family
- * @returns {object} Complete modified stats
- */
-export const getModifiedWeaponStats = (
-  weapon,
-  weaponCategories,
-  selectedFamilyName
-) => {
-  const baseStats = weaponCategories[weapon?.category];
-
-  if (!baseStats || !selectedFamilyName) {
-    return baseStats;
-  }
-
-  const selectedFamily = baseStats.families?.find(
-    (f) => f.family === selectedFamilyName
+  return campEquipment.filter(
+    (item) =>
+      (item.class === character.class ||
+        item.class === character.multiClass) &&
+      item.cost === 0 &&
+      (!item?.SubMunition || !item?.parentId === "thinkpad"),
   );
-
-  if (!selectedFamily) {
-    return baseStats;
-  }
-
-  return applyModifiers(baseStats, selectedFamily.modifiers);
 };
 
 /**
- * Get abilities from a weapon family
- * @param {object} family - Family object from weaponCategories
- * @returns {array} Array of ability names
+ * Returns the max armor class a character's class can equip.
+ * Combat Engineer/Technical Engineer/Medic -> 2, Fire Support -> 3, else 1.
+ * @param {object} character
+ * @returns {number}
  */
-export const getAbilitiesFromFamily = (family) => {
-  return family?.modifiers?.abilities || [];
+export const getArmorClassCap = (character) => {
+  if (
+    character.class === "Combat Engineer" ||
+    character.class === "Technical Engineer" ||
+    character.class === "Medic"
+  ) {
+    return 2;
+  }
+  if (character.class === "Fire Support") {
+    return 3;
+  }
+  return 1;
+};
+
+/**
+ * Looks up a class's secondary (innate) gadget from the classSkills map.
+ * @param {object} secondaryGadgetsMap - classSkills.json shape, keyed by class
+ * @param {object} character
+ * @returns {*} the classGadget entry, or null if the class has none
+ */
+export const getSecondaryGadgetForClass = (secondaryGadgetsMap, character) => {
+  if (secondaryGadgetsMap[character.class]) {
+    return secondaryGadgetsMap[character.class].classGadget;
+  }
+  return null;
+};
+
+/**
+ * Returns the flavor-text description for a given armor class value.
+ * @param {number} armorClass
+ * @returns {string|null} null when armorClass is 1 (no bonuses) matches original blank-vs-text rendering? see below.
+ */
+export const getArmorClassDescription = (armorClass) => {
+  if (armorClass == 0) {
+    return "No maluses for sprinting and shooting, +1 to [Acrobatics][Jump][Climb][Endurance][Stealth]";
+  }
+  if (armorClass == 1) {
+    return "No Bonuses";
+  }
+  if (armorClass == 2) {
+    return "-1 to movement related checks [Acrobatics][Jump][Climb][Endurance]";
+  }
+  if (armorClass == 3) {
+    return "-2 to movement related checks [Acrobatics][Jump][Climb][Endurance]";
+  }
+  if (armorClass >= 4) {
+    return "[N/A // Cannot have an AC past 3.]";
+  }
+  return "";
+};
+
+/**
+ * Determines whether a mixed-munitions/thinkpad gadget option should be
+ * hidden due to the Siberia2022 campaign's cost restriction. `costLookup` is
+ * whichever id-keyed lookup the call site checks cost against (campaign
+ * equipment for mixed-munitions options, itemById for thinkpad hacks).
+ * @param {string} optionId - equipment id of the option/hack
+ * @param {object} costLookup - id-keyed lookup table used to read `.cost`
+ * @param {boolean} campActive - whether a campaign is currently active
+ * @param {string} campaignId - character's campaignId string
+ * @returns {boolean}
+ */
+export const isGadgetOptionHiddenForCampaign = (optionId, costLookup, campActive, campaignId) => {
+  return Boolean(
+    campActive &&
+      costLookup?.[optionId]?.cost != 0 &&
+      campaignId
+        ?.replace(/\s/g, "")
+        ?.split(",")
+        ?.includes("Siberia2022"),
+  );
 };
 
 // --- Gadget Ammo Logic ---

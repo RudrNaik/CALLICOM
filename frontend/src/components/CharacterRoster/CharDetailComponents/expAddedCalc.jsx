@@ -1,10 +1,6 @@
 import {
   BASE_CLASS_XP,
-  SPEC_EXP_COST,
-  MULTICLASS_EXP_COST,
-  BASE_ATTR_POINTS,
-  ATTR_EXP_COST,
-  calculateTotalSpentXP,
+  getXPBreakdown,
 } from "../../../engine/characterEngine";
 
 function LedgerRow({ label, value, sub, total = false, indent = false }) {
@@ -48,21 +44,18 @@ function LedgerRow({ label, value, sub, total = false, indent = false }) {
 }
 
 function ExpBreakdown({ character }) {
-  const skills = character?.skills ?? {};
-  const attrs = character?.attributes ?? {};
   const specializations = character?.specializations ?? [];
   const hasMulticlass = Boolean(character?.multiClass);
 
-  const totalSpent = calculateTotalSpentXP(character);
+  const {
+    totalSpent,
+    skillsXp,
+    attrXP,
+    specXP,
+    multiclassXP,
+    purchasedAttrPoints,
+  } = getXPBreakdown(character);
 
-  const totalAttrPoints = Object.values(attrs).reduce((a, b) => a + b, 0);
-  const purchasedAttrPoints = Math.max(0, totalAttrPoints - BASE_ATTR_POINTS);
-  const attrXP = purchasedAttrPoints * ATTR_EXP_COST;
-
-  const specXP = specializations.length * SPEC_EXP_COST;
-  const multiclassXP = hasMulticlass ? MULTICLASS_EXP_COST : 0;
-
-  const skillsXp = Math.max(0, totalSpent - BASE_CLASS_XP - multiclassXP - specXP - attrXP);
   const remainingXP = character?.XP ?? 0;
 
   return (

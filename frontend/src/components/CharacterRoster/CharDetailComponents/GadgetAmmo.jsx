@@ -18,6 +18,7 @@ import {
   useExpendableGadget,
   resupplyExpendableGadget,
   hasExplicitGadgetAmmo,
+  isGadgetOptionHiddenForCampaign,
 } from "../../../engine/equipmentEngine";
 
 export default function GadgetAmmo({
@@ -123,14 +124,7 @@ export default function GadgetAmmo({
               : 0;
 
             if (!isEditing && count <= -1) return null;
-            if (
-              campActive &&
-              campaignEquipment?.[opt.id]?.cost !== 0 &&
-              campaignId
-                ?.replace(/\s/g, "")
-                ?.split(",")
-                ?.includes("Siberia2022")
-            )
+            if (isGadgetOptionHiddenForCampaign(opt.id, campaignEquipment, campActive, campaignId))
               return null; //Specific to the current campaign where it will filter out gadgets based on cost.
             return (
               <div
@@ -204,14 +198,7 @@ export default function GadgetAmmo({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {options.map((opt) => {
               const rules = itemById?.[opt.id]?.rulesText;
-              if (
-                campActive &&
-                itemById?.[opt.id]?.cost != 0 &&
-                campaignId
-                  ?.replace(/\s/g, "")
-                  ?.split(",")
-                  ?.includes("Siberia2022")
-              )
+              if (isGadgetOptionHiddenForCampaign(opt.id, itemById, campActive, campaignId))
                 return null; //Specific to the current campaign where it will filter out gadgets based on cost.
               return (
                 <div

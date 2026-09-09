@@ -2,9 +2,12 @@ import { useState, useEffect } from "react";
 import "../../../assets/css/ammoBlur.css";
 import {
   applyModifiers,
-  getModifiedWeaponStats,
-  getAbilitiesFromFamily,
-} from "../../../engine/equipmentEngine";
+  pseudoMagSizes,
+  getWeaponAmmoCapacity,
+  computeFireResult,
+  resupplyWeaponAmmo,
+  computeReloadResult,
+} from "../../../engine/weaponEngine";
 
 const WeaponSlot = ({
   slot,
@@ -25,18 +28,6 @@ const WeaponSlot = ({
   const [displayedAmmo, setDisplayedAmmo] = useState(null);
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedFamily, setSelectedFamily] = useState(null);
-
-  const pseudoMagSizes = {
-    "Light Pistols": 12,
-    "Heavy Pistols": 6,
-    "SMGs": 20,
-    "Carbines": 30,
-    "Assault Rifles": 30,
-    "Marksman Rifles": 10,
-    "Shotguns": 8,
-    "Sniper Rifles": 5,
-    "Machine Guns": 100,
-  };
 
   // Load ammo from the character's weapon slot on weapon load
   useEffect(() => {
@@ -104,9 +95,6 @@ const WeaponSlot = ({
     }
   }, [pseudoAmmo]);
 
-  let reserveAmmo;
-  let magSize;
-
   const selectedFamilyData =
     selectedFamily && categoryData?.families
       ? categoryData.families.find((f) => f.family === selectedFamily)
@@ -116,15 +104,13 @@ const WeaponSlot = ({
     ? applyModifiers(categoryData, selectedFamilyData.modifiers)
     : categoryData;
 
-  if (weapon?.category == "SMGs" && isSecondary) {
-    reserveAmmo = 4;
-    magSize = 2;
-  } else {
-    reserveAmmo = modifiedCategoryData?.totalTurns || 0;
-    magSize = modifiedCategoryData?.magazineSize || 1;
-  }
-  const totalTurns = reserveAmmo;
-  const magazineSize = magSize;
+  const { totalTurns, magazineSize } = getWeaponAmmoCapacity(
+    weapon,
+    categoryData,
+    weaponCategories,
+    selectedFamily,
+    isSecondary,
+  );
   const turnsRemaining = totalTurns - totalFired;
   const magTurnsLeft = Math.max(0, magazineSize - firedThisMag);
 
@@ -136,68 +122,48 @@ const WeaponSlot = ({
   const handleFire = () => {
     if (isAnimating) return;
 
-    if (turnsRemaining > 0 && magTurnsLeft > 0) {
-      const nextFiredThisMag = firedThisMag + 1;
-      const nextTotalFired = totalFired + 1;
-      setFiredThisMag(nextFiredThisMag);
-      setTotalFired(nextTotalFired);
+    const result = computeFireResult({
+      firedThisMag,
+      totalFired,
+      pseudoAmmo,
+      magazineSize,
+      totalTurns,
+      category: weapon?.category,
+    });
+    if (!result) return;
 
-      let nextPseudoAmmo = pseudoAmmo;
-      if (pseudoAmmo !== null) {
-        const fullRounds = pseudoMagSizes[weapon?.category] || 1;
-        let reduction = 1;
-        if (fullRounds !== 5) {
-          const expectedPerTurn = fullRounds / magazineSize;
-          const variance = Math.max(1, Math.floor(expectedPerTurn * 0.5));
-          reduction = Math.floor(
-            expectedPerTurn + (Math.random() * variance - variance / 2),
-          );
-        }
-
-        nextPseudoAmmo =
-          nextFiredThisMag >= magazineSize
-            ? 0
-            : Math.max(0, pseudoAmmo - reduction);
-        setPseudoAmmo(nextPseudoAmmo);
-      }
-
-      pushAmmo({
-        firedThisMag: nextFiredThisMag,
-        totalFired: nextTotalFired,
-        pseudoAmmo: nextPseudoAmmo,
-      });
+    const { firedThisMag: nextFiredThisMag, totalFired: nextTotalFired, pseudoAmmo: nextPseudoAmmo } = result;
+    setFiredThisMag(nextFiredThisMag);
+    setTotalFired(nextTotalFired);
+    if (pseudoAmmo !== null) {
+      setPseudoAmmo(nextPseudoAmmo);
     }
+
+    pushAmmo({
+      firedThisMag: nextFiredThisMag,
+      totalFired: nextTotalFired,
+      pseudoAmmo: nextPseudoAmmo,
+    });
   };
 
   const handleResupply = () => {
-    const nextPseudoAmmo = pseudoMagSizes[weapon?.category] || null;
-    setFiredThisMag(0);
-    setTotalFired(0);
+    const { firedThisMag: nextFiredThisMag, totalFired: nextTotalFired, pseudoAmmo: nextPseudoAmmo } =
+      resupplyWeaponAmmo(weapon?.category);
+    setFiredThisMag(nextFiredThisMag);
+    setTotalFired(nextTotalFired);
     setPseudoAmmo(nextPseudoAmmo);
 
-    pushAmmo({ firedThisMag: 0, totalFired: 0, pseudoAmmo: nextPseudoAmmo });
+    pushAmmo({ firedThisMag: nextFiredThisMag, totalFired: nextTotalFired, pseudoAmmo: nextPseudoAmmo });
   };
 
   const handleReload = () => {
-    const refillTurns = Math.min(magazineSize, turnsRemaining);
-    const nextFiredThisMag = magazineSize - refillTurns;
+    const { firedThisMag: nextFiredThisMag, pseudoAmmo: nextPseudoAmmo } = computeReloadResult({
+      firedThisMag,
+      turnsRemaining,
+      magazineSize,
+      category: weapon?.category,
+    });
     setFiredThisMag(nextFiredThisMag);
-
-    const fullRounds = pseudoMagSizes[weapon?.category] || 0;
-    let nextPseudoAmmo;
-    if (refillTurns === magazineSize) {
-      nextPseudoAmmo = fullRounds;
-    } else {
-      const ratio = refillTurns / magazineSize;
-      const estimatedRounds = Math.floor(fullRounds * ratio);
-      const variance = Math.floor(estimatedRounds * 0.1);
-      nextPseudoAmmo = Math.max(
-        0,
-        estimatedRounds +
-          Math.floor(Math.random() * (2 * variance + 1)) -
-          variance,
-      );
-    }
     setPseudoAmmo(nextPseudoAmmo);
 
     pushAmmo({
