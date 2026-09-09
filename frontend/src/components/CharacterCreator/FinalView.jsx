@@ -12,6 +12,7 @@ const FinalReview = ({ formData, onBack, onSubmit }) => {
     attributes = {},
     specializations = [],
     emergencyDice = 0,
+    metadata = {},
   } = formData || {};
 
   return (
@@ -39,6 +40,10 @@ const FinalReview = ({ formData, onBack, onSubmit }) => {
           <p>
             <span className="font-bold text-orange-300">Emergency Dice:</span>{" "}
             {emergencyDice}
+          </p>
+          <p>
+            <span className="font-bold text-orange-300">Starting Cash:</span>{" "}
+            {metadata.starting_cash ?? 0}
           </p>
         </div>
       </div>

@@ -7,8 +7,7 @@ export interface Attributes {
 
 export interface MetaData {
   starting_cash: number,
-  userId: string, 
-  uniqueId: string;
+  userId: string,
 }
 
 /**
@@ -44,9 +43,13 @@ export interface Equipment {
   secondaryWeapon?: WeaponSlot;
   classGadget: string;
   grenades?: string[];
+  /** Remaining throws per grenades[] slot, mission-runtime state. */
+  grenadeCounts?: number[];
   gadget?: string;
   gadgetAmmo: GadgetAmmoState;
   armorClass: number;
+  /** Remaining uses [AFAK, IFAK, Painkiller], mission-runtime state. */
+  medCounts?: number[];
   miscGear: string;
   gearSlots : {
     headgear?: string;
@@ -64,6 +67,7 @@ export interface Specialization {
 
 export interface Character {
   _id?: string;
+  uniqueId: string;
   metadata: MetaData
   name: string;
   callsign: string;

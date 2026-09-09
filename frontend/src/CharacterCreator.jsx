@@ -30,9 +30,12 @@ const createBiographyDraft = () => ({
 
 /** @returns {import("./types/improvedCharTypes").Character} */
 const createCharacterDraft = (userName) => ({
-  uniqueId: createCharacterId(),
   _id: undefined,
-  userId: userName,
+  uniqueId: createCharacterId(),
+  metadata: {
+    userId: userName,
+    starting_cash: 0,
+  },
   name: "",
   callsign: "",
   background: "",
@@ -50,9 +53,11 @@ const createCharacterDraft = (userName) => ({
     secondaryWeapon: { name: "", category: "", family: "" },
     classGadget: "",
     grenades: ["", ""],
+    grenadeCounts: [2, 2],
     gadget: "",
     gadgetAmmo: {},
     armorClass: 0,
+    medCounts: [1, 2, 1],
     miscGear: "",
     gearSlots: {},
   },
@@ -79,8 +84,11 @@ const CharacterCreator = () => {
       ...createCharacterDraft(user?.userName || ""),
       ...formData,
       uniqueId: formData.uniqueId || createCharacterId(),
+      metadata: {
+        userId: user?.userName || formData.metadata?.userId || "",
+        starting_cash: Number(formData.metadata?.starting_cash || 0),
+      },
       XP: Number(formData.XP || 0),
-      userId: user?.userName || formData.userId || "",
       createdAt: formData.createdAt || new Date().toISOString(),
       equipment: {
         ...createCharacterDraft(user?.userName || "").equipment,
@@ -104,7 +112,7 @@ const CharacterCreator = () => {
       emergencyDice: Number(formData.emergencyDice || 0),
     };
 
-    const storageKey = `roster_characters_${fullCharacter.userId}`;
+    const storageKey = `roster_characters_${fullCharacter.metadata.userId}`;
     const cachedCharacters = JSON.parse(
       localStorage.getItem(storageKey) || "[]",
     );

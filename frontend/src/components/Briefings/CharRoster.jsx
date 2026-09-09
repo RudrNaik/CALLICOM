@@ -118,7 +118,7 @@ export default function Roster({ characters, isLoading }) {
     return characters.filter((c) => {
       const name = norm(c.name);
       const callsign = norm(c.callsign);
-      const userId = norm(c.userId);
+      const userId = norm(c.metadata?.userId ?? c.userId);
       const cls = norm(c.class);
       const mcls = norm(c.multiClass);
       const bg = norm(c.background);
@@ -210,7 +210,7 @@ export default function Roster({ characters, isLoading }) {
               />
             </p>
             <p className="absolute top-2 right-3 text-orange-300 text-[0.60rem]">
-              <Highlight text={char.userId} terms={terms} />
+              <Highlight text={char.metadata?.userId ?? char.userId} terms={terms} />
             </p>
             <p className="text-xs text-neutral-300">
               <Highlight

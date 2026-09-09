@@ -4,14 +4,13 @@ import secondaryGadgets from "../../../data/classSkills.json";
 import WeaponSlot from "./WeaponCards";
 import GadgetAmmo from "./GadgetAmmo";
 import {
-  getJsonMemory,
-  setJsonMemory,
-} from "../../../engine/memoryEngine";
-import {
   getGadgetAmmoConfig,
   getGadgetAmmoMax,
   getWeaponCategoriesLookup,
 } from "../../../engine/equipmentEngine";
+
+const DEFAULT_GRENADE_COUNTS = [2, 2];
+const DEFAULT_MED_COUNTS = [1, 2, 1]; // [AFAK, IFAK, Painkiller]
 
 function EquipmentSelection({
   character,
@@ -25,9 +24,11 @@ function EquipmentSelection({
     primaryWeapon: { name: "", category: "" },
     secondaryWeapon: { name: "", category: "" },
     grenades: ["", ""],
+    grenadeCounts: DEFAULT_GRENADE_COUNTS,
     gadget: "",
     gadgetAmmo: {},
     armorClass: 0,
+    medCounts: DEFAULT_MED_COUNTS,
     miscGear: "",
   };
 
@@ -55,15 +56,17 @@ function EquipmentSelection({
   const [gear, setGear] = useState(defaultGear);
 
   const safeGrenades = Array.isArray(gear?.grenades) ? gear.grenades : ["", ""];
+  const safeGrenadeCounts =
+    Array.isArray(gear?.grenadeCounts) && gear.grenadeCounts.length === 2
+      ? gear.grenadeCounts
+      : DEFAULT_GRENADE_COUNTS;
+  const safeMedCounts =
+    Array.isArray(gear?.medCounts) && gear.medCounts.length === 3
+      ? gear.medCounts
+      : DEFAULT_MED_COUNTS;
   const [classGadgets, setClassGadgets] = useState([]);
   const [grenades, setGrenades] = useState([]);
   const [secondaryGadget, setSecGadget] = useState([]);
-  const [grenadeCounts, setGrenadeCounts] = useState([3, 3]);
-  const [medCounts, setMedCounts] = useState([1, 2, 1]); // [AFAK, IFAK, Painkiller]
-  const equipmentRuntimeKey = useMemo(
-    () => `equipment_runtime_${character?.callsign ?? "unknown"}`,
-    [character?.callsign],
-  );
   const activeGadgetConfig = useMemo(
     () => getGadgetAmmoConfig(gear.gadget, equipmentData),
     [gear.gadget],
@@ -78,27 +81,6 @@ function EquipmentSelection({
 
   useEffect(() => {
     if (!character) return;
-
-    const savedRuntime = getJsonMemory(equipmentRuntimeKey);
-    const defaultGrenades = [2, 2];
-    const defaultMeds = [1, 2, 1];
-
-    if (savedRuntime) {
-      if (Array.isArray(savedRuntime.grenadeCounts) && savedRuntime.grenadeCounts.length === 2) {
-        setGrenadeCounts(savedRuntime.grenadeCounts);
-      } else {
-        setGrenadeCounts(defaultGrenades);
-      }
-
-      if (Array.isArray(savedRuntime.medCounts) && savedRuntime.medCounts.length === 3) {
-        setMedCounts(savedRuntime.medCounts);
-      } else {
-        setMedCounts(defaultMeds);
-      }
-    } else {
-      setGrenadeCounts(defaultGrenades);
-      setMedCounts(defaultMeds);
-    }
 
     const normalizedEquipment = {
       ...(character.equipment ?? {}),
@@ -117,9 +99,19 @@ function EquipmentSelection({
       grenades: Array.isArray(character.equipment?.grenades)
         ? character.equipment.grenades
         : ["", ""],
+      grenadeCounts:
+        Array.isArray(character.equipment?.grenadeCounts) &&
+        character.equipment.grenadeCounts.length === 2
+          ? character.equipment.grenadeCounts
+          : DEFAULT_GRENADE_COUNTS,
       gadget: character.equipment?.gadget ?? "",
       gadgetAmmo: character.equipment?.gadgetAmmo ?? {},
       armorClass: character.equipment?.armorClass ?? 0,
+      medCounts:
+        Array.isArray(character.equipment?.medCounts) &&
+        character.equipment.medCounts.length === 3
+          ? character.equipment.medCounts
+          : DEFAULT_MED_COUNTS,
       miscGear: character.equipment?.miscGear ?? "",
     };
 
@@ -228,20 +220,7 @@ function EquipmentSelection({
       setSecGadget(null);
     }
 
-    //Sets the grenades.
-    if (!getJsonMemory(equipmentRuntimeKey)) {
-      setGrenadeCounts([2, 2]);
-    }
-  }, [character, equipmentRuntimeKey]);
-
-  useEffect(() => {
-    if (!character || !charActive) return;
-
-    setJsonMemory(equipmentRuntimeKey, {
-      grenadeCounts,
-      medCounts,
-    });
-  }, [character, charActive, grenadeCounts, medCounts, equipmentRuntimeKey]);
+  }, [character]);
 
   const handleChange = (field, value) => {
     setGear((prev) => ({ ...prev, [field]: value }));
@@ -288,6 +267,28 @@ function EquipmentSelection({
    */
   const handleGadgetAmmoChange = (nextGadgetAmmo) => {
     const next = { ...gear, gadgetAmmo: nextGadgetAmmo };
+    setGear(next);
+    if (charActive) {
+      refreshCharacter({ equipment: next });
+    }
+  };
+
+  /**
+   * Same as above but for grenade throw counts.
+   */
+  const handleGrenadeCountsChange = (nextCounts) => {
+    const next = { ...gear, grenadeCounts: nextCounts };
+    setGear(next);
+    if (charActive) {
+      refreshCharacter({ equipment: next });
+    }
+  };
+
+  /**
+   * Same as above but for med (AFAK/IFAK/Painkiller) use counts.
+   */
+  const handleMedCountsChange = (nextCounts) => {
+    const next = { ...gear, medCounts: nextCounts };
     setGear(next);
     if (charActive) {
       refreshCharacter({ equipment: next });
@@ -408,7 +409,7 @@ function EquipmentSelection({
                         <div>
                           <div className="px-2 py-1 rounded bg-neutral-900 mb-2">
                             <span className="text-yellow-400">
-                              {grenadeCounts[i]} / 2
+                              {safeGrenadeCounts[i]} / 2
                             </span>{" "}
                             <span className="text-gray-400 italic">
                               remaining
@@ -416,26 +417,22 @@ function EquipmentSelection({
                           </div>
                           <div className="flex gap-1">
                             <button
-                              onClick={() =>
-                                setGrenadeCounts((prev) => {
-                                  const updated = [...prev];
-                                  updated[i] = Math.max(0, updated[i] - 1);
-                                  return updated;
-                                })
-                              }
-                              disabled={grenadeCounts[i] === 0}
+                              onClick={() => {
+                                const updated = [...safeGrenadeCounts];
+                                updated[i] = Math.max(0, updated[i] - 1);
+                                handleGrenadeCountsChange(updated);
+                              }}
+                              disabled={safeGrenadeCounts[i] === 0}
                               className="bg-orange-600 hover:bg-orange-700 text-white px-2 py-1 rounded disabled:opacity-40 text-xs"
                             >
                               Throw
                             </button>
                             <button
-                              onClick={() =>
-                                setGrenadeCounts((prev) => {
-                                  const updated = [...prev];
-                                  updated[i] = 2;
-                                  return updated;
-                                })
-                              }
+                              onClick={() => {
+                                const updated = [...safeGrenadeCounts];
+                                updated[i] = 2;
+                                handleGrenadeCountsChange(updated);
+                              }}
                               className="bg-green-700 hover:bg-green-800 text-white px-2 py-1 rounded text-xs"
                             >
                               Resupply
@@ -545,31 +542,27 @@ function EquipmentSelection({
                     <span className="font-semibold text-orange-300">{med}</span>
                   </p>
                   <p className="px-2 py-1 rounded bg-neutral-900 mb-2">
-                    <span className="text-yellow-400">{medCounts[i]}</span>{" "}
+                    <span className="text-yellow-400">{safeMedCounts[i]}</span>{" "}
                     <span className="text-gray-400 italic">remaining</span>
                   </p>
                   <div className="flex gap-1">
                     <button
-                      onClick={() =>
-                        setMedCounts((prev) => {
-                          const updated = [...prev];
-                          updated[i] = Math.max(0, updated[i] - 1);
-                          return updated;
-                        })
-                      }
-                      disabled={medCounts[i] === 0}
+                      onClick={() => {
+                        const updated = [...safeMedCounts];
+                        updated[i] = Math.max(0, updated[i] - 1);
+                        handleMedCountsChange(updated);
+                      }}
+                      disabled={safeMedCounts[i] === 0}
                       className="bg-orange-600 hover:bg-orange-700 text-white px-2 py-1 rounded disabled:opacity-40 text-xs"
                     >
                       Use
                     </button>
                     <button
-                      onClick={() =>
-                        setMedCounts((prev) => {
-                          const updated = [...prev];
-                          updated[i] = i === 1 ? 2 : 1; // default: AFAK = 2, others = 1
-                          return updated;
-                        })
-                      }
+                      onClick={() => {
+                        const updated = [...safeMedCounts];
+                        updated[i] = i === 1 ? 2 : 1; // default: AFAK = 2, others = 1
+                        handleMedCountsChange(updated);
+                      }}
                       className="bg-green-700 hover:bg-green-800 text-white px-2 py-1 rounded text-xs"
                     >
                       Resupply

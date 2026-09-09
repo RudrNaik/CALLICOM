@@ -110,6 +110,26 @@ const CharCreator = ({ formData, setFormData, onNext }) => {
               <p className="text-red-400 text-sm mt-1">Required</p>
             )}
           </div>
+
+          <div>
+            <p className="text-sm text-orange-400/80"> LC-218-E // Starting Cash</p>
+            <input
+              type="number"
+              min={0}
+              placeholder="Starting Cash"
+              value={formData.metadata?.starting_cash ?? 0}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  metadata: {
+                    ...formData.metadata,
+                    starting_cash: Number(e.target.value) || 0,
+                  },
+                })
+              }
+              className="input-style border-orange-400"
+            />
+          </div>
         </div>
       </div>
 

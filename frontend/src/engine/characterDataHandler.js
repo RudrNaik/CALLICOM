@@ -52,6 +52,39 @@ export const normalizeCharacterAttributes = (value) => {
   return normalized;
 };
 
+/**
+ * Normalizes a character's identity fields to the current shape:
+ * `uniqueId` lives on the character itself, `userId`/`starting_cash` live in
+ * `metadata`. Also migrates older shapes seen in already-stored data: a
+ * fully flat legacy shape (userId/uniqueId/starting_cash all top-level) and
+ * an intermediate shape where uniqueId was nested inside metadata too.
+ */
+export const normalizeCharacterMetadata = (value) => {
+  if (!isRecord(value)) return value;
+
+  const nestedMetadata = isRecord(value.metadata) ? value.metadata : {};
+  const hasIdentityFields =
+    value.userId !== undefined ||
+    value.uniqueId !== undefined ||
+    value.starting_cash !== undefined ||
+    isRecord(value.metadata);
+
+  if (!hasIdentityFields) return value;
+
+  const { userId, uniqueId, starting_cash, metadata: _metadata, ...rest } = value;
+  const { userId: nestedUserId, uniqueId: nestedUniqueId, starting_cash: nestedStartingCash, ...restMetadata } = nestedMetadata;
+
+  return {
+    ...rest,
+    uniqueId: uniqueId ?? nestedUniqueId ?? "",
+    metadata: {
+      ...restMetadata,
+      userId: nestedUserId ?? userId ?? "",
+      starting_cash: unwrapNumberLike(nestedStartingCash ?? starting_cash) ?? 0,
+    },
+  };
+};
+
 export const normalizeValue = (value) => {
   if (Array.isArray(value)) {
     return value.map(normalizeValue);
@@ -71,7 +104,7 @@ export const normalizeValue = (value) => {
       normalizedRecord.attributes = normalizeCharacterAttributes(normalizedRecord.attributes);
     }
 
-    return normalizedRecord;
+    return normalizeCharacterMetadata(normalizedRecord);
   }
 
   return unwrapNumberLike(value) ?? value;
@@ -142,7 +175,7 @@ export const isCharacter = (value) => {
     value.deepWounds === undefined || isNumberLike(value.deepWounds);
 
   return (
-    typeof value.userId === "string" &&
+    typeof value.metadata?.userId === "string" &&
     typeof value.name === "string" &&
     typeof value.callsign === "string" &&
     typeof value.background === "string" &&
