@@ -3,7 +3,6 @@ import skillGroups from "../../data/skills.json";
 import {
   getSkillUpgradeCost,
   ATTR_EXP_COST,
-  upgradeAttribute,
 } from "../../engine/characterEngine";
 import Edice from "./CharDetailComponents/EDice";
 import SpecModal from "./CharDetailComponents/SpecModal";
@@ -36,28 +35,23 @@ const emptyBiography = Object.fromEntries(
 );
 
 function CharacterDetail({ character, onUpdate, user, equipment }) {
-  if (!character) return null;
-
   const [isEditing, setIsEditing] = useState(false);
   const [isEditingBio, setIsEditingBio] = useState(false);
   const [isEditingEquipment, setIsEditingEquipment] = useState(false);
-  const [xpRemaining, setXpRemaining] = useState(character.XP || 0);
-  const [editedSkills, setEditedSkills] = useState({ ...character.skills });
-  const [emergencyDice, setEmergencyDice] = useState(character.emergencyDice || 0);
-  const [originalEmergencyDice, setOriginalEmergencyDice] = useState(character.emergencyDice || 0);
-  const [specializations, setSpecializations] = useState([...character.specializations]);
+  const [xpRemaining, setXpRemaining] = useState(character?.XP || 0);
+  const [editedSkills, setEditedSkills] = useState({ ...character?.skills });
+  const [emergencyDice, setEmergencyDice] = useState(character?.emergencyDice || 0);
+  const [originalEmergencyDice, setOriginalEmergencyDice] = useState(character?.emergencyDice || 0);
+  const [specializations, setSpecializations] = useState([...(character?.specializations || [])]);
   const [showSpecModal, setShowSpecModal] = useState(false);
-  const [showXpInput, setShowXpInput] = useState(false);
-  const [xpToAdd, setXpToAdd] = useState("");
-  const [campaignInput, setCampaignInput] = useState(character.campaignId || "");
+  const [campaignInput, setCampaignInput] = useState(character?.campaignId || "");
   const [charActive, setCharActive] = useState(false);
-  const [isEditingAttr, setEditAttr] = useState(false);
-  const [multiClass, setMulticlass] = useState(character.multiClass || "");
+  const [multiClass, setMulticlass] = useState(character?.multiClass || "");
   const [showMultiClassModal, setShowMultiClassModal] = useState(false);
   const [Biography, setBio] = useState("");
-  const [attributes, setAttributes] = useState({ ...character.attributes });
+  const [attributes, setAttributes] = useState({ ...character?.attributes });
 
-  const characterKey = character._id || character.uniqueId || character.callsign;
+  const characterKey = character?._id || character?.uniqueId || character?.callsign;
 
   useEffect(() => {
     if (character) {
@@ -193,8 +187,6 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
     };
 
     setXpRemaining((prev) => prev + amount);
-    setXpToAdd("");
-    setShowXpInput(false);
     onUpdate(updates);
   };
 
@@ -260,7 +252,6 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
     setAttributes(nextAttributes);
     setXpRemaining(newXP);
     onUpdate?.({ XP: newXP, attributes: nextAttributes });
-    setEditAttr(false);
   };
 
   /**
@@ -282,6 +273,8 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
     onUpdate(updates);
   };
 
+  if (!character) return null;
+
   return (
     <div
       className="mx-auto p-6 space-y-3 text-white"
@@ -294,152 +287,9 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
         {character.class} {character.multiClass}
       </h2>
 
-      <div className="relative inline-block group">
-        <h2 className="text-2xl font-bold text-orange-400 mt-4 mb-0">
-          Attributes{" "}
-          <span className="text-xs font-light text-neutral-400">[?]</span>
-        </h2>
-
-        {/* Tooltip modal */}
-        <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-0">
-          <p>
-            Attributes determine your{" "}
-            <span className="text-orange-500 font-bold">
-              wound thresholds, system shock,
-            </span>{" "}
-            and other critical attributes of your character via{" "}
-            <span className="text-orange-500 font-bold">
-              derived attributes
-            </span>
-            .
-          </p>
-        </div>
-      </div>
-      <AttributeView
-        attributes={attributes}
-        xp={xpRemaining}
-        isEditing={isEditingAttr}
-        onBuy={patchAttribute}
-      />
-
-      <DerivedStats
-        character={character}
-        userId={user}
-        refreshCharacter={onUpdate}
-      />
-
-      {/* Gear */}
-      <div className="relative inline-block group">
-        <h2 className="text-2xl font-bold text-orange-400 mt-4">
-          Equipment{" "}
-          <span className="text-xs font-light text-neutral-400">[?]</span>
-        </h2>
-
-        {/* Tooltip modal */}
-        <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-1">
-          <p>
-            Your equipment determines the gear that you bring into a mission.
-            You can choose a{" "}
-            <span className="text-orange-500 font-bold">primary</span>, a{" "}
-            <span className="text-orange-500 font-bold">secondary</span>, 2
-            types of <span className="text-orange-500 font-bold">grenades</span>
-            , and then your{" "}
-            <span className="text-orange-500 font-bold">armor</span> and{" "}
-            <span className="text-orange-500 font-bold">gadget</span>.
-          </p>
-        </div>
-      </div>
-      <EquipmentSelection
-        character={character}
-        isEditing={isEditingEquipment}
-        userId={user}
-        refreshCharacter={onUpdate}
-        setIsEditing={setIsEditingEquipment}
-        charActive={charActive}
-        campEquipment={equipment} //Know that this only applies to Siberia2022 atm. Any character not assigned to that campaign does not have the restrictions.
-      />
-
-      <div className="mt-2">
-        {!isEditingEquipment && (
-          <button
-            onClick={() => setIsEditingEquipment(true)}
-            className="bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded cursor-pointer"
-          >
-            Edit Equipment
-          </button>
-        )}
-
-        <button
-          onClick={() => setCharActive((prev) => !prev)}
-          className={`px-4 py-2 rounded ml-2 cursor-pointer ${
-            charActive
-              ? "bg-red-700 hover:bg-red-800"
-              : "bg-orange-600 hover:bg-orange-800"
-          }`}
-        >
-          {charActive ? "Set Inactive" : "Set Active"}
-        </button>
-      </div>
-
-      <h2 className=""></h2>
-      {/*Stats*/}
-
-      <Collapsible
-        title={"Stats"}
-        color={"orange-400"}
-        autoOpen={true}
-        headerSize={"2xl"}
-      >
-        {/* Attributes */}
+      <div className="grid md:grid-cols-2 gap-6">
+        {/* Left column: Attributes / Skills / Specializations */}
         <div>
-          <h2 className="text-xl font-bold text-orange-400 mt-2 mb-1">
-            Attributes{" "}
-          </h2>
-          <AttributeView
-            attributes={attributes}
-            xp={xpRemaining}
-            isEditing={isEditingAttr}
-            onBuy={patchAttribute}
-          />
-          <div className="mt-2">
-            {xpRemaining >= 40 && (
-              <button
-                onClick={() => setEditAttr((prev) => !prev)}
-                className={`px-2 py-1 text-xs rounded ${
-                  isEditingAttr
-                    ? "bg-red-700 hover:bg-red-800"
-                    : "bg-orange-600 hover:bg-orange-600"
-                }`}
-              >
-                {isEditingAttr ? "Cancel" : "Edit Attributes"}
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* Skills */}
-        <div className="mt-4">
-          <div className="relative inline-block group">
-            <h2 className="text-xl font-bold text-orange-400 mt-2 mb-1">
-              Skills{" "}
-              <span className="text-xs font-light text-neutral-400">[?]</span>
-            </h2>
-
-            {/* Tooltip modal */}
-            <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-1">
-              <p>
-                Skills determine the amount of dice you{" "}
-                <span className="text-orange-500 font-bold">roll</span> during a{" "}
-                <span className="text-orange-500 font-bold">check</span>. the
-                higher the level, the more dice you roll.
-              </p>
-              <p className="text-neutral-500 text-xs">
-                IE: 0 in a skill is 2d6l, 1 in a skill is 1d6, 2 is 2d6l and so
-                on for a max of 4 levels in a skill.
-              </p>
-            </div>
-          </div>
-
           {!isEditing ? (
             <XpControls
               xpRemaining={xpRemaining}
@@ -449,8 +299,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
               patchMulticlass={patchMulticlass}
             />
           ) : (
-            <div className="mt-0 flex items-center space-x-2">
-              <br></br>
+            <div className="flex items-center space-x-2">
               <button
                 onClick={handleSaveChanges}
                 className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded"
@@ -478,95 +327,204 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
             />
           )}
 
-          <div className="mt-4"></div>
+          <div className="relative inline-block group">
+            <h2 className="text-2xl font-bold text-orange-400 mt-4 mb-0">
+              Attributes{" "}
+              <span className="text-xs font-light text-neutral-400">[?]</span>
+            </h2>
 
-          <SkillsView
-            skillGroups={skillGroups}
+            {/* Tooltip modal */}
+            <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-0">
+              <p>
+                Attributes determine your{" "}
+                <span className="text-orange-500 font-bold">
+                  wound thresholds, system shock,
+                </span>{" "}
+                and other critical attributes of your character via{" "}
+                <span className="text-orange-500 font-bold">
+                  derived attributes
+                </span>
+                .
+              </p>
+            </div>
+          </div>
+          <AttributeView
+            attributes={attributes}
+            xp={xpRemaining}
             isEditing={isEditing}
-            editedSkills={editedSkills}
-            character={character}
-            increaseSkill={increaseSkill}
-            decreaseSkill={decreaseSkill}
+            onBuy={patchAttribute}
           />
+
+          <DerivedStats
+            character={character}
+            userId={user}
+            refreshCharacter={onUpdate}
+          />
+
+          {/* Skills */}
+          <div className="mt-4">
+            <div className="relative inline-block group">
+              <h2 className="text-xl font-bold text-orange-400 mt-2 mb-1">
+                Skills{" "}
+                <span className="text-xs font-light text-neutral-400">[?]</span>
+              </h2>
+
+              {/* Tooltip modal */}
+              <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-1">
+                <p>
+                  Skills determine the amount of dice you{" "}
+                  <span className="text-orange-500 font-bold">roll</span> during a{" "}
+                  <span className="text-orange-500 font-bold">check</span>. the
+                  higher the level, the more dice you roll.
+                </p>
+                <p className="text-neutral-500 text-xs">
+                  IE: 0 in a skill is 2d6l, 1 in a skill is 1d6, 2 is 2d6l and so
+                  on for a max of 4 levels in a skill.
+                </p>
+              </div>
+            </div>
+
+            <SkillsView
+              skillGroups={skillGroups}
+              isEditing={isEditing}
+              editedSkills={editedSkills}
+              character={character}
+              increaseSkill={increaseSkill}
+              decreaseSkill={decreaseSkill}
+            />
+          </div>
+
+          {/* Specializations */}
+          <div className="mt-4">
+            <div className="relative inline-block group">
+              <h2 className="text-xl font-bold text-orange-400">
+                Specializations{" "}
+                <span className="text-xs font-light text-neutral-400">[?]</span>
+              </h2>
+
+              {/* Tooltip modal */}
+              <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-1">
+                <p>
+                  Specialiations provide a{" "}
+                  <span className="text-orange-500 font-bold">+1</span> to rolls
+                  when conditions are met. For example, a specialization in
+                  Carbines provides a +1 when rolling to attack with a Carbine.
+                </p>
+              </div>
+            </div>
+
+            {specializations.length > 0 && (
+              <SpecView
+                specializations={specializations}
+                isEditing={isEditing}
+                removeSpec={removeSpecialization}
+              />
+            )}
+
+            {isEditing && xpRemaining >= 5 && (
+              <div className="mt-4">
+                <button
+                  onClick={() => setShowSpecModal(true)}
+                  className="bg-orange-600 hover:bg-orange-700 px-4 py-1 rounded"
+                >
+                  + Add Specialization (−5 XP)
+                </button>
+              </div>
+            )}
+
+            {showSpecModal && (
+              <SpecModal
+                editedSkills={editedSkills}
+                specializations={specializations}
+                xpRemaining={xpRemaining}
+                setSpecializations={setSpecializations}
+                setXpRemaining={setXpRemaining}
+                setShowSpecModal={setShowSpecModal}
+              />
+            )}
+          </div>
+
+          <Edice
+            isEditing={isEditing}
+            emergencyDice={emergencyDice}
+            charEmergencyDice={character.emergencyDice}
+            removeEmergencyDie={removeEmergencyDie}
+            addEmergencyDie={addEmergencyDie}
+          />
+
+          <div className="mt-4">
+          {/* expcalctesting */}
+          <Collapsible
+            title={"EXP Spent"}
+            color={"orange-400"}
+            autoOpen={false}
+            headerSize={"xl"}
+            bottomMargin={false}
+          >
+            <ExpAddedCalc
+              character={character}
+              userId={user}
+              refreshCharacter={onUpdate}
+            />
+          </Collapsible>
+          </div>
         </div>
 
-        {/* Specializations */}
-        <div className="mt-4">
+        {/* Right column: Equipment */}
+        <div className="md:border-l md:border-orange-500/40 md:pl-6">
+          <div className="mb-2">
+            {!isEditingEquipment && (
+              <button
+                onClick={() => setIsEditingEquipment(true)}
+                className="bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded cursor-pointer"
+              >
+                Edit Equipment
+              </button>
+            )}
+
+            <button
+              onClick={() => setCharActive((prev) => !prev)}
+              className={`px-4 py-2 rounded ml-2 cursor-pointer ${
+                charActive
+                  ? "bg-red-700 hover:bg-red-800"
+                  : "bg-orange-600 hover:bg-orange-800"
+              }`}
+            >
+              {charActive ? "Set Inactive" : "Set Active"}
+            </button>
+          </div>
+
           <div className="relative inline-block group">
-            <h2 className="text-xl font-bold text-orange-400">
-              Specializations{" "}
+            <h2 className="text-2xl font-bold text-orange-400 mt-4">
+              Equipment{" "}
               <span className="text-xs font-light text-neutral-400">[?]</span>
             </h2>
 
             {/* Tooltip modal */}
             <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-1">
               <p>
-                Specialiations provide a{" "}
-                <span className="text-orange-500 font-bold">+1</span> to rolls
-                when conditions are met. For example, a specialization in
-                Carbines provides a +1 when rolling to attack with a Carbine.
+                Your equipment determines the gear that you bring into a mission.
+                You can choose a{" "}
+                <span className="text-orange-500 font-bold">primary</span>, a{" "}
+                <span className="text-orange-500 font-bold">secondary</span>, 2
+                types of <span className="text-orange-500 font-bold">grenades</span>
+                , and then your{" "}
+                <span className="text-orange-500 font-bold">armor</span> and{" "}
+                <span className="text-orange-500 font-bold">gadget</span>.
               </p>
             </div>
           </div>
-
-          {specializations.length > 0 && (
-            <SpecView
-              specializations={specializations}
-              isEditing={isEditing}
-              removeSpec={removeSpecialization}
-            />
-          )}
-
-          {isEditing && xpRemaining >= 5 && (
-            <div className="mt-4">
-              <button
-                onClick={() => setShowSpecModal(true)}
-                className="bg-orange-600 hover:bg-orange-700 px-4 py-1 rounded"
-              >
-                + Add Specialization (−5 XP)
-              </button>
-            </div>
-          )}
-
-          {showSpecModal && (
-            <SpecModal
-              editedSkills={editedSkills}
-              specializations={specializations}
-              xpRemaining={xpRemaining}
-              setSpecializations={setSpecializations}
-              setXpRemaining={setXpRemaining}
-              setShowSpecModal={setShowSpecModal}
-            />
-          )}
-        </div>
-
-        <Edice
-          isEditing={isEditing}
-          emergencyDice={emergencyDice}
-          charEmergencyDice={character.emergencyDice}
-          removeEmergencyDie={removeEmergencyDie}
-          addEmergencyDie={addEmergencyDie}
-        />
-
-        <div className="mt-4">
-        {/* expcalctesting */}
-        <Collapsible
-          title={"EXP Spent"}
-          color={"orange-400"}
-          autoOpen={false}
-          headerSize={"xl"}
-          bottomMargin={false}
-        >
-          <ExpAddedCalc
+          <EquipmentSelection
             character={character}
+            isEditing={isEditingEquipment}
             userId={user}
             refreshCharacter={onUpdate}
+            setIsEditing={setIsEditingEquipment}
+            charActive={charActive}
+            campEquipment={equipment} //Know that this only applies to Siberia2022 atm. Any character not assigned to that campaign does not have the restrictions.
           />
-        </Collapsible>
         </div>
-        
-      </Collapsible>
-      
+      </div>
 
       {/* Calculator */}
       <Collapsible

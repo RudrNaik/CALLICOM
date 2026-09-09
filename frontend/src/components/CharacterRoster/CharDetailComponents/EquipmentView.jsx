@@ -5,7 +5,6 @@ import WeaponSlot from "./WeaponCards";
 import GadgetAmmo from "./GadgetAmmo";
 import {
   getGadgetAmmoConfig,
-  getGadgetAmmoMax,
   getWeaponCategoriesLookup,
 } from "../../../engine/equipmentEngine";
 
@@ -56,7 +55,7 @@ function EquipmentSelection({
     });
 
     return m;
-  });
+  }, [campEquipment]);
 
   const [gear, setGear] = useState(defaultGear);
 
@@ -225,22 +224,17 @@ function EquipmentSelection({
       setSecGadget(null);
     }
 
-  }, [character]);
+  }, [character, campEquipment, weaponCatsLookup]);
 
   const handleChange = (field, value) => {
     setGear((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleGadgetChange = (nextGadgetId) => {
-    const nextConfig = equipmentData.find((item) => item.id === nextGadgetId) || null;
-    const isMixed = !!nextConfig?.options?.length;
-    const inferredMax = nextConfig ? getGadgetAmmoMax(nextConfig) : 0;
-    const nextAmmo = {};
-
     setGear((prev) => ({
       ...prev,
       gadget: nextGadgetId,
-      gadgetAmmo: nextAmmo,
+      gadgetAmmo: {},
     }));
   };
 
@@ -333,9 +327,9 @@ function EquipmentSelection({
 
   return (
     <div className=" text-white" style={{ fontFamily: "Geist_Mono" }}>
-      <div className="grid grid-cols-2 gap-2">
+      <div className="flex flex-col gap-2">
         {/* Weapons */}
-        <div className=" col-span-2 lg:col-span-1">
+        <div>
           <WeaponSlot
             slot="primaryWeapon"
             weapon={gear["primaryWeapon"]}
@@ -348,7 +342,7 @@ function EquipmentSelection({
           />
         </div>
 
-        <div className="col-span-2 lg:col-span-1">
+        <div>
           <WeaponSlot
             slot="secondaryWeapon"
             weapon={gear["secondaryWeapon"]}
@@ -363,7 +357,7 @@ function EquipmentSelection({
         </div>
 
         {/* Grenades */}
-        <div className="col-span-2 lg:col-span-1 bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-6 rounded shadow">
+        <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-6 rounded shadow">
           <h3 className="font-semibold text-orange-300">Grenades</h3>
 
           {isEditing ? (
@@ -454,7 +448,7 @@ function EquipmentSelection({
         </div>
 
         {/* Armor Class */}
-        <div className="col-span-2 lg:col-span-1 bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-6 rounded shadow">
+        <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-6 rounded shadow">
           <h3 className="font-semibold text-orange-300">Armor Class</h3>
           {isEditing ? (
             <div>
@@ -584,7 +578,7 @@ function EquipmentSelection({
         </div>
 
         {/* Gadget */}
-        <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-6 rounded shadow col-span-2 lg:col-span-full">
+        <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-6 rounded shadow">
           <h3 className="font-semibold text-orange-300">Class Gadget</h3>
           {isEditing ? (
             <select
@@ -657,7 +651,7 @@ function EquipmentSelection({
         </div>
 
         {/* inventory */}
-        <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-6 rounded shadow col-span-2 lg:col-span-full">
+        <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-6 rounded shadow">
           <h3 className="font-semibold text-orange-300">Inventory</h3>
           {isEditing ? (
             <textarea
