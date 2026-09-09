@@ -1,17 +1,10 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import "../../../assets/css/ammoBlur.css";
 import {
   applyModifiers,
   getModifiedWeaponStats,
   getAbilitiesFromFamily,
 } from "../../../engine/equipmentEngine";
-import {
-  getMemory,
-  setMemory,
-  getJsonMemory,
-  setJsonMemory,
-  getWeaponAmmoKey,
-} from "../../../engine/memoryEngine";
 
 const WeaponSlot = ({
   slot,
@@ -19,15 +12,12 @@ const WeaponSlot = ({
   isEditing,
   weaponCategories,
   handleWeaponChange,
+  onAmmoChange,
   characterCallsign,
   charActive,
   isSecondary,
 }) => {
   const categoryData = weaponCategories[weapon?.category];
-  const localStorageKey = useMemo(
-    () => getWeaponAmmoKey(characterCallsign, slot),
-    [characterCallsign, slot],
-  );
 
   const [firedThisMag, setFiredThisMag] = useState(0);
   const [totalFired, setTotalFired] = useState(0);
@@ -48,7 +38,7 @@ const WeaponSlot = ({
     "Machine Guns": 100,
   };
 
-  // Load from localStorage on weapon load
+  // Load ammo from the character's weapon slot on weapon load
   useEffect(() => {
     const initial = pseudoMagSizes[weapon?.category] || null;
     setPseudoAmmo(initial);
@@ -61,30 +51,17 @@ const WeaponSlot = ({
       setSelectedFamily(null);
     }
 
-    const saved = getJsonMemory(localStorageKey);
-    if (saved) {
-      try {
-        const { firedThisMag, totalFired, pseudoAmmo } = saved;
-        setFiredThisMag(firedThisMag ?? 0);
-        setTotalFired(totalFired ?? 0);
-        setPseudoAmmo(pseudoAmmo ?? initial);
-        setDisplayedAmmo(pseudoAmmo ?? initial);
-      } catch (e) {
-        console.error("Ammo state parse error:", e);
-      }
+    if (weapon?.ammo) {
+      const { firedThisMag, totalFired, pseudoAmmo } = weapon.ammo;
+      setFiredThisMag(firedThisMag ?? 0);
+      setTotalFired(totalFired ?? 0);
+      setPseudoAmmo(pseudoAmmo ?? initial);
+      setDisplayedAmmo(pseudoAmmo ?? initial);
     } else {
       setFiredThisMag(0);
       setTotalFired(0);
     }
-  }, [weapon?.category, weapon?.family, localStorageKey]);
-
-  // Save ammo to localStorage
-  useEffect(() => {
-    if (!charActive) return;
-
-    const ammoState = { firedThisMag, totalFired, pseudoAmmo };
-    setJsonMemory(localStorageKey, ammoState);
-  }, [firedThisMag, totalFired, pseudoAmmo, charActive, localStorageKey]);
+  }, [weapon?.category, weapon?.family, characterCallsign, slot]);
 
   // Sync family selection to Equipment View
   useEffect(() => {
@@ -151,13 +128,21 @@ const WeaponSlot = ({
   const turnsRemaining = totalTurns - totalFired;
   const magTurnsLeft = Math.max(0, magazineSize - firedThisMag);
 
+  const pushAmmo = (next) => {
+    if (!charActive) return;
+    onAmmoChange?.(slot, next);
+  };
+
   const handleFire = () => {
     if (isAnimating) return;
 
     if (turnsRemaining > 0 && magTurnsLeft > 0) {
-      setFiredThisMag((prev) => prev + 1);
-      setTotalFired((prev) => prev + 1);
+      const nextFiredThisMag = firedThisMag + 1;
+      const nextTotalFired = totalFired + 1;
+      setFiredThisMag(nextFiredThisMag);
+      setTotalFired(nextTotalFired);
 
+      let nextPseudoAmmo = pseudoAmmo;
       if (pseudoAmmo !== null) {
         const fullRounds = pseudoMagSizes[weapon?.category] || 1;
         let reduction = 1;
@@ -169,38 +154,57 @@ const WeaponSlot = ({
           );
         }
 
-        setPseudoAmmo((prev) =>
-          firedThisMag + 1 >= magazineSize ? 0 : Math.max(0, prev - reduction),
-        );
+        nextPseudoAmmo =
+          nextFiredThisMag >= magazineSize
+            ? 0
+            : Math.max(0, pseudoAmmo - reduction);
+        setPseudoAmmo(nextPseudoAmmo);
       }
+
+      pushAmmo({
+        firedThisMag: nextFiredThisMag,
+        totalFired: nextTotalFired,
+        pseudoAmmo: nextPseudoAmmo,
+      });
     }
   };
 
   const handleResupply = () => {
+    const nextPseudoAmmo = pseudoMagSizes[weapon?.category] || null;
     setFiredThisMag(0);
     setTotalFired(0);
-    setPseudoAmmo(pseudoMagSizes[weapon?.category] || null);
+    setPseudoAmmo(nextPseudoAmmo);
+
+    pushAmmo({ firedThisMag: 0, totalFired: 0, pseudoAmmo: nextPseudoAmmo });
   };
 
   const handleReload = () => {
     const refillTurns = Math.min(magazineSize, turnsRemaining);
-    setFiredThisMag(magazineSize - refillTurns);
+    const nextFiredThisMag = magazineSize - refillTurns;
+    setFiredThisMag(nextFiredThisMag);
 
     const fullRounds = pseudoMagSizes[weapon?.category] || 0;
+    let nextPseudoAmmo;
     if (refillTurns === magazineSize) {
-      setPseudoAmmo(fullRounds);
+      nextPseudoAmmo = fullRounds;
     } else {
       const ratio = refillTurns / magazineSize;
       const estimatedRounds = Math.floor(fullRounds * ratio);
       const variance = Math.floor(estimatedRounds * 0.1);
-      const randomized = Math.max(
+      nextPseudoAmmo = Math.max(
         0,
         estimatedRounds +
           Math.floor(Math.random() * (2 * variance + 1)) -
           variance,
       );
-      setPseudoAmmo(randomized);
     }
+    setPseudoAmmo(nextPseudoAmmo);
+
+    pushAmmo({
+      firedThisMag: nextFiredThisMag,
+      totalFired,
+      pseudoAmmo: nextPseudoAmmo,
+    });
   };
 
   return (

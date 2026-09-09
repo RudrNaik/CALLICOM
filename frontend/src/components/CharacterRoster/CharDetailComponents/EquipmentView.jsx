@@ -267,6 +267,33 @@ function EquipmentSelection({
     }));
   };
 
+  /**
+   * Live ammo changes (firing/reloading during a mission) write straight
+   * through to the character so equipment.<slot>.ammo is the single source
+   * of truth, instead of a parallel localStorage entry.
+   */
+  const handleWeaponAmmoChange = (slot, ammoState) => {
+    const next = {
+      ...gear,
+      [slot]: { ...gear[slot], ammo: ammoState },
+    };
+    setGear(next);
+    if (charActive) {
+      refreshCharacter({ equipment: next });
+    }
+  };
+
+  /**
+   * Same as above but for gadget ammo/charges.
+   */
+  const handleGadgetAmmoChange = (nextGadgetAmmo) => {
+    const next = { ...gear, gadgetAmmo: nextGadgetAmmo };
+    setGear(next);
+    if (charActive) {
+      refreshCharacter({ equipment: next });
+    }
+  };
+
   const handleGrenadeChange = (index, value) => {
     setGear((prev) => {
       const updated = [...prev.grenades];
@@ -309,6 +336,7 @@ function EquipmentSelection({
             isEditing={isEditing}
             weaponCategories={primaryOptions}
             handleWeaponChange={handleWeaponChange}
+            onAmmoChange={handleWeaponAmmoChange}
             characterCallsign={character.callsign}
             charActive={charActive}
           />
@@ -321,6 +349,7 @@ function EquipmentSelection({
             isEditing={isEditing}
             weaponCategories={secondaryOptions}
             handleWeaponChange={handleWeaponChange}
+            onAmmoChange={handleWeaponAmmoChange}
             characterCallsign={character.callsign}
             charActive={charActive}
             isSecondary={true}
@@ -600,7 +629,7 @@ function EquipmentSelection({
               isActive={charActive}
               gadgetId={gear.gadget}
               gadgetAmmo={gear.gadgetAmmo || {}}
-              setGadgetAmmo={(next) => handleChange("gadgetAmmo", next)}
+              setGadgetAmmo={handleGadgetAmmoChange}
               itemById={itemById}
               charClass={character.class}
               characterCallsign={character.callsign}

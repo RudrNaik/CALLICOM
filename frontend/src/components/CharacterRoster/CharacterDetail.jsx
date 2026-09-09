@@ -57,6 +57,8 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
   const [Biography, setBio] = useState("");
   const [attributes, setAttributes] = useState({ ...character.attributes });
 
+  const characterKey = character._id || character.uniqueId || character.callsign;
+
   useEffect(() => {
     if (character) {
       setSpecializations([...character.specializations]);
@@ -67,7 +69,6 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
       setOriginalEmergencyDice(character.emergencyDice || 0);
       setCampaignInput(character.campaignId || "");
       setMulticlass(character.multiClass || "");
-      setCharActive(false);
       setBio(
         character?.Bio && typeof character.Bio === "object"
           ? { ...emptyBiography, ...character.Bio }
@@ -75,6 +76,13 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
       );
     }
   }, [character]);
+
+  // Only reset "active" (mission) state when switching to a different
+  // character, not on every in-place refresh of the same one (e.g. a
+  // live ammo update writing back to the character object).
+  useEffect(() => {
+    setCharActive(false);
+  }, [characterKey]);
 
   /**
    * Handles the upgrade cost in terms of EXP needed between levels. You can only level up by being at the previous level, you cant jump from 1 to 4 without being at 2 or 3 along the way.

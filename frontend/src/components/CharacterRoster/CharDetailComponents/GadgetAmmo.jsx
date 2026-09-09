@@ -1,5 +1,5 @@
 // src/components/GadgetAmmo.jsx
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo } from "react";
 import {
   MIXED_GADGETS,
   EX_KEY,
@@ -19,13 +19,6 @@ import {
   resupplyExpendableGadget,
   hasExplicitGadgetAmmo,
 } from "../../../engine/equipmentEngine";
-import {
-  getMemory,
-  setMemory,
-  getJsonMemory,
-  setJsonMemory,
-  getGadgetAmmoKey,
-} from "../../../engine/memoryEngine";
 
 export default function GadgetAmmo({
   isEditing,
@@ -83,62 +76,15 @@ export default function GadgetAmmo({
     [config, gadgetId, isExpendable, effectiveMax]
   );
 
-  const localStorageKey = useMemo(
-    () => getGadgetAmmoKey(characterCallsign, gadgetId),
-    [characterCallsign, gadgetId],
-  );
-  const hasLoadedStorage = useRef(false);
-  const skipSaveAfterLoad = useRef(false);
-
   /**
-   * Load new data from localstorage as needed.
+   * Re-sanitize the ammo state stored on the character whenever the gadget
+   * selection (or what counts as its pool shape) changes.
    */
   useEffect(() => {
-    hasLoadedStorage.current = false;
-
-    try {
-      const raw = getMemory(localStorageKey);
-      const parsed = raw ? getJsonMemory(localStorageKey) : null;
-
-      const initial = getInitialGadgetAmmo(
-        gadgetId,
-        charClass,
-        config,
-        parsed,
-        gadgetAmmo
-      );
-
-      if (raw) {
-        skipSaveAfterLoad.current = true;
-      }
-
-      setGadgetAmmo(initial);
-      hasLoadedStorage.current = true;
-    } catch (e) {
-      console.error("GadgetAmmo parse error:", e);
-      setGadgetAmmo(getInitialGadgetAmmo(gadgetId, charClass, config, null, {}));
-      hasLoadedStorage.current = true;
-    }
+    const initial = getInitialGadgetAmmo(gadgetId, charClass, config, gadgetAmmo);
+    setGadgetAmmo(initial);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [localStorageKey, isMixed, isExpendable, effectiveMax]);
-
-  /**
-   * if the ammo changes, save to localstorage.
-   */
-  useEffect(() => {
-    try {
-      if (!hasLoadedStorage.current) return;
-      if (skipSaveAfterLoad.current) {
-        skipSaveAfterLoad.current = false;
-        return;
-      }
-      const clean = sanitize(gadgetAmmo || {});
-      setJsonMemory(localStorageKey, clean);
-    } catch (e) {
-      console.error("GadgetAmmo save error:", e);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gadgetAmmo, isActive, localStorageKey, effectiveMax]);
+  }, [gadgetId, characterCallsign, isMixed, isExpendable, effectiveMax]);
 
   /**
    * get rid of unknown keys when the weapon selection changes.
@@ -159,9 +105,6 @@ export default function GadgetAmmo({
     if (!next) return;
 
     setGadgetAmmo(next);
-    try {
-      setJsonMemory(localStorageKey, sanitize(next));
-    } catch {}
   };
 
   // ------- Render -------
@@ -308,9 +251,6 @@ export default function GadgetAmmo({
                   const next = useExpendableGadget(gadgetAmmo, effectiveMax);
                   if (!next) return;
                   setGadgetAmmo(next);
-                  try {
-                    setJsonMemory(localStorageKey, sanitize(next));
-                  } catch {}
                 }}
                 disabled={
                   !isActive ||
@@ -327,9 +267,6 @@ export default function GadgetAmmo({
                 onClick={() => {
                   const next = resupplyExpendableGadget(gadgetAmmo, effectiveMax);
                   setGadgetAmmo(next);
-                  try {
-                    setJsonMemory(localStorageKey, sanitize(next));
-                  } catch {}
                 }}
                 className="bg-green-700 hover:bg-green-800 text-white px-3 py-1 rounded text-sm"
               >

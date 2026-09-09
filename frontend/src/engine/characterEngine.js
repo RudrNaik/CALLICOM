@@ -16,11 +16,11 @@ export function calculateDerivedStats(character) {
   const fleshWounds = character?.fleshWounds ?? 0;
   const deepWounds = character?.deepWounds ?? 0;
 
-  const Alertness = attrs.Alertness ?? attrs.Expertise ?? 0;
+  const Alertness = attrs.Alertness || 0;
   const Body = attrs.Body || 0;
   const Intelligence = attrs.Intelligence || 0;
   const Spirit = attrs.Spirit || 0;
-  const Brawl = skills.CQC || 0;
+  const CQC = skills.CQC || 0;
   const Melee = skills.Melee || 0;
 
   const defense = 1 + Alertness + Body;
@@ -32,7 +32,7 @@ export function calculateDerivedStats(character) {
   const fleshThreshold = Math.ceil(stamina / 2) + (equip.armorClass ?? 0);
   const deepThreshold = stamina + (equip.armorClass ?? 0);
   const instantDeath = stamina * 2;
-  const unarmedDamage = Math.max(4, Math.ceil((3 + Body + Brawl) / 1.5));
+  const unarmedDamage = Math.max(4, Math.ceil((3 + Body + CQC) / 1.5));
   const armedDamage = Math.max(4, Math.ceil((3 + Body + Melee) / 1.5));
   const woundMod = fleshWounds + deepWounds * 2;
 

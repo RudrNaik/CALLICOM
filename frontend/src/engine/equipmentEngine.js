@@ -353,31 +353,22 @@ export const sumNonNeg = (obj) =>
   );
 
 /**
- * Determines the initial ammo state for a gadget.
+ * Determines the initial ammo state for a gadget, sanitized from whatever is
+ * currently stored on the character's equipment.gadgetAmmo.
  * @param {string} gadgetId - ID of the gadget
  * @param {string} charClass - Character class
  * @param {object} config - Gadget configuration
- * @param {any} parsedStorage - Data loaded from storage (if any)
- * @param {object} currentAmmo - Current ammo state (if any)
+ * @param {object} currentAmmo - Ammo state currently stored on the character
  * @returns {object} The initial ammo object
  */
-export const getInitialGadgetAmmo = (gadgetId, charClass, config, parsedStorage = null, currentAmmo = {}) => {
+export const getInitialGadgetAmmo = (gadgetId, charClass, config, currentAmmo = {}) => {
   const isMixed = isMixedGadget(gadgetId);
   const isExpendable = isExpendableGadget(gadgetId, config);
   const effectiveMax = getEffectiveMax(gadgetId, charClass, config);
   const options = config?.options || [];
   const optionIds = new Set(options.map((o) => o.id));
 
-  if (parsedStorage !== null) {
-    if (isExpendable && typeof parsedStorage === "number") {
-      return { [EX_KEY]: Math.max(0, Math.min(parsedStorage, effectiveMax)) };
-    }
-    return sanitizeGadgetAmmo(parsedStorage, isMixed, isExpendable, optionIds, effectiveMax);
-  }
-
-  if (isExpendable) {
-    return {};
-  } else if (isMixed) {
+  if (isMixed || isExpendable) {
     return sanitizeGadgetAmmo(currentAmmo, isMixed, isExpendable, optionIds, effectiveMax);
   }
   return {};

@@ -152,22 +152,3 @@ export const clearRosterCache = (userId) => {
   clearMemory("roster_equipment");
 };
 
-// --- Standardized Key Generators ---
-
-/**
- * Generates a key for weapon ammo storage.
- */
-export const getWeaponAmmoKey = (callsign, slot) => {
-  const owner = normalizeStorageKey(callsign);
-  const weaponSlot = normalizeStorageKey(slot);
-  return `ammo_${owner}_${weaponSlot}`;
-};
-
-/**
- * Generates a key for gadget ammo storage.
- */
-export const getGadgetAmmoKey = (callsign, gadgetId) => {
-  const owner = normalizeStorageKey(callsign);
-  const gadget = normalizeStorageKey(gadgetId);
-  return `gadgetAmmo_${owner}_${gadget}`;
-};

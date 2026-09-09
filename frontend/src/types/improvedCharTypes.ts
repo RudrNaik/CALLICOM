@@ -3,15 +3,41 @@ export interface Attributes {
   Body: number;
   Intelligence: number;
   Spirit: number;
-  /** @deprecated Legacy field retained for backwards compatibility with older saved data. */
-  Expertise?: number;
+}
+
+export interface MetaData {
+  starting_cash: number,
+  userId: string, 
+  uniqueId: string;
+}
+
+/**
+ * Per-weapon-slot ammo tracking. Lives on the WeaponSlot itself so a weapon's
+ * ammo travels with the character object instead of a separate
+ * `ammo_{callsign}_{slot}` localStorage entry.
+ */
+export interface WeaponAmmoState {
+  firedThisMag: number;
+  totalFired: number;
+  pseudoAmmo: number | null;
 }
 
 export interface WeaponSlot {
   name: string;
   category: string;
   family?: string;
+  ammo?: WeaponAmmoState;
 }
+
+/**
+ * Gadget ammo/charge pool, keyed by option id for mixed gadgets
+ * (e.g. grenade/round/stim ids) or by the reserved keys below for
+ * expendables tracked as a single pool.
+ *
+ * Reserved keys (see equipmentEngine.js): EX_KEY ("__uses"), MAG_KEY ("__mag"),
+ * RES_KEY ("__res").
+ */
+export type GadgetAmmoState = Record<string, number>;
 
 export interface Equipment {
   primaryWeapon?: WeaponSlot;
@@ -19,7 +45,7 @@ export interface Equipment {
   classGadget: string;
   grenades?: string[];
   gadget?: string;
-  gadgetAmmo: Record<string, number>;
+  gadgetAmmo: GadgetAmmoState;
   armorClass: number;
   miscGear: string;
   gearSlots : {
@@ -38,8 +64,7 @@ export interface Specialization {
 
 export interface Character {
   _id?: string;
-  uniqueId: string;
-  userId: string;
+  metadata: MetaData
   name: string;
   callsign: string;
   background: string;
