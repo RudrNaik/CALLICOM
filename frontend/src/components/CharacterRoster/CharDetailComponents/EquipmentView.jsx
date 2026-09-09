@@ -335,7 +335,7 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
     <div className=" text-white" style={{ fontFamily: "Geist_Mono" }}>
       <div className={wideLayout ? "grid grid-cols-2 gap-2" : "flex flex-col gap-2"}>
         {/* Weapons */}
-        <div>
+        <div className={wideLayout ? "col-span-2 md:col-span-1" : ""}>
           <WeaponSlot
             slot="primaryWeapon"
             weapon={gear["primaryWeapon"]}
@@ -348,7 +348,7 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
           />
         </div>
 
-        <div>
+        <div className={wideLayout ? "col-span-2 md:col-span-1" : ""}>
           <WeaponSlot
             slot="secondaryWeapon"
             weapon={gear["secondaryWeapon"]}
@@ -363,7 +363,7 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
         </div>
 
         {/* Grenades */}
-        <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-6 rounded shadow">
+        <div className={`bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-6 rounded shadow ${wideLayout ? "col-span-2 md:col-span-1" : ""}`}>
           <h3 className="font-semibold text-orange-300">Grenades</h3>
 
           {isEditing ? (
@@ -454,7 +454,7 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
         </div>
 
         {/* Armor Class */}
-        <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-6 rounded shadow">
+        <div className={`bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-6 rounded shadow ${wideLayout ? "col-span-2 md:col-span-1" : ""}`}>
           <h3 className="font-semibold text-orange-300">Armor Class</h3>
           {isEditing ? (
             <div>

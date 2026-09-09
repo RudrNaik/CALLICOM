@@ -40,11 +40,19 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
   const [isEditingEquipment, setIsEditingEquipment] = useState(false);
   const [xpRemaining, setXpRemaining] = useState(character?.XP || 0);
   const [editedSkills, setEditedSkills] = useState({ ...character?.skills });
-  const [emergencyDice, setEmergencyDice] = useState(character?.emergencyDice || 0);
-  const [originalEmergencyDice, setOriginalEmergencyDice] = useState(character?.emergencyDice || 0);
-  const [specializations, setSpecializations] = useState([...(character?.specializations || [])]);
+  const [emergencyDice, setEmergencyDice] = useState(
+    character?.emergencyDice || 0,
+  );
+  const [originalEmergencyDice, setOriginalEmergencyDice] = useState(
+    character?.emergencyDice || 0,
+  );
+  const [specializations, setSpecializations] = useState([
+    ...(character?.specializations || []),
+  ]);
   const [showSpecModal, setShowSpecModal] = useState(false);
-  const [campaignInput, setCampaignInput] = useState(character?.campaignId || "");
+  const [campaignInput, setCampaignInput] = useState(
+    character?.campaignId || "",
+  );
   const [charActive, setCharActive] = useState(false);
   const [columnView, setColumnView] = useState(true);
   const [multiClass, setMulticlass] = useState(character?.multiClass || "");
@@ -61,7 +69,8 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
   const woundsTimerRef = useRef(null);
   const equipmentRef = useRef(null);
 
-  const characterKey = character?._id || character?.uniqueId || character?.callsign;
+  const characterKey =
+    character?._id || character?.uniqueId || character?.callsign;
 
   useEffect(() => {
     if (character) {
@@ -203,7 +212,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
   /**
    * Directly patches the edice -1. Ayncrhonous due to calling the backend.
    * @param {*} amount The amount of edice being removed.
-   * @returns 
+   * @returns
    */
   const patchRemoveEDice = (amount) => {
     const updates = {
@@ -216,7 +225,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
   /**
    * Handles removing a specialization from the character.
    * @param {*} index index of the specialization.
-   * @returns 
+   * @returns
    */
   const removeSpecialization = (index) => {
     const baseLength = character.specializations.length;
@@ -232,7 +241,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
   /**
    * Patches the exp spent/earned.
    * @param {*} amount amount of exp.
-   * @returns 
+   * @returns
    */
   const patchXP = (amount) => {
     const updates = {
@@ -245,7 +254,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
 
   /**
    * Patches the backend data for the multiclass. Blocked if you have a multiclass already, if you dont have enough EXP, or there isnt any value.
-   * @param {*} secClass 
+   * @param {*} secClass
    * @returns nothing if blocked.
    */
   const patchMulticlass = async (secClass) => {
@@ -261,7 +270,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
 
     const updates = {
       multiClass: secClass,
-      XP: newXP, 
+      XP: newXP,
     };
 
     setMulticlass(secClass);
@@ -272,8 +281,8 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
 
   /**
    * Patches the backend data for the biography of said character.
-   * @param {*} bio biography string + whitespace. 
-   * @returns 
+   * @param {*} bio biography string + whitespace.
+   * @returns
    */
   const patchBio = async (bio) => {
     const updates = {
@@ -287,7 +296,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
   /**
    * Patches the attributes (alt, bdy, int, spr) for the backend data.
    * @param {*} attrKey the key of the attribute.
-   * @returns 
+   * @returns
    */
   const patchAttribute = async (attrKey) => {
     if (!attrKey) return;
@@ -309,7 +318,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
 
   /**
    * Handles saving the changes so everything is synced up.
-   * @returns 
+   * @returns
    */
   const handleSaveChanges = async () => {
     const updates = normalizeCharacterData({
@@ -349,7 +358,11 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
         </button>
       </div>
 
-      <div className={columnView ? "grid md:grid-cols-2 gap-6" : "flex flex-col gap-6"}>
+      <div
+        className={
+          columnView ? "grid md:grid-cols-2 gap-6" : "flex flex-col gap-6"
+        }
+      >
         {!columnView && (
           <div className="order-1">
             <div className="relative inline-block group">
@@ -464,16 +477,18 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
             onBuy={patchAttribute}
           />
 
-          <DerivedStats
-            character={character}
-            fleshWounds={fleshWounds}
-            deepWounds={deepWounds}
-            isSavingWounds={isSavingWounds}
-            onIncreaseFlesh={handleIncreaseFleshWounds}
-            onDecreaseFlesh={handleDecreaseFleshWounds}
-            onIncreaseDeep={handleIncreaseDeepWounds}
-            onDecreaseDeep={handleDecreaseDeepWounds}
-          />
+          {columnView && (
+            <DerivedStats
+              character={character}
+              fleshWounds={fleshWounds}
+              deepWounds={deepWounds}
+              isSavingWounds={isSavingWounds}
+              onIncreaseFlesh={handleIncreaseFleshWounds}
+              onDecreaseFlesh={handleDecreaseFleshWounds}
+              onIncreaseDeep={handleIncreaseDeepWounds}
+              onDecreaseDeep={handleDecreaseDeepWounds}
+            />
+          )}
 
           {/* Skills */}
           <div className="mt-4">
@@ -487,13 +502,13 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
               <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-1">
                 <p>
                   Skills determine the amount of dice you{" "}
-                  <span className="text-orange-500 font-bold">roll</span> during a{" "}
-                  <span className="text-orange-500 font-bold">check</span>. the
-                  higher the level, the more dice you roll.
+                  <span className="text-orange-500 font-bold">roll</span> during
+                  a <span className="text-orange-500 font-bold">check</span>.
+                  the higher the level, the more dice you roll.
                 </p>
                 <p className="text-neutral-500 text-xs">
-                  IE: 0 in a skill is 2d6l, 1 in a skill is 1d6, 2 is 2d6l and so
-                  on for a max of 4 levels in a skill.
+                  IE: 0 in a skill is 2d6l, 1 in a skill is 1d6, 2 is 2d6l and
+                  so on for a max of 4 levels in a skill.
                 </p>
               </div>
             </div>
@@ -568,27 +583,27 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
           />
 
           <div className="mt-4">
-          {/* expcalctesting */}
-          <Collapsible
-            title={"EXP Spent"}
-            color={"orange-400"}
-            autoOpen={false}
-            headerSize={"xl"}
-            bottomMargin={false}
-          >
-            <ExpAddedCalc
-              character={character}
-              userId={user}
-              refreshCharacter={onUpdate}
-            />
-          </Collapsible>
+            {/* expcalctesting */}
+            <Collapsible
+              title={"EXP Spent"}
+              color={"orange-400"}
+              autoOpen={false}
+              headerSize={"xl"}
+              bottomMargin={false}
+            >
+              <ExpAddedCalc
+                character={character}
+                userId={user}
+                refreshCharacter={onUpdate}
+              />
+            </Collapsible>
           </div>
         </div>
 
         {/* Right column: Equipment */}
         <div
           className={`order-2 ${
-            columnView ? "md:border-l md:border-orange-500/40 md:pl-6" : ""
+            columnView ? "md:border-l md:border-neutral-500/40 md:pl-6" : ""
           }`}
         >
           <div className="flex items-center justify-between flex-wrap gap-2">
@@ -601,12 +616,13 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
               {/* Tooltip modal */}
               <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-1">
                 <p>
-                  Your equipment determines the gear that you bring into a mission.
-                  You can choose a{" "}
+                  Your equipment determines the gear that you bring into a
+                  mission. You can choose a{" "}
                   <span className="text-orange-500 font-bold">primary</span>, a{" "}
-                  <span className="text-orange-500 font-bold">secondary</span>, 2
-                  types of <span className="text-orange-500 font-bold">grenades</span>
-                  , and then your{" "}
+                  <span className="text-orange-500 font-bold">secondary</span>,
+                  2 types of{" "}
+                  <span className="text-orange-500 font-bold">grenades</span>,
+                  and then your{" "}
                   <span className="text-orange-500 font-bold">armor</span> and{" "}
                   <span className="text-orange-500 font-bold">gadget</span>.
                 </p>
@@ -680,8 +696,17 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
             typeof Biography === "object" ? (
               <div className="grid sm:grid-cols-2 gap-3">
                 {biographyFields.map(([field, label]) => (
-                  <label key={field} className={field === "bio" || field === "notes" ? "sm:col-span-2" : ""}>
-                    <span className="block text-xs text-orange-400 mb-1">{label}</span>
+                  <label
+                    key={field}
+                    className={
+                      field === "bio" || field === "notes"
+                        ? "sm:col-span-2"
+                        : ""
+                    }
+                  >
+                    <span className="block text-xs text-orange-400 mb-1">
+                      {label}
+                    </span>
                     <textarea
                       className="w-full bg-neutral-900 text-white p-2 rounded resize-y min-h-[60px]"
                       value={Biography[field] || ""}
@@ -700,21 +725,26 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
                 onInput={(event) => setBio(event.target.value)}
               />
             )
+          ) : typeof Biography === "object" ? (
+            <div className="grid sm:grid-cols-2 gap-3 text-xs">
+              {biographyFields.map(([field, label]) => (
+                <div
+                  key={field}
+                  className={
+                    field === "bio" || field === "notes" ? "sm:col-span-2" : ""
+                  }
+                >
+                  <span className="block text-orange-400">{label}</span>
+                  <p className="whitespace-pre-wrap">
+                    {Biography[field] || "..."}
+                  </p>
+                </div>
+              ))}
+            </div>
           ) : (
-            typeof Biography === "object" ? (
-              <div className="grid sm:grid-cols-2 gap-3 text-xs">
-                {biographyFields.map(([field, label]) => (
-                  <div key={field} className={field === "bio" || field === "notes" ? "sm:col-span-2" : ""}>
-                    <span className="block text-orange-400">{label}</span>
-                    <p className="whitespace-pre-wrap">{Biography[field] || "..."}</p>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="whitespace-pre-wrap text-xs mt-1">
-                {Biography || "..."}
-              </p>
-            )
+            <p className="whitespace-pre-wrap text-xs mt-1">
+              {Biography || "..."}
+            </p>
           )}
         </div>
         <div className="mt-2">
