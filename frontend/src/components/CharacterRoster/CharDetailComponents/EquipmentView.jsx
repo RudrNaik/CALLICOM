@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useState, useMemo } from "react";
 import equipmentData from "../../../data/Equipment.json";
 import secondaryGadgets from "../../../data/classSkills.json";
 import WeaponSlot from "./WeaponCards";
@@ -11,14 +11,18 @@ import {
 const DEFAULT_GRENADE_COUNTS = [2, 2];
 const DEFAULT_MED_COUNTS = [1, 2, 1]; // [AFAK, IFAK, Painkiller]
 
-function EquipmentSelection({
-  character,
-  isEditing,
-  refreshCharacter,
-  setIsEditing,
-  charActive,
-  campEquipment,
-}) {
+const EquipmentSelection = forwardRef(function EquipmentSelection(
+  {
+    character,
+    isEditing,
+    refreshCharacter,
+    setIsEditing,
+    charActive,
+    campEquipment,
+    wideLayout,
+  },
+  ref,
+) {
   // Prefer a stable unique identity over callsign (user-editable, not
   // guaranteed unique) so per-character effects/keys can't collide between
   // two characters that happen to share a callsign.
@@ -307,6 +311,8 @@ function EquipmentSelection({
     setIsEditing(false);
   };
 
+  useImperativeHandle(ref, () => ({ save: saveToDatabase }));
+
   // console.log(
   //   character?.campaignId == undefined ||
   //     character?.campaignId == null ||
@@ -327,7 +333,7 @@ function EquipmentSelection({
 
   return (
     <div className=" text-white" style={{ fontFamily: "Geist_Mono" }}>
-      <div className="flex flex-col gap-2">
+      <div className={wideLayout ? "grid grid-cols-2 gap-2" : "flex flex-col gap-2"}>
         {/* Weapons */}
         <div>
           <WeaponSlot
@@ -578,7 +584,7 @@ function EquipmentSelection({
         </div>
 
         {/* Gadget */}
-        <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-6 rounded shadow">
+        <div className={`bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-6 rounded shadow ${wideLayout ? "col-span-2" : ""}`}>
           <h3 className="font-semibold text-orange-300">Class Gadget</h3>
           {isEditing ? (
             <select
@@ -651,7 +657,7 @@ function EquipmentSelection({
         </div>
 
         {/* inventory */}
-        <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-6 rounded shadow">
+        <div className={`bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-6 rounded shadow ${wideLayout ? "col-span-2" : ""}`}>
           <h3 className="font-semibold text-orange-300">Inventory</h3>
           {isEditing ? (
             <textarea
@@ -667,19 +673,8 @@ function EquipmentSelection({
           )}
         </div>
       </div>
-
-      {isEditing && (
-        <div className="mt-4">
-          <button
-            onClick={saveToDatabase}
-            className="bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded"
-          >
-            Save Equipment
-          </button>
-        </div>
-      )}
     </div>
   );
-}
+});
 
 export default EquipmentSelection;

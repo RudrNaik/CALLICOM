@@ -2,7 +2,15 @@ import { useState, useEffect, useMemo } from "react";
 import equipmentData from "../../../data/Equipment.json";
 import { getModifiedWeaponStats, getWeaponCategoriesLookup } from "../../../engine/equipmentEngine";
 
-function Calculator({ characterData }) {
+function Calculator({
+  characterData,
+  fleshWounds,
+  deepWounds,
+  onIncreaseFlesh,
+  onDecreaseFlesh,
+  onIncreaseDeep,
+  onDecreaseDeep,
+}) {
   const [character, setCharacter] = useState(null);
   const [primary, setPrimary] = useState(null);
   const [secondary, setSecondary] = useState(null);
@@ -28,8 +36,6 @@ function Calculator({ characterData }) {
 
   const [pingEnabled, setPingEnabled] = useState(false);
 
-  const [fleshWounds, setFleshWounds] = useState(0);
-  const [deepWounds, setDeepWounds] = useState(0);
   const [navigateRoll, setNavigateRoll] = useState(null);
 
   useEffect(() => {
@@ -38,8 +44,6 @@ function Calculator({ characterData }) {
       setPrimary(characterData?.equipment?.primaryWeapon);
       setSecondary(characterData?.equipment?.secondaryWeapon);
       setSkills(characterData?.skills);
-      setFleshWounds(characterData?.fleshWounds ?? 0);
-      setDeepWounds(characterData?.deepWounds ?? 0);
     }
   }, [characterData]);
 
@@ -510,7 +514,7 @@ function Calculator({ characterData }) {
             <div className="flex items-center gap-2">
               <label>FW:</label>
               <button
-                onClick={() => setFleshWounds(Math.max(0, fleshWounds - 1))}
+                onClick={onDecreaseFlesh}
                 className="px-2 py-1 bg-neutral-800 border border-neutral-700 text-neutral-400 rounded hover:bg-neutral-700"
               >
                 -
@@ -519,7 +523,7 @@ function Calculator({ characterData }) {
                 {fleshWounds}
               </div>
               <button
-                onClick={() => setFleshWounds(fleshWounds + 1)}
+                onClick={onIncreaseFlesh}
                 className="px-2 py-1 bg-neutral-800 border border-neutral-700 text-neutral-400 rounded hover:bg-neutral-700"
               >
                 +
@@ -529,7 +533,7 @@ function Calculator({ characterData }) {
             <div className="flex items-center gap-2">
               <label>DW:</label>
               <button
-                onClick={() => setDeepWounds(Math.max(0, deepWounds - 1))}
+                onClick={onDecreaseDeep}
                 className="px-2 py-1 bg-neutral-800 border border-neutral-700 text-neutral-400 rounded hover:bg-neutral-700"
               >
                 -
@@ -538,7 +542,7 @@ function Calculator({ characterData }) {
                 {deepWounds}
               </div>
               <button
-                onClick={() => setDeepWounds(deepWounds + 1)}
+                onClick={onIncreaseDeep}
                 className="px-2 py-1 bg-neutral-800 border border-neutral-700 text-neutral-400 rounded hover:bg-neutral-700"
               >
                 +

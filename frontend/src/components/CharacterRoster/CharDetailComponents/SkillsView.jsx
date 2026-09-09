@@ -8,9 +8,14 @@ function SkillsView({
   character,
   increaseSkill,
   decreaseSkill,
+  wideColumns,
 }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div
+      className={`grid grid-cols-1 sm:grid-cols-2 gap-4 ${
+        wideColumns ? "lg:grid-cols-4" : ""
+      }`}
+    >
       {Object.entries(skillGroups).map(([group, object]) => (
         <div key={group}>
           <h3 className="text-orange-300 font-semibold mb-2">{group}</h3>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import skillGroups from "../../data/skills.json";
 import {
   getSkillUpgradeCost,
@@ -46,10 +46,20 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
   const [showSpecModal, setShowSpecModal] = useState(false);
   const [campaignInput, setCampaignInput] = useState(character?.campaignId || "");
   const [charActive, setCharActive] = useState(false);
+  const [columnView, setColumnView] = useState(true);
   const [multiClass, setMulticlass] = useState(character?.multiClass || "");
   const [showMultiClassModal, setShowMultiClassModal] = useState(false);
   const [Biography, setBio] = useState("");
   const [attributes, setAttributes] = useState({ ...character?.attributes });
+  const [fleshWounds, setFleshWounds] = useState(character?.fleshWounds || 0);
+  const [deepWounds, setDeepWounds] = useState(character?.deepWounds || 0);
+  const [isSavingWounds, setIsSavingWounds] = useState(false);
+  const prevWounds = useRef({
+    fleshWounds: character?.fleshWounds || 0,
+    deepWounds: character?.deepWounds || 0,
+  });
+  const woundsTimerRef = useRef(null);
+  const equipmentRef = useRef(null);
 
   const characterKey = character?._id || character?.uniqueId || character?.callsign;
 
@@ -68,6 +78,12 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
           ? { ...emptyBiography, ...character.Bio }
           : character?.Bio || "",
       );
+
+      const fw = character.fleshWounds || 0;
+      const dw = character.deepWounds || 0;
+      setFleshWounds(fw);
+      setDeepWounds(dw);
+      prevWounds.current = { fleshWounds: fw, deepWounds: dw };
     }
   }, [character]);
 
@@ -77,6 +93,43 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
   useEffect(() => {
     setCharActive(false);
   }, [characterKey]);
+
+  // 700ms debounce because rapidly spamming the deep and flesh wounds causes
+  // desync with the backend as master so it reverts. Shared by DerivedStats
+  // and the Roll Calculator so both read/write the same wound counters.
+  useEffect(() => {
+    if (woundsTimerRef.current) {
+      clearTimeout(woundsTimerRef.current);
+    }
+
+    woundsTimerRef.current = setTimeout(() => {
+      const changed =
+        fleshWounds !== prevWounds.current.fleshWounds ||
+        deepWounds !== prevWounds.current.deepWounds;
+
+      if (!changed) return;
+
+      setIsSavingWounds(true);
+      try {
+        onUpdate({ fleshWounds, deepWounds });
+        prevWounds.current = { fleshWounds, deepWounds };
+      } finally {
+        setIsSavingWounds(false);
+      }
+    }, 700);
+
+    return () => {
+      if (woundsTimerRef.current) clearTimeout(woundsTimerRef.current);
+    };
+  }, [fleshWounds, deepWounds, onUpdate]);
+
+  const handleDecreaseFleshWounds = () =>
+    setFleshWounds((v) => Math.max(v - 1, 0));
+  const handleIncreaseFleshWounds = () => setFleshWounds((v) => v + 1);
+
+  const handleDecreaseDeepWounds = () =>
+    setDeepWounds((v) => Math.max(v - 1, 0));
+  const handleIncreaseDeepWounds = () => setDeepWounds((v) => v + 1);
 
   /**
    * Handles the upgrade cost in terms of EXP needed between levels. You can only level up by being at the previous level, you cant jump from 1 to 4 without being at 2 or 3 along the way.
@@ -287,37 +340,114 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
         {character.class} {character.multiClass}
       </h2>
 
-      <div className="grid md:grid-cols-2 gap-6">
-        {/* Left column: Attributes / Skills / Specializations */}
-        <div>
-          {!isEditing ? (
-            <XpControls
-              xpRemaining={xpRemaining}
-              setIsEditing={setIsEditing}
-              patchXP={patchXP}
-              setMulticlass={setMulticlass}
-              patchMulticlass={patchMulticlass}
-            />
-          ) : (
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={handleSaveChanges}
-                className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded"
-              >
-                Confirm | {xpRemaining} XP Remaining
-              </button>
+      <div className="flex justify-end">
+        <button
+          onClick={() => setColumnView((prev) => !prev)}
+          className="bg-neutral-800 hover:bg-neutral-700 border border-orange-500/40 text-orange-300 px-3 py-1 rounded text-xs cursor-pointer"
+        >
+          {columnView ? "Switch to Vertical View" : "Switch to Column View"}
+        </button>
+      </div>
 
-              {isEditing && !multiClass && (
-                <button
-                  disabled={xpRemaining < 20}
-                  onClick={() => setShowMultiClassModal(true)}
-                  className="bg-orange-600 hover:bg-orange-700 disabled:bg-gray-700 disabled:hover:bg-gray-800 px-4 py-2 rounded"
-                >
-                  Multiclass | 20 XP
-                </button>
-              )}
+      <div className={columnView ? "grid md:grid-cols-2 gap-6" : "flex flex-col gap-6"}>
+        {!columnView && (
+          <div className="order-1">
+            <div className="relative inline-block group">
+              <h2 className="text-2xl font-bold text-orange-400 mt-4 mb-0">
+                Attributes{" "}
+                <span className="text-xs font-light text-neutral-400">[?]</span>
+              </h2>
+
+              {/* Tooltip modal */}
+              <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-0">
+                <p>
+                  Attributes determine your{" "}
+                  <span className="text-orange-500 font-bold">
+                    wound thresholds, system shock,
+                  </span>{" "}
+                  and other critical attributes of your character via{" "}
+                  <span className="text-orange-500 font-bold">
+                    derived attributes
+                  </span>
+                  .
+                </p>
+              </div>
             </div>
-          )}
+
+            <AttributeView
+              attributes={attributes}
+              xp={xpRemaining}
+              isEditing={isEditing}
+              onBuy={patchAttribute}
+            />
+
+            <DerivedStats
+              character={character}
+              fleshWounds={fleshWounds}
+              deepWounds={deepWounds}
+              isSavingWounds={isSavingWounds}
+              onIncreaseFlesh={handleIncreaseFleshWounds}
+              onDecreaseFlesh={handleDecreaseFleshWounds}
+              onIncreaseDeep={handleIncreaseDeepWounds}
+              onDecreaseDeep={handleDecreaseDeepWounds}
+            />
+          </div>
+        )}
+
+        {/* Left column: Attributes / Skills / Specializations */}
+        <div className={columnView ? "" : "order-3"}>
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <div className="relative inline-block group">
+              <h2 className="text-2xl font-bold text-orange-400 mt-4 mb-0">
+                Attributes{" "}
+                <span className="text-xs font-light text-neutral-400">[?]</span>
+              </h2>
+
+              {/* Tooltip modal */}
+              <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-0">
+                <p>
+                  Attributes determine your{" "}
+                  <span className="text-orange-500 font-bold">
+                    wound thresholds, system shock,
+                  </span>{" "}
+                  and other critical attributes of your character via{" "}
+                  <span className="text-orange-500 font-bold">
+                    derived attributes
+                  </span>
+                  .
+                </p>
+              </div>
+            </div>
+
+            {!isEditing ? (
+              <XpControls
+                xpRemaining={xpRemaining}
+                setIsEditing={setIsEditing}
+                patchXP={patchXP}
+                setMulticlass={setMulticlass}
+                patchMulticlass={patchMulticlass}
+              />
+            ) : (
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={handleSaveChanges}
+                  className="bg-green-600 hover:bg-green-700 px-2 py-1 rounded text-xs"
+                >
+                  Confirm | {xpRemaining} XP Remaining
+                </button>
+
+                {isEditing && !multiClass && (
+                  <button
+                    disabled={xpRemaining < 20}
+                    onClick={() => setShowMultiClassModal(true)}
+                    className="bg-orange-600 hover:bg-orange-700 disabled:bg-gray-700 disabled:hover:bg-gray-800 px-2 py-1 rounded text-xs"
+                  >
+                    Multiclass | 20 XP
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
 
           {showMultiClassModal && xpRemaining >= 20 && (
             <MultiClassModal
@@ -327,27 +457,6 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
             />
           )}
 
-          <div className="relative inline-block group">
-            <h2 className="text-2xl font-bold text-orange-400 mt-4 mb-0">
-              Attributes{" "}
-              <span className="text-xs font-light text-neutral-400">[?]</span>
-            </h2>
-
-            {/* Tooltip modal */}
-            <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-0">
-              <p>
-                Attributes determine your{" "}
-                <span className="text-orange-500 font-bold">
-                  wound thresholds, system shock,
-                </span>{" "}
-                and other critical attributes of your character via{" "}
-                <span className="text-orange-500 font-bold">
-                  derived attributes
-                </span>
-                .
-              </p>
-            </div>
-          </div>
           <AttributeView
             attributes={attributes}
             xp={xpRemaining}
@@ -357,8 +466,13 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
 
           <DerivedStats
             character={character}
-            userId={user}
-            refreshCharacter={onUpdate}
+            fleshWounds={fleshWounds}
+            deepWounds={deepWounds}
+            isSavingWounds={isSavingWounds}
+            onIncreaseFlesh={handleIncreaseFleshWounds}
+            onDecreaseFlesh={handleDecreaseFleshWounds}
+            onIncreaseDeep={handleIncreaseDeepWounds}
+            onDecreaseDeep={handleDecreaseDeepWounds}
           />
 
           {/* Skills */}
@@ -391,6 +505,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
               character={character}
               increaseSkill={increaseSkill}
               decreaseSkill={decreaseSkill}
+              wideColumns={!columnView}
             />
           </div>
 
@@ -471,50 +586,64 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
         </div>
 
         {/* Right column: Equipment */}
-        <div className="md:border-l md:border-orange-500/40 md:pl-6">
-          <div className="mb-2">
-            {!isEditingEquipment && (
+        <div
+          className={`order-2 ${
+            columnView ? "md:border-l md:border-orange-500/40 md:pl-6" : ""
+          }`}
+        >
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <div className="relative inline-block group">
+              <h2 className="text-2xl font-bold text-orange-400 mt-4">
+                Equipment{" "}
+                <span className="text-xs font-light text-neutral-400">[?]</span>
+              </h2>
+
+              {/* Tooltip modal */}
+              <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-1">
+                <p>
+                  Your equipment determines the gear that you bring into a mission.
+                  You can choose a{" "}
+                  <span className="text-orange-500 font-bold">primary</span>, a{" "}
+                  <span className="text-orange-500 font-bold">secondary</span>, 2
+                  types of <span className="text-orange-500 font-bold">grenades</span>
+                  , and then your{" "}
+                  <span className="text-orange-500 font-bold">armor</span> and{" "}
+                  <span className="text-orange-500 font-bold">gadget</span>.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-2">
               <button
-                onClick={() => setIsEditingEquipment(true)}
-                className="bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded cursor-pointer"
+                onClick={() =>
+                  isEditingEquipment
+                    ? equipmentRef.current?.save()
+                    : setIsEditingEquipment(true)
+                }
+                className={`px-2 py-1 rounded text-xs cursor-pointer ${
+                  isEditingEquipment
+                    ? "bg-green-600 hover:bg-green-700"
+                    : "bg-orange-600 hover:bg-orange-700"
+                }`}
               >
-                Edit Equipment
+                {isEditingEquipment ? "Save Equipment" : "Edit Equipment"}
               </button>
-            )}
 
-            <button
-              onClick={() => setCharActive((prev) => !prev)}
-              className={`px-4 py-2 rounded ml-2 cursor-pointer ${
-                charActive
-                  ? "bg-red-700 hover:bg-red-800"
-                  : "bg-orange-600 hover:bg-orange-800"
-              }`}
-            >
-              {charActive ? "Set Inactive" : "Set Active"}
-            </button>
-          </div>
-
-          <div className="relative inline-block group">
-            <h2 className="text-2xl font-bold text-orange-400 mt-4">
-              Equipment{" "}
-              <span className="text-xs font-light text-neutral-400">[?]</span>
-            </h2>
-
-            {/* Tooltip modal */}
-            <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-1">
-              <p>
-                Your equipment determines the gear that you bring into a mission.
-                You can choose a{" "}
-                <span className="text-orange-500 font-bold">primary</span>, a{" "}
-                <span className="text-orange-500 font-bold">secondary</span>, 2
-                types of <span className="text-orange-500 font-bold">grenades</span>
-                , and then your{" "}
-                <span className="text-orange-500 font-bold">armor</span> and{" "}
-                <span className="text-orange-500 font-bold">gadget</span>.
-              </p>
+              <button
+                onClick={() => setCharActive((prev) => !prev)}
+                className={`px-2 py-1 rounded text-xs cursor-pointer ${
+                  charActive
+                    ? "bg-red-700 hover:bg-red-800"
+                    : "bg-orange-600 hover:bg-orange-800"
+                }`}
+              >
+                {charActive ? "Set Inactive" : "Set Active"}
+              </button>
             </div>
           </div>
+
           <EquipmentSelection
+            ref={equipmentRef}
             character={character}
             isEditing={isEditingEquipment}
             userId={user}
@@ -522,6 +651,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
             setIsEditing={setIsEditingEquipment}
             charActive={charActive}
             campEquipment={equipment} //Know that this only applies to Siberia2022 atm. Any character not assigned to that campaign does not have the restrictions.
+            wideLayout={!columnView}
           />
         </div>
       </div>
@@ -532,7 +662,15 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
         color={"orange-400"}
         headerSize={"2xl"}
       >
-        <RollCalculator characterData={character}></RollCalculator>
+        <RollCalculator
+          characterData={character}
+          fleshWounds={fleshWounds}
+          deepWounds={deepWounds}
+          onIncreaseFlesh={handleIncreaseFleshWounds}
+          onDecreaseFlesh={handleDecreaseFleshWounds}
+          onIncreaseDeep={handleIncreaseDeepWounds}
+          onDecreaseDeep={handleDecreaseDeepWounds}
+        />
       </Collapsible>
 
       {/* Biography */}

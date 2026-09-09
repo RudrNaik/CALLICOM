@@ -18,7 +18,7 @@ function XpControls({ xpRemaining, setIsEditing, patchXP }) {
     <div className="flex items-center space-x-2">
       <button
         onClick={() => setIsEditing(true)}
-        className="bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded"
+        className="bg-orange-600 hover:bg-orange-700 px-2 py-1 rounded text-xs"
       >
         Spend XP | {xpRemaining}
       </button>
@@ -26,7 +26,7 @@ function XpControls({ xpRemaining, setIsEditing, patchXP }) {
       {!showXpInput && (
         <button
           onClick={() => setShowXpInput(true)}
-          className="bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded"
+          className="bg-orange-600 hover:bg-orange-700 px-2 py-1 rounded text-xs"
         >
           + Add XP
         </button>
@@ -37,7 +37,7 @@ function XpControls({ xpRemaining, setIsEditing, patchXP }) {
           <input
             type="number"
             min="0"
-            className="w-24 px-2 py-1 bg-neutral-800 border border-gray-500 rounded text-white"
+            className="w-20 px-2 py-1 bg-neutral-800 border border-gray-500 rounded text-white text-xs"
             placeholder="XP"
             value={xpToAdd}
             onChange={(e) => setXpToAdd(e.target.value)}
@@ -47,7 +47,7 @@ function XpControls({ xpRemaining, setIsEditing, patchXP }) {
               handleConfirm();
               setShowXpInput(false);
             }}
-            className="bg-green-600 hover:bg-green-700 px-2 py-1 rounded"
+            className="bg-green-600 hover:bg-green-700 px-2 py-1 rounded text-xs"
           >
             Confirm
           </button>
