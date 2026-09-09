@@ -127,7 +127,7 @@ const CharCreator = ({ formData, setFormData, onNext }) => {
                   },
                 })
               }
-              className="input-style border-orange-400"
+              className="border-orange-400 text-neutral-400/80"
             />
           </div>
         </div>
