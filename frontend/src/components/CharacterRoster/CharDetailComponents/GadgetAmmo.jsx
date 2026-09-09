@@ -241,7 +241,6 @@ export default function GadgetAmmo({
               {currentUses === null ? "" : Math.max(0, currentUses)}
             </span>
             {currentUses !== null && <> / {effectiveMax}</>}
-            <div className="text-[10px] text-gray-400 italic">Uses</div>
           </div>
 
           {isActive && (
