@@ -29,7 +29,7 @@ export default function GadgetAmmo({
   setGadgetAmmo,
   itemById,
   charClass,
-  characterCallsign, // for per-character storage key
+  characterId, // distinguishes which character this ammo belongs to for reload effects
   campActive,
   campaignEquipment,
   campaignId,
@@ -84,7 +84,7 @@ export default function GadgetAmmo({
     const initial = getInitialGadgetAmmo(gadgetId, charClass, config, gadgetAmmo);
     setGadgetAmmo(initial);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gadgetId, characterCallsign, isMixed, isExpendable, effectiveMax]);
+  }, [gadgetId, characterId, isMixed, isExpendable, effectiveMax]);
 
   /**
    * get rid of unknown keys when the weapon selection changes.

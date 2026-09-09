@@ -20,6 +20,11 @@ function EquipmentSelection({
   charActive,
   campEquipment,
 }) {
+  // Prefer a stable unique identity over callsign (user-editable, not
+  // guaranteed unique) so per-character effects/keys can't collide between
+  // two characters that happen to share a callsign.
+  const characterId = character._id || character.uniqueId || character.callsign;
+
   const defaultGear = {
     primaryWeapon: { name: "", category: "" },
     secondaryWeapon: { name: "", category: "" },
@@ -338,7 +343,7 @@ function EquipmentSelection({
             weaponCategories={primaryOptions}
             handleWeaponChange={handleWeaponChange}
             onAmmoChange={handleWeaponAmmoChange}
-            characterCallsign={character.callsign}
+            characterId={characterId}
             charActive={charActive}
           />
         </div>
@@ -351,7 +356,7 @@ function EquipmentSelection({
             weaponCategories={secondaryOptions}
             handleWeaponChange={handleWeaponChange}
             onAmmoChange={handleWeaponAmmoChange}
-            characterCallsign={character.callsign}
+            characterId={characterId}
             charActive={charActive}
             isSecondary={true}
           />
@@ -617,7 +622,7 @@ function EquipmentSelection({
           {/* Special Ammo UI */}
           {activeGadgetConfig && (
             <GadgetAmmo
-              key={`${character.callsign}-${gear.gadget}`}
+              key={`${characterId}-${gear.gadget}`}
               isEditing={isEditing}
               isActive={charActive}
               gadgetId={gear.gadget}
@@ -625,7 +630,7 @@ function EquipmentSelection({
               setGadgetAmmo={handleGadgetAmmoChange}
               itemById={itemById}
               charClass={character.class}
-              characterCallsign={character.callsign}
+              characterId={characterId}
               config={activeGadgetConfig}
               campaignEquipment={campaignLookupTable}
               campActive={!(!campEquipment || campEquipment == null)}
