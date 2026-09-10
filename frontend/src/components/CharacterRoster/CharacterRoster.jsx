@@ -184,7 +184,6 @@ function CharacterRoster({ userId }) {
                   character={selectedCharacter}
                   user={userId}
                   onUpdate={updateCharacter}
-                  equipment={equipment}
                 />
               </div>
             </div>

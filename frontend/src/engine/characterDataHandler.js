@@ -104,14 +104,25 @@ export const normalizeValue = (value) => {
       normalizedRecord.attributes = normalizeCharacterAttributes(normalizedRecord.attributes);
     }
 
-    return normalizeCharacterMetadata(normalizedRecord);
+    return normalizedRecord;
   }
 
   return unwrapNumberLike(value) ?? value;
 };
 
+/**
+ * Recursively normalizes every value on a character, then fixes up its
+ * identity fields exactly once, at the character root (see
+ * normalizeCharacterMetadata). That has to happen only at the root and not
+ * inside normalizeValue's generic per-record recursion: `metadata` itself
+ * is a record shaped like `{userId, starting_cash}`, which independently
+ * satisfies normalizeCharacterMetadata's "looks like identity data" check —
+ * running it again on that sub-object as if it were the character wraps it
+ * in a spurious extra `metadata` layer and loses `starting_cash`.
+ */
 export const normalizeCharacterData = (value) => {
-  return normalizeValue(value);
+  const normalized = normalizeValue(value);
+  return normalizeCharacterMetadata(normalized);
 };
 
 export const repairLegacyCharacterData = (value) => {

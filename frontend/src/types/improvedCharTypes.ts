@@ -38,6 +38,18 @@ export interface WeaponSlot {
  */
 export type GadgetAmmoState = Record<string, number>;
 
+/**
+ * What's currently equipped. What a character is eligible to *select* here
+ * (Logistics purchases: gadgets/submunitions, weapons, grenades) is never
+ * stored — it's derived fresh from `Character.logs`' receipts every time
+ * (see equipmentEngine.getPurchasedGadgetIds/getPurchasedWeapons/
+ * getPurchasedGrenadeIds, and getAvailableClassGadgets/getOwnedGrenades/
+ * weaponEngine.getOwnedWeaponCategories), so removing a mission or undoing
+ * a purchase (logisticsEngine.undoLastPurchase) can't leave stale ownership
+ * data behind — there's nothing to go stale. equipmentEngine.
+ * sanitizeEquipmentOwnership clears any of the fields below that end up
+ * pointing at something no longer purchasable after such a change.
+ */
 export interface Equipment {
   primaryWeapon?: WeaponSlot;
   secondaryWeapon?: WeaponSlot;
@@ -95,11 +107,12 @@ export interface Character {
    * removed (see MissionReceipt).
    */
   emergencyDiceXPSpent?: number;
-  /** Running money total, earned via mission payouts (see MissionLog.payout) and, eventually, spent in Logistics. Falls back to `metadata.starting_cash` until the first mission is logged. */
+  /** Running money total, earned via mission payouts (see MissionLog.payout) and spent in Logistics. Falls back to `metadata.starting_cash` until the first mission is logged. */
   money?: number;
   multiClass?: string;
   createdAt: string;
   campaignId?: string;
+  /** Empty/undefined until the UI lazily seeds a "Starting Loadout" entry (see logsEngine.ensureStartingLog) crediting `metadata.starting_cash`, so spending done before any real mission is still attached to a receipt and reversible. */
   logs?: MissionLog[];
   Bio?: Biography | string;
 }
@@ -129,6 +142,8 @@ export interface MissionLog {
   /** Bonus objectives logged after the fact; their XP/cash add on top of missionXP/payout (see logsEngine.getMissionEarnings). */
   achievements: Achievement[];
   receipt: MissionReceipt;
+  /** Only set on the synthetic "Starting Loadout" entry (see logsEngine.createStartingLog) — records the character's starting cash distinctly from an earned mission payout, for display. */
+  metadata?: { starting_cash: number };
 }
 
 /**
@@ -163,24 +178,29 @@ export interface MissionReceipt {
   emergencyDiceBefore: number;
   /** `Character.emergencyDiceXPSpent` snapshotted at the same moment. */
   emergencyDiceXPSpentBefore: number;
+  /** Logistics purchases (see logisticsEngine.js) made since this mission was logged — for display only, `equipmentBefore` below is what actually reverses them. */
+  purchases: LogisticsPurchase[];
+  /** `Character.equipment` snapshotted the moment this mission was logged; a removal resets equipment to this whole-object snapshot rather than undoing purchases one at a time, since equipment fields hold a single current value rather than an append-only list. */
+  equipmentBefore: Equipment;
 }
 
-// Not yet wired up — a plausible future shape for the Logistics tab
-// (purchases/loot spent between missions), kept distinct from
-// MissionReceipt above (which only tracks XP spending).
-export interface LogisticsReceipt {
-  purchases: PurchaseReciept[];
-  loot: lootReciept[];
-}
-
-export interface PurchaseReciept {
-    moneyDelta: number;
-    itemIDPurchased: string;
-}
-
-export interface lootReciept {
-    itemID: string,
-    itemReason: string,
+/**
+ * A single logistics purchase (see logisticsEngine.js): buying a weapon,
+ * gadget, a submunition (a gadget's ammo variant, e.g. a UGL 40mm round —
+ * always its own individual purchase, never bundled with the gadget itself
+ * even when it costs $0), grenades (fills the first empty grenade slot, or
+ * just unlocks the type without equipping it once both slots are full), or
+ * (placeholder, no real catalog yet) a gear-slot item — all with the
+ * character's money.
+ */
+export interface LogisticsPurchase {
+  type: "weapon" | "gadget" | "submunition" | "grenade" | "gearSlot";
+  /** Which equipment field this touches: an Equipment key for weapons/gadget/grenades, or a gearSlots key. Empty for `type: "submunition"`, which touches no equipment field — being in `purchases` is what makes it derive as owned (see equipmentEngine.getPurchasedGadgetIds). */
+  slot: string;
+  label: string;
+  cost: number;
+  /** The value written into the first empty grenades[] slot for `type: "grenade"` (or left unequipped if both are full). */
+  value: unknown;
 }
 
 export interface Biography {

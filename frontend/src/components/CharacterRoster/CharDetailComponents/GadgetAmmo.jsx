@@ -18,7 +18,6 @@ import {
   useExpendableGadget,
   resupplyExpendableGadget,
   hasExplicitGadgetAmmo,
-  isGadgetOptionHiddenForCampaign,
 } from "../../../engine/equipmentEngine";
 
 export default function GadgetAmmo({
@@ -31,9 +30,7 @@ export default function GadgetAmmo({
   itemById,
   charClass,
   characterId, // distinguishes which character this ammo belongs to for reload effects
-  campActive,
-  campaignEquipment,
-  campaignId,
+  ownedOptionIds = [], // ids purchased in Logistics (see equipmentEngine.getPurchasedGadgetIds) — narrows option pickers below to what's actually been bought
 }) {
   if (!config) return null;
 
@@ -128,8 +125,10 @@ export default function GadgetAmmo({
               : 0;
 
             if (!isEditing && count <= -1) return null;
-            if (isGadgetOptionHiddenForCampaign(opt.id, campaignEquipment, campActive, campaignId))
-              return null; //Specific to the current campaign where it will filter out gadgets based on cost.
+            // Only show ammo variants actually bought in Logistics (see
+            // equipmentEngine.getPurchasedGadgetIds) — even a $0 one needs
+            // its own purchase now, not just owning the parent gadget.
+            if (!ownedOptionIds.includes(opt.id)) return null;
             return (
               <div
                 key={opt.id}
@@ -202,8 +201,7 @@ export default function GadgetAmmo({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {options.map((opt) => {
               const rules = itemById?.[opt.id]?.rulesText;
-              if (isGadgetOptionHiddenForCampaign(opt.id, itemById, campActive, campaignId))
-                return null; //Specific to the current campaign where it will filter out gadgets based on cost.
+              if (!ownedOptionIds.includes(opt.id)) return null;
               return (
                 <div
                   key={opt.id}

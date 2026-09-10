@@ -19,13 +19,22 @@
  * modeled yet. Adding one is always safe (it only ever grows the character's
  * totals); removing one is guarded the same way spending is, since an
  * achievement logged on any past mission may already have been spent.
+ *
+ * Logistics purchases (weapons/gadgets/gear bought with money, see
+ * logisticsEngine.js) are recorded onto the same receipt for display
+ * (`purchases`), but reversed via a full `equipmentBefore` snapshot taken
+ * when the mission was logged, rather than itemized undo — equipment fields
+ * are single values (not append-only lists like specializations), so a
+ * mission removal just restores the whole equipment object to how it stood
+ * right before that mission.
  */
 import { getAvailableXP } from "./characterEngine";
+import { sanitizeEquipmentOwnership } from "./equipmentEngine";
 
 /**
  * Empty receipt for a freshly logged mission: nothing's been bought against
- * its XP yet, and the character's emergency dice are snapshotted so a later
- * removal can restore exactly that pre-mission count.
+ * its XP/money yet, and the character's emergency dice + equipment are
+ * snapshotted so a later removal can restore exactly the pre-mission state.
  */
 function emptyReceipt(character) {
   return {
@@ -35,6 +44,8 @@ function emptyReceipt(character) {
     xpSpent: 0,
     emergencyDiceBefore: character?.emergencyDice ?? 0,
     emergencyDiceXPSpentBefore: character?.emergencyDiceXPSpent ?? 0,
+    purchases: [],
+    equipmentBefore: character?.equipment ?? {},
   };
 }
 
@@ -99,6 +110,45 @@ export function createMissionLog({ name, missionXP, payout, notes, date }, chara
     achievements: [],
     receipt: emptyReceipt(character),
   };
+}
+
+/**
+ * Every character needs a first log entry to attach spending receipts to —
+ * without one, purchases/skill buys made before any real mission is logged
+ * (funded by starting cash) aren't tracked anywhere and can't be reversed.
+ * This builds that entry, crediting the character's starting cash as its
+ * payout so it flows through the same money total as any other mission
+ * (see getMoneyTotal) instead of a separate special case. That same amount
+ * is also recorded in `metadata.starting_cash`, so the Logs tab can display
+ * it distinctly from a mission's earned payout.
+ */
+export function createStartingLog(character) {
+  const startingCash = character.metadata.starting_cash || 0;
+
+  return {
+    ...createMissionLog(
+      {
+        name: "Orientation",
+        missionXP: 0,
+        payout: startingCash,
+        notes: "Starting cash and other bonuses from character creation.",
+        date: character?.createdAt?.slice(0, 10),
+      },
+      character,
+    )
+  };
+}
+
+/**
+ * Returns `logs` unchanged if it already has entries, otherwise a new array
+ * containing just the starting log (see createStartingLog). Callers should
+ * use this instead of reading `character.logs` directly wherever a receipt
+ * needs to exist to attach to — the caller is responsible for actually
+ * persisting the result the first time something gets attached to it.
+ */
+export function ensureStartingLog(character, logs) {
+  if (logs && logs.length > 0) return logs;
+  return [createStartingLog(character)];
 }
 
 /**
@@ -170,10 +220,32 @@ export function recordSpendOnLatestMission(
 }
 
 /**
+ * Records a logistics purchase (see logisticsEngine.js) onto the most
+ * recently logged mission's receipt, for display purposes only — the actual
+ * money spend and equipment change are applied by the caller
+ * (logisticsEngine.applyPurchase). No-op if no mission has been logged yet.
+ */
+export function recordPurchaseOnLatestMission(logs, purchase) {
+  if (!logs || logs.length === 0) return logs;
+
+  const lastIndex = logs.length - 1;
+  const last = logs[lastIndex];
+  const receipt = last.receipt ?? emptyReceipt();
+
+  const nextLogs = [...logs];
+  nextLogs[lastIndex] = {
+    ...last,
+    receipt: { ...receipt, purchases: [...(receipt.purchases ?? []), purchase] },
+  };
+  return nextLogs;
+}
+
+/**
  * Turns a mission's receipt into small display-ready summary lines (skill
- * levels bought, attribute points bought, specializations purchased, and the
- * emergency dice count at the time the mission was logged) for the Logs tab.
- * Returns an empty summary for a mission with no receipt (e.g. legacy data).
+ * levels bought, attribute points bought, specializations purchased, the
+ * emergency dice count at the time the mission was logged, and any
+ * logistics purchases) for the Logs tab. Returns an empty summary for a
+ * mission with no receipt (e.g. legacy data).
  */
 export function describeReceipt(receipt) {
   const skills = Object.entries(receipt?.skills ?? {})
@@ -188,12 +260,18 @@ export function describeReceipt(receipt) {
     (spec) => spec.label || spec.skill,
   );
 
+  const purchases = (receipt?.purchases ?? []).map((purchase) => ({
+    label: purchase.label,
+    cost: purchase.cost,
+  }));
+
   return {
     skills,
     attributes,
     specializations,
     xpSpent: receipt?.xpSpent ?? 0,
     emergencyDiceBefore: receipt?.emergencyDiceBefore,
+    purchases,
   };
 }
 
@@ -233,24 +311,32 @@ export function applyMissionLogAdd(character, logs, entry) {
 
 /**
  * Removes the most recently logged mission, reversing exactly what its
- * receipt says was bought with its XP: skill levels and attribute points are
- * rolled back by the recorded deltas, the specializations purchased since
- * are stripped back off, and emergency dice (count + lifetime XP spent) are
- * reset to their pre-mission snapshot — discarding any dice bought or used
- * since. Blocked if `index` isn't the last entry (an older receipt can't be
- * safely unwound once later missions/spending have layered on top of it), or
- * if refunding the payout would take the character's money negative.
- * @returns {{logs, money, skills, attributes, specializations, emergencyDice, emergencyDiceXPSpent}|null} null if blocked
+ * receipt says was bought with its XP and money: skill levels and attribute
+ * points are rolled back by the recorded deltas, the specializations
+ * purchased since are stripped back off, emergency dice (count + lifetime XP
+ * spent) are reset to their pre-mission snapshot, and equipment is reset to
+ * its pre-mission snapshot too — discarding any dice/gear bought or used
+ * since. Money spent on those now-reverted purchases is refunded, alongside
+ * removing the mission's own earnings. Blocked if `index` isn't the last
+ * entry (an older receipt can't be safely unwound once later
+ * missions/spending have layered on top of it), or if the net money change
+ * would take the character's money negative.
+ * @returns {{logs, money, skills, attributes, specializations, emergencyDice, emergencyDiceXPSpent, equipment}|null} null if blocked
  */
 export function applyMissionLogRemove(character, logs, index) {
   const entry = logs[index];
   if (!entry) return null;
   if (index !== logs.length - 1) return null;
 
-  const nextMoney = getMoneyTotal(character) - getMissionEarnings(entry).cash;
-  if (nextMoney < 0) return null;
-
   const receipt = entry.receipt ?? {};
+
+  const purchaseRefund = (receipt.purchases ?? []).reduce(
+    (sum, purchase) => sum + (purchase.cost || 0),
+    0,
+  );
+  const nextMoney =
+    getMoneyTotal(character) - getMissionEarnings(entry).cash + purchaseRefund;
+  if (nextMoney < 0) return null;
 
   const skills = { ...(character.skills ?? {}) };
   Object.entries(receipt.skills ?? {}).forEach(([skill, delta]) => {
@@ -270,8 +356,10 @@ export function applyMissionLogRemove(character, logs, index) {
       ? (character.specializations ?? []).slice(0, -specCount)
       : [...(character.specializations ?? [])];
 
+  const nextLogs = logs.slice(0, -1);
+
   return {
-    logs: logs.slice(0, -1),
+    logs: nextLogs,
     money: nextMoney,
     skills,
     attributes,
@@ -279,6 +367,10 @@ export function applyMissionLogRemove(character, logs, index) {
     emergencyDice: receipt.emergencyDiceBefore ?? character.emergencyDice ?? 0,
     emergencyDiceXPSpent:
       receipt.emergencyDiceXPSpentBefore ?? character.emergencyDiceXPSpent ?? 0,
+    equipment: sanitizeEquipmentOwnership(
+      receipt.equipmentBefore ?? character.equipment ?? {},
+      nextLogs,
+    ),
   };
 }
 

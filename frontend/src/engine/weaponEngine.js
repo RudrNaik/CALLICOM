@@ -2,6 +2,7 @@
  * Weapon Engine
  * Centralizes weapon stat/category logic, ammo-capacity math, and roll-calculator helpers.
  */
+import { getPurchasedWeapons } from "./equipmentEngine";
 
 /**
  * Transforms the equipment list into a lookup object for weapon categories using IDs.
@@ -41,6 +42,36 @@ export const getWeaponCategoriesLookup = (equipmentData) => {
     }
   });
   return lookup;
+};
+
+/**
+ * Restricts a weapon-category lookup (as built by getWeaponCategoriesLookup)
+ * to only the categories/families a character has actually purchased in
+ * Logistics, derived from `logs` (see equipmentEngine.getPurchasedWeapons —
+ * nothing is stored on Equipment for this), for the Gameplay tab's weapon
+ * pickers — buying is what unlocks a category or family, not class
+ * eligibility alone (that's still enforced upstream, at purchase time, via
+ * getExcludedPrimaryCategories/getExcludedSecondaryCategories).
+ * @param {Array} logs - character.logs
+ * @param {object} weaponCatsLookup - category-name-keyed lookup
+ * @returns {object} the same shape, filtered down to owned categories/families
+ */
+export const getOwnedWeaponCategories = (logs, weaponCatsLookup) => {
+  const owned = getPurchasedWeapons(logs);
+  const result = {};
+
+  Object.entries(weaponCatsLookup).forEach(([categoryName, categoryData]) => {
+    const ownedInCategory = owned.filter((w) => w.category === categoryName);
+    if (ownedInCategory.length === 0) return;
+
+    const ownedFamilies = new Set(ownedInCategory.map((w) => w.family || ""));
+    result[categoryName] = {
+      ...categoryData,
+      families: (categoryData.families ?? []).filter((f) => ownedFamilies.has(f.family)),
+    };
+  });
+
+  return result;
 };
 
 // --- Weapon Logic ---

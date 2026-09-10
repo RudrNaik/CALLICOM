@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   createMissionLog,
   createAchievement,
@@ -12,6 +12,7 @@ import {
   getMissionEarnings,
   describeReceipt,
   getEmergencyDiceXPDuring,
+  ensureStartingLog,
 } from "../../../engine/logsEngine";
 
 const today = () => new Date().toISOString().slice(0, 10);
@@ -37,9 +38,19 @@ function LogsView({ character, refreshCharacter }) {
   const [showAchievementForm, setShowAchievementForm] = useState(false);
   const [achievementDraft, setAchievementDraft] = useState(emptyAchievementDraft);
 
-  const logs = character?.logs ?? [];
+  const logs = ensureStartingLog(character, character?.logs ?? []);
   const money = getMoneyTotal(character);
   const { totalMissionXP, totalPayout } = getLogTotals(logs);
+
+  // Every character needs a first log to attach receipts to (see
+  // createStartingLog); persist it as soon as we notice one's missing so it
+  // shows up "no matter what", not just once something's bought against it.
+  useEffect(() => {
+    if (!character?.logs || character.logs.length === 0) {
+      refreshCharacter({ logs });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [character?.logs?.length]);
 
   const resetForm = () => {
     setName("");
@@ -220,6 +231,7 @@ function LogsView({ character, refreshCharacter }) {
                 receipt.skills.length > 0 ||
                 receipt.attributes.length > 0 ||
                 receipt.specializations.length > 0 ||
+                receipt.purchases.length > 0 ||
                 ediceXPSpent !== 0;
               const earnings = getMissionEarnings(log);
               const hasAchievementBonus =
@@ -421,7 +433,13 @@ function LogsView({ character, refreshCharacter }) {
                         )}
                         <div className="text-xs mt-1 space-x-3">
                           <span className="text-orange-300">+{log.missionXP} XP</span>
-                          <span className="text-green-400">+${log.payout}</span>
+                          {log.metadata?.starting_cash != null ? (
+                            <span className="text-green-400">
+                              Starting Cash: ${log.metadata.starting_cash}
+                            </span>
+                          ) : (
+                            <span className="text-green-400">+${log.payout}</span>
+                          )}
                         </div>
 
                         {achievements.length > 0 && (
@@ -479,6 +497,16 @@ function LogsView({ character, refreshCharacter }) {
                             <div className="text-orange-300 font-semibold">
                               Total XP Spent: {totalXPSpent}
                             </div>
+                            {receipt.purchases.length > 0 && (
+                              <div>
+                                <div className="text-neutral-500">Purchased:</div>
+                                {receipt.purchases.map((purchase, pIndex) => (
+                                  <div key={pIndex} className="pl-2">
+                                    {purchase.label} — ${purchase.cost}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
                           </div>
                         )}
                         {receipt.emergencyDiceBefore !== undefined && (

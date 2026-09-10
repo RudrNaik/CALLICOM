@@ -34,6 +34,7 @@ import Collapsible from "../Collapsible";
 import RollCalculator from "./CharDetailComponents/RollCalculator";
 import ExpAddedCalc from "./CharDetailComponents/expAddedCalc";
 import LogsView from "./CharDetailComponents/LogsView";
+import LogisticsView from "./CharDetailComponents/LogisticsView";
 import { normalizeCharacterData } from "../../engine/characterDataHandler";
 
 const biographyFields = [
@@ -52,7 +53,7 @@ const emptyBiography = Object.fromEntries(
   biographyFields.map(([field]) => [field, ""]),
 );
 
-function CharacterDetail({ character, onUpdate, user, equipment }) {
+function CharacterDetail({ character, onUpdate, user }) {
   const [isEditing, setIsEditing] = useState(false);
   const [isEditingBio, setIsEditingBio] = useState(false);
   const [isEditingEquipment, setIsEditingEquipment] = useState(false);
@@ -431,9 +432,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
       )}
 
       {activeTab === "logistics" && (
-        <div className="text-gray-400 italic p-6">
-          Logistics coming soon.
-        </div>
+        <LogisticsView character={character} refreshCharacter={onUpdate} />
       )}
 
       {activeTab === "gameplay" && (
@@ -759,7 +758,6 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
             refreshCharacter={onUpdate}
             setIsEditing={setIsEditingEquipment}
             charActive={charActive}
-            campEquipment={equipment} //Know that this only applies to Siberia2022 atm. Any character not assigned to that campaign does not have the restrictions.
             wideLayout={!columnView}
           />
         </div>

@@ -7,12 +7,15 @@ import {
   getGadgetAmmoConfig,
   getItemByIdLookup,
   getAvailableClassGadgets,
+  getOwnedGrenades,
+  getPurchasedGadgetIds,
   getArmorClassCap,
   getSecondaryGadgetForClass,
   getArmorClassDescription,
 } from "../../../engine/equipmentEngine";
 import {
   getWeaponCategoriesLookup,
+  getOwnedWeaponCategories,
   getExcludedPrimaryCategories,
   getExcludedSecondaryCategories,
 } from "../../../engine/weaponEngine";
@@ -28,7 +31,6 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
     refreshCharacter,
     setIsEditing,
     charActive,
-    campEquipment,
     wideLayout,
   },
   ref,
@@ -51,9 +53,12 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
   //percolates items from the equipment data into an easy to use lookup table.
   const itemById = useMemo(() => getItemByIdLookup(equipmentData), []);
 
-  const campaignLookupTable = useMemo(
-    () => getItemByIdLookup(campEquipment),
-    [campEquipment],
+  // Ammo variants (submunitions) purchased in Logistics — narrows the ammo
+  // picker in GadgetAmmo.jsx to only what's actually been bought (see
+  // equipmentEngine.getPurchasedGadgetIds).
+  const ownedGadgetIds = useMemo(
+    () => getPurchasedGadgetIds(character?.logs),
+    [character?.logs],
   );
 
   const [gear, setGear] = useState(defaultGear);
@@ -89,41 +94,40 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
 
     setGear(normalizedEquipment);
 
-    //filters items based on class, secondary class, and if they are purchased or not.
-    const filtered = getAvailableClassGadgets(character, campEquipment, equipmentData);
+    //Gadgets are restricted to what's actually been bought in Logistics
+    //(derived from the mission logs' receipts, nothing stored on equipment).
+    const filtered = getAvailableClassGadgets(character.logs, equipmentData);
     setClassGadgets(filtered);
 
-    // Filter grenades from equipment data
-    const grenadeList = equipmentData.filter(
-      (item) => item?.parentId == "grenades",
-    );
-    setGrenades(grenadeList);
+    //Grenades likewise: only types bought in Logistics are selectable.
+    setGrenades(getOwnedGrenades(character.logs, equipmentData));
 
-    //Excludes primaries based on main and sub classes
+    //Excludes primaries based on main and sub classes, then further
+    //restricts to categories/families actually bought in Logistics.
     const excludedPrimary = getExcludedPrimaryCategories(character);
     const primaryFilter = Object.fromEntries(
       Object.entries(weaponCatsLookup).filter(
         ([key]) => !excludedPrimary.includes(key),
       ),
     );
-    setPrimaries(primaryFilter);
+    setPrimaries(getOwnedWeaponCategories(character.logs, primaryFilter));
 
     //Restrics Armor per SUPP getting AC3 as max (to use the juggernaut suit), everyone else has max of AC1
     setArmor(getArmorClassCap(character));
 
-    //Excludes secondaries universally.
+    //Excludes secondaries universally, then restricts to what's been bought.
     const excludedSecondary = getExcludedSecondaryCategories();
     const secondaryFilter = Object.fromEntries(
       Object.entries(weaponCatsLookup).filter(
         ([key]) => !excludedSecondary.includes(key),
       ),
     );
-    setSecondary(secondaryFilter);
+    setSecondary(getOwnedWeaponCategories(character.logs, secondaryFilter));
 
     //Grabs secondary gadget (class gadget) and assigns it.
     setSecGadget(getSecondaryGadgetForClass(secondaryGadgets, character));
 
-  }, [character, campEquipment, weaponCatsLookup]);
+  }, [character, weaponCatsLookup]);
 
   const handleChange = (field, value) => {
     setGear((prev) => ({ ...prev, [field]: value }));
@@ -480,9 +484,7 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
               charClass={character.class}
               characterId={characterId}
               config={activeGadgetConfig}
-              campaignEquipment={campaignLookupTable}
-              campActive={!(!campEquipment || campEquipment == null)}
-              campaignId={character?.campaignId}
+              ownedOptionIds={ownedGadgetIds}
             />
           )}
 

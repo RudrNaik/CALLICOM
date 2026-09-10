@@ -28,42 +28,156 @@ export const getItemByIdLookup = (items) => {
 };
 
 /**
- * Filters the available class gadgets for a character, accounting for the
- * Siberia2022 campaign restriction (only free/cost===0 campaign items) and
- * excluding SubMunition items parented to "thinkpad".
- * @param {object} character
- * @param {Array} campEquipment - campaign-specific equipment list (may be undefined/null)
+ * Derives every gadget/submunition id a character has ever purchased by
+ * scanning their mission logs' receipts (see logisticsEngine.js) — nothing
+ * is stored on Equipment itself for this, so removing a mission or undoing
+ * a purchase updates what's "owned" for free, just by re-deriving from the
+ * (now shorter) `logs`. A gadget's submunitions are always their own
+ * individual purchases (see logisticsEngine.createSubmunitionPurchase),
+ * never bundled with buying the gadget itself, but both fold into this same
+ * id set — there's no separate "unlocked submunitions" concept; a
+ * submunition is just another item that either shows up here or doesn't.
+ * @param {Array} logs - character.logs
+ * @returns {Array<string>}
+ */
+export const getPurchasedGadgetIds = (logs) => {
+  const ids = new Set();
+  (logs ?? []).forEach((log) => {
+    (log?.receipt?.purchases ?? []).forEach((purchase) => {
+      if (purchase.type === "gadget" || purchase.type === "submunition") {
+        ids.add(purchase.value);
+      }
+    });
+  });
+  return [...ids];
+};
+
+/**
+ * Derives every weapon a character has ever purchased (one entry per
+ * purchase, name included) from their mission logs' receipts.
+ * @param {Array} logs - character.logs
+ * @returns {Array<{name: string, category: string, family: string}>}
+ */
+export const getPurchasedWeapons = (logs) => {
+  const weapons = [];
+  (logs ?? []).forEach((log) => {
+    (log?.receipt?.purchases ?? []).forEach((purchase) => {
+      if (purchase.type === "weapon") weapons.push(purchase.value);
+    });
+  });
+  return weapons;
+};
+
+/**
+ * Derives every grenade type id a character has ever purchased from their
+ * mission logs' receipts.
+ * @param {Array} logs - character.logs
+ * @returns {Array<string>}
+ */
+export const getPurchasedGrenadeIds = (logs) => {
+  const ids = new Set();
+  (logs ?? []).forEach((log) => {
+    (log?.receipt?.purchases ?? []).forEach((purchase) => {
+      if (purchase.type === "grenade") ids.add(purchase.value);
+    });
+  });
+  return [...ids];
+};
+
+/**
+ * Gadgets a character can currently select as their Class Gadget in the
+ * Gameplay tab — restricted to what they've actually purchased in
+ * Logistics, derived from `logs` (see getPurchasedGadgetIds). Excludes
+ * SubMunition items (ammo variants like 40mm rounds): those are selected
+ * via the gadget's own ammo UI (GadgetAmmo.jsx), not as a main gadget in
+ * their own right. Availability used to be gated by a campaign-specific
+ * equipment list (Siberia2022); that's been replaced entirely by this
+ * purchase-based check, which applies uniformly regardless of campaign.
+ * @param {Array} logs - character.logs
  * @param {Array} equipmentData - full equipment data list
  * @returns {Array}
  */
-export const getAvailableClassGadgets = (character, campEquipment, equipmentData) => {
-  const isSiberia2022 =
-    character?.campaignId
-      ?.replace(/\s/g, "")
-      ?.split(",")
-      ?.includes("Siberia2022");
+export const getAvailableClassGadgets = (logs, equipmentData) => {
+  const owned = getPurchasedGadgetIds(logs);
+  return equipmentData.filter((item) => owned.includes(item.id) && !item.SubMunition);
+};
 
-  if (
-    character?.campaignId == undefined ||
-    character?.campaignId == null ||
-    !isSiberia2022 ||
-    !campEquipment
-  ) {
-    return equipmentData.filter(
-      (item) =>
-        (item.class === character.class ||
-          item.class === character.multiClass) &&
-        (!item?.SubMunition || !item?.parentId === "thinkpad"),
+/**
+ * Gadgets a character is eligible to buy in Logistics: their class's (and
+ * multiclass's, if set) catalog entries. Ownership isn't required here —
+ * it's the outcome of buying, not a prerequisite. Excludes SubMunition
+ * items (ammo variants like 40mm rounds), which aren't standalone gadgets.
+ * @param {object} character
+ * @param {Array} equipmentData - full equipment data list
+ * @returns {Array}
+ */
+export const getClassEligibleGadgets = (character, equipmentData) => {
+  return equipmentData.filter(
+    (item) =>
+      (item.class === character.class || item.class === character.multiClass) &&
+      !item?.SubMunition,
+  );
+};
+
+/**
+ * Grenade types a character can select in the Gameplay tab — restricted to
+ * what they've actually purchased in Logistics, derived from `logs`.
+ * @param {Array} logs - character.logs
+ * @param {Array} equipmentData - full equipment data list
+ * @returns {Array}
+ */
+export const getOwnedGrenades = (logs, equipmentData) => {
+  const owned = getPurchasedGrenadeIds(logs);
+  return equipmentData.filter(
+    (item) => item?.parentId === "grenades" && owned.includes(item.id),
+  );
+};
+
+/**
+ * Clears any currently-equipped gadget/weapon/grenade that no longer has a
+ * matching purchase in `logs` (see getPurchasedGadgetIds/Weapons/
+ * GrenadeIds) — e.g. after a purchase undo (see logisticsEngine.js) or on
+ * legacy data predating purchase tracking. Ownership itself is never
+ * stored, so this only ever touches the equip pointers, not `logs`.
+ * @param {object} equipment
+ * @param {Array} logs - character.logs
+ * @returns {object} a new equipment object with dangling equip pointers cleared
+ */
+export const sanitizeEquipmentOwnership = (equipment, logs) => {
+  const base = equipment ?? {};
+  const ownedGadgetIds = getPurchasedGadgetIds(logs);
+  const ownedWeapons = getPurchasedWeapons(logs);
+  const ownedGrenadeIds = getPurchasedGrenadeIds(logs);
+
+  const sanitized = { ...base };
+
+  if (sanitized.gadget && !ownedGadgetIds.includes(sanitized.gadget)) {
+    sanitized.gadget = "";
+    sanitized.gadgetAmmo = {};
+  }
+
+  ["primaryWeapon", "secondaryWeapon"].forEach((slot) => {
+    const weapon = sanitized[slot];
+    if (!weapon?.category) return;
+
+    const stillOwned = ownedWeapons.some(
+      (w) =>
+        w.name === weapon.name &&
+        w.category === weapon.category &&
+        (w.family || "") === (weapon.family || ""),
+    );
+    if (!stillOwned) {
+      sanitized[slot] = { name: "", category: "", family: "" };
+    }
+  });
+
+  if (Array.isArray(sanitized.grenades)) {
+    sanitized.grenades = sanitized.grenades.map((id) =>
+      id && !ownedGrenadeIds.includes(id) ? "" : id,
     );
   }
 
-  return campEquipment.filter(
-    (item) =>
-      (item.class === character.class ||
-        item.class === character.multiClass) &&
-      item.cost === 0 &&
-      (!item?.SubMunition || !item?.parentId === "thinkpad"),
-  );
+  return sanitized;
 };
 
 /**
@@ -118,28 +232,6 @@ export const getArmorClassDescription = (armorClass) => {
     return "[N/A // Cannot have an AC past 2.]";
   }
   return "";
-};
-
-/**
- * Determines whether a mixed-munitions/thinkpad gadget option should be
- * hidden due to the Siberia2022 campaign's cost restriction. `costLookup` is
- * whichever id-keyed lookup the call site checks cost against (campaign
- * equipment for mixed-munitions options, itemById for thinkpad hacks).
- * @param {string} optionId - equipment id of the option/hack
- * @param {object} costLookup - id-keyed lookup table used to read `.cost`
- * @param {boolean} campActive - whether a campaign is currently active
- * @param {string} campaignId - character's campaignId string
- * @returns {boolean}
- */
-export const isGadgetOptionHiddenForCampaign = (optionId, costLookup, campActive, campaignId) => {
-  return Boolean(
-    campActive &&
-      costLookup?.[optionId]?.cost != 0 &&
-      campaignId
-        ?.replace(/\s/g, "")
-        ?.split(",")
-        ?.includes("Siberia2022"),
-  );
 };
 
 // --- Gadget Ammo Logic ---
