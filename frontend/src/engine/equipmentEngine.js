@@ -252,6 +252,7 @@ export const RES_KEY = "__res";
 export const isMixedGadget = (gadgetId) => MIXED_GADGETS.includes(gadgetId);
 export const isExpendableGadget = (gadgetId, config = null) => {
   if (!config || typeof config !== "object") return false;
+  if (isMixedGadget(gadgetId)) return false;
   const max = getGadgetAmmoMax(config);
   return Number.isFinite(max) && max > 0;
 };
