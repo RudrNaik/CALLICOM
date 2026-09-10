@@ -12,8 +12,15 @@
  *
  * Because a receipt only makes sense relative to the missions logged after
  * it, only the most recently logged mission (the end of the `logs` array)
- * can be removed this way.
+ * can be removed or edited this way.
+ *
+ * A mission can also carry `achievements`: extra XP/money awards (bonus
+ * objectives, etc.) logged after the fact. Loot-granting achievements aren't
+ * modeled yet. Adding one is always safe (it only ever grows the character's
+ * totals); removing one is guarded the same way spending is, since an
+ * achievement logged on any past mission may already have been spent.
  */
+import { getAvailableXP } from "./characterEngine";
 
 /**
  * Empty receipt for a freshly logged mission: nothing's been bought against
@@ -41,14 +48,37 @@ export function getMoneyTotal(character) {
 }
 
 /**
- * Sums the XP and money earned across all logged missions.
+ * A mission's total XP/cash, including whatever its logged achievements add
+ * on top of the base mission reward.
+ */
+export function getMissionEarnings(log) {
+  const achievements = log?.achievements ?? [];
+  return {
+    xp:
+      (log?.missionXP || 0) +
+      achievements.reduce((sum, a) => sum + (a.xpPayout || 0), 0),
+    cash:
+      (log?.payout || 0) +
+      achievements.reduce((sum, a) => sum + (a.cashPayout || 0), 0),
+  };
+}
+
+/**
+ * Sums the XP and money earned across all logged missions, achievements
+ * included.
  */
 export function getLogTotals(logs) {
   const list = logs ?? [];
-  return {
-    totalMissionXP: list.reduce((sum, log) => sum + (log.missionXP || 0), 0),
-    totalPayout: list.reduce((sum, log) => sum + (log.payout || 0), 0),
-  };
+  return list.reduce(
+    (totals, log) => {
+      const earnings = getMissionEarnings(log);
+      return {
+        totalMissionXP: totals.totalMissionXP + earnings.xp,
+        totalPayout: totals.totalPayout + earnings.cash,
+      };
+    },
+    { totalMissionXP: 0, totalPayout: 0 },
+  );
 }
 
 /**
@@ -66,7 +96,21 @@ export function createMissionLog({ name, missionXP, payout, notes, date }, chara
     payout: Number(payout) || 0,
     notes: notes?.trim() || "",
     date: date || new Date().toISOString().slice(0, 10),
+    achievements: [],
     receipt: emptyReceipt(character),
+  };
+}
+
+/**
+ * Builds a new achievement entry from form input.
+ */
+export function createAchievement({ name, criteria, xpPayout, cashPayout }) {
+  return {
+    id: crypto.randomUUID(),
+    name: name?.trim() || "Unnamed Achievement",
+    criteria: criteria?.trim() || "",
+    xpPayout: Number(xpPayout) || 0,
+    cashPayout: Number(cashPayout) || 0,
   };
 }
 
@@ -183,7 +227,7 @@ export function getEmergencyDiceXPDuring(logs, index, character) {
 export function applyMissionLogAdd(character, logs, entry) {
   return {
     logs: [...logs, entry],
-    money: getMoneyTotal(character) + entry.payout,
+    money: getMoneyTotal(character) + getMissionEarnings(entry).cash,
   };
 }
 
@@ -203,7 +247,7 @@ export function applyMissionLogRemove(character, logs, index) {
   if (!entry) return null;
   if (index !== logs.length - 1) return null;
 
-  const nextMoney = getMoneyTotal(character) - entry.payout;
+  const nextMoney = getMoneyTotal(character) - getMissionEarnings(entry).cash;
   if (nextMoney < 0) return null;
 
   const receipt = entry.receipt ?? {};
@@ -236,4 +280,87 @@ export function applyMissionLogRemove(character, logs, index) {
     emergencyDiceXPSpent:
       receipt.emergencyDiceXPSpentBefore ?? character.emergencyDiceXPSpent ?? 0,
   };
+}
+
+/**
+ * Edits the most recently logged mission's own fields (name/date/notes/
+ * missionXP/payout) in place, instead of having to remove and re-add it.
+ * Only the last entry is editable, matching the removal restriction — its
+ * receipt-based spending assumes its XP/money contribution to the totals,
+ * so an older entry could invalidate spending already layered on top of it.
+ * Blocked if the new missionXP/payout would take the character's derived
+ * available XP or money negative.
+ * @returns {{logs: array, money: number}|null} null if blocked
+ */
+export function applyMissionLogEdit(character, logs, index, updates) {
+  const entry = logs[index];
+  if (!entry) return null;
+  if (index !== logs.length - 1) return null;
+
+  const nextEntry = {
+    ...entry,
+    name: updates.name?.trim() || entry.name,
+    date: updates.date || entry.date,
+    notes: updates.notes?.trim() ?? entry.notes,
+    missionXP: Number(updates.missionXP) || 0,
+    payout: Number(updates.payout) || 0,
+  };
+
+  const cashDelta = getMissionEarnings(nextEntry).cash - getMissionEarnings(entry).cash;
+  const nextMoney = getMoneyTotal(character) + cashDelta;
+  if (nextMoney < 0) return null;
+
+  const xpDelta = getMissionEarnings(nextEntry).xp - getMissionEarnings(entry).xp;
+  const nextMissionXPTotal = getLogTotals(logs).totalMissionXP + xpDelta;
+  if (getAvailableXP(character, nextMissionXPTotal) < 0) return null;
+
+  const nextLogs = [...logs];
+  nextLogs[index] = nextEntry;
+
+  return { logs: nextLogs, money: nextMoney };
+}
+
+/**
+ * Adds an achievement to a mission. Always safe regardless of which mission
+ * (even an old one) — it only ever grows the character's XP/money totals.
+ * @returns {{logs: array, money: number}}
+ */
+export function applyAchievementAdd(character, logs, missionIndex, achievement) {
+  const entry = logs[missionIndex];
+  const nextLogs = [...logs];
+  nextLogs[missionIndex] = {
+    ...entry,
+    achievements: [...(entry.achievements ?? []), achievement],
+  };
+
+  return {
+    logs: nextLogs,
+    money: getMoneyTotal(character) + achievement.cashPayout,
+  };
+}
+
+/**
+ * Removes an achievement from a mission, refunding its cash/XP contribution.
+ * Blocked if doing so would take the character's money or derived available
+ * XP negative (i.e. it's already been spent).
+ * @returns {{logs: array, money: number}|null} null if blocked
+ */
+export function applyAchievementRemove(character, logs, missionIndex, achievementIndex) {
+  const entry = logs[missionIndex];
+  const achievement = entry?.achievements?.[achievementIndex];
+  if (!achievement) return null;
+
+  const nextMoney = getMoneyTotal(character) - achievement.cashPayout;
+  if (nextMoney < 0) return null;
+
+  const nextMissionXPTotal = getLogTotals(logs).totalMissionXP - achievement.xpPayout;
+  if (getAvailableXP(character, nextMissionXPTotal) < 0) return null;
+
+  const nextAchievements = [...entry.achievements];
+  nextAchievements.splice(achievementIndex, 1);
+
+  const nextLogs = [...logs];
+  nextLogs[missionIndex] = { ...entry, achievements: nextAchievements };
+
+  return { logs: nextLogs, money: nextMoney };
 }

@@ -126,7 +126,21 @@ export interface MissionLog {
   notes: string;
   /** In-character date the mission took place ("YYYY-MM-DD"), set by the user on the form — not the real-world date it was logged. */
   date: string;
+  /** Bonus objectives logged after the fact; their XP/cash add on top of missionXP/payout (see logsEngine.getMissionEarnings). */
+  achievements: Achievement[];
   receipt: MissionReceipt;
+}
+
+/**
+ * A bonus XP/money award logged against a mission (e.g. an optional
+ * objective). Loot-granting achievements aren't modeled yet.
+ */
+export interface Achievement {
+  id: string;
+  name: string;
+  criteria: string;
+  xpPayout: number;
+  cashPayout: number;
 }
 
 /**
