@@ -5,6 +5,8 @@ import {
   applyMissionLogRemove,
   getMoneyTotal,
   getLogTotals,
+  describeReceipt,
+  getEmergencyDiceXPDuring,
 } from "../../../engine/logsEngine";
 
 const today = () => new Date().toISOString().slice(0, 10);
@@ -31,7 +33,10 @@ function LogsView({ character, refreshCharacter }) {
   };
 
   const handleAddMission = () => {
-    const entry = createMissionLog({ name, missionXP, payout, notes, date: missionDate });
+    const entry = createMissionLog(
+      { name, missionXP, payout, notes, date: missionDate },
+      character,
+    );
     const result = applyMissionLogAdd(character, logs, entry);
     refreshCharacter(result);
     resetForm();
@@ -41,7 +46,7 @@ function LogsView({ character, refreshCharacter }) {
     const result = applyMissionLogRemove(character, logs, index);
     if (!result) {
       alert(
-        "Can't remove this mission — its XP or payout has already been spent.",
+        "Can't remove this mission — its payout has already been spent.",
       );
       return;
     }
@@ -137,33 +142,80 @@ function LogsView({ character, refreshCharacter }) {
         <div className="space-y-2">
           {logs
             .map((log, index) => ({ log, index }))
-            .sort((a, b) => (b.log.date || "").localeCompare(a.log.date || ""))
-            .map(({ log, index }) => (
-              <div
-                key={log.id ?? index}
-                className="bg-neutral-900 border border-neutral-700 rounded p-3 flex items-start justify-between gap-3"
-              >
-                <div>
-                  <div className="font-semibold text-orange-400">{log.name}</div>
-                  <div className="text-xs text-neutral-400">{log.date}</div>
-                  {log.notes && (
-                    <p className="text-sm text-neutral-300 mt-1 whitespace-pre-wrap">
-                      {log.notes}
-                    </p>
-                  )}
-                  <div className="text-xs mt-1 space-x-3">
-                    <span className="text-orange-300">+{log.missionXP} XP</span>
-                    <span className="text-green-400">+{log.payout} Money</span>
-                  </div>
-                </div>
-                <button
-                  onClick={() => handleRemoveMission(index)}
-                  className="text-neutral-500 hover:text-red-400 text-xs cursor-pointer shrink-0"
+            .sort((a, b) => b.index - a.index)
+            .map(({ log, index }) => {
+              const canRemove = index === logs.length - 1;
+              const receipt = describeReceipt(log.receipt);
+              const ediceXPSpent = getEmergencyDiceXPDuring(logs, index, character);
+              const totalXPSpent = receipt.xpSpent + ediceXPSpent;
+              const hasReceipt =
+                receipt.skills.length > 0 ||
+                receipt.attributes.length > 0 ||
+                receipt.specializations.length > 0 ||
+                ediceXPSpent !== 0;
+              return (
+                <div
+                  key={log.id ?? index}
+                  className="bg-neutral-900 border border-neutral-700 rounded p-3 flex items-start justify-between gap-3"
                 >
-                  Remove
-                </button>
-              </div>
-            ))}
+                  <div>
+                    <div className="font-semibold text-orange-400">{log.name}</div>
+                    <div className="text-xs text-neutral-400">{log.date}</div>
+                    {log.notes && (
+                      <p className="text-sm text-neutral-300 mt-1 whitespace-pre-wrap">
+                        {log.notes}
+                      </p>
+                    )}
+                    <div className="text-xs mt-1 space-x-3">
+                      <span className="text-orange-300">+{log.missionXP} XP</span>
+                      <span className="text-green-400">+{log.payout} Money</span>
+                    </div>
+                    {hasReceipt && (
+                      <div className="text-xs mt-2 pt-2 border-t border-neutral-800 text-neutral-400 space-y-0.5">
+                        <div className="text-neutral-500">Bought since:</div>
+                        {receipt.skills.length > 0 && (
+                          <div>Skills: {receipt.skills.join(", ")}</div>
+                        )}
+                        {receipt.attributes.length > 0 && (
+                          <div>Attributes: {receipt.attributes.join(", ")}</div>
+                        )}
+                        {receipt.specializations.length > 0 && (
+                          <div>
+                            Specializations: {receipt.specializations.join(", ")}
+                          </div>
+                        )}
+                        {ediceXPSpent !== 0 && (
+                          <div>Emergency Dice: {ediceXPSpent} XP</div>
+                        )}
+                        <div className="text-orange-300 font-semibold">
+                          Total XP Spent: {totalXPSpent}
+                        </div>
+                      </div>
+                    )}
+                    {receipt.emergencyDiceBefore !== undefined && (
+                      <div className="text-xs text-neutral-500 mt-1">
+                        E-Dice at mission start: {receipt.emergencyDiceBefore}
+                      </div>
+                    )}
+                  </div>
+                  {canRemove ? (
+                    <button
+                      onClick={() => handleRemoveMission(index)}
+                      className="text-neutral-500 hover:text-red-400 text-xs cursor-pointer shrink-0"
+                    >
+                      Remove
+                    </button>
+                  ) : (
+                    <span
+                      title="Only the most recently logged mission can be removed"
+                      className="text-neutral-700 text-xs shrink-0"
+                    >
+                      Locked
+                    </span>
+                  )}
+                </div>
+              );
+            })}
         </div>
       )}
     </div>

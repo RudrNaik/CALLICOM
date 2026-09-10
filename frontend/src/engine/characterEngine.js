@@ -1,9 +1,34 @@
+import classStartingSkills from "../data/classSkills.json";
+
 export const EXP_COST = [0, 1, 5, 15, 30];
-export const BASE_CLASS_XP = 40;
 export const ATTR_EXP_COST = 25;
 export const SPEC_EXP_COST = 5;
 export const MULTICLASS_EXP_COST = 20;
 export const BASE_ATTR_POINTS = 5;
+
+// Character creation (SkillCreator.jsx): the shared XP budget for buying
+// extra skills/specializations beyond the free class package, and the free
+// starting/maximum emergency dice count — trading dice away during creation
+// frees up more of that budget (1 die = 1 XP), and trading back up spends it
+// again, capped at this baseline.
+export const CREATION_XP_BUDGET = 15;
+export const BASELINE_EMERGENCY_DICE = 4;
+
+/**
+ * The XP value of a class's free starting skill package (its level1/level2
+ * skills, per classSkills.json, costed via EXP_COST). Computed per-class
+ * rather than a flat constant, since it must exactly match whatever free
+ * skills a class actually grants for the derived available-XP formula to
+ * balance to zero on a freshly created character.
+ */
+export function getBaseClassXP(characterClass) {
+  const config = classStartingSkills[characterClass];
+  if (!config) return 0;
+
+  return (
+    config.level2.length * EXP_COST[2] + config.level1.length * EXP_COST[1]
+  );
+}
 
 /**
  * Computes the wound penalty from flesh/deep wound counts.
@@ -108,11 +133,12 @@ export function getXPBreakdown(character) {
   const totalSpent = totalSkillXP + attrXP + specXP + multiclassXP + emergencyDiceXPSpent;
 
   // Matches expAddedCalc.jsx's original display math: the base class package
-  // (BASE_CLASS_XP) is shown as its own line item, so it's carved back out
-  // of the raw skill-level XP total here.
+  // is shown as its own line item, so it's carved back out of the raw
+  // skill-level XP total here.
+  const baseClassXP = getBaseClassXP(character?.class);
   const skillsXp = Math.max(
     0,
-    totalSpent - BASE_CLASS_XP - multiclassXP - specXP - attrXP - emergencyDiceXPSpent,
+    totalSpent - baseClassXP - multiclassXP - specXP - attrXP - emergencyDiceXPSpent,
   );
 
   return {
@@ -123,6 +149,7 @@ export function getXPBreakdown(character) {
     multiclassXP,
     purchasedAttrPoints,
     emergencyDiceXPSpent,
+    baseClassXP,
   };
 }
 
@@ -143,8 +170,8 @@ export function calculateTotalSpentXP(character) {
  * `getXPBreakdown`).
  */
 export function getAvailableXP(character, missionXPTotal = 0) {
-  const { totalSpent } = getXPBreakdown(character);
-  return BASE_CLASS_XP + (character?.XP || 0) + missionXPTotal - totalSpent;
+  const { totalSpent, baseClassXP } = getXPBreakdown(character);
+  return baseClassXP + (character?.XP || 0) + missionXPTotal - totalSpent;
 }
 
 /**
@@ -327,6 +354,25 @@ export function applyAttributeIncrease(attributes, availableXP, attrKey) {
       ...attributes,
       [attrKey]: (attributes?.[attrKey] ?? 0) + 1,
     },
+  };
+}
+
+/**
+ * Undoes an attribute increase made this editing session. Blocked at or
+ * below the attribute's already-saved value — like skills, an attribute
+ * can't be sold back below what was true before this edit session started.
+ * No XP bookkeeping needed: reducing a point automatically frees up
+ * available XP since it's derived from the current point total.
+ * @returns {{attributes: object}|null} null if blocked
+ */
+export function applyAttributeDecrease(attributes, attrKey, originalAttributes) {
+  const current = attributes?.[attrKey] ?? 0;
+  const original = originalAttributes?.[attrKey] ?? 0;
+
+  if (current <= original) return null;
+
+  return {
+    attributes: { ...attributes, [attrKey]: current - 1 },
   };
 }
 

@@ -39,10 +39,6 @@ function CharCard({ character, onSelect, onDelete }) {
         <span className="font-semibold text-white text-xs">BG:</span>{" "}
         {character.background}
       </p>
-      <p className="text-sm text-gray-400">
-        <span className="font-semibold text-white">XP:</span>{" "}
-        {character.XP || 0}
-      </p>
     </div>
   );
 }

@@ -8,7 +8,9 @@ import {
   downgradeSkill,
   upgradeAttribute,
   downgradeAttribute,
-  getSkillUpgradeCost
+  getSkillUpgradeCost,
+  CREATION_XP_BUDGET,
+  BASELINE_EMERGENCY_DICE,
 } from "../../engine/characterEngine";
 
 const attributeList = ["Alertness", "Body", "Intelligence", "Spirit"];
@@ -16,7 +18,7 @@ const attributeList = ["Alertness", "Body", "Intelligence", "Spirit"];
 const SkillCreator = ({ formData, setFormData, onNext, onBack }) => {
   const [skills, setSkills] = useState({});
   const [specializations, setSpecializations] = useState([]);
-  const [emergencyDice, setEmergencyDice] = useState(3);
+  const [emergencyDice, setEmergencyDice] = useState(BASELINE_EMERGENCY_DICE);
   const [showSpecModal, setShowSpecModal] = useState(false);
 
   const [attributes, setAttributes] = useState({
@@ -26,7 +28,7 @@ const SkillCreator = ({ formData, setFormData, onNext, onBack }) => {
     Spirit: 0,
   });
 
-  const [remainingXP, setRemainingXP] = useState(15);
+  const [remainingXP, setRemainingXP] = useState(CREATION_XP_BUDGET);
   const [remainingAttrPoints, setRemainingAttrPoints] = useState(5);
 
   useEffect(() => {
@@ -81,12 +83,29 @@ const SkillCreator = ({ formData, setFormData, onNext, onBack }) => {
   };
 
   const handleNext = () => {
+    // Trading dice below the baseline frees up XP that funded skill/spec
+    // purchases here (already reflected in `skills`/`specializations`); that
+    // freed amount has to flow into the character's bonus `XP` stat so the
+    // post-creation XP ledger (characterEngine.getAvailableXP) balances back
+    // to zero. Trading back up toward the baseline costs XP the same way,
+    // recorded as `emergencyDiceXPSpent` for the same reason.
+    const emergencyDiceXPSpent = Math.max(
+      0,
+      emergencyDice - BASELINE_EMERGENCY_DICE,
+    );
+    const emergencyDiceXPFreed = Math.max(
+      0,
+      BASELINE_EMERGENCY_DICE - emergencyDice,
+    );
+
     setFormData({
       ...formData,
       skills,
       attributes,
       specializations,
       emergencyDice,
+      emergencyDiceXPSpent,
+      XP: CREATION_XP_BUDGET + emergencyDiceXPFreed,
     });
     onNext();
   };
@@ -173,12 +192,14 @@ const SkillCreator = ({ formData, setFormData, onNext, onBack }) => {
                 {emergencyDice}
               </span>
             </p>
-            <p className="text-xs text-gray-500">Max 4 | 1 XP = 1 Die</p>
+            <p className="text-xs text-gray-500">
+              Max {BASELINE_EMERGENCY_DICE} | 1 XP = 1 Die
+            </p>
           </div>
           <div className="flex space-x-2">
             <button
               onClick={() => {
-                if (remainingXP > 0 && emergencyDice < 4) {
+                if (remainingXP > 0 && emergencyDice < BASELINE_EMERGENCY_DICE) {
                   setEmergencyDice(emergencyDice + 1);
                   setRemainingXP(remainingXP - 1);
                 }

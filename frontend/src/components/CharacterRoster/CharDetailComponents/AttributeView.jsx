@@ -1,6 +1,13 @@
 import { ATTR_EXP_COST } from "../../../engine/characterEngine";
 
-function AttributeView({ attributes, xp, isEditing, onBuy }) {
+function AttributeView({
+  attributes,
+  originalAttributes,
+  xp,
+  isEditing,
+  onIncrease,
+  onDecrease,
+}) {
   const items = [
     { key: "Alertness", label: "Alertness" },
     { key: "Body", label: "Body" },
@@ -13,6 +20,7 @@ function AttributeView({ attributes, xp, isEditing, onBuy }) {
       {items.map(({ key, label }) => {
         const val = attributes?.[key] ?? 0;
         const canBuy = isEditing && xp >= ATTR_EXP_COST;
+        const canSell = isEditing && val > (originalAttributes?.[key] ?? 0);
         return (
           <div
             key={key}
@@ -20,11 +28,25 @@ function AttributeView({ attributes, xp, isEditing, onBuy }) {
           >
             <div className="font-semibold text-orange-300">{label}</div>
             <div className="flex items-center gap-2">
+              {isEditing && (
+                <button
+                  type="button"
+                  onClick={() => onDecrease?.(key)}
+                  disabled={!canSell}
+                  title="Undo attribute increase (refund 40 XP)"
+                  className={`px-2 py-0.5 rounded text-xs
+                    ${canSell
+                      ? "bg-orange-600 hover:bg-orange-700"
+                      : "bg-neutral-700 cursor-not-allowed"}`}
+                >
+                  -
+                </button>
+              )}
               <span>{val}</span>
               {isEditing && (
                 <button
                   type="button"
-                  onClick={() => onBuy?.(key)}
+                  onClick={() => onIncrease?.(key)}
                   disabled={!canBuy}
                   title="Increase attribute (40 XP)"
                   className={`px-2 py-0.5 rounded text-xs

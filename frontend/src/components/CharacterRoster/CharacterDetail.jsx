@@ -4,16 +4,23 @@ import {
   ATTR_EXP_COST,
   SPEC_EXP_COST,
   MULTICLASS_EXP_COST,
+  BASE_ATTR_POINTS,
   applySkillIncrease,
   applySkillDecrease,
   applyAttributeIncrease,
+  applyAttributeDecrease,
   applySpecializationRemoval,
   applyMulticlassSelection,
   applyEmergencyDiceIncrease,
   applyEmergencyDiceDecrease,
   getAvailableXP,
+  getTotalSkillXP,
 } from "../../engine/characterEngine";
-import { getLogTotals } from "../../engine/logsEngine";
+import {
+  getLogTotals,
+  diffCounts,
+  recordSpendOnLatestMission,
+} from "../../engine/logsEngine";
 import Edice from "./CharDetailComponents/EDice";
 import SpecModal from "./CharDetailComponents/SpecModal";
 import SpecView from "./CharDetailComponents/SpecView";
@@ -299,11 +306,13 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
   };
 
   /**
-   * Patches the attributes (alt, bdy, int, spr) for the backend data.
+   * Increases an attribute (alt, bdy, int, spr) in the local editing draft.
+   * Not persisted until Save — so it can still be undone via
+   * decreaseAttribute before the character is committed.
    * @param {*} attrKey the key of the attribute.
    * @returns
    */
-  const patchAttribute = async (attrKey) => {
+  const increaseAttribute = (attrKey) => {
     if (!attrKey) return;
 
     const result = applyAttributeIncrease(attributes, availableXP, attrKey);
@@ -313,7 +322,19 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
     }
 
     setAttributes(result.attributes);
-    onUpdate?.({ attributes: result.attributes });
+  };
+
+  /**
+   * Undoes an attribute increase made this editing session, refunding its
+   * XP (via the derived available-XP formula — no explicit refund needed).
+   * Blocked below the attribute's already-saved value.
+   * @param {*} attrKey the key of the attribute.
+   */
+  const decreaseAttribute = (attrKey) => {
+    const result = applyAttributeDecrease(attributes, attrKey, character.attributes);
+    if (!result) return;
+
+    setAttributes(result.attributes);
   };
 
   /**
@@ -321,6 +342,41 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
    * @returns
    */
   const handleSaveChanges = async () => {
+    const skillDeltas = diffCounts(character.skills, editedSkills);
+    const skillXPCost = Object.keys(skillDeltas).reduce((sum, skill) => {
+      const before = character.skills?.[skill] || 0;
+      const after = editedSkills[skill] || 0;
+      return sum + (getTotalSkillXP(after) - getTotalSkillXP(before));
+    }, 0);
+
+    const attributeDeltas = diffCounts(character.attributes, attributes);
+    const attrPointsBefore = Object.values(character.attributes ?? {}).reduce(
+      (sum, val) => sum + (val || 0),
+      0,
+    );
+    const attrPointsAfter = Object.values(attributes).reduce(
+      (sum, val) => sum + (val || 0),
+      0,
+    );
+    const attrXPCost =
+      Math.max(0, attrPointsAfter - BASE_ATTR_POINTS) * ATTR_EXP_COST -
+      Math.max(0, attrPointsBefore - BASE_ATTR_POINTS) * ATTR_EXP_COST;
+
+    const netNewSpecCount = Math.max(
+      0,
+      specializations.length - (character.specializations?.length ?? 0),
+    );
+    const newSpecializations =
+      netNewSpecCount > 0 ? specializations.slice(-netNewSpecCount) : [];
+    const specXPCost = newSpecializations.length * SPEC_EXP_COST;
+
+    const nextLogs = recordSpendOnLatestMission(character.logs ?? [], {
+      skillDeltas,
+      attributeDeltas,
+      newSpecializations,
+      xpSpentDelta: skillXPCost + attrXPCost + specXPCost,
+    });
+
     const updates = normalizeCharacterData({
       skills: editedSkills,
       specializations,
@@ -328,6 +384,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
       emergencyDiceXPSpent,
       multiClass,
       attributes,
+      logs: nextLogs,
     });
 
     setIsEditing(false);
@@ -421,9 +478,11 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
 
             <AttributeView
               attributes={attributes}
+              originalAttributes={character.attributes}
               xp={availableXP}
               isEditing={isEditing}
-              onBuy={patchAttribute}
+              onIncrease={increaseAttribute}
+              onDecrease={decreaseAttribute}
             />
 
             <DerivedStats
@@ -504,9 +563,11 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
 
           <AttributeView
             attributes={attributes}
+            originalAttributes={character.attributes}
             xp={availableXP}
             isEditing={isEditing}
-            onBuy={patchAttribute}
+            onIncrease={increaseAttribute}
+            onDecrease={decreaseAttribute}
           />
 
           {columnView && (

@@ -65,6 +65,7 @@ const createCharacterDraft = (userName) => ({
   deepWounds: 0,
   XP: 0,
   emergencyDice: 0,
+  emergencyDiceXPSpent: 0,
   createdAt: new Date().toISOString(),
   Bio: createBiographyDraft(),
 });
@@ -110,6 +111,7 @@ const CharacterCreator = () => {
       fleshWounds: Number(formData.fleshWounds || 0),
       deepWounds: Number(formData.deepWounds || 0),
       emergencyDice: Number(formData.emergencyDice || 0),
+      emergencyDiceXPSpent: Number(formData.emergencyDiceXPSpent || 0),
     };
 
     const storageKey = `roster_characters_${fullCharacter.metadata.userId}`;

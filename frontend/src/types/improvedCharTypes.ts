@@ -79,8 +79,24 @@ export interface Character {
   equipment: Equipment;
   fleshWounds: number;
   deepWounds: number;
+  /**
+   * Bonus/misc XP only — added to via mission logging or the "+Add XP"
+   * control, never spent from directly. The character's actual spendable
+   * total is derived (see characterEngine.getAvailableXP): base class
+   * package + this stat + XP summed from `logs` - XP actually spent on
+   * skills/attributes/specializations/multiclass/emergency dice.
+   */
   XP: number;
   emergencyDice?: number;
+  /**
+   * Lifetime XP spent buying emergency dice above the free baseline.
+   * Doesn't decrease when a die is used up in play — only when a same-session
+   * purchase is undone, or when a mission whose receipt recorded it is
+   * removed (see MissionReceipt).
+   */
+  emergencyDiceXPSpent?: number;
+  /** Running money total, earned via mission payouts (see MissionLog.payout) and, eventually, spent in Logistics. Falls back to `metadata.starting_cash` until the first mission is logged. */
+  money?: number;
   multiClass?: string;
   createdAt: string;
   campaignId?: string;
@@ -102,41 +118,50 @@ export interface DerivedStats {
   woundMod: number;
 }
 
-export interface MissionLog{
-    name: string;
-    missionXP: number;
-    payout: number;
-    achievement: Achievement[];
-    reciept: Reciept;
+export interface MissionLog {
+  id: string;
+  name: string;
+  missionXP: number;
+  payout: number;
+  notes: string;
+  /** In-character date the mission took place ("YYYY-MM-DD"), set by the user on the form — not the real-world date it was logged. */
+  date: string;
+  receipt: MissionReceipt;
 }
 
-export interface Achievement{
-    name: string
-    requirement: string
-    achievementXP: number
-    payout: number
+/**
+ * Exactly what a mission's XP paid for, recorded as spending happens against
+ * it (see logsEngine.recordSpendOnLatestMission). Lets removing a mission
+ * later reverse precisely what was bought with its XP — but only the most
+ * recently logged mission's receipt is safe to unwind this way, since an
+ * older one may have later missions'/spending layered on top of it.
+ */
+export interface MissionReceipt {
+  /** Net skill-level deltas bought since this mission was logged, keyed by skill name. */
+  skills: Record<string, number>;
+  /** Net attribute-point deltas bought since, keyed by attribute name. */
+  attributes: Record<string, number>;
+  /** Specializations purchased since — always the trailing entries of `Character.specializations`, since specs are only ever appended. */
+  specializations: Specialization[];
+  /** Exact XP cost of everything above (skills + attributes + specializations), from the real cost tables, not just level counts. */
+  xpSpent: number;
+  /** `Character.emergencyDice` snapshotted the moment this mission was logged; a removal resets the count to this, discarding anything bought or used since. */
+  emergencyDiceBefore: number;
+  /** `Character.emergencyDiceXPSpent` snapshotted at the same moment. */
+  emergencyDiceXPSpentBefore: number;
 }
 
-export interface Reciept{
-    XP: XpReciept[];
-    loot: lootReciept[];
-    purchases: PurchaseReciept[];
-    money: MiscMoneyPayouts[];
-}
-
-export interface XpReciept {
-    XpDelta: number;
-    XpReason: string;
+// Not yet wired up — a plausible future shape for the Logistics tab
+// (purchases/loot spent between missions), kept distinct from
+// MissionReceipt above (which only tracks XP spending).
+export interface LogisticsReceipt {
+  purchases: PurchaseReciept[];
+  loot: lootReciept[];
 }
 
 export interface PurchaseReciept {
     moneyDelta: number;
     itemIDPurchased: string;
-}
-
-export interface MiscMoneyPayouts {
-    moneyDelta: number;
-    moneyReason: number;
 }
 
 export interface lootReciept {

@@ -1,5 +1,4 @@
 import {
-  BASE_CLASS_XP,
   getXPBreakdown,
   getAvailableXP,
 } from "../../../engine/characterEngine";
@@ -57,6 +56,7 @@ function ExpBreakdown({ character }) {
     multiclassXP,
     purchasedAttrPoints,
     emergencyDiceXPSpent,
+    baseClassXP,
   } = getXPBreakdown(character);
 
   const bonusXP = character?.XP ?? 0;
@@ -69,7 +69,7 @@ function ExpBreakdown({ character }) {
 
         <LedgerRow label="Total XP Spent" value={totalSpent} total />
 
-        <LedgerRow label="Base class" value={BASE_CLASS_XP} />
+        <LedgerRow label="Base class" value={baseClassXP} />
 
         {hasMulticlass && (
           <LedgerRow
