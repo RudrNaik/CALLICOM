@@ -114,11 +114,8 @@ export const getArmorClassDescription = (armorClass) => {
   if (armorClass == 2) {
     return "-1 to movement related checks [Acrobatics][Jump][Climb][Endurance]";
   }
-  if (armorClass == 3) {
-    return "-2 to movement related checks [Acrobatics][Jump][Climb][Endurance]";
-  }
-  if (armorClass >= 4) {
-    return "[N/A // Cannot have an AC past 3.]";
+  if (armorClass >= 3) {
+    return "[N/A // Cannot have an AC past 2.]";
   }
   return "";
 };
@@ -227,6 +224,9 @@ export const getGadgetAmmoHeader = (gadgetId, config, isExpendable, effectiveMax
   return { title: "", max: 0 };
 };
 
+/** 
+ * Checks if a gadget explicitly has an ammo count. Some gadgets dont have ammo and are instead function outside of this.
+ */
 export const hasExplicitGadgetAmmo = (gadgetId, config, isMixed, isExpendable) => {
   if (!config || typeof config !== "object") return false;
   if (isMixed || isExpendable) return true;

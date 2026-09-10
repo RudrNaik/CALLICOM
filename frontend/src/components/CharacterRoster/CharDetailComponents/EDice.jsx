@@ -18,9 +18,9 @@ function Edice({
         </div>
       </div>
 
-      <div className="flex items-center space-x-4 mt-2">
-        <span className="text-white text-lg">
-          {emergencyDice} dice available
+      <div className="flex items-center space-x-4 mt-1 rounded-sm bg-gradient-to-r from-neutral-800 to-neutral-850 border-l-4 border-orange-500 p-3">
+        <span className="text-white text-md">
+          <span className="text-orange-400">{emergencyDice}</span> E-Dice available
         </span>
 
         <button

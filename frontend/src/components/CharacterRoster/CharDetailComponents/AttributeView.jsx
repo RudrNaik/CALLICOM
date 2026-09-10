@@ -32,7 +32,7 @@ function AttributeView({ attributes, xp, isEditing, onBuy }) {
                       ? "bg-orange-600 hover:bg-orange-700"
                       : "bg-neutral-700 cursor-not-allowed"}`}
                 >
-                  40 XP
+                  {ATTR_EXP_COST} XP
                 </button>
               )}
             </div>

@@ -95,11 +95,15 @@ const WeaponSlot = ({
     }
   }, [pseudoAmmo]);
 
+  /**
+   * Finds the weapon family data, if its not there, is set to null.
+   */
   const selectedFamilyData =
     selectedFamily && categoryData?.families
       ? categoryData.families.find((f) => f.family === selectedFamily)
       : null;
 
+  /** The applied modified data for the weapon class. If there isnt any family data, defaults to the standard data. */
   const modifiedCategoryData = selectedFamilyData
     ? applyModifiers(categoryData, selectedFamilyData.modifiers)
     : categoryData;

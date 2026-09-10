@@ -68,7 +68,7 @@ function DerivedStats({
           <StatCard label="Instant Death" value={InstantDeath} accent="red" />
 
           <div className="col-span-2 text-center text-sm font-semibold text-red-400">
-            Wound Modifier: −{woundMod}
+            Wound Malus: -{woundMod}
           </div>
         </div>
 

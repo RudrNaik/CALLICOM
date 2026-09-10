@@ -33,7 +33,7 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
   },
   ref,
 ) {
-  
+
   const characterId = character.uniqueId;
 
   const defaultGear = {
@@ -145,9 +145,7 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
   };
 
   /**
-   * Live ammo changes (firing/reloading during a mission) write straight
-   * through to the character so equipment.<slot>.ammo is the single source
-   * of truth, instead of a parallel localStorage entry.
+   * Handles live changes (firing/reloading during a mission)
    */
   const handleWeaponAmmoChange = (slot, ammoState) => {
     const next = {
@@ -161,7 +159,7 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
   };
 
   /**
-   * Same as above but for gadget ammo/charges.
+   * Handles live gadget ammo changes (firing/charges/traps/etc)
    */
   const handleGadgetAmmoChange = (nextGadgetAmmo) => {
     const next = { ...gear, gadgetAmmo: nextGadgetAmmo };
@@ -172,7 +170,7 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
   };
 
   /**
-   * Same as above but for grenade throw counts.
+   * Handles grenade count changes
    */
   const handleGrenadeCountsChange = (nextCounts) => {
     const next = { ...gear, grenadeCounts: nextCounts };
@@ -183,7 +181,7 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
   };
 
   /**
-   * Same as above but for med (AFAK/IFAK/Painkiller) use counts.
+   * Handles medical count changes (AFAK, IFAK)
    */
   const handleMedCountsChange = (nextCounts) => {
     const next = { ...gear, medCounts: nextCounts };
@@ -193,8 +191,11 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
     }
   };
 
-  // Renders the armor-class flavor text; shared between the editing and
-  // non-editing branches below (they previously duplicated this verbatim).
+  /**
+   * Handles the armor class flavor text
+   * @param {*} armorClass 
+   * @returns the bonuses/maluses from that armor level
+   */
   const renderArmorClassDescription = (armorClass) => {
     if (armorClass == 0) {
       return (
@@ -203,7 +204,7 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
         </span>
       );
     }
-    if (armorClass == 1 || armorClass == 2 || armorClass == 3 || armorClass >= 4) {
+    if (armorClass == 1 || armorClass == 2 || armorClass >= 4) {
       return (
         <p className="text-xs text-neutral-400">
           {getArmorClassDescription(armorClass)}
@@ -227,24 +228,6 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
   };
 
   useImperativeHandle(ref, () => ({ save: saveToDatabase }));
-
-  // console.log(
-  //   character?.campaignId == undefined ||
-  //     character?.campaignId == null ||
-  //     !campEquipment ||
-  //     campEquipment == null ||
-  //     campEquipment == undefined
-  // );
-  // if (character?.campaignId != null) {
-  //   console.log(
-  //     character?.campaignId
-  //       .replace(/\s/g, "")
-  //       .split(",")
-  //       .includes("Siberia2022")
-  //   );
-  // }
-  // console.log(primaryOptions);
-  // console.log(secondaryOptions);
 
   return (
     <div className=" text-white" style={{ fontFamily: "Geist_Mono" }}>

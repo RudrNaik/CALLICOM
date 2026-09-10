@@ -1,6 +1,6 @@
 export const EXP_COST = [0, 1, 5, 15, 30];
 export const BASE_CLASS_XP = 40;
-export const ATTR_EXP_COST = 40;
+export const ATTR_EXP_COST = 25;
 export const SPEC_EXP_COST = 5;
 export const MULTICLASS_EXP_COST = 20;
 export const BASE_ATTR_POINTS = 5;

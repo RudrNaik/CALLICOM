@@ -48,16 +48,22 @@ export default function GadgetAmmo({
     [gadgetId],
   );
 
-  // Everything that isn't mixed + has a max pool is considered expendable here
+  // Determines if this is an expendable gadget. Everything that isn't mixed + has a max pool is considered expendable.
   const isExpendable = useMemo(
     () => isExpendableGadget(gadgetId, config),
     [gadgetId, config],
   );
 
+  /** 
+   * The effective maximum of that gadget.
+   */
   const effectiveMax = useMemo(() => getEffectiveMax(gadgetId, charClass, config), [gadgetId, charClass, config]);
 
   const sanitize = (obj) => sanitizeGadgetAmmo(obj, isMixed, isExpendable, optionIds, effectiveMax);
 
+  /**
+   * Determines if the gadgetAmmo UI should render if it is either an expendable gadget (has charges/ammo) or is mixed munitions (has charges/ammo but also multiple selections)
+   */
   const shouldRender = useMemo(
     () => hasExplicitGadgetAmmo(gadgetId, config, isMixed, isExpendable),
     [config, gadgetId, isExpendable, isMixed],
@@ -79,7 +85,7 @@ export default function GadgetAmmo({
 
   /**
    * Re-sanitize the ammo state stored on the character whenever the gadget
-   * selection (or what counts as its pool shape) changes.
+   * selection (or what counts as its pool) changes.
    */
   useEffect(() => {
     const initial = getInitialGadgetAmmo(gadgetId, charClass, config, gadgetAmmo);
@@ -99,8 +105,6 @@ export default function GadgetAmmo({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [optionIds, isMixed, effectiveMax]);
 
-  //console.log(max)
-
   const setMixedValue = (id, nextVal) => {
     const next = updateMixedGadgetAmmo(gadgetAmmo, id, nextVal, max);
     if (!next) return;
@@ -114,7 +118,7 @@ export default function GadgetAmmo({
       <h4 className="text-orange-300 font-semibold mb-2">{title}</h4>
       {headerText && <p className="text-xs text-gray-400 mb-2">{headerText}</p>}
 
-      {/* MIXED MUNITIONS (UBGL / AMS / Spec / Stims/ Demo Dogs) */}
+      {/* MIXED MUNITIONS (UBGL / AMS / Spec / Stims / Demo Dogs) */}
       {isMixed && (
         <div className="text-xs">
           {options.map((opt) => {
