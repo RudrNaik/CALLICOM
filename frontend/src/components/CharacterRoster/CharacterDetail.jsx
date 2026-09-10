@@ -2,9 +2,15 @@ import { useEffect, useRef, useState } from "react";
 import skillGroups from "../../data/skills.json";
 import {
   ATTR_EXP_COST,
+  SPEC_EXP_COST,
+  MULTICLASS_EXP_COST,
   applySkillIncrease,
   applySkillDecrease,
   applyAttributeIncrease,
+  applySpecializationRemoval,
+  applyMulticlassSelection,
+  applyEmergencyDiceIncrease,
+  applyEmergencyDiceDecrease,
 } from "../../engine/characterEngine";
 import Edice from "./CharDetailComponents/EDice";
 import SpecModal from "./CharDetailComponents/SpecModal";
@@ -169,10 +175,10 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
    * Adds an emergency dice to the character's E-dice count.
    */
   const addEmergencyDie = () => {
-    if (emergencyDice < 4 && xpRemaining >= 1) {
-      setEmergencyDice((prev) => prev + 1);
-      setXpRemaining((prev) => prev - 1);
-    }
+    const result = applyEmergencyDiceIncrease(emergencyDice, xpRemaining);
+    if (!result) return;
+    setEmergencyDice(result.emergencyDice);
+    setXpRemaining(result.xp);
   };
 
   /**
@@ -185,15 +191,15 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
       return;
     }
 
-    if (emergencyDice > 0) {
-      setEmergencyDice(emergencyDice - 1); // Update the state first
+    const result = applyEmergencyDiceDecrease(emergencyDice, xpRemaining, isEditing);
+    if (!result) return;
 
-      if (isEditing) {
-        setXpRemaining(xpRemaining + 1); // Refund XP during editing
-      } else {
-        // Patch to the backend after state is updated
-        patchRemoveEDice(1); // Send the update to backend
-      }
+    setEmergencyDice(result.emergencyDice);
+
+    if (isEditing) {
+      setXpRemaining(result.xp); // Refund XP during editing
+    } else {
+      patchRemoveEDice(1); // Patch to the backend after state is updated
     }
   };
 
@@ -216,14 +222,17 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
    * @returns
    */
   const removeSpecialization = (index) => {
-    const baseLength = character.specializations.length;
-    // Allow removing specializations when in editing mode; otherwise block removal
-    if (index < baseLength && !isEditing) return;
+    const result = applySpecializationRemoval(
+      specializations,
+      xpRemaining,
+      index,
+      character.specializations.length,
+      isEditing,
+    );
+    if (!result) return;
 
-    const updated = [...specializations];
-    updated.splice(index, 1);
-    setSpecializations(updated);
-    setXpRemaining((prev) => prev + 5);
+    setSpecializations(result.specializations);
+    setXpRemaining(result.xp);
   };
 
   /**
@@ -246,25 +255,18 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
    * @returns nothing if blocked.
    */
   const patchMulticlass = async (secClass) => {
-    // Guard: must have enough XP and not already multiclassed
-    if (!secClass) return;
-    if (multiClass) return; // Blocks from being able to re-assign a multiclass. Kinda unecessary but its just a double guard.
-    if (xpRemaining < 20) {
-      alert("You need at least 20 XP to multiclass.");
+    const result = applyMulticlassSelection(xpRemaining, multiClass, secClass);
+    if (!result) {
+      if (secClass && !multiClass) {
+        alert(`You need at least ${MULTICLASS_EXP_COST} XP to multiclass.`);
+      }
       return;
     }
 
-    const newXP = Math.max(0, xpRemaining - 20);
-
-    const updates = {
-      multiClass: secClass,
-      XP: newXP,
-    };
-
-    setMulticlass(secClass);
-    setXpRemaining(newXP);
+    setMulticlass(result.multiClass);
+    setXpRemaining(result.xp);
     setShowMultiClassModal(false);
-    onUpdate(updates);
+    onUpdate({ multiClass: result.multiClass, XP: result.xp });
   };
 
   /**
@@ -435,18 +437,18 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
 
                 {isEditing && !multiClass && (
                   <button
-                    disabled={xpRemaining < 20}
+                    disabled={xpRemaining < MULTICLASS_EXP_COST}
                     onClick={() => setShowMultiClassModal(true)}
                     className="bg-orange-600 hover:bg-orange-700 disabled:bg-gray-700 disabled:hover:bg-gray-800 px-2 py-1 rounded text-xs"
                   >
-                    Multiclass | 20 XP
+                    Multiclass | {MULTICLASS_EXP_COST} XP
                   </button>
                 )}
               </div>
             )}
           </div>
 
-          {showMultiClassModal && xpRemaining >= 20 && (
+          {showMultiClassModal && xpRemaining >= MULTICLASS_EXP_COST && (
             <MultiClassModal
               onClose={setShowMultiClassModal}
               patchMulticlass={patchMulticlass}
@@ -535,13 +537,13 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
               />
             )}
 
-            {isEditing && xpRemaining >= 5 && (
+            {isEditing && xpRemaining >= SPEC_EXP_COST && (
               <div className="mt-4">
                 <button
                   onClick={() => setShowSpecModal(true)}
                   className="bg-orange-600 hover:bg-orange-700 px-4 py-1 rounded"
                 >
-                  + Add Specialization (−5 XP)
+                  + Add Specialization (−{SPEC_EXP_COST} XP)
                 </button>
               </div>
             )}

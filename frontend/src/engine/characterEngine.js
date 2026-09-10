@@ -264,7 +264,7 @@ export function downgradeAttribute(character, attribute) {
 /**
  * Pure variant of upgradeSkill that operates on the separate skills/xp tuple
  * shape CharacterDetail.jsx tracks while editing, rather than a whole
- * character object. Mirrors CharacterDetail's increaseSkill exactly.
+ * character object.
  * @returns {{skills: object, xp: number}|null} null if blocked
  */
 export function applySkillIncrease(skills, xp, skill) {
@@ -282,7 +282,7 @@ export function applySkillIncrease(skills, xp, skill) {
 
 /**
  * Pure variant of downgradeSkill for CharacterDetail.jsx's skills/xp tuple
- * shape. Mirrors CharacterDetail's decreaseSkill exactly.
+ * shape.
  * @returns {{skills: object, xp: number}|null} null if blocked
  */
 export function applySkillDecrease(skills, xp, skill, originalSkills) {
@@ -314,5 +314,73 @@ export function applyAttributeIncrease(attributes, xp, attrKey) {
       [attrKey]: (attributes?.[attrKey] ?? 0) + 1,
     },
     xp: xp - ATTR_EXP_COST,
+  };
+}
+
+/**
+ * Removes a specialization at `index` and refunds its XP cost. Refunding is
+ * blocked for a base (already-saved) specialization unless currently
+ * editing.
+ * @returns {{specializations: array, xp: number}|null} null if blocked
+ */
+export function applySpecializationRemoval(
+  specializations,
+  xp,
+  index,
+  baseSpecializationsLength,
+  isEditing,
+) {
+  if (index < baseSpecializationsLength && !isEditing) return null;
+
+  const updated = [...specializations];
+  updated.splice(index, 1);
+
+  return {
+    specializations: updated,
+    xp: xp + SPEC_EXP_COST,
+  };
+}
+
+/**
+ * Applies a multiclass selection, deducting its XP cost. Blocked if there's
+ * no selection, a multiclass is already set, or there isn't enough XP.
+ * @returns {{multiClass: string, xp: number}|null} null if blocked
+ */
+export function applyMulticlassSelection(xp, currentMultiClass, secClass) {
+  if (!secClass || currentMultiClass) return null;
+  if (xp < MULTICLASS_EXP_COST) return null;
+
+  return {
+    multiClass: secClass,
+    xp: Math.max(0, xp - MULTICLASS_EXP_COST),
+  };
+}
+
+/**
+ * Adds an emergency die, deducting 1 XP. Blocked at the 4-die cap or with no
+ * XP to spend.
+ * @returns {{emergencyDice: number, xp: number}|null} null if blocked
+ */
+export function applyEmergencyDiceIncrease(emergencyDice, xp) {
+  if (emergencyDice >= 4 || xp < 1) return null;
+
+  return {
+    emergencyDice: emergencyDice + 1,
+    xp: xp - 1,
+  };
+}
+
+/**
+ * Removes an emergency die. Refunds 1 XP only while editing (removal during
+ * play instead patches the backend directly, handled by the caller). The
+ * "can't remove more than you started with" guard/alert stays in the caller.
+ * @returns {{emergencyDice: number, xp: number}|null} null if blocked
+ */
+export function applyEmergencyDiceDecrease(emergencyDice, xp, isEditing) {
+  if (emergencyDice <= 0) return null;
+
+  return {
+    emergencyDice: emergencyDice - 1,
+    xp: isEditing ? xp + 1 : xp,
   };
 }
