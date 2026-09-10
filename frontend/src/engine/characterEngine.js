@@ -91,6 +91,7 @@ export function getXPBreakdown(character) {
   const attrs = character?.attributes ?? {};
   const specializations = character?.specializations ?? [];
   const hasMulticlass = Boolean(character?.multiClass);
+  const emergencyDiceXPSpent = character?.emergencyDiceXPSpent ?? 0;
 
   const totalSkillXP = Object.values(skills).reduce(
     (sum, lvl) => sum + (EXP_COST[Math.min(Math.max(lvl, 0), 4)] ?? 0),
@@ -104,12 +105,15 @@ export function getXPBreakdown(character) {
   const specXP = specializations.length * SPEC_EXP_COST;
   const multiclassXP = hasMulticlass ? MULTICLASS_EXP_COST : 0;
 
-  const totalSpent = totalSkillXP + attrXP + specXP + multiclassXP;
+  const totalSpent = totalSkillXP + attrXP + specXP + multiclassXP + emergencyDiceXPSpent;
 
   // Matches expAddedCalc.jsx's original display math: the base class package
   // (BASE_CLASS_XP) is shown as its own line item, so it's carved back out
   // of the raw skill-level XP total here.
-  const skillsXp = Math.max(0, totalSpent - BASE_CLASS_XP - multiclassXP - specXP - attrXP);
+  const skillsXp = Math.max(
+    0,
+    totalSpent - BASE_CLASS_XP - multiclassXP - specXP - attrXP - emergencyDiceXPSpent,
+  );
 
   return {
     totalSpent,
@@ -118,6 +122,7 @@ export function getXPBreakdown(character) {
     specXP,
     multiclassXP,
     purchasedAttrPoints,
+    emergencyDiceXPSpent,
   };
 }
 
@@ -127,6 +132,19 @@ export function getXPBreakdown(character) {
  */
 export function calculateTotalSpentXP(character) {
   return getXPBreakdown(character).totalSpent;
+}
+
+/**
+ * The character's current spendable XP, derived rather than stored directly:
+ * the base class package + the character's `XP` stat (a bonus/misc pool that
+ * is only ever added to, never spent from directly) + all XP earned from
+ * logged missions, minus everything actually spent building the character
+ * (skills/attributes/specializations/multiclass/emergency dice, per
+ * `getXPBreakdown`).
+ */
+export function getAvailableXP(character, missionXPTotal = 0) {
+  const { totalSpent } = getXPBreakdown(character);
+  return BASE_CLASS_XP + (character?.XP || 0) + missionXPTotal - totalSpent;
 }
 
 /**
@@ -262,70 +280,64 @@ export function downgradeAttribute(character, attribute) {
 }
 
 /**
- * Pure variant of upgradeSkill that operates on the separate skills/xp tuple
- * shape CharacterDetail.jsx tracks while editing, rather than a whole
- * character object.
- * @returns {{skills: object, xp: number}|null} null if blocked
+ * Pure variant of upgradeSkill that operates on CharacterDetail.jsx's edited
+ * skills draft, checking cost against the character's derived available XP
+ * (`getAvailableXP`) rather than a stored/mutable pool.
+ * @returns {{skills: object}|null} null if blocked
  */
-export function applySkillIncrease(skills, xp, skill) {
+export function applySkillIncrease(skills, availableXP, skill) {
   const level = skills[skill] || 0;
   if (level >= 4) return null;
 
   const cost = getSkillUpgradeCost(level);
-  if (xp < cost) return null;
+  if (availableXP < cost) return null;
 
   return {
     skills: { ...skills, [skill]: level + 1 },
-    xp: xp - cost,
   };
 }
 
 /**
- * Pure variant of downgradeSkill for CharacterDetail.jsx's skills/xp tuple
- * shape.
- * @returns {{skills: object, xp: number}|null} null if blocked
+ * Pure variant of downgradeSkill for CharacterDetail.jsx's edited skills
+ * draft. No XP bookkeeping needed here: reducing a skill level automatically
+ * frees up available XP since it's derived from current levels.
+ * @returns {{skills: object}|null} null if blocked
  */
-export function applySkillDecrease(skills, xp, skill, originalSkills) {
+export function applySkillDecrease(skills, skill, originalSkills) {
   const current = skills[skill] || 0;
   const original = originalSkills?.[skill] || 0;
 
   if (current <= original) return null;
 
-  const refund = getSkillUpgradeCost(current - 1);
-
   return {
     skills: { ...skills, [skill]: current - 1 },
-    xp: xp + refund,
   };
 }
 
 /**
- * Pure variant of upgradeAttribute for CharacterDetail.jsx's attributes/xp
- * tuple shape. Mirrors CharacterDetail's patchAttribute math (the alert()
- * call stays in the component).
- * @returns {{attributes: object, xp: number}|null} null if blocked
+ * Pure variant of upgradeAttribute for CharacterDetail.jsx's attributes
+ * draft, checked against derived available XP.
+ * @returns {{attributes: object}|null} null if blocked
  */
-export function applyAttributeIncrease(attributes, xp, attrKey) {
-  if (xp < ATTR_EXP_COST) return null;
+export function applyAttributeIncrease(attributes, availableXP, attrKey) {
+  if (availableXP < ATTR_EXP_COST) return null;
 
   return {
     attributes: {
       ...attributes,
       [attrKey]: (attributes?.[attrKey] ?? 0) + 1,
     },
-    xp: xp - ATTR_EXP_COST,
   };
 }
 
 /**
- * Removes a specialization at `index` and refunds its XP cost. Refunding is
- * blocked for a base (already-saved) specialization unless currently
- * editing.
- * @returns {{specializations: array, xp: number}|null} null if blocked
+ * Removes a specialization at `index`. Removal is blocked for a base
+ * (already-saved) specialization unless currently editing. No XP bookkeeping
+ * needed: removing a specialization automatically frees up available XP.
+ * @returns {{specializations: array}|null} null if blocked
  */
 export function applySpecializationRemoval(
   specializations,
-  xp,
   index,
   baseSpecializationsLength,
   isEditing,
@@ -337,50 +349,56 @@ export function applySpecializationRemoval(
 
   return {
     specializations: updated,
-    xp: xp + SPEC_EXP_COST,
   };
 }
 
 /**
- * Applies a multiclass selection, deducting its XP cost. Blocked if there's
- * no selection, a multiclass is already set, or there isn't enough XP.
- * @returns {{multiClass: string, xp: number}|null} null if blocked
+ * Applies a multiclass selection. Blocked if there's no selection, a
+ * multiclass is already set, or there isn't enough available XP.
+ * @returns {{multiClass: string}|null} null if blocked
  */
-export function applyMulticlassSelection(xp, currentMultiClass, secClass) {
+export function applyMulticlassSelection(availableXP, currentMultiClass, secClass) {
   if (!secClass || currentMultiClass) return null;
-  if (xp < MULTICLASS_EXP_COST) return null;
+  if (availableXP < MULTICLASS_EXP_COST) return null;
 
   return {
     multiClass: secClass,
-    xp: Math.max(0, xp - MULTICLASS_EXP_COST),
   };
 }
 
 /**
- * Adds an emergency die, deducting 1 XP. Blocked at the 4-die cap or with no
- * XP to spend.
- * @returns {{emergencyDice: number, xp: number}|null} null if blocked
+ * Adds an emergency die, permanently recording its 1 XP cost in
+ * `emergencyDiceXPSpent` (a lifetime counter, separate from the `XP` bonus
+ * stat, that never decreases from in-play die usage — only from undoing a
+ * same-session purchase, see `applyEmergencyDiceDecrease`). Blocked at the
+ * 4-die cap or with no available XP to spend.
+ * @returns {{emergencyDice: number, emergencyDiceXPSpent: number}|null} null if blocked
  */
-export function applyEmergencyDiceIncrease(emergencyDice, xp) {
-  if (emergencyDice >= 4 || xp < 1) return null;
+export function applyEmergencyDiceIncrease(emergencyDice, emergencyDiceXPSpent, availableXP) {
+  if (emergencyDice >= 4 || availableXP < 1) return null;
 
   return {
     emergencyDice: emergencyDice + 1,
-    xp: xp - 1,
+    emergencyDiceXPSpent: emergencyDiceXPSpent + 1,
   };
 }
 
 /**
- * Removes an emergency die. Refunds 1 XP only while editing (removal during
- * play instead patches the backend directly, handled by the caller). The
- * "can't remove more than you started with" guard/alert stays in the caller.
- * @returns {{emergencyDice: number, xp: number}|null} null if blocked
+ * Removes an emergency die. Refunds its 1 XP cost (decrementing
+ * `emergencyDiceXPSpent`) only while editing — undoing a purchase made this
+ * session. Removal during play instead just spends the die (the caller
+ * patches that straight to storage) without touching XP, since dice used up
+ * in a mission were already paid for. The "can't remove more than you
+ * started with" guard/alert stays in the caller.
+ * @returns {{emergencyDice: number, emergencyDiceXPSpent: number}|null} null if blocked
  */
-export function applyEmergencyDiceDecrease(emergencyDice, xp, isEditing) {
+export function applyEmergencyDiceDecrease(emergencyDice, emergencyDiceXPSpent, isEditing) {
   if (emergencyDice <= 0) return null;
 
   return {
     emergencyDice: emergencyDice - 1,
-    xp: isEditing ? xp + 1 : xp,
+    emergencyDiceXPSpent: isEditing
+      ? Math.max(0, emergencyDiceXPSpent - 1)
+      : emergencyDiceXPSpent,
   };
 }

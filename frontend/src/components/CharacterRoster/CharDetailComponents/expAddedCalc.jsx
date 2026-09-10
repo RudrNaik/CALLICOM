@@ -1,7 +1,9 @@
 import {
   BASE_CLASS_XP,
   getXPBreakdown,
+  getAvailableXP,
 } from "../../../engine/characterEngine";
+import { getLogTotals } from "../../../engine/logsEngine";
 
 function LedgerRow({ label, value, sub, total = false, indent = false }) {
   return (
@@ -54,9 +56,12 @@ function ExpBreakdown({ character }) {
     specXP,
     multiclassXP,
     purchasedAttrPoints,
+    emergencyDiceXPSpent,
   } = getXPBreakdown(character);
 
-  const remainingXP = character?.XP ?? 0;
+  const bonusXP = character?.XP ?? 0;
+  const missionXPTotal = getLogTotals(character?.logs).totalMissionXP;
+  const availableXP = getAvailableXP(character, missionXPTotal);
 
   return (
     <div className="text-white font-geist">
@@ -92,12 +97,17 @@ function ExpBreakdown({ character }) {
           }
         />
 
-        {remainingXP > 0 && (
-          <div className="mt-2 pt-2 border-t border-neutral-800 flex justify-between text-xs">
-            <span className="text-neutral-500">Unspent XP</span>
-            <span className="text-green-400 font-semibold">{remainingXP}</span>
-          </div>
+        {emergencyDiceXPSpent > 0 && (
+          <LedgerRow label="Emergency Dice" value={emergencyDiceXPSpent} />
         )}
+
+        <LedgerRow label="Bonus XP" value={bonusXP} indent />
+        <LedgerRow label="Mission XP" value={missionXPTotal} indent />
+
+        <div className="mt-2 pt-2 border-t border-neutral-800 flex justify-between text-xs">
+          <span className="text-neutral-500">Available XP</span>
+          <span className="text-green-400 font-semibold">{availableXP}</span>
+        </div>
 
       </div>
     </div>

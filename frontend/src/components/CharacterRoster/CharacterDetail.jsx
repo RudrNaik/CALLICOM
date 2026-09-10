@@ -11,7 +11,9 @@ import {
   applyMulticlassSelection,
   applyEmergencyDiceIncrease,
   applyEmergencyDiceDecrease,
+  getAvailableXP,
 } from "../../engine/characterEngine";
+import { getLogTotals } from "../../engine/logsEngine";
 import Edice from "./CharDetailComponents/EDice";
 import SpecModal from "./CharDetailComponents/SpecModal";
 import SpecView from "./CharDetailComponents/SpecView";
@@ -24,6 +26,7 @@ import MultiClassModal from "./CharDetailComponents/MultiClassModal";
 import Collapsible from "../Collapsible";
 import RollCalculator from "./CharDetailComponents/RollCalculator";
 import ExpAddedCalc from "./CharDetailComponents/expAddedCalc";
+import LogsView from "./CharDetailComponents/LogsView";
 import { normalizeCharacterData } from "../../engine/characterDataHandler";
 
 const biographyFields = [
@@ -46,13 +49,15 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
   const [isEditing, setIsEditing] = useState(false);
   const [isEditingBio, setIsEditingBio] = useState(false);
   const [isEditingEquipment, setIsEditingEquipment] = useState(false);
-  const [xpRemaining, setXpRemaining] = useState(character?.XP || 0);
   const [editedSkills, setEditedSkills] = useState({ ...character?.skills });
   const [emergencyDice, setEmergencyDice] = useState(
     character?.emergencyDice || 0,
   );
   const [originalEmergencyDice, setOriginalEmergencyDice] = useState(
     character?.emergencyDice || 0,
+  );
+  const [emergencyDiceXPSpent, setEmergencyDiceXPSpent] = useState(
+    character?.emergencyDiceXPSpent || 0,
   );
   const [specializations, setSpecializations] = useState([
     ...(character?.specializations || []),
@@ -86,9 +91,9 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
       setSpecializations([...character.specializations]);
       setAttributes({ ...character.attributes });
       setEditedSkills({ ...character.skills });
-      setXpRemaining(character.XP || 0);
       setEmergencyDice(character.emergencyDice || 0);
       setOriginalEmergencyDice(character.emergencyDice || 0);
+      setEmergencyDiceXPSpent(character.emergencyDiceXPSpent || 0);
       setCampaignInput(character.campaignId || "");
       setMulticlass(character.multiClass || "");
       setBio(
@@ -141,6 +146,23 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
     };
   }, [fleshWounds, deepWounds, onUpdate]);
 
+  // The character's spendable XP is derived, not stored: base class package
+  // + the bonus/misc `XP` stat (never spent from directly) + XP earned from
+  // logged missions, minus everything actually spent on the in-progress
+  // draft (skills/attributes/specializations/multiclass/emergency dice).
+  const missionXPTotal = getLogTotals(character?.logs).totalMissionXP;
+  const availableXP = getAvailableXP(
+    {
+      ...character,
+      skills: editedSkills,
+      attributes,
+      specializations,
+      multiClass,
+      emergencyDiceXPSpent,
+    },
+    missionXPTotal,
+  );
+
   const handleDecreaseFleshWounds = () =>
     setFleshWounds((v) => Math.max(v - 1, 0));
   const handleIncreaseFleshWounds = () => setFleshWounds((v) => v + 1);
@@ -155,10 +177,9 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
    * @returns sets the edited skill in the payload to the level + 1.
    */
   const increaseSkill = (skill) => {
-    const result = applySkillIncrease(editedSkills, xpRemaining, skill);
+    const result = applySkillIncrease(editedSkills, availableXP, skill);
     if (!result) return;
     setEditedSkills(result.skills);
-    setXpRemaining(result.xp);
   };
 
   /**
@@ -166,20 +187,19 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
    * @param {*} skill Selected skill
    */
   const decreaseSkill = (skill) => {
-    const result = applySkillDecrease(editedSkills, xpRemaining, skill, character.skills);
+    const result = applySkillDecrease(editedSkills, skill, character.skills);
     if (!result) return;
     setEditedSkills(result.skills);
-    setXpRemaining(result.xp);
   };
 
   /**
    * Adds an emergency dice to the character's E-dice count.
    */
   const addEmergencyDie = () => {
-    const result = applyEmergencyDiceIncrease(emergencyDice, xpRemaining);
+    const result = applyEmergencyDiceIncrease(emergencyDice, emergencyDiceXPSpent, availableXP);
     if (!result) return;
     setEmergencyDice(result.emergencyDice);
-    setXpRemaining(result.xp);
+    setEmergencyDiceXPSpent(result.emergencyDiceXPSpent);
   };
 
   /**
@@ -192,13 +212,13 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
       return;
     }
 
-    const result = applyEmergencyDiceDecrease(emergencyDice, xpRemaining, isEditing);
+    const result = applyEmergencyDiceDecrease(emergencyDice, emergencyDiceXPSpent, isEditing);
     if (!result) return;
 
     setEmergencyDice(result.emergencyDice);
 
     if (isEditing) {
-      setXpRemaining(result.xp); // Refund XP during editing
+      setEmergencyDiceXPSpent(result.emergencyDiceXPSpent); // Refund XP during editing
     } else {
       patchRemoveEDice(1); // Patch to the backend after state is updated
     }
@@ -225,7 +245,6 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
   const removeSpecialization = (index) => {
     const result = applySpecializationRemoval(
       specializations,
-      xpRemaining,
       index,
       character.specializations.length,
       isEditing,
@@ -233,21 +252,17 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
     if (!result) return;
 
     setSpecializations(result.specializations);
-    setXpRemaining(result.xp);
   };
 
   /**
-   * Patches the exp spent/earned.
+   * Adds bonus/misc XP directly to the character's `XP` stat. This stat is
+   * only ever added to (never spent from) — it's one of the inputs to the
+   * derived available-XP total, alongside the mission log and base package.
    * @param {*} amount amount of exp.
    * @returns
    */
   const patchXP = (amount) => {
-    const updates = {
-      XP: xpRemaining + amount,
-    };
-
-    setXpRemaining((prev) => prev + amount);
-    onUpdate(updates);
+    onUpdate({ XP: (character.XP || 0) + amount });
   };
 
   /**
@@ -256,7 +271,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
    * @returns nothing if blocked.
    */
   const patchMulticlass = async (secClass) => {
-    const result = applyMulticlassSelection(xpRemaining, multiClass, secClass);
+    const result = applyMulticlassSelection(availableXP, multiClass, secClass);
     if (!result) {
       if (secClass && !multiClass) {
         alert(`You need at least ${MULTICLASS_EXP_COST} XP to multiclass.`);
@@ -265,9 +280,8 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
     }
 
     setMulticlass(result.multiClass);
-    setXpRemaining(result.xp);
     setShowMultiClassModal(false);
-    onUpdate({ multiClass: result.multiClass, XP: result.xp });
+    onUpdate({ multiClass: result.multiClass });
   };
 
   /**
@@ -292,15 +306,14 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
   const patchAttribute = async (attrKey) => {
     if (!attrKey) return;
 
-    const result = applyAttributeIncrease(attributes, xpRemaining, attrKey);
+    const result = applyAttributeIncrease(attributes, availableXP, attrKey);
     if (!result) {
       alert(`You need ${ATTR_EXP_COST} XP for an attribute increase.`);
       return;
     }
 
     setAttributes(result.attributes);
-    setXpRemaining(result.xp);
-    onUpdate?.({ XP: result.xp, attributes: result.attributes });
+    onUpdate?.({ attributes: result.attributes });
   };
 
   /**
@@ -309,10 +322,10 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
    */
   const handleSaveChanges = async () => {
     const updates = normalizeCharacterData({
-      XP: xpRemaining,
       skills: editedSkills,
       specializations,
       emergencyDice,
+      emergencyDiceXPSpent,
       multiClass,
       attributes,
     });
@@ -357,9 +370,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
       </div>
 
       {activeTab === "logs" && (
-        <div className="text-gray-400 italic p-6">
-          Mission logs coming soon.
-        </div>
+        <LogsView character={character} refreshCharacter={onUpdate} />
       )}
 
       {activeTab === "logistics" && (
@@ -410,7 +421,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
 
             <AttributeView
               attributes={attributes}
-              xp={xpRemaining}
+              xp={availableXP}
               isEditing={isEditing}
               onBuy={patchAttribute}
             />
@@ -455,7 +466,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
 
             {!isEditing ? (
               <XpControls
-                xpRemaining={xpRemaining}
+                xpRemaining={availableXP}
                 setIsEditing={setIsEditing}
                 patchXP={patchXP}
                 setMulticlass={setMulticlass}
@@ -467,12 +478,12 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
                   onClick={handleSaveChanges}
                   className="bg-green-600 hover:bg-green-700 px-2 py-1 rounded text-xs"
                 >
-                  Confirm | {xpRemaining} XP Remaining
+                  Confirm | {availableXP} XP Remaining
                 </button>
 
                 {isEditing && !multiClass && (
                   <button
-                    disabled={xpRemaining < MULTICLASS_EXP_COST}
+                    disabled={availableXP < MULTICLASS_EXP_COST}
                     onClick={() => setShowMultiClassModal(true)}
                     className="bg-orange-600 hover:bg-orange-700 disabled:bg-gray-700 disabled:hover:bg-gray-800 px-2 py-1 rounded text-xs"
                   >
@@ -483,7 +494,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
             )}
           </div>
 
-          {showMultiClassModal && xpRemaining >= MULTICLASS_EXP_COST && (
+          {showMultiClassModal && availableXP >= MULTICLASS_EXP_COST && (
             <MultiClassModal
               onClose={setShowMultiClassModal}
               patchMulticlass={patchMulticlass}
@@ -493,7 +504,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
 
           <AttributeView
             attributes={attributes}
-            xp={xpRemaining}
+            xp={availableXP}
             isEditing={isEditing}
             onBuy={patchAttribute}
           />
@@ -572,7 +583,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
               />
             )}
 
-            {isEditing && xpRemaining >= SPEC_EXP_COST && (
+            {isEditing && availableXP >= SPEC_EXP_COST && (
               <div className="mt-4">
                 <button
                   onClick={() => setShowSpecModal(true)}
@@ -587,9 +598,9 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
               <SpecModal
                 editedSkills={editedSkills}
                 specializations={specializations}
-                xpRemaining={xpRemaining}
+                xpRemaining={availableXP}
                 setSpecializations={setSpecializations}
-                setXpRemaining={setXpRemaining}
+                setXpRemaining={() => {}} // specializations state alone drives the derived available XP
                 setShowSpecModal={setShowSpecModal}
               />
             )}
