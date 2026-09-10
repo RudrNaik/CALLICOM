@@ -63,6 +63,7 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
   );
   const [charActive, setCharActive] = useState(false);
   const [columnView, setColumnView] = useState(true);
+  const [activeTab, setActiveTab] = useState("gameplay");
   const [multiClass, setMulticlass] = useState(character?.multiClass || "");
   const [showMultiClassModal, setShowMultiClassModal] = useState(false);
   const [Biography, setBio] = useState("");
@@ -335,6 +336,40 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
         {character.class} {character.multiClass}
       </h2>
 
+      <div className="flex border-b border-neutral-700 mb-4">
+        {[
+          ["gameplay", "Gameplay"],
+          ["logs", "Logs"],
+          ["logistics", "Logistics"],
+        ].map(([key, label]) => (
+          <button
+            key={key}
+            onClick={() => setActiveTab(key)}
+            className={`px-4 py-2 text-sm font-semibold cursor-pointer border-b-2 -mb-px ${
+              activeTab === key
+                ? "border-orange-500 text-orange-400"
+                : "border-transparent text-gray-400 hover:text-orange-300"
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {activeTab === "logs" && (
+        <div className="text-gray-400 italic p-6">
+          Mission logs coming soon.
+        </div>
+      )}
+
+      {activeTab === "logistics" && (
+        <div className="text-gray-400 italic p-6">
+          Logistics coming soon.
+        </div>
+      )}
+
+      {activeTab === "gameplay" && (
+        <>
       <div className="flex justify-end">
         <button
           onClick={() => setColumnView((prev) => !prev)}
@@ -778,6 +813,8 @@ function CharacterDetail({ character, onUpdate, user, equipment }) {
           </button>
         </div>
       </Collapsible>
+        </>
+      )}
     </div>
   );
 }
