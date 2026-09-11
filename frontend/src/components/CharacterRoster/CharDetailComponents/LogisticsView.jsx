@@ -30,7 +30,13 @@ const buttonClass = (enabled) =>
 const selectClass =
   "w-full bg-neutral-800 border border-gray-500 rounded px-2 py-1 text-white text-xs";
 
-function WeaponPurchaseForm({ slot, label, character, logs, refreshCharacter }) {
+function WeaponPurchaseForm({
+  slot,
+  label,
+  character,
+  logs,
+  refreshCharacter,
+}) {
   const [name, setName] = useState("");
   const [category, setCategory] = useState("");
   const [family, setFamily] = useState("");
@@ -43,7 +49,13 @@ function WeaponPurchaseForm({ slot, label, character, logs, refreshCharacter }) 
   const current = character?.equipment?.[slot];
 
   const handlePurchase = () => {
-    const purchase = createWeaponPurchase({ slot, name, category, family, cost });
+    const purchase = createWeaponPurchase({
+      slot,
+      name,
+      category,
+      family,
+      cost,
+    });
     const result = applyPurchase(character, logs, purchase);
     if (!result) {
       alert("Not enough money for that purchase.");
@@ -56,16 +68,8 @@ function WeaponPurchaseForm({ slot, label, character, logs, refreshCharacter }) 
   };
 
   return (
-    <div className="bg-neutral-900 border border-neutral-700 rounded p-3 space-y-2">
+    <div className="bg-neutral-900 border border-neutral-700 border-l-4 border-l-orange-500 rounded-xs p-3 space-y-2">
       <div className="font-semibold text-orange-400">{label}</div>
-      {current?.name || current?.category ? (
-        <div className="text-xs text-neutral-400">
-          Current: {current?.name || "Unnamed"} ({current?.category}
-          {current?.family ? ` / ${current.family}` : ""})
-        </div>
-      ) : (
-        <div className="text-xs text-neutral-500 italic">None equipped</div>
-      )}
 
       <input
         type="text"
@@ -109,7 +113,11 @@ function WeaponPurchaseForm({ slot, label, character, logs, refreshCharacter }) 
 
       <div className="flex items-center justify-between">
         <span className="text-xs text-neutral-400">Cost: {cost}</span>
-        <button onClick={handlePurchase} disabled={!canBuy} className={buttonClass(canBuy)}>
+        <button
+          onClick={handlePurchase}
+          disabled={!canBuy}
+          className={buttonClass(canBuy)}
+        >
           Purchase
         </button>
       </div>
@@ -130,7 +138,10 @@ function GadgetPurchaseSection({ character, logs, refreshCharacter }) {
     gadget,
     submunitions: getGadgetSubmunitionOptions(gadget, equipmentData),
   }));
-  const options = groups.flatMap(({ gadget, submunitions }) => [gadget, ...submunitions]);
+  const options = groups.flatMap(({ gadget, submunitions }) => [
+    gadget,
+    ...submunitions,
+  ]);
   const selected = options.find((g) => g.id === gadgetId);
   const cost = selected?.cost || 0;
   const money = getMoneyTotal(character);
@@ -142,7 +153,11 @@ function GadgetPurchaseSection({ character, logs, refreshCharacter }) {
 
   const handlePurchase = () => {
     const purchase = selected?.SubMunition
-      ? createSubmunitionPurchase({ submunitionId: gadgetId, label: selected?.title, cost })
+      ? createSubmunitionPurchase({
+          submunitionId: gadgetId,
+          label: selected?.title,
+          cost,
+        })
       : createGadgetPurchase({ gadgetId, label: selected?.title, cost });
     const result = applyPurchase(character, logs, purchase);
     if (!result) {
@@ -154,17 +169,23 @@ function GadgetPurchaseSection({ character, logs, refreshCharacter }) {
   };
 
   return (
-    <div className="bg-neutral-900 border border-neutral-700 rounded p-3 space-y-2">
+    <div className="bg-neutral-900 border border-neutral-700 border-l-4 border-l-orange-500 rounded-xs p-3 space-y-2">
+      <div className="font-semibold text-orange-400">Gadgets</div>
       <div className="text-xs text-neutral-400">
         Current: {current?.title || "None equipped"}
       </div>
 
-      <select className={selectClass} value={gadgetId} onChange={(e) => setGadgetId(e.target.value)}>
+      <select
+        className={selectClass}
+        value={gadgetId}
+        onChange={(e) => setGadgetId(e.target.value)}
+      >
         <option value="">Select Gadget</option>
         {groups.map(({ gadget, submunitions }) => (
           <optgroup key={gadget.id} label={gadget.title}>
             <option value={gadget.id}>
-              {gadget.title} ({gadget.cost}){unlocked.includes(gadget.id) ? " — Owned" : ""}
+              {gadget.title} ({gadget.cost})
+              {unlocked.includes(gadget.id) ? " — Owned" : ""}
             </option>
             {submunitions.map((sub) => (
               <option key={sub.id} value={sub.id}>
@@ -176,7 +197,11 @@ function GadgetPurchaseSection({ character, logs, refreshCharacter }) {
       </select>
       <div className="flex items-center justify-between">
         <span className="text-xs text-neutral-400">Cost: {cost}</span>
-        <button onClick={handlePurchase} disabled={!canBuy} className={buttonClass(canBuy)}>
+        <button
+          onClick={handlePurchase}
+          disabled={!canBuy}
+          className={buttonClass(canBuy)}
+        >
           Purchase
         </button>
       </div>
@@ -199,7 +224,11 @@ function GrenadePurchaseForm({ character, logs, refreshCharacter }) {
     .filter(Boolean);
 
   const handlePurchase = () => {
-    const purchase = createGrenadePurchase({ grenadeId, label: selected?.title, cost });
+    const purchase = createGrenadePurchase({
+      grenadeId,
+      label: selected?.title,
+      cost,
+    });
     const result = applyPurchase(character, logs, purchase);
     if (!result) {
       alert("Not enough money for that purchase.");
@@ -210,16 +239,13 @@ function GrenadePurchaseForm({ character, logs, refreshCharacter }) {
   };
 
   return (
-    <div className="bg-neutral-900 border border-neutral-700 rounded p-3 space-y-2">
+    <div className="bg-neutral-900 border border-neutral-700 border-l-4 border-l-orange-500 rounded-xs p-3 space-y-2">
       <div className="font-semibold text-orange-400">Grenades</div>
-      <p className="text-xs text-neutral-500">
-        Buying a type fills the first empty grenade slot. Once both are full,
-        further purchases just unlock the type without changing what's equipped.
-      </p>
-      <div className="text-xs text-neutral-400">
-        Current: {currentTitles.length > 0 ? currentTitles.join(", ") : "None equipped"}
-      </div>
-      <select className={selectClass} value={grenadeId} onChange={(e) => setGrenadeId(e.target.value)}>
+      <select
+        className={selectClass}
+        value={grenadeId}
+        onChange={(e) => setGrenadeId(e.target.value)}
+      >
         <option value="">Select Grenade</option>
         {options.map((g) => (
           <option key={g.id} value={g.id}>
@@ -229,7 +255,11 @@ function GrenadePurchaseForm({ character, logs, refreshCharacter }) {
       </select>
       <div className="flex items-center justify-between">
         <span className="text-xs text-neutral-400">Cost: {cost}</span>
-        <button onClick={handlePurchase} disabled={!canBuy} className={buttonClass(canBuy)}>
+        <button
+          onClick={handlePurchase}
+          disabled={!canBuy}
+          className={buttonClass(canBuy)}
+        >
           Purchase
         </button>
       </div>
@@ -241,7 +271,7 @@ function PurchasedList({ title, items }) {
   if (items.length === 0) return null;
   return (
     <div className="bg-neutral-900 border border-neutral-700 rounded p-3">
-      <div className="text-xs text-neutral-500 mb-1">{title}</div>
+      <div className="text-xs text-orange-400 mb-1">{title}</div>
       <ul className="text-xs text-neutral-300 space-y-1">
         {items.map((item, index) => (
           <li key={index}>{item}</li>
@@ -286,7 +316,8 @@ function LogisticsView({ character, refreshCharacter }) {
     });
 
   const ownedWeaponLabels = getPurchasedWeapons(logs).map(
-    (w) => `${w.name || "Unnamed Weapon"} (${w.category}${w.family ? ` / ${w.family}` : ""})`,
+    (w) =>
+      `${w.name || "Unnamed Weapon"} (${w.category}${w.family ? ` / ${w.family}` : ""})`,
   );
 
   const ownedGrenadeTitles = getPurchasedGrenadeIds(logs).map(
@@ -307,14 +338,15 @@ function LogisticsView({ character, refreshCharacter }) {
     <div className="text-white space-y-6">
       <div className="flex flex-wrap items-center gap-4">
         <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-4 border-orange-500 px-4 py-2 rounded-sm inline-block">
-          <span className="block text-xs text-neutral-400">Current Money</span>
-          <span className="text-lg font-bold text-green-400">{money}</span>
+          <span className="block text-xs text-neutral-400">Current Cash</span>
+          <span className="text-lg font-bold text-green-400">${money}</span>
         </div>
 
         {lastPurchase && (
           <div className="bg-neutral-900 border border-neutral-700 rounded p-2 flex items-center gap-3">
             <div className="text-xs text-neutral-400">
-              Last purchase: <span className="text-neutral-200">{lastPurchase.label}</span> (
+              Last purchase:{" "}
+              <span className="text-neutral-200">{lastPurchase.label}</span> (
               -${lastPurchase.cost})
             </div>
             <button
@@ -329,19 +361,13 @@ function LogisticsView({ character, refreshCharacter }) {
       </div>
 
       <div>
-        <h2 className="text-xl font-bold text-orange-400 mb-2">Gadgets</h2>
-        <p className="text-xs text-neutral-500 mb-2">
-          Includes options from both your class and multiclass, if set.
-        </p>
-        <GadgetPurchaseSection character={character} logs={logs} refreshCharacter={refreshCharacter} />
-        <div className="mt-2">
-          <PurchasedList title="Purchased Gadgets" items={ownedGadgetTitles} />
-        </div>
-      </div>
+        <div className="grid md:grid-cols-4 gap-2">
+          <GadgetPurchaseSection
+            character={character}
+            logs={logs}
+            refreshCharacter={refreshCharacter}
+          />
 
-      <div>
-        <h2 className="text-xl font-bold text-orange-400 mb-2">Weapons</h2>
-        <div className="grid md:grid-cols-2 gap-3">
           <WeaponPurchaseForm
             slot="primaryWeapon"
             label="Primary Weapon"
@@ -356,17 +382,18 @@ function LogisticsView({ character, refreshCharacter }) {
             logs={logs}
             refreshCharacter={refreshCharacter}
           />
+          <GrenadePurchaseForm
+            character={character}
+            logs={logs}
+            refreshCharacter={refreshCharacter}
+          />
         </div>
-        <div className="mt-2">
+        <div className="mt-2 grid md:grid-cols-4 gap-2 ">
+          <PurchasedList title="Purchased Gadgets" items={ownedGadgetTitles} />
+          <div className="md:col-span-2">
           <PurchasedList title="Purchased Weapons" items={ownedWeaponLabels} />
-        </div>
-      </div>
-
-      <div>
-        <h2 className="text-xl font-bold text-orange-400 mb-2">Gear</h2>
-        <GrenadePurchaseForm character={character} logs={logs} refreshCharacter={refreshCharacter} />
-        <div className="mt-2">
-          <PurchasedList title="Purchased Grenade Types" items={ownedGrenadeTitles} />
+          </div>
+          <PurchasedList title="Purchased Grenade Types" items={ownedGrenadeTitles}/>
         </div>
       </div>
 

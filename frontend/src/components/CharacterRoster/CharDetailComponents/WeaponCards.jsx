@@ -14,33 +14,27 @@ const WeaponSlot = ({
   weapon,
   isEditing,
   weaponCategories,
-  handleWeaponChange,
+  ownedWeapons,
+  onSelectWeapon,
   onAmmoChange,
   characterId,
   charActive,
   isSecondary,
 }) => {
   const categoryData = weaponCategories[weapon?.category];
+  const selectedFamily = weapon?.family || null;
 
   const [firedThisMag, setFiredThisMag] = useState(0);
   const [totalFired, setTotalFired] = useState(0);
   const [pseudoAmmo, setPseudoAmmo] = useState(null);
   const [displayedAmmo, setDisplayedAmmo] = useState(null);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [selectedFamily, setSelectedFamily] = useState(null);
 
   // Load ammo from the character's weapon slot on weapon load
   useEffect(() => {
     const initial = pseudoMagSizes[weapon?.category] || null;
     setPseudoAmmo(initial);
     setDisplayedAmmo(initial);
-
-    // Initialize family from weapon data if it's present
-    if (weapon?.family) {
-      setSelectedFamily(weapon.family);
-    } else {
-      setSelectedFamily(null);
-    }
 
     if (weapon?.ammo) {
       const { firedThisMag, totalFired, pseudoAmmo } = weapon.ammo;
@@ -54,25 +48,15 @@ const WeaponSlot = ({
     }
   }, [weapon?.category, weapon?.family, characterId, slot]);
 
-  // Sync family selection to Equipment View
-  useEffect(() => {
-    if (isEditing && selectedFamily) {
-      handleWeaponChange(slot, "family", selectedFamily);
-    }
-  }, [selectedFamily, isEditing, slot, handleWeaponChange]);
-
-  // Force Machine Pistols for secondary SMGs
-  useEffect(() => {
-    if (
-      weapon?.category === "SMGs" &&
-      isSecondary &&
-      isEditing &&
-      selectedFamily !== "Machine Pistols"
-    ) {
-      setSelectedFamily("Machine Pistols");
-      handleWeaponChange(slot, "family", "Machine Pistols");
-    }
-  }, [weapon?.category, isSecondary, isEditing, slot, handleWeaponChange]);
+  // Finds the specific purchased-weapon instance currently equipped, so the
+  // selector can show it as selected.
+  const ownedWeaponsList = ownedWeapons || [];
+  const selectedInstanceIndex = ownedWeaponsList.findIndex(
+    (w) =>
+      w.name === weapon?.name &&
+      w.category === weapon?.category &&
+      (w.family || "") === (weapon?.family || ""),
+  );
 
   useEffect(() => {
     if (pseudoAmmo === null || displayedAmmo === null) return;
@@ -188,69 +172,22 @@ const WeaponSlot = ({
 
       {isEditing ? (
         <>
-          <input
-            className="w-full bg-neutral-900 text-white p-2 border-1 border-orange-400/60 rounded mb-2"
-            placeholder="Weapon Name"
-            value={weapon?.name || ""}
-            onChange={(e) => handleWeaponChange(slot, "name", e.target.value)}
-          />
           <select
             className="w-full select-themed p-2 rounded mb-2"
-            value={weapon?.category || ""}
-            onChange={(e) =>
-              handleWeaponChange(slot, "category", e.target.value)
-            }
+            value={selectedInstanceIndex >= 0 ? selectedInstanceIndex : ""}
+            onChange={(e) => {
+              const value = e.target.value;
+              onSelectWeapon(slot, value === "" ? null : ownedWeaponsList[Number(value)]);
+            }}
           >
-            <option value="">Select Weapon Category</option>
-            {Object.keys(weaponCategories).map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
+            <option value="">Select Weapon</option>
+            {ownedWeaponsList.map((w, i) => (
+              <option key={`${w.name}-${w.category}-${w.family}-${i}`} value={i}>
+                {w.name || "Unnamed Weapon"} — {w.category}
+                {w.family ? ` — ${w.family}` : ""}
               </option>
             ))}
           </select>
-
-          {categoryData?.families && categoryData.families.length > 0 && (
-            <>
-              {weapon?.category === "SMGs" && isSecondary ? (
-                <>
-                  <select
-                    className="w-full select-themed p-2 rounded mb-2"
-                    value={selectedFamily || ""}
-                    onChange={(e) => {
-                      const value = e.target.value || null;
-                      setSelectedFamily(value);
-                      handleWeaponChange(slot, "family", value);
-                    }}
-                  >
-                    {categoryData.families
-                      .filter((family) => family.family === "Machine Pistols")
-                      .map((family) => (
-                        <option key={family.family} value={family.family}>
-                          {family.family}
-                        </option>
-                      ))}
-                  </select>
-                </>
-              ) : (
-                <select
-                  className="w-full select-themed p-2 rounded mb-2"
-                  value={selectedFamily || ""}
-                  onChange={(e) => {
-                    const value = e.target.value || null;
-                    setSelectedFamily(value);
-                    handleWeaponChange(slot, "family", value);
-                  }}
-                >
-                  <option value="">Default</option>
-                  {categoryData.families.map((family) => (
-                    <option key={family.family} value={family.family}>
-                      {family.family}
-                    </option>
-                  ))}
-                </select>
-              )}
-            </>
-          )}
 
           {categoryData && (
             <div className="text-xs text-gray-400 bg-neutral-900 p-2 rounded">

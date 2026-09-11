@@ -9,6 +9,7 @@ import {
   getAvailableClassGadgets,
   getOwnedGrenades,
   getPurchasedGadgetIds,
+  getPurchasedWeapons,
   getArmorClassCap,
   getSecondaryGadgetForClass,
   getArmorClassDescription,
@@ -85,6 +86,8 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
   );
   const [primaryOptions, setPrimaries] = useState({});
   const [secondaryOptions, setSecondary] = useState({});
+  const [primaryWeaponInstances, setPrimaryWeaponInstances] = useState([]);
+  const [secondaryWeaponInstances, setSecondaryWeaponInstances] = useState([]);
   const [maxArmor, setArmor] = useState(1);
 
   useEffect(() => {
@@ -124,6 +127,22 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
     );
     setSecondary(getOwnedWeaponCategories(character.logs, secondaryFilter));
 
+    //Individual purchased weapons (name/category/family, as bought in
+    //Logistics) available to pick from directly in each slot's selector,
+    //rather than filtering by category/family independently.
+    const ownedWeapons = getPurchasedWeapons(character.logs);
+    setPrimaryWeaponInstances(
+      ownedWeapons.filter((w) => !excludedPrimary.includes(w.category)),
+    );
+    setSecondaryWeaponInstances(
+      ownedWeapons.filter(
+        (w) =>
+          !excludedSecondary.includes(w.category) &&
+          // Secondary SMGs are restricted to the Machine Pistols family.
+          (w.category !== "SMGs" || w.family === "Machine Pistols"),
+      ),
+    );
+
     //Grabs secondary gadget (class gadget) and assigns it.
     setSecGadget(getSecondaryGadgetForClass(secondaryGadgets, character));
 
@@ -141,10 +160,19 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
     }));
   };
 
-  const handleWeaponChange = (slot, subfield, value) => {
+  /**
+   * Selects a specific purchased weapon instance for a slot, percolating its
+   * name/category/family in one shot. Any ammo tracked for the previous
+   * weapon in that slot is dropped since it belongs to a different weapon.
+   */
+  const handleWeaponSelect = (slot, instance) => {
     setGear((prev) => ({
       ...prev,
-      [slot]: { ...prev[slot], [subfield]: value },
+      [slot]: {
+        name: instance?.name || "",
+        category: instance?.category || "",
+        family: instance?.family || "",
+      },
     }));
   };
 
@@ -243,7 +271,8 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
             weapon={gear["primaryWeapon"]}
             isEditing={isEditing}
             weaponCategories={primaryOptions}
-            handleWeaponChange={handleWeaponChange}
+            ownedWeapons={primaryWeaponInstances}
+            onSelectWeapon={handleWeaponSelect}
             onAmmoChange={handleWeaponAmmoChange}
             characterId={characterId}
             charActive={charActive}
@@ -256,7 +285,8 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
             weapon={gear["secondaryWeapon"]}
             isEditing={isEditing}
             weaponCategories={secondaryOptions}
-            handleWeaponChange={handleWeaponChange}
+            ownedWeapons={secondaryWeaponInstances}
+            onSelectWeapon={handleWeaponSelect}
             onAmmoChange={handleWeaponAmmoChange}
             characterId={characterId}
             charActive={charActive}

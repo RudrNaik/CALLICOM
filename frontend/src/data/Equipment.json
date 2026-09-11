@@ -411,7 +411,7 @@
         "title": "Flashbangs",
         "parentId": "grenades",
         "class": "All",
-        "cost": 0,
+        "cost": 2000,
         "description": "The power of chemistry, in the palm of your hand. Useful in dissuading people from choosing to shoot back, or to create an opening and interrupt them.",
         "rulesText": "[Throw][Interrupt]\n 0 DMG | 3 hex AOE\n When thrown in combat, prompts [Throw] vs [Spirit] to withstand or [Acrobatics] to dodge. Applies -1 malus on all afflicted targets within the AOE. Interrupts readied, aiming, and suppression if within the AOE and they fail the check. If used before combat starts, will cause friendlies to have initaitive first instead of enemies."
     },
