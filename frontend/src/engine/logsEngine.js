@@ -22,19 +22,27 @@
  *
  * Logistics purchases (weapons/gadgets/gear bought with money, see
  * logisticsEngine.js) are recorded onto the same receipt for display
- * (`purchases`), but reversed via a full `equipmentBefore` snapshot taken
- * when the mission was logged, rather than itemized undo — equipment fields
- * are single values (not append-only lists like specializations), so a
- * mission removal just restores the whole equipment object to how it stood
- * right before that mission.
+ * (`purchases`). Equipment (what's currently equipped) is never snapshotted
+ * or reversed by hand — it's rebuilt from scratch from `logs` any time it
+ * might have changed (see logisticsEngine.rebuildEquipmentFromLogs), so
+ * removing a mission just means replaying one fewer receipt's worth of
+ * purchases.
+ *
+ * Money follows the same rule: nothing stores a running total. getMoneyTotal
+ * re-sums every mission's earnings minus every purchase's *current* cost
+ * (re-priced live from Equipment.json, see logisticsEngine.getPurchaseCost)
+ * each time it's called, so a price change in the catalog is reflected
+ * everywhere immediately, and every mutation below only needs to change
+ * `logs` — money is just however that comes out.
  */
 import { getAvailableXP } from "./characterEngine";
 import { sanitizeEquipmentOwnership } from "./equipmentEngine";
+import { getPurchaseCost, rebuildEquipmentFromLogs } from "./logisticsEngine";
 
 /**
  * Empty receipt for a freshly logged mission: nothing's been bought against
- * its XP/money yet, and the character's emergency dice + equipment are
- * snapshotted so a later removal can restore exactly the pre-mission state.
+ * its XP/money yet, and the character's emergency dice are snapshotted so a
+ * later removal can restore exactly the pre-mission state.
  */
 function emptyReceipt(character) {
   return {
@@ -45,17 +53,30 @@ function emptyReceipt(character) {
     emergencyDiceBefore: character?.emergencyDice ?? 0,
     emergencyDiceXPSpentBefore: character?.emergencyDiceXPSpent ?? 0,
     purchases: [],
-    equipmentBefore: character?.equipment ?? {},
   };
 }
 
 /**
- * The character's current money total. Falls back to their starting cash
- * (from character creation) if no missions have been logged yet.
+ * The character's current money total: starting cash plus every logged
+ * mission/achievement's cash earnings, minus every logistics purchase ever
+ * made — re-priced live from `equipmentData` rather than trusted from
+ * whatever a purchase was recorded at (see logisticsEngine.getPurchaseCost),
+ * so an item's cost changing in the catalog changes this immediately for
+ * every character who ever bought it. Falls back to starting cash alone if
+ * no missions have been logged yet.
  */
-export function getMoneyTotal(character) {
-  if (typeof character?.money === "number") return character.money;
-  return character?.metadata?.starting_cash ?? 0;
+export function getMoneyTotal(character, equipmentData) {
+  const logs = character?.logs ?? [];
+  if (logs.length === 0) return character?.metadata?.starting_cash ?? 0;
+
+  return logs.reduce((total, log) => {
+    const earnings = getMissionEarnings(log);
+    const spent = (log?.receipt?.purchases ?? []).reduce(
+      (sum, purchase) => sum + getPurchaseCost(purchase, equipmentData),
+      0,
+    );
+    return total + earnings.cash - spent;
+  }, 0);
 }
 
 /**
@@ -247,7 +268,7 @@ export function recordPurchaseOnLatestMission(logs, purchase) {
  * logistics purchases) for the Logs tab. Returns an empty summary for a
  * mission with no receipt (e.g. legacy data).
  */
-export function describeReceipt(receipt) {
+export function describeReceipt(receipt, equipmentData) {
   const skills = Object.entries(receipt?.skills ?? {})
     .filter(([, delta]) => delta !== 0)
     .map(([skill, delta]) => `${skill} ${delta > 0 ? "+" : ""}${delta}`);
@@ -262,7 +283,7 @@ export function describeReceipt(receipt) {
 
   const purchases = (receipt?.purchases ?? []).map((purchase) => ({
     label: purchase.label,
-    cost: purchase.cost,
+    cost: getPurchaseCost(purchase, equipmentData),
   }));
 
   return {
@@ -297,45 +318,37 @@ export function getEmergencyDiceXPDuring(logs, index, character) {
 }
 
 /**
- * Adds a mission log entry, crediting its payout to the character's running
- * money total. Its XP isn't stored separately — it's picked up automatically
- * from `logs` wherever available XP is derived.
- * @returns {{logs: array, money: number}}
+ * Adds a mission log entry. Money isn't stored — it's picked up automatically
+ * from `logs` wherever getMoneyTotal is called, same as XP.
+ * @returns {{logs: array}}
  */
 export function applyMissionLogAdd(character, logs, entry) {
-  return {
-    logs: [...logs, entry],
-    money: getMoneyTotal(character) + getMissionEarnings(entry).cash,
-  };
+  return { logs: [...logs, entry] };
 }
 
 /**
  * Removes the most recently logged mission, reversing exactly what its
- * receipt says was bought with its XP and money: skill levels and attribute
- * points are rolled back by the recorded deltas, the specializations
- * purchased since are stripped back off, emergency dice (count + lifetime XP
- * spent) are reset to their pre-mission snapshot, and equipment is reset to
- * its pre-mission snapshot too — discarding any dice/gear bought or used
- * since. Money spent on those now-reverted purchases is refunded, alongside
- * removing the mission's own earnings. Blocked if `index` isn't the last
- * entry (an older receipt can't be safely unwound once later
- * missions/spending have layered on top of it), or if the net money change
- * would take the character's money negative.
- * @returns {{logs, money, skills, attributes, specializations, emergencyDice, emergencyDiceXPSpent, equipment}|null} null if blocked
+ * receipt says was bought with its XP: skill levels and attribute points are
+ * rolled back by the recorded deltas, the specializations purchased since are
+ * stripped back off, and emergency dice (count + lifetime XP spent) are reset
+ * to their pre-mission snapshot. Equipment and money both just fall out of
+ * the shortened `logs` (see rebuildEquipmentFromLogs / getMoneyTotal) —
+ * removing the mission also removes whatever purchases were recorded on its
+ * receipt, refunding them for free. Blocked if `index` isn't the last entry
+ * (an older receipt can't be safely unwound once later missions/spending
+ * have layered on top of it), or if doing so would leave the character's
+ * money negative.
+ * @returns {{logs, skills, attributes, specializations, emergencyDice, emergencyDiceXPSpent, equipment}|null} null if blocked
  */
-export function applyMissionLogRemove(character, logs, index) {
+export function applyMissionLogRemove(character, logs, index, equipmentData) {
   const entry = logs[index];
   if (!entry) return null;
   if (index !== logs.length - 1) return null;
 
   const receipt = entry.receipt ?? {};
+  const nextLogs = logs.slice(0, -1);
 
-  const purchaseRefund = (receipt.purchases ?? []).reduce(
-    (sum, purchase) => sum + (purchase.cost || 0),
-    0,
-  );
-  const nextMoney =
-    getMoneyTotal(character) - getMissionEarnings(entry).cash + purchaseRefund;
+  const nextMoney = getMoneyTotal({ ...character, logs: nextLogs }, equipmentData);
   if (nextMoney < 0) return null;
 
   const skills = { ...(character.skills ?? {}) };
@@ -356,21 +369,15 @@ export function applyMissionLogRemove(character, logs, index) {
       ? (character.specializations ?? []).slice(0, -specCount)
       : [...(character.specializations ?? [])];
 
-  const nextLogs = logs.slice(0, -1);
-
   return {
     logs: nextLogs,
-    money: nextMoney,
     skills,
     attributes,
     specializations,
     emergencyDice: receipt.emergencyDiceBefore ?? character.emergencyDice ?? 0,
     emergencyDiceXPSpent:
       receipt.emergencyDiceXPSpentBefore ?? character.emergencyDiceXPSpent ?? 0,
-    equipment: sanitizeEquipmentOwnership(
-      receipt.equipmentBefore ?? character.equipment ?? {},
-      nextLogs,
-    ),
+    equipment: sanitizeEquipmentOwnership(rebuildEquipmentFromLogs(nextLogs), nextLogs),
   };
 }
 
@@ -382,9 +389,9 @@ export function applyMissionLogRemove(character, logs, index) {
  * so an older entry could invalidate spending already layered on top of it.
  * Blocked if the new missionXP/payout would take the character's derived
  * available XP or money negative.
- * @returns {{logs: array, money: number}|null} null if blocked
+ * @returns {{logs: array}|null} null if blocked
  */
-export function applyMissionLogEdit(character, logs, index, updates) {
+export function applyMissionLogEdit(character, logs, index, updates, equipmentData) {
   const entry = logs[index];
   if (!entry) return null;
   if (index !== logs.length - 1) return null;
@@ -398,24 +405,23 @@ export function applyMissionLogEdit(character, logs, index, updates) {
     payout: Number(updates.payout) || 0,
   };
 
-  const cashDelta = getMissionEarnings(nextEntry).cash - getMissionEarnings(entry).cash;
-  const nextMoney = getMoneyTotal(character) + cashDelta;
+  const nextLogs = [...logs];
+  nextLogs[index] = nextEntry;
+
+  const nextMoney = getMoneyTotal({ ...character, logs: nextLogs }, equipmentData);
   if (nextMoney < 0) return null;
 
   const xpDelta = getMissionEarnings(nextEntry).xp - getMissionEarnings(entry).xp;
   const nextMissionXPTotal = getLogTotals(logs).totalMissionXP + xpDelta;
   if (getAvailableXP(character, nextMissionXPTotal) < 0) return null;
 
-  const nextLogs = [...logs];
-  nextLogs[index] = nextEntry;
-
-  return { logs: nextLogs, money: nextMoney };
+  return { logs: nextLogs };
 }
 
 /**
  * Adds an achievement to a mission. Always safe regardless of which mission
  * (even an old one) — it only ever grows the character's XP/money totals.
- * @returns {{logs: array, money: number}}
+ * @returns {{logs: array}}
  */
 export function applyAchievementAdd(character, logs, missionIndex, achievement) {
   const entry = logs[missionIndex];
@@ -425,24 +431,21 @@ export function applyAchievementAdd(character, logs, missionIndex, achievement) 
     achievements: [...(entry.achievements ?? []), achievement],
   };
 
-  return {
-    logs: nextLogs,
-    money: getMoneyTotal(character) + achievement.cashPayout,
-  };
+  return { logs: nextLogs };
 }
 
 /**
  * Removes an achievement from a mission, refunding its cash/XP contribution.
  * Blocked if doing so would take the character's money or derived available
  * XP negative (i.e. it's already been spent).
- * @returns {{logs: array, money: number}|null} null if blocked
+ * @returns {{logs: array}|null} null if blocked
  */
-export function applyAchievementRemove(character, logs, missionIndex, achievementIndex) {
+export function applyAchievementRemove(character, logs, missionIndex, achievementIndex, equipmentData) {
   const entry = logs[missionIndex];
   const achievement = entry?.achievements?.[achievementIndex];
   if (!achievement) return null;
 
-  const nextMoney = getMoneyTotal(character) - achievement.cashPayout;
+  const nextMoney = getMoneyTotal(character, equipmentData) - achievement.cashPayout;
   if (nextMoney < 0) return null;
 
   const nextMissionXPTotal = getLogTotals(logs).totalMissionXP - achievement.xpPayout;
@@ -454,5 +457,5 @@ export function applyAchievementRemove(character, logs, missionIndex, achievemen
   const nextLogs = [...logs];
   nextLogs[missionIndex] = { ...entry, achievements: nextAchievements };
 
-  return { logs: nextLogs, money: nextMoney };
+  return { logs: nextLogs };
 }

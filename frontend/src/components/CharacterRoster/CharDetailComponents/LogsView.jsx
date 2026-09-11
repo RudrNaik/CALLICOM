@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import equipmentData from "../../../data/Equipment.json";
 import {
   createMissionLog,
   createAchievement,
@@ -24,6 +25,92 @@ const emptyAchievementDraft = {
   cashPayout: "",
 };
 
+// A negative payout (a task/achievement that costs XP or money rather than
+// awarding it) drops the "+" and shows red instead of its usual color, so
+// it reads as a cost at a glance rather than looking like a typo'd bonus.
+const formatSigned = (value) => (value < 0 ? `${value}` : `+${value}`);
+const formatSignedCash = (value) => (value < 0 ? `-$${Math.abs(value)}` : `+$${value}`);
+const signedClass = (value, positiveClass) => (value < 0 ? "text-red-400" : positiveClass);
+
+/** One already-added achievement, shown wherever a mission's achievements are listed (the add-mission form's staged list, and the latest mission's edit view). */
+function AchievementListItem({ achievement, onRemove }) {
+  return (
+    <div className="flex items-start justify-between gap-2 bg-neutral-800/60 rounded px-2 py-1 text-xs">
+      <div>
+        <div className="text-orange-300 font-medium">{achievement.name}</div>
+        {achievement.criteria && (
+          <div className="text-neutral-500">Criteria/Reason: {achievement.criteria}</div>
+        )}
+        <div className="space-x-3 mt-0.5">
+          <span className={signedClass(achievement.xpPayout, "text-orange-300")}>
+            {formatSigned(achievement.xpPayout)} XP
+          </span>
+          <span className={signedClass(achievement.cashPayout, "text-green-400")}>
+            {formatSigned(achievement.cashPayout)} Money
+          </span>
+        </div>
+      </div>
+      <button
+        onClick={onRemove}
+        className="text-neutral-500 hover:text-red-400 shrink-0 cursor-pointer"
+      >
+        Remove
+      </button>
+    </div>
+  );
+}
+
+/** The name/criteria/XP/cash inputs for drafting one new achievement, shared between the add-mission form and the latest mission's edit view. */
+function AchievementDraftForm({ draft, setDraft, onSave, onCancel }) {
+  return (
+    <div className="space-y-2">
+      <input
+        type="text"
+        placeholder="Name"
+        className="w-full bg-neutral-800 border border-gray-500 rounded px-2 py-1 text-white text-xs"
+        value={draft.name}
+        onChange={(e) => setDraft({ ...draft, name: e.target.value })}
+      />
+      <textarea
+        placeholder="Criteria/Reason"
+        className="w-full bg-neutral-800 border border-gray-500 rounded px-2 py-1 text-white text-xs resize-y min-h-[40px]"
+        value={draft.criteria}
+        onChange={(e) => setDraft({ ...draft, criteria: e.target.value })}
+      />
+      <div className="flex gap-2">
+        <input
+          type="number"
+          placeholder="XP Adjustment"
+          className="w-full bg-neutral-800 border border-gray-500 rounded px-2 py-1 text-white text-xs"
+          value={draft.xpPayout}
+          onChange={(e) => setDraft({ ...draft, xpPayout: e.target.value })}
+        />
+        <input
+          type="number"
+          placeholder="Cash Adjustment"
+          className="w-full bg-neutral-800 border border-gray-500 rounded px-2 py-1 text-white text-xs"
+          value={draft.cashPayout}
+          onChange={(e) => setDraft({ ...draft, cashPayout: e.target.value })}
+        />
+      </div>
+      <div className="flex gap-2">
+        <button
+          onClick={onSave}
+          className="bg-green-600 hover:bg-green-700 px-3 py-1 rounded text-xs cursor-pointer"
+        >
+          Save Achievement
+        </button>
+        <button
+          onClick={onCancel}
+          className="bg-neutral-700 hover:bg-neutral-600 px-3 py-1 rounded text-xs cursor-pointer"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function LogsView({ character, refreshCharacter }) {
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState("");
@@ -32,6 +119,13 @@ function LogsView({ character, refreshCharacter }) {
   const [notes, setNotes] = useState("");
   const [missionDate, setMissionDate] = useState(today);
 
+  // Achievements staged onto the mission being logged — folded into its
+  // `achievements` when the mission is saved (see handleAddMission), rather
+  // than requiring the mission to be saved first and edited afterward.
+  const [newMissionAchievements, setNewMissionAchievements] = useState([]);
+  const [showNewAchievementForm, setShowNewAchievementForm] = useState(false);
+  const [newAchievementDraft, setNewAchievementDraft] = useState(emptyAchievementDraft);
+
   const [editingLatest, setEditingLatest] = useState(false);
   const [editDraft, setEditDraft] = useState(null);
 
@@ -39,7 +133,7 @@ function LogsView({ character, refreshCharacter }) {
   const [achievementDraft, setAchievementDraft] = useState(emptyAchievementDraft);
 
   const logs = ensureStartingLog(character, character?.logs ?? []);
-  const money = getMoneyTotal(character);
+  const money = getMoneyTotal(character, equipmentData);
   const { totalMissionXP, totalPayout } = getLogTotals(logs);
 
   // Every character needs a first log to attach receipts to (see
@@ -59,6 +153,9 @@ function LogsView({ character, refreshCharacter }) {
     setNotes("");
     setMissionDate(today());
     setShowForm(false);
+    setNewMissionAchievements([]);
+    setShowNewAchievementForm(false);
+    setNewAchievementDraft(emptyAchievementDraft);
   };
 
   const handleAddMission = () => {
@@ -66,13 +163,29 @@ function LogsView({ character, refreshCharacter }) {
       { name, missionXP, payout, notes, date: missionDate },
       character,
     );
+    entry.achievements = newMissionAchievements;
     const result = applyMissionLogAdd(character, logs, entry);
     refreshCharacter(result);
     resetForm();
   };
 
+  const handleAddNewMissionAchievement = () => {
+    setNewMissionAchievements([
+      ...newMissionAchievements,
+      createAchievement(newAchievementDraft),
+    ]);
+    setShowNewAchievementForm(false);
+    setNewAchievementDraft(emptyAchievementDraft);
+  };
+
+  const handleRemoveNewMissionAchievement = (achIndex) => {
+    setNewMissionAchievements(
+      newMissionAchievements.filter((_, i) => i !== achIndex),
+    );
+  };
+
   const handleRemoveMission = (index) => {
-    const result = applyMissionLogRemove(character, logs, index);
+    const result = applyMissionLogRemove(character, logs, index, equipmentData);
     if (!result) {
       alert(
         "Can't remove this mission — its payout has already been spent.",
@@ -101,7 +214,7 @@ function LogsView({ character, refreshCharacter }) {
   };
 
   const handleSaveEditLatest = (index) => {
-    const result = applyMissionLogEdit(character, logs, index, editDraft);
+    const result = applyMissionLogEdit(character, logs, index, editDraft, equipmentData);
     if (!result) {
       alert(
         "Can't save that — it would take available XP or money below zero.",
@@ -121,7 +234,13 @@ function LogsView({ character, refreshCharacter }) {
   };
 
   const handleRemoveAchievement = (missionIndex, achievementIndex) => {
-    const result = applyAchievementRemove(character, logs, missionIndex, achievementIndex);
+    const result = applyAchievementRemove(
+      character,
+      logs,
+      missionIndex,
+      achievementIndex,
+      equipmentData,
+    );
     if (!result) {
       alert(
         "Can't remove that achievement — its XP or money has already been spent.",
@@ -139,12 +258,12 @@ function LogsView({ character, refreshCharacter }) {
           <span className="text-lg font-bold text-orange-400">{totalMissionXP}</span>
         </div>
         <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-4 border-orange-500 px-4 py-2 rounded-sm">
-          <span className="block text-xs text-neutral-400">Total Payout Earned</span>
-          <span className="text-lg font-bold text-orange-400">{totalPayout}</span>
+          <span className="block text-xs text-neutral-400">Total Payout</span>
+          <span className="text-lg font-bold text-orange-400">${totalPayout}</span>
         </div>
         <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-4 border-orange-500 px-4 py-2 rounded-sm">
-          <span className="block text-xs text-neutral-400">Current Money</span>
-          <span className="text-lg font-bold text-green-400">{money}</span>
+          <span className="block text-xs text-neutral-400">Current Cash</span>
+          <span className="text-lg font-bold text-green-400">${money}</span>
         </div>
       </div>
 
@@ -196,6 +315,36 @@ function LogsView({ character, refreshCharacter }) {
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
             />
+
+            <div className="pt-2 border-t border-neutral-800 space-y-2">
+              <div className="text-xs text-neutral-500">Achievements/Tasks/Etc. (optional)</div>
+              {newMissionAchievements.map((achievement, achIndex) => (
+                <AchievementListItem
+                  key={achievement.id ?? achIndex}
+                  achievement={achievement}
+                  onRemove={() => handleRemoveNewMissionAchievement(achIndex)}
+                />
+              ))}
+              {showNewAchievementForm ? (
+                <AchievementDraftForm
+                  draft={newAchievementDraft}
+                  setDraft={setNewAchievementDraft}
+                  onSave={handleAddNewMissionAchievement}
+                  onCancel={() => {
+                    setShowNewAchievementForm(false);
+                    setNewAchievementDraft(emptyAchievementDraft);
+                  }}
+                />
+              ) : (
+                <button
+                  onClick={() => setShowNewAchievementForm(true)}
+                  className="text-xs text-orange-400 hover:text-orange-300 cursor-pointer"
+                >
+                  + Add Achievement
+                </button>
+              )}
+            </div>
+
             <div className="flex gap-2">
               <button
                 onClick={handleAddMission}
@@ -224,7 +373,7 @@ function LogsView({ character, refreshCharacter }) {
             .map(({ log, index }) => {
               const canRemove = index === logs.length - 1;
               const isEditingThis = editingLatest && canRemove;
-              const receipt = describeReceipt(log.receipt);
+              const receipt = describeReceipt(log.receipt, equipmentData);
               const ediceXPSpent = getEmergencyDiceXPDuring(logs, index, character);
               const totalXPSpent = receipt.xpSpent + ediceXPSpent;
               const hasReceipt =
@@ -295,108 +444,25 @@ function LogsView({ character, refreshCharacter }) {
 
                         {/* Achievements are managed here, folded into the mission's edit view. */}
                         <div className="pt-2 border-t border-neutral-800 space-y-2">
-                          <div className="text-xs text-neutral-500">Achievements</div>
+                          <div className="text-xs text-neutral-500">Achievements/Tasks/Etc.</div>
                           {achievements.map((achievement, achIndex) => (
-                            <div
+                            <AchievementListItem
                               key={achievement.id ?? achIndex}
-                              className="flex items-start justify-between gap-2 bg-neutral-800/60 rounded px-2 py-1 text-xs"
-                            >
-                              <div>
-                                <div className="text-orange-300 font-medium">
-                                  {achievement.name}
-                                </div>
-                                {achievement.criteria && (
-                                  <div className="text-neutral-500">
-                                    Criteria: {achievement.criteria}
-                                  </div>
-                                )}
-                                <div className="space-x-3 mt-0.5">
-                                  <span className="text-orange-300">
-                                    +{achievement.xpPayout} XP
-                                  </span>
-                                  <span className="text-green-400">
-                                    +{achievement.cashPayout} Money
-                                  </span>
-                                </div>
-                              </div>
-                              <button
-                                onClick={() => handleRemoveAchievement(index, achIndex)}
-                                className="text-neutral-500 hover:text-red-400 shrink-0 cursor-pointer"
-                              >
-                                Remove
-                              </button>
-                            </div>
+                              achievement={achievement}
+                              onRemove={() => handleRemoveAchievement(index, achIndex)}
+                            />
                           ))}
 
                           {showAchievementForm ? (
-                            <div className="space-y-2">
-                              <input
-                                type="text"
-                                placeholder="Achievement name"
-                                className="w-full bg-neutral-800 border border-gray-500 rounded px-2 py-1 text-white text-xs"
-                                value={achievementDraft.name}
-                                onChange={(e) =>
-                                  setAchievementDraft({
-                                    ...achievementDraft,
-                                    name: e.target.value,
-                                  })
-                                }
-                              />
-                              <textarea
-                                placeholder="Criteria"
-                                className="w-full bg-neutral-800 border border-gray-500 rounded px-2 py-1 text-white text-xs resize-y min-h-[40px]"
-                                value={achievementDraft.criteria}
-                                onChange={(e) =>
-                                  setAchievementDraft({
-                                    ...achievementDraft,
-                                    criteria: e.target.value,
-                                  })
-                                }
-                              />
-                              <div className="flex gap-2">
-                                <input
-                                  type="number"
-                                  placeholder="XP payout"
-                                  className="w-full bg-neutral-800 border border-gray-500 rounded px-2 py-1 text-white text-xs"
-                                  value={achievementDraft.xpPayout}
-                                  onChange={(e) =>
-                                    setAchievementDraft({
-                                      ...achievementDraft,
-                                      xpPayout: e.target.value,
-                                    })
-                                  }
-                                />
-                                <input
-                                  type="number"
-                                  placeholder="Cash payout"
-                                  className="w-full bg-neutral-800 border border-gray-500 rounded px-2 py-1 text-white text-xs"
-                                  value={achievementDraft.cashPayout}
-                                  onChange={(e) =>
-                                    setAchievementDraft({
-                                      ...achievementDraft,
-                                      cashPayout: e.target.value,
-                                    })
-                                  }
-                                />
-                              </div>
-                              <div className="flex gap-2">
-                                <button
-                                  onClick={() => handleAddAchievement(index)}
-                                  className="bg-green-600 hover:bg-green-700 px-3 py-1 rounded text-xs cursor-pointer"
-                                >
-                                  Save Achievement
-                                </button>
-                                <button
-                                  onClick={() => {
-                                    setShowAchievementForm(false);
-                                    setAchievementDraft(emptyAchievementDraft);
-                                  }}
-                                  className="bg-neutral-700 hover:bg-neutral-600 px-3 py-1 rounded text-xs cursor-pointer"
-                                >
-                                  Cancel
-                                </button>
-                              </div>
-                            </div>
+                            <AchievementDraftForm
+                              draft={achievementDraft}
+                              setDraft={setAchievementDraft}
+                              onSave={() => handleAddAchievement(index)}
+                              onCancel={() => {
+                                setShowAchievementForm(false);
+                                setAchievementDraft(emptyAchievementDraft);
+                              }}
+                            />
                           ) : (
                             <button
                               onClick={() => setShowAchievementForm(true)}
@@ -444,7 +510,7 @@ function LogsView({ character, refreshCharacter }) {
 
                         {achievements.length > 0 && (
                           <div className="text-xs mt-2 pt-2 border-t border-neutral-800 space-y-1">
-                            <div className="text-neutral-500">Achievements:</div>
+                            <div className="text-neutral-500">Achievements/Tasks/Etc.:</div>
                             {achievements.map((achievement, achIndex) => (
                               <div
                                 key={achievement.id ?? achIndex}
@@ -455,15 +521,15 @@ function LogsView({ character, refreshCharacter }) {
                                 </div>
                                 {achievement.criteria && (
                                   <div className="text-neutral-500">
-                                    Criteria: {achievement.criteria}
+                                    Criteria/Reason: {achievement.criteria}
                                   </div>
                                 )}
                                 <div className="space-x-3 mt-0.5">
-                                  <span className="text-orange-300">
-                                    +{achievement.xpPayout} XP
+                                  <span className={signedClass(achievement.xpPayout, "text-orange-300")}>
+                                    {formatSigned(achievement.xpPayout)} XP
                                   </span>
-                                  <span className="text-green-400">
-                                    +${achievement.cashPayout}
+                                  <span className={signedClass(achievement.cashPayout, "text-green-400")}>
+                                    {formatSignedCash(achievement.cashPayout)}
                                   </span>
                                 </div>
                               </div>
@@ -473,7 +539,14 @@ function LogsView({ character, refreshCharacter }) {
 
                         {hasAchievementBonus && (
                           <div className="text-xs mt-1 text-neutral-500">
-                            Total with achievements: +{earnings.xp} XP, +${earnings.cash}
+                            Total with achievements/tasks/etc.:{" "}
+                            <span className={signedClass(earnings.xp, "")}>
+                              {formatSigned(earnings.xp)} XP
+                            </span>
+                            ,{" "}
+                            <span className={signedClass(earnings.cash, "")}>
+                              {formatSignedCash(earnings.cash)}
+                            </span>
                           </div>
                         )}
 

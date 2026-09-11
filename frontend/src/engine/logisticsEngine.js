@@ -4,10 +4,9 @@
  * Pure functions for buying gear with a character's money (see
  * logsEngine.getMoneyTotal), between missions. Every purchase is recorded
  * onto the most recently logged mission's receipt (logsEngine.
- * recordPurchaseOnLatestMission) purely for display — reversal, on removing
- * that mission, works by resetting the whole equipment object back to its
- * pre-mission snapshot (receipt.equipmentBefore), not by undoing purchases
- * one at a time.
+ * recordPurchaseOnLatestMission) — that's the only place a purchase lives;
+ * see rebuildEquipmentFromLogs for how "currently equipped" is rebuilt from
+ * it, and sellPurchase for removing one again later.
  *
  * Purchase types: weapons (primary/secondary — name + category + family,
  * priced off the category/family catalog), gadgets (the character's
@@ -29,6 +28,29 @@
  * restriction, and it's also why removing a mission or undoing a purchase
  * needs no separate bookkeeping to stay consistent — there's nothing to go
  * stale.
+ *
+ * Cost itself is never trusted from a stored value either: a purchase
+ * record keeps whatever `cost` it was made at (mostly for the gear-slot
+ * placeholder, which has no real catalog yet), but every money calculation
+ * re-prices it from the live Equipment.json via getPurchaseCost. That means
+ * changing an item's cost in the catalog immediately changes what every
+ * character who ever bought it is considered to have paid, everywhere
+ * (getMoneyTotal, sellPurchase refunds, receipt display) — nothing needs a
+ * migration when a price changes.
+ *
+ * Selling (sellPurchase) is scoped to the current "buy period": only
+ * purchases recorded on the most recently logged mission's receipt can be
+ * sold, and any of them can be — not just the last one made, unlike a strict
+ * undo stack. Once a newer mission gets logged, that receipt locks and its
+ * purchases are committed for good; you bought it three missions ago, you
+ * can't just sell it back now. Whatever's currently equipped in each slot is
+ * rebuilt from scratch by replaying every remaining purchase across every
+ * mission in order (rebuildEquipmentFromLogs), so a slot just reverts to
+ * whichever purchase is now the most recent for it (or empty, if none are
+ * left) — correct for gadgets/grenades (each id can only be bought once, so
+ * selling one always removes it entirely) and for weapons (which can be
+ * bought many times over, so selling one specific purchased instance leaves
+ * the others untouched).
  */
 import {
   getWeaponCategoriesLookup,
@@ -92,6 +114,33 @@ export function getGadgetSubmunitionOptions(gadgetItem, equipmentData) {
   return options
     .map((option) => equipmentData.find((item) => item.id === option.id))
     .filter(Boolean);
+}
+
+/**
+ * A purchase's current cost, re-priced live from Equipment.json rather than
+ * trusted from whatever was stored on the purchase when it was made — so
+ * editing an item's cost in the catalog retroactively changes what every
+ * character is considered to have paid for it. Weapons re-derive from their
+ * category + family (the same catalog lookup the buy form uses); gadgets,
+ * grenades and submunitions re-derive from their catalog id. Gear-slot
+ * purchases have no real catalog yet, so they fall back to their stored
+ * `cost`.
+ */
+export function getPurchaseCost(purchase, equipmentData) {
+  switch (purchase?.type) {
+    case "weapon": {
+      const lookup = getWeaponCategoriesLookup(equipmentData ?? []);
+      return getWeaponCost(lookup[purchase.value?.category], purchase.value?.family);
+    }
+    case "gadget":
+    case "grenade":
+    case "submunition": {
+      const item = (equipmentData ?? []).find((i) => i.id === purchase.value);
+      return item?.cost || 0;
+    }
+    default:
+      return purchase?.cost || 0;
+  }
 }
 
 export function createWeaponPurchase({ slot, name, category, family, cost }) {
@@ -163,17 +212,25 @@ export function createGearSlotPurchase({ slot, label, cost }) {
  * Applies a purchase's effect to the currently-equipped fields only —
  * ownership itself is never stored (see equipmentEngine.getPurchased*),
  * so this is purely "what's now equipped", not "what's now owned". A
- * submunition purchase has no equipped field of its own (it just needs to
- * show up in the receipt for ownership to derive it later), so it's a
- * no-op here.
+ * purchase never bumps something already equipped out of its slot — it
+ * only fills that slot if it was empty, same as grenades already did (each
+ * purchase fills the first empty grenade slot, or just unlocks the type if
+ * both are full). Buying a second gadget/weapon while one's already
+ * equipped just adds it to what's owned; switching what's equipped is a
+ * deliberate choice made in the Gameplay tab (see EquipmentView.jsx), not a
+ * side effect of buying. A submunition purchase has no equipped field of
+ * its own (it just needs to show up in the receipt for ownership to derive
+ * it later), so it's a no-op here.
  */
 function applyPurchaseToEquipment(equipment, purchase) {
   const base = equipment ?? {};
 
   switch (purchase.type) {
     case "weapon":
+      if (base[purchase.slot]?.category) return base;
       return { ...base, [purchase.slot]: purchase.value };
     case "gadget":
+      if (base.gadget) return base;
       return { ...base, gadget: purchase.value };
     case "grenade": {
       const grenades = Array.isArray(base.grenades) ? [...base.grenades] : ["", ""];
@@ -185,11 +242,13 @@ function applyPurchaseToEquipment(equipment, purchase) {
       }
       return { ...base, grenades };
     }
-    case "gearSlot":
+    case "gearSlot": {
+      if (base.gearSlots?.[purchase.slot]) return base;
       return {
         ...base,
         gearSlots: { ...(base.gearSlots ?? {}), [purchase.slot]: purchase.value },
       };
+    }
     case "submunition":
     default:
       return base;
@@ -197,59 +256,98 @@ function applyPurchaseToEquipment(equipment, purchase) {
 }
 
 /**
- * Spends money on a purchase, updating equipment and recording it onto the
- * latest mission's receipt. Blocked if the character can't afford it.
- * @returns {{money: number, equipment: object, logs: array}|null} null if blocked
+ * Rebuilds "what's currently equipped" from nothing but `logs`, by replaying
+ * every purchase from every mission's receipt, in order, from an empty
+ * equipment object. This is the single source of truth for equipped
+ * gear/weapons/grenades — there's no snapshot to keep in sync, so selling or
+ * removing a purchase from anywhere in a character's history (not just the
+ * latest mission) always leaves equipment consistent: a slot just reverts to
+ * whichever remaining purchase for it is now the most recent, or empty if
+ * none are left.
  */
-export function applyPurchase(character, logs, purchase) {
-  const money = getMoneyTotal(character) - purchase.cost;
-  if (money < 0) return null;
-
-  const equipment = applyPurchaseToEquipment(character?.equipment, purchase);
-  const nextLogs = recordPurchaseOnLatestMission(logs, purchase);
-
-  return { money, equipment, logs: nextLogs };
+export function rebuildEquipmentFromLogs(logs) {
+  return (logs ?? []).reduce((equipment, mission) => {
+    const purchases = mission?.receipt?.purchases ?? [];
+    return purchases.reduce(applyPurchaseToEquipment, equipment);
+  }, {});
 }
 
 /**
- * Undoes the most recently made logistics purchase, as long as it's still
- * attributed to the most recently logged mission — that mission is a "buy
- * period" that stays open (and reversible one purchase at a time) until a
- * newer mission gets logged and locks it in. Refunds its cost, drops it from
- * the receipt (which is what ownership derives from — see
- * equipmentEngine.getPurchased*), and reconstructs the equipped fields by
- * replaying every remaining purchase in this mission's window from its
- * pre-mission snapshot, so equipment ends up exactly as if that purchase
- * had never happened. Sanitized afterward in case the undone purchase was
- * the only thing that had unlocked whatever's currently equipped.
- * @returns {{logs: array, money: number, equipment: object}|null} null if there's nothing to undo
+ * Every purchase ever made, across every mission, in receipt order, paired
+ * with the (missionIndex, purchaseIndex) location sellPurchase needs to
+ * remove one — optionally filtered to a single purchase `type`.
  */
-export function undoLastPurchase(character, logs) {
-  if (!logs || logs.length === 0) return null;
+export function getPurchaseEntries(logs, type) {
+  const entries = [];
+  (logs ?? []).forEach((log, missionIndex) => {
+    (log?.receipt?.purchases ?? []).forEach((purchase, purchaseIndex) => {
+      if (!type || purchase.type === type) {
+        entries.push({ missionIndex, purchaseIndex, purchase });
+      }
+    });
+  });
+  return entries;
+}
 
-  const lastIndex = logs.length - 1;
-  const mission = logs[lastIndex];
-  const receipt = mission.receipt ?? {};
-  const purchases = receipt.purchases ?? [];
-  if (purchases.length === 0) return null;
+/**
+ * Spends money on a purchase, updating equipment and recording it onto the
+ * latest mission's receipt. Blocked if the character can't afford it.
+ * @returns {{equipment: object, logs: array}|null} null if blocked
+ */
+export function applyPurchase(character, logs, purchase, equipmentData) {
+  const cost = getPurchaseCost(purchase, equipmentData);
+  const money = getMoneyTotal(character, equipmentData) - cost;
+  if (money < 0) return null;
 
-  const undonePurchase = purchases[purchases.length - 1];
-  const remainingPurchases = purchases.slice(0, -1);
+  const equipment = applyPurchaseToEquipment(character?.equipment, purchase);
+  const nextLogs = recordPurchaseOnLatestMission(logs, { ...purchase, cost });
 
-  const replayedEquipment = remainingPurchases.reduce(
-    (acc, purchase) => applyPurchaseToEquipment(acc, purchase),
-    receipt.equipmentBefore ?? {},
-  );
+  return { equipment, logs: nextLogs };
+}
+
+/**
+ * Sells (removes) a purchase recorded on the most recently logged mission's
+ * receipt — this mission is the open "buy period", and any purchase made
+ * during it can be sold, not just the last one (unlike a strict undo stack).
+ * Blocked for any purchase on an older mission: once a newer mission gets
+ * logged, that receipt locks and its purchases are committed for good.
+ * Refunds the purchase's current cost (see getPurchaseCost) and rebuilds
+ * every equip slot from scratch (see rebuildEquipmentFromLogs).
+ * @returns {{logs: array, equipment: object}|null} null if the purchase can't be found or isn't in the current buy period
+ */
+export function sellPurchase(character, logs, missionIndex, purchaseIndex, equipmentData) {
+  if (!logs || missionIndex !== logs.length - 1) return null;
+
+  const mission = logs[missionIndex];
+  const purchases = mission?.receipt?.purchases ?? [];
+  const purchase = purchases[purchaseIndex];
+  if (!purchase) return null;
+
+  const nextPurchases = purchases.filter((_, i) => i !== purchaseIndex);
 
   const nextLogs = [...logs];
-  nextLogs[lastIndex] = {
+  nextLogs[missionIndex] = {
     ...mission,
-    receipt: { ...receipt, purchases: remainingPurchases },
+    receipt: { ...mission.receipt, purchases: nextPurchases },
   };
 
   return {
     logs: nextLogs,
-    money: getMoneyTotal(character) + undonePurchase.cost,
-    equipment: sanitizeEquipmentOwnership(replayedEquipment, nextLogs),
+    equipment: sanitizeEquipmentOwnership(rebuildEquipmentFromLogs(nextLogs), nextLogs),
   };
+}
+
+/**
+ * Undoes the most recently made logistics purchase — a convenience wrapper
+ * over sellPurchase targeting the current buy period's last purchase.
+ * @returns {{logs: array, equipment: object}|null} null if there's nothing to undo
+ */
+export function undoLastPurchase(character, logs, equipmentData) {
+  if (!logs || logs.length === 0) return null;
+
+  const lastIndex = logs.length - 1;
+  const purchases = logs[lastIndex]?.receipt?.purchases ?? [];
+  if (purchases.length === 0) return null;
+
+  return sellPurchase(character, logs, lastIndex, purchases.length - 1, equipmentData);
 }

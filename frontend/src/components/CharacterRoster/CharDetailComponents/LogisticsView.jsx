@@ -12,12 +12,11 @@ import {
   createSubmunitionPurchase,
   applyPurchase,
   undoLastPurchase,
+  sellPurchase,
+  getPurchaseEntries,
+  getPurchaseCost,
 } from "../../../engine/logisticsEngine";
-import {
-  getPurchasedGadgetIds,
-  getPurchasedWeapons,
-  getPurchasedGrenadeIds,
-} from "../../../engine/equipmentEngine";
+import { getPurchasedGadgetIds } from "../../../engine/equipmentEngine";
 import { getMoneyTotal, ensureStartingLog } from "../../../engine/logsEngine";
 
 const buttonClass = (enabled) =>
@@ -44,7 +43,7 @@ function WeaponPurchaseForm({
   const categories = getWeaponCategoryOptions(equipmentData, slot, character);
   const categoryData = categories[category];
   const cost = category ? getWeaponCost(categoryData, family) : 0;
-  const money = getMoneyTotal(character);
+  const money = getMoneyTotal(character, equipmentData);
   const canBuy = Boolean(category) && money >= cost;
   const current = character?.equipment?.[slot];
 
@@ -56,7 +55,7 @@ function WeaponPurchaseForm({
       family,
       cost,
     });
-    const result = applyPurchase(character, logs, purchase);
+    const result = applyPurchase(character, logs, purchase, equipmentData);
     if (!result) {
       alert("Not enough money for that purchase.");
       return;
@@ -144,7 +143,7 @@ function GadgetPurchaseSection({ character, logs, refreshCharacter }) {
   ]);
   const selected = options.find((g) => g.id === gadgetId);
   const cost = selected?.cost || 0;
-  const money = getMoneyTotal(character);
+  const money = getMoneyTotal(character, equipmentData);
   const canBuy = Boolean(gadgetId) && money >= cost;
 
   const currentId = character?.equipment?.gadget;
@@ -159,7 +158,7 @@ function GadgetPurchaseSection({ character, logs, refreshCharacter }) {
           cost,
         })
       : createGadgetPurchase({ gadgetId, label: selected?.title, cost });
-    const result = applyPurchase(character, logs, purchase);
+    const result = applyPurchase(character, logs, purchase, equipmentData);
     if (!result) {
       alert("Not enough money for that purchase.");
       return;
@@ -215,7 +214,7 @@ function GrenadePurchaseForm({ character, logs, refreshCharacter }) {
   const options = getGrenadeOptions(equipmentData);
   const selected = options.find((g) => g.id === grenadeId);
   const cost = selected?.cost || 0;
-  const money = getMoneyTotal(character);
+  const money = getMoneyTotal(character, equipmentData);
   const canBuy = Boolean(grenadeId) && money >= cost;
 
   const grenades = character?.equipment?.grenades ?? [];
@@ -229,7 +228,7 @@ function GrenadePurchaseForm({ character, logs, refreshCharacter }) {
       label: selected?.title,
       cost,
     });
-    const result = applyPurchase(character, logs, purchase);
+    const result = applyPurchase(character, logs, purchase, equipmentData);
     if (!result) {
       alert("Not enough money for that purchase.");
       return;
@@ -267,14 +266,28 @@ function GrenadePurchaseForm({ character, logs, refreshCharacter }) {
   );
 }
 
-function PurchasedList({ title, items }) {
+function PurchasedList({ title, items, onSell }) {
   if (items.length === 0) return null;
   return (
     <div className="bg-neutral-900 border border-neutral-700 rounded p-3">
       <div className="text-xs text-orange-400 mb-1">{title}</div>
       <ul className="text-xs text-neutral-300 space-y-1">
         {items.map((item, index) => (
-          <li key={index}>{item}</li>
+          <li key={index} className="flex items-center justify-between gap-2">
+            <span>{typeof item === "string" ? item : item.label}</span>
+            {onSell &&
+              typeof item !== "string" &&
+              (item.sellable ? (
+                <button
+                  onClick={() => onSell(item)}
+                  className="text-neutral-500 hover:text-red-400 shrink-0 cursor-pointer"
+                >
+                  Sell
+                </button>
+              ) : (
+                <span className="text-neutral-700 shrink-0">N/A</span>
+              ))}
+          </li>
         ))}
       </ul>
     </div>
@@ -284,7 +297,7 @@ function PurchasedList({ title, items }) {
 const GEAR_SLOT_LABELS = ["Headgear", "Vest", "Equipment", "Gloves"];
 
 function LogisticsView({ character, refreshCharacter }) {
-  const money = getMoneyTotal(character);
+  const money = getMoneyTotal(character, equipmentData);
   const logs = ensureStartingLog(character, character?.logs ?? []);
 
   // Guarantees the starting log exists even if this tab is opened before the
@@ -296,14 +309,29 @@ function LogisticsView({ character, refreshCharacter }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [character?.logs?.length]);
 
-  // Nothing here is stored on the character — all derived fresh from
-  // `logs` each render (see equipmentEngine.getPurchased*), so removing a
-  // mission or undoing a purchase updates these for free.
+  const handleSell = (entry) => {
+    const result = sellPurchase(
+      character,
+      logs,
+      entry.missionIndex,
+      entry.purchaseIndex,
+      equipmentData,
+    );
+    if (!result) return;
+    refreshCharacter(result);
+  };
+
+  // Nothing here is stored on the character — all derived fresh from `logs`
+  // each render (see logisticsEngine.getPurchaseEntries). Only purchases on
+  // the current buy period (the most recently logged mission) are
+  // `sellable` — anything from an older mission is committed for good (see
+  // logisticsEngine.sellPurchase).
+  const currentMissionIndex = logs.length - 1;
   const purchasedGadgetIds = getPurchasedGadgetIds(logs);
-  const ownedGadgetTitles = purchasedGadgetIds
-    .map((id) => equipmentData.find((g) => g.id === id))
-    .filter((gadget) => !gadget?.SubMunition)
-    .map((gadget) => {
+  const gadgetEntries = getPurchaseEntries(logs, "gadget")
+    .map(({ missionIndex, purchaseIndex, purchase }) => {
+      const gadget = equipmentData.find((g) => g.id === purchase.value);
+      if (!gadget) return null;
       const submunitions = getGadgetSubmunitionOptions(gadget, equipmentData);
       const unlockedCount = submunitions.filter(
         (sub) => !sub.cost || purchasedGadgetIds.includes(sub.id),
@@ -312,16 +340,35 @@ function LogisticsView({ character, refreshCharacter }) {
         submunitions.length > 0
           ? ` — ${unlockedCount}/${submunitions.length} submunitions unlocked`
           : "";
-      return `${gadget.title}${submunitionNote}`;
-    });
+      return {
+        label: `${gadget.title}${submunitionNote}`,
+        missionIndex,
+        purchaseIndex,
+        sellable: missionIndex === currentMissionIndex,
+      };
+    })
+    .filter(Boolean);
 
-  const ownedWeaponLabels = getPurchasedWeapons(logs).map(
-    (w) =>
-      `${w.name || "Unnamed Weapon"} (${w.category}${w.family ? ` / ${w.family}` : ""})`,
+  const weaponEntries = getPurchaseEntries(logs, "weapon").map(
+    ({ missionIndex, purchaseIndex, purchase }) => ({
+      label: `${purchase.value.name || "Unnamed Weapon"} (${purchase.value.category}${
+        purchase.value.family ? ` / ${purchase.value.family}` : ""
+      })`,
+      missionIndex,
+      purchaseIndex,
+      sellable: missionIndex === currentMissionIndex,
+    }),
   );
 
-  const ownedGrenadeTitles = getPurchasedGrenadeIds(logs).map(
-    (id) => equipmentData.find((g) => g.id === id)?.title || id,
+  const grenadeEntries = getPurchaseEntries(logs, "grenade").map(
+    ({ missionIndex, purchaseIndex, purchase }) => ({
+      label:
+        equipmentData.find((g) => g.id === purchase.value)?.title ||
+        purchase.value,
+      missionIndex,
+      purchaseIndex,
+      sellable: missionIndex === currentMissionIndex,
+    }),
   );
 
   const latestReceipt = logs[logs.length - 1]?.receipt;
@@ -329,7 +376,7 @@ function LogisticsView({ character, refreshCharacter }) {
   const lastPurchase = latestPurchases[latestPurchases.length - 1];
 
   const handleUndoLastPurchase = () => {
-    const result = undoLastPurchase(character, logs);
+    const result = undoLastPurchase(character, logs, equipmentData);
     if (!result) return;
     refreshCharacter(result);
   };
@@ -341,23 +388,6 @@ function LogisticsView({ character, refreshCharacter }) {
           <span className="block text-xs text-neutral-400">Current Cash</span>
           <span className="text-lg font-bold text-green-400">${money}</span>
         </div>
-
-        {lastPurchase && (
-          <div className="bg-neutral-900 border border-neutral-700 rounded p-2 flex items-center gap-3">
-            <div className="text-xs text-neutral-400">
-              Last purchase:{" "}
-              <span className="text-neutral-200">{lastPurchase.label}</span> (
-              -${lastPurchase.cost})
-            </div>
-            <button
-              onClick={handleUndoLastPurchase}
-              className="text-xs text-orange-400 hover:text-orange-300 cursor-pointer"
-              title="Undo this purchase — only available until the next mission is logged"
-            >
-              Undo
-            </button>
-          </div>
-        )}
       </div>
 
       <div>
@@ -389,11 +419,23 @@ function LogisticsView({ character, refreshCharacter }) {
           />
         </div>
         <div className="mt-2 grid md:grid-cols-4 gap-2 ">
-          <PurchasedList title="Purchased Gadgets" items={ownedGadgetTitles} />
+          <PurchasedList
+            title="Purchased Gadgets"
+            items={gadgetEntries}
+            onSell={handleSell}
+          />
           <div className="md:col-span-2">
-          <PurchasedList title="Purchased Weapons" items={ownedWeaponLabels} />
+            <PurchasedList
+              title="Purchased Weapons"
+              items={weaponEntries}
+              onSell={handleSell}
+            />
           </div>
-          <PurchasedList title="Purchased Grenade Types" items={ownedGrenadeTitles}/>
+          <PurchasedList
+            title="Purchased Grenade Types"
+            items={grenadeEntries}
+            onSell={handleSell}
+          />
         </div>
       </div>
 

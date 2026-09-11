@@ -107,12 +107,10 @@ export interface Character {
    * removed (see MissionReceipt).
    */
   emergencyDiceXPSpent?: number;
-  /** Running money total, earned via mission payouts (see MissionLog.payout) and spent in Logistics. Falls back to `metadata.starting_cash` until the first mission is logged. */
-  money?: number;
   multiClass?: string;
   createdAt: string;
   campaignId?: string;
-  /** Empty/undefined until the UI lazily seeds a "Starting Loadout" entry (see logsEngine.ensureStartingLog) crediting `metadata.starting_cash`, so spending done before any real mission is still attached to a receipt and reversible. */
+  /** Empty/undefined until the UI lazily seeds a "Starting Loadout" entry (see logsEngine.ensureStartingLog) crediting `metadata.starting_cash`, so spending done before any real mission is still attached to a receipt and reversible. Money is never stored directly — it's derived from this every time via logsEngine.getMoneyTotal (mission/achievement payouts minus purchases, each re-priced live from Equipment.json). */
   logs?: MissionLog[];
   Bio?: Biography | string;
 }
@@ -178,10 +176,8 @@ export interface MissionReceipt {
   emergencyDiceBefore: number;
   /** `Character.emergencyDiceXPSpent` snapshotted at the same moment. */
   emergencyDiceXPSpentBefore: number;
-  /** Logistics purchases (see logisticsEngine.js) made since this mission was logged — for display only, `equipmentBefore` below is what actually reverses them. */
+  /** Logistics purchases (see logisticsEngine.js) recorded onto this mission — the only place a purchase lives; both what's currently equipped (logisticsEngine.rebuildEquipmentFromLogs) and money (logsEngine.getMoneyTotal) are derived by replaying these across every mission, so removing this mission or selling one of these purchases (logisticsEngine.sellPurchase) needs no separate snapshot to restore. */
   purchases: LogisticsPurchase[];
-  /** `Character.equipment` snapshotted the moment this mission was logged; a removal resets equipment to this whole-object snapshot rather than undoing purchases one at a time, since equipment fields hold a single current value rather than an append-only list. */
-  equipmentBefore: Equipment;
 }
 
 /**

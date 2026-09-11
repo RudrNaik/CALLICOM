@@ -381,6 +381,18 @@ export const sanitizeGadgetAmmo = (obj, isMixed, isExpendable, optionIds, effect
       return out;
     }
 
+    const hasLegacyMagRes =
+      Object.prototype.hasOwnProperty.call(obj, MAG_KEY) ||
+      Object.prototype.hasOwnProperty.call(obj, RES_KEY);
+    if (!hasLegacyMagRes) {
+      // No ammo state recorded at all — a gadget just selected, not one
+      // that's been fired down — so it starts full. A real 0 is only ever
+      // reached afterward, by using ammo down (see useExpendableGadget),
+      // which always leaves EX_KEY set and is caught by the branch above.
+      out[EX_KEY] = effectiveMax;
+      return out;
+    }
+
     const mag = clamp0(obj[MAG_KEY]);
     const res = clamp0(obj[RES_KEY]);
     const total = Math.min(mag + res, effectiveMax);
