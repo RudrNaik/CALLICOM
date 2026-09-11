@@ -261,13 +261,13 @@ const WeaponSlot = ({
               </div>
 
               {charActive && (
-                <div className="flex justify-left items-start gap-5 mt-2">
+                <div className="flex justify-left items-start gap-2 mt-2">
                   {/* Left: Counters + Buttons */}
                   <div className="flex flex-col">
-                    <div className="text-xs text-white">
-                      Remaining Ammo: {turnsRemaining} turns
+                    <div className="text-xs text-white rounded-xs bg-neutral-900 px-2 py-1">
+                      Mag Remaining: <span className="text-yellow-400 italic">{magTurnsLeft}/{magazineSize} turns</span>
                       <br />
-                      Mag Remaining: {magTurnsLeft}/{magazineSize}
+                      Total Remaining: <span className="text-yellow-400 italic">{turnsRemaining} turns</span>
                     </div>
 
                     <div className="flex gap-1 mt-2">
@@ -308,7 +308,7 @@ const WeaponSlot = ({
                       <span
                         className={`${
                           isAnimating ? "motion-blur-vertical" : ""
-                        } transition-all duration-200 ${displayedAmmo < pseudoMagSizes[weapon?.category] * (1 / 3) ? "animate-[pulse_0.75s_cubic-bezier(0.4,0,0.6,1)_infinite] text-red-500" : ""}`}
+                        } transition-all duration-200 ${magTurnsLeft <= (2 / 5) * magazineSize ? "animate-[pulse_0.55s_cubic-bezier(0.4,0,0.6,1)_infinite] text-red-500" : ""}`}
                       >
                         {displayedAmmo}
                       </span>{" "}

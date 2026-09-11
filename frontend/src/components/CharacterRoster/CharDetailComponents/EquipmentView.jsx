@@ -414,7 +414,7 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
         <div
           className={`bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-4 border-orange-500 p-4 rounded-xs shadow ${wideLayout ? "col-span-2 md:col-span-1" : ""}`}
         >
-          <h3 className="font-semibold text-orange-300">Armor/Medical</h3>
+          <h3 className="font-semibold text-orange-300 ">Armor/Medical</h3>
           {isEditing ? (
             <div>
               <div>
@@ -432,23 +432,23 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
                   }}
                 />
               </div>
-              <div>{renderArmorClassDescription(gear.armorClass)}</div>
+              <div className="text-xs">{renderArmorClassDescription(gear.armorClass)}</div>
             </div>
           ) : (
             <div>
               <p>
                 <span>AC{gear.armorClass}</span>
               </p>
-              <div>{renderArmorClassDescription(gear.armorClass)}</div>
+              <div className="text-xs whitespace-pre-line">{renderArmorClassDescription(gear.armorClass)}</div>
             </div>
           )}
 
           {/* Medicine and meds. */}
-          <div className="grid sm:grid-cols-1 md:grid-cols-3 gap-4 mt-2">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2">
             {["AFAK", "IFAK"].map((med, i) => (
               <div key={med} className="text-sm text-white space-y-1">
                 <p>
-                  <span className="font-semibold text-orange-300">{med}</span>
+                  <span className="font-semibold text-neutral-300">{med}</span>
                 </p>
                 <p className="px-2 py-1 rounded bg-neutral-900 mb-2">
                   <span className="text-yellow-400">{safeMedCounts[i]}</span>{" "}

@@ -110,7 +110,7 @@ export default function GadgetAmmo({
 
   // ------- Render -------
   return (
-    <div className="mt-1 rounded border border-orange-500/40 bg-neutral-900/50 p-3">
+    <div className="mt-1 rounded-xs border border-orange-500/40 bg-neutral-900/50 p-3">
       <h4 className="text-orange-300 font-semibold mb-2">{title}</h4>
       {headerText && <p className="text-xs text-gray-400 mb-2">{headerText}</p>}
 
@@ -184,7 +184,7 @@ export default function GadgetAmmo({
                     </button>
                   </div>
                 ) : (
-                  <p className="px-2 py-1 rounded bg-neutral-900">
+                  <p className="px-2 py-1 rounded-xs bg-neutral-900">
                     <span className="text-yellow-400">{count}</span>
                   </p>
                 )}
