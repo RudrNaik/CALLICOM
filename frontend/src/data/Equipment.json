@@ -402,7 +402,7 @@
         "title": "Frag Grenades",
         "parentId": "grenades",
         "class": "All",
-        "cost": 0,
+        "cost": 3000,
         "description": "A bog standard high explosive fragmentation grenade. Light, easy to carry, easier to throw. Useful for many applications.",
         "rulesText": "[Throw][Explosive]\n 7 Damage. | 1 hex AOE\n When thrown in combat, prompts [Throw] vs [Armor] to brace or [Acrobatics] to dodge. Out of combat, requires an [Alertness] roll check if they react, and then their reaction."
     },
@@ -420,7 +420,7 @@
         "title": "Smoke",
         "parentId": "grenades",
         "class": "All",
-        "cost": 0,
+        "cost": 1900,
         "description": "Creates a plume of smoke around a designated location. Perfect for slipping away from enemies, or covering an advance.",
         "rulesText": "[Throw][Obscure]\n When thrown in combat, prompts [Throw] against a threshold of 2.\n 0 DMG | 3 hex AOE. \n Applies very dimly lit [-2] to the area and areas behind it when attempting to look through the smoke. Lasts for 2 turns starting when it was deployed."
     },
@@ -429,7 +429,7 @@
         "title": "Throwing Knives",
         "parentId": "grenades",
         "class": "All",
-        "cost": 0,
+        "cost": 2500,
         "description": "Knife to meet you. [Cackling]",
         "rulesText": "[Throw][Stealth]\n 7 DMG. | No AOE \n  When thrown in combat, prompts [Throw] vs [Acrobatics] or [Armor]. Makes no noise, and can be aimed to debilitate limbs if need be."
     },
@@ -605,7 +605,7 @@
         "parentId": "Rifleman",
         "SubMunition": true,
         "class": "Rifleman",
-        "cost": 0,
+        "cost": 6500,
         "description": "Frag grenade in a 40mm can. Detonates on impact.",
         "rulesText": "[Explosive]\n7 DMG\nM-Weapons attacker check, Acrobatics defender check. 1 hex AOE."
     },
@@ -615,7 +615,7 @@
         "parentId": "Rifleman",
         "SubMunition": true,
         "class": "Rifleman",
-        "cost": 0,
+        "cost": 2300,
         "description": "Smoke grenades in a 40mm can",
         "rulesText": "[Obscure]\nNo DMG\nApplies ‘very dimly lit’ (-2 attack to/through smoke) with a 3 hex AOE.\nPings from visual sources such as cameras are erased if obscured by smoke."
     },
@@ -625,7 +625,7 @@
         "parentId": "Rifleman",
         "SubMunition": true,
         "class": "Rifleman",
-        "cost": 5500,
+        "cost": 3100,
         "description": "Apparently it’s the sun, in a 40mm can. Blinds anyone looking at it.",
         "rulesText": "[Interrupt]\nM-Weapons attacker check, Acrobatics defender check.\n Applies very harshly lit (-2) towards a target. Interrupts actions."
     },
@@ -635,7 +635,7 @@
         "parentId": "Rifleman",
         "SubMunition": true,
         "class": "Rifleman",
-        "cost": 3600,
+        "cost": 3700,
         "description": "Spotter grenades, and you won't believe it, in a 40mm can.",
         "rulesText": "[Spot]\nM-Weapons attacker check, Acrobatics defender check\nPings all enemies in an area. \nLasts for 1 turn. \nUpon fumble, no pings."
     },
@@ -645,7 +645,7 @@
         "parentId": "Rifleman",
         "SubMunition": true,
         "class": "Rifleman",
-        "cost": 2550,
+        "cost": 4500,
         "description": "Bounceable 40mm HE",
         "rulesText": "[Explosive]\n7 DMG.\n M-Weapons attacker check, Acrobatics defender check\n Able to be bounced off walls. 1 hex AOE. When bounced off of a wall, roll a d7 for the exact hex the 40mm lands on in a 1 hex radius of the target, starting clockwise at the top right most hex as a result of 1, and exactly where it was aimed on 7."
     },
@@ -664,7 +664,7 @@
         "title": "SkeletonKey MSS",
         "parentId": "Rifleman",
         "class": "Rifleman",
-        "cost": 6600,
+        "cost": 4300,
         "description": "For when you want a shotgun on hand, but can’t be bothered to forego something with a bit more range.",
         "rulesText": "[M-wep][Breach][Deploy]\nRange modifier: +2 C | -1 M | -3 L | -4 ELR\n PEN: 1 | DMG: 6\n CAP: 3\n Can be used as a breaching tool against doors as a Deploy action.",
         "max": 4
@@ -690,7 +690,7 @@
         "title": "Breaching Charge",
         "parentId": "Raider",
         "class": "Raider",
-        "cost": 0,
+        "cost": 1700,
         "max": 3,
         "description": "'clack clack' - BOOM\n♪♫I'm coming down on the stereo, put me on the radio-♪♬",
         "rulesText": "[Breach][Explosive]\nOpens all doors up to ones heavily reinforced, blows through soft walls.\nCauses a loud explosion, gives guaranteed initiative to the team upon entry."
@@ -730,7 +730,7 @@
         "title": "9-bangs",
         "parentId": "Raider",
         "class": "Raider",
-        "cost": 0,
+        "cost": 3600,
         "description": "For when compliance wasn't a request. Channels the power of chemistry to dissuade targets from considering shooting back. And also blinds them. And gives them hearing problems.",
         "rulesText": "[Throw][Interrupt][Stun]\n 0 DMG | 3 hex AOE\n When thrown in combat, prompts [Throw] vs [Spirit] to withstand or [Acrobatics] to dodge.\n Applies -2 malus on all afflicted targets within the AOE. Interrupts readied, aiming, and suppression if within the AOE and they fail the check. Upon defender MOF of 2, they are [Stunned] and lose their turn. If used before combat starts, will cause friendlies to have initaitive first instead of enemies.",
         "max": 3
@@ -774,7 +774,7 @@
         "title": "Rocket Launcher",
         "parentId": "C-ENG",
         "class": "Combat Engineer",
-        "cost": 0,
+        "cost": 10000,
         "description": "A staple of Green Berets, Rangers, and other Special Forces units who don’t need to clear rooms like Delta. AT launchers are shoulder fired munitions that can blow up vehicles, destroy walls, and take down buildings if aimed right.",
         "rulesText": "[H-Wep]\nRange Modifiers: -1NS | -100C | +1M | -1ELR\nCapacity: 1\nAmmo: 3\nPen: 3\nDamage: 10.\n Against infantry, abides by grenade rules. Against Ground Vehicles, abides by ranged rules. Against Air Vehicles, causes an opposed [Alertness] check, and then an [Intelligence] check to evade.",
         "max": 3
@@ -804,7 +804,7 @@
         "title": "Anti-Material Rifle",
         "parentId": "C-ENG",
         "class": "Combat Engineer",
-        "cost": 13000,
+        "cost": 9000,
         "description": "From the classics of the AW-50 and M107 Barret to modern options such as the Gepard GM6 Lynx, Anti Material rifles come in all shapes and sizes but offer the same capability: big bullet, big penetration, big damage. Anti Material rifles can penetrate heavy armor and disable dedicated vehicle systems permanently. Such as APS, tracks, or engines. On lighter vehicles, they can punch through the armor, killing passengers or gunnners.",
         "rulesText": "[H-Wep]\nRange Modifiers: -2C | +1L | +2ELR\n Ammo: 5\nPen: 3\nDamage: 8",
         "max": 5
@@ -814,7 +814,7 @@
         "title": "Semenov HVAM Railgun",
         "parentId": "C-ENG",
         "class": "Combat Engineer",
-        "cost": "[???]",
+        "cost": 90000,
         "description": "Advanced, experimental Railgun design from Gold Coast. Utilizes electromagnetics to accelerate a 14.5 Anti-Material round from 0 to Mach 3 in under a second. We are not liable for hearing damage caused by extensive use.",
         "rulesText": "[H-Wep]\nRange Modifiers: -2C | +1L | +2ELR\n Ammo: 3\nPen: 4\nDamage: 10\n\nWill cause characters within the room its fired in or one hex from the round path to become Suppressed.",
         "max": 3
@@ -869,7 +869,7 @@
         "parentId": "T-ENG",
         "SubMunition": true,
         "class": "Technical Engineer",
-        "cost": 10000,
+        "cost": 0,
         "description": "The original, and ever beloved Demo Dog. Don't fix what aint broken.",
         "rulesText": "DMG 5 | PEN 2 | Range: +1 M , -1 L , -1 ELR | 6 turns of ammo |"
     },
@@ -889,7 +889,7 @@
         "parentId": "T-ENG",
         "SubMunition": true,
         "class": "Technical Engineer",
-        "cost": 13000,
+        "cost": 4000,
         "description": "Dedicated marksman variant for Long Range Recon and endurance. Strips down the armor much like the stealth variant in favor of an advanced sensor suite.",
         "rulesText": "DMG 6 | PEN 2 | Range: -1 C | +1 L | -1 ELR | 6 turns of ammo | +1 dice to notice checks, AC:0"
     },
@@ -899,7 +899,7 @@
         "parentId": "T-ENG",
         "SubMunition": true,
         "class": "Technical Engineer",
-        "cost": 15000,
+        "cost": 6000,
         "description": "Based off of prototypes found in 2018, the Gunner variant offers more firepower and ammo in exchange for poor heat dispersion due to the gimbal mount.",
         "rulesText": "DMG 5 | PEN 2 | Range: -1 C | +1 M | -1 L | -1 ELR | 6 turns of ammo | Can supress for at most 3 turns before barrel overheats or belt jams."
     },
@@ -908,7 +908,7 @@
         "title": "XMQ-17 UCAV 'Magic Missile'",
         "parentId": "T-ENG",
         "class": "Technical Engineer",
-        "cost": 0,
+        "cost": 9000,
         "description": "The whir of electric motors and the buzz of small drones have become the new age stuka siren. Equipped with an anti-infantry warhead, 'magic missiles' are guided by their operators onto targets such as tanks or infantry before detonating. Useful against dug in targets and some armored vehicles.",
         "rulesText": "[Airborne][Explosive][Deploy][Datalink]\nDMG 7, PEN 1. AOE 2.\n When deployed, user's turn ends immediately. When attacking an enemy, the defender rolls acrobatics if they wish to dodge, or their respective weapons with a -1 dice malus if they want to shoot it out of the sky. Uses a Drive check when deployed. Fumbles pre-detonate the warhead.",
         "max": 3
@@ -918,7 +918,7 @@
         "title": "XMQ-18 UCAV-AT 'Bigger Magic Missile'",
         "parentId": "T-ENG",
         "class": "Technical Engineer",
-        "cost": 9000,
+        "cost": 12000,
         "description": "The whir of electric motors and the buzz of small drones have become the new age stuka siren. Equipped with a shaped charge warhead for vehicles, 'magic missiles' are guided by their operators onto targets such as tanks or infantry before detonating. Useful against dug in targets and some armored vehicles.",
         "rulesText": "[Airborne][Explosive][Deploy][Datalink]\nDMG 8, PEN 3, AOE 0\n When deployed, user's turn ends immediately. When attacking an enemy, the defender rolls acrobatics if they wish to dodge, or their respective weapons with a -1 dice malus if they want to shoot it out of the sky. Uses a Drive check when deployed. Fumbles pre-detonate the warhead.",
         "max": 2
@@ -935,7 +935,7 @@
         "title": "X-89 AMS (Auto-Mortar)",
         "parentId": "F-SUP",
         "class": "Fire Support",
-        "cost": 0,
+        "cost": 9000,
         "description": "Simplifies the math of indirect fire into a 'point and click' adventure game. Allows the user to set up a remote mortar, designate targets, and then deliver ordnance from anywhere within an AO accurately.",
         "rulesText": "[Deploy][Datalink]\nH-Weapons attacking roll vs Acrobatics defender roll\nRequires a line of sight to the sky, along with minimal obstruction. One turn setup.\nCannot hit targets inside of buildings or with strong overhead cover.\n Ammo: 4",
         "maxRounds": 4,
@@ -1031,7 +1031,7 @@
         "title": "Resupply Bag",
         "parentId": "F-SUP",
         "class": "Fire Support",
-        "cost": 0,
+        "cost": 2000,
         "description": "A bag of assorted ammo types. Includes auto-feeders to rapidly refill magazines with them.",
         "rulesText": "[Deploy][Resupply]\nResupplies all ammo and grenades.\nHas same amount of charges as team members."
     },
@@ -1049,7 +1049,7 @@
         "title": "Juggernaut Suit",
         "parentId": "F-SUP",
         "class": "Fire Support",
-        "cost": "[???]",
+        "cost": 32000,
         "description": "Repurposed EOD suit equipped with a half exo to assist with movement. Provides a two stage armor system, where the outer layer of armor ‘soaks’ damage before it begins to strip and fall apart with further impacts, leaving the user with AC2 armor once it’s shredded.",
         "rulesText": "[Armor]\nThe suit can soak up to 200 HP (MoS x weapon damage) from enemies.\nWhen shot at, instead of rounds missing when a check is failed, the armor soaks the base damage of the weapon (MoS of 1) and it’s deducted from the health pool.\nWhen this health pool reaches zero, the armor is shredded, and the user now takes damage against their wound thresholds."
     },
@@ -1068,7 +1068,7 @@
         "title": "Ammo-Types",
         "parentId": "F-SUP",
         "class": "Fire Support",
-        "cost": 5000,
+        "cost": 6000,
         "description": "Get your ammo, fresh off the press. Its a bag filled with Stopping Power, Subsonic, or High Velocity rounds. Each with their own effects when loaded.",
         "rulesText": "[Deploy][Resupply]\nWhen loading out, choose an amount of charges for each ammo type when unlocked. When deployed, or given by a support using this specific ammo bag, you automatically reload your weapon with the new ammo type and gain its benefits for that magazine only. when reloading, the ammo is lost.",
         "maxBatches": 5,
@@ -1113,7 +1113,7 @@
         "parentId": "F-SUP",
         "SubMunition": true,
         "class": "Fire Support",
-        "cost": 0,
+        "cost": 6000,
         "description": "Optimizes the rounds to shoot faster and flatter. It wont make your rounds any quieter, but some people say it turns it into a point and shoot adventure game.",
         "rulesText": "Increases all range bands by a net +1 bonus."
     },
@@ -1129,7 +1129,7 @@
         "title": "Nanite Stimulants",
         "parentId": "Medic",
         "class": "Medic",
-        "cost": 0,
+        "cost": 4000,
         "description": "Contains all the stims a medic can carry, from regenerative nanites that heal you, to performance enhancing ones that let you react faster. Just dont get too reliant on them. Don't need junkies in the company. ",
         "rulesText": "[Deploy][Medical]\nHolds all of the nanite stims for a medic. A medic can carry up to 4 stims of assorted types. Each has their own rules.",
         "maxStims": 4,
@@ -1166,7 +1166,7 @@
         "parentId": "Medic",
         "SubMunition": true,
         "class": "Medic",
-        "cost": 0,
+        "cost": 4000,
         "description": "Advanced nanomachines automatically help stop bleeding, apply painkillers, and make getting shot a little less un-fun.",
         "rulesText": "Heal a flesh wound every turn, if no flesh wounds heal a deep wound every 2 turns.\nLasts for 1d6 turns/2 + medical skill level turns"
     },
@@ -1176,7 +1176,7 @@
         "parentId": "Medic",
         "SubMunition": true,
         "class": "Medic",
-        "cost": 6000,
+        "cost": 2000,
         "description": "A concoction of nanites from every kind to stave off death and keep someone in the fight. Painkillers, coagulants, and stimulants get someone back on their feet instantly.",
         "rulesText": "Revives a character from DBNO instantly with only a flesh wound. The turn after- remove a flesh wound."
     },
@@ -1186,7 +1186,7 @@
         "parentId": "Medic",
         "SubMunition": true,
         "class": "Medic",
-        "cost": 8000,
+        "cost": 3000,
         "description": "Retooled for killing any and all pain, Truamadol Nanites make the user feel nothing, other than emotion — we didn't disable that just yet.",
         "rulesText": "Temporarily removes all wounds\nLasts for 1d6 + medical skill level turns divided by 2"
     },
@@ -1196,7 +1196,7 @@
         "parentId": "Medic",
         "SubMunition": true,
         "class": "Medic",
-        "cost": 9000,
+        "cost": 6000,
         "description": "Created to simulate a release of adrenaline via nanites, the Adrenal Nanites give you a kick of energy in the moment.",
         "rulesText": "Adds another standard action for the user\nLasts for the turn"
     },
@@ -1232,7 +1232,7 @@
         "title": "Hummingbird Reconaissance Drone",
         "parentId": "Recon",
         "class": "Sharpshooter",
-        "cost": 0,
+        "cost": 6000,
         "description": "Built off the chassis of the PD-105 Black Hornet, Hummingbird reconnaissance drones are Gold Coast's home brewed modification, also tying in BUDDI spotting software and hardened Datalinks.",
         "rulesText": "[Deploy][Spot][Datalink]\nUser carried\nSpots traps, gadgets, vehicles, and more in the encounter area and one hex around\n Uptime: 4 turns\n 3 notice | 2 stealth | 1 investigation"
     },
@@ -1268,7 +1268,7 @@
         "title": "Grappling Hook",
         "parentId": "Recon",
         "class": "Sharpshooter",
-        "cost": 0,
+        "cost": 1000,
         "description": "Intended to help scale vertical walls and buildings. Can be daisy chained up to three times and 75 meters total.",
         "rulesText": "[Deploy][Traversal]\n1 turn deployment on vertical surfaces. This allows players to climb up any building as if on a makeshift ladder.\nRequires a throw check for if the target is hooked. Upon failure, charge is returned to the player.\n Can be used to gain overwatch positions in Dense Urban terrain, and negate many movement checks.\n3 uses.\nCan be used by teammates.",
         "max": 3
@@ -1278,7 +1278,7 @@
         "title": "Zipline",
         "parentId": "Recon",
         "class": "Sharpshooter",
-        "cost": 3000,
+        "cost": 5000,
         "description": "Intended to help traverse large gaps between buildings. Cannot be daisy chained, however can also be used to scale vertically if given enough distance. Very fun to ride, but make sure to hook in.",
         "rulesText": "[Deploy][Traversal]\n1 turn deployment across large gaps. This allows players to create a zipline between adjacent buildings.\nRequires an M-weapons check to see if the target is hit. Upon failure, charge is expended.\nCan be used to skip certain movement checks,on downhill or from climb zones. downhill creates 3 hex movement, climb creates 5 hex movement.\n2 uses.\nCan be used by teammates.",
         "max": 2
@@ -1288,7 +1288,7 @@
         "title": "Hydraulic Hook",
         "parentId": "Recon",
         "class": "Sharpshooter",
-        "cost": 7000,
+        "cost": 8000,
         "description": "Intended for snipers to be able to scale and move between buildings and walls quickly with a universal tool. However, only the operator can move, and only to adjacent buildings or vertically up to 25 meters.",
         "rulesText": "[Deploy][Traversal]\nRequires an M-weapons check to see if the target is hit. Upon failure the charge is expended.\nCan be used for overwatch positions in Dense Urban zones via providing a rapell, or to skip climb checks.\nUpon success, the hook needs to recharge, which takes two world ticks.\n3 uses.\nCannot be used by teammates.",
         "max": 3
@@ -1298,7 +1298,7 @@
         "title": "Special Ammo",
         "parentId": "Recon",
         "class": "Sharpshooter",
-        "cost": 0,
+        "cost": 6000,
         "description": "Special ammo allows for sharpshooters to have a greater effect with their bullets than just killing people. From disabling electronics with a low power EMP round, to punching through even the heaviest of body armor with AP rounds, Gold Coast's special ammo provides snipers unmatched flexibility on the field.",
         "rulesText": "[Deploy]\nSpecial ammo rules are detailed below. EMP, Lure, AP, and Smart Rounds. Requires a Deploy action to load.",
         "maxSpecAmmo": 4,
@@ -1373,7 +1373,7 @@
         "title": "Shock Sticks",
         "parentId": "Trapper",
         "class": "Trapper",
-        "cost": 0,
+        "cost": 4000,
         "description": "Shock Sticks are quiet, non-lethal traps which can be used to stealthily dispatch guards or patrols, bar the noise of them being tazed.",
         "rulesText": "[Deploy][Throw][Electric]\nAttacker Throw vs Defender Acrobatics [thrown]\nor\nAttacker Disguise vs Defender Alertness [mine]\nUser carried, 3x\n 3 hex AOE \n\n Forces a Body check against 4 when caught in the trap.\n -Upon failure, you are tazed, forced prone, and take a flesh wound.\n -Upon success, you can disable the shock stick with an action- or leave its AOE.",
         "max": 3
@@ -1423,7 +1423,7 @@
         "title": "M5 SLAM",
         "parentId": "Trapper",
         "class": "Trapper",
-        "cost": 6000,
+        "cost": 8000,
         "description": "Jeep stuff's younger, more tech-savvy cousin, M5 SLAMs are AT/Demo charges that can be set to detonate under a variety of circumstances. Easy to program, easy to detonate, and even float in water to act as aquatic mines.",
         "rulesText": "[Deploy][Throw][Explosive]\nAttacker Throw/Disguise vs Defender Acrobatics/Notice. Can be deployed on any surface with either:\n- Timed detonation (turn count)\n- Attack detonation (automatic)\n- Remote detonation (manual)\n\n10 DMG",
         "max": 4
@@ -1433,7 +1433,7 @@
         "title": "Thermtex",
         "parentId": "Trapper",
         "class": "Trapper",
-        "cost": 4000,
+        "cost": 7000,
         "description": "The power of chemistry once more, now re-engineered and applied to burn at 2000 degrees celsius, and then detonate into a spectacular explosion. Powerful enough to deal damage to vehicles and burn through armor. Not as effective against people unless stuck... But why would you do that?",
         "rulesText": "[Throw][Explosive]\n8 DMG | 3 hex AOE.\n When thrown in combat, prompts [Throw] vs [Armor] or [Acrobatics]. Requires a turn to detonate. Turns hard walls into cover. Can damage armored vehicles.",
         "max": 3
@@ -1443,7 +1443,7 @@
         "title": "Thinkpad",
         "parentId": "Trapper",
         "class": "Trapper",
-        "cost": 0,
+        "cost": 9500,
         "description": "It’s a ThinkPad. You’re not leaving this job for a while brother, and this thing isn’t breaking unless you shoot it with a tank.",
         "rulesText": "[Datalink][Deploy]\nProvides access to the cyberwarfare suite. Useful for hacking. Upon usage ends your turn.",
         "options": [
@@ -1521,7 +1521,7 @@
         "parentId": "thinkpad",
         "SubMunition": true,
         "class": "Trapper",
-        "cost": 0,
+        "cost": 5000,
         "description": "Accesses a specific target and cuts their connection to all downlink and uplink connections, effectively 'severing' them from their own command. ",
         "rulesText": "[-1 Traceability] Disable an enemy's ability to call reinforcements, mark targets, or control drones. 2 Turns."
     },
@@ -1541,7 +1541,7 @@
         "parentId": "thinkpad",
         "SubMunition": true,
         "class": "Trapper",
-        "cost": 15000,
+        "cost": 13000,
         "description": "Ping's bigger brother, penetrates into an enemy datalink to trace it back to everything using it. Pings any and every enemy on the local network.",
         "rulesText": "[-3 Traceability] Pings all enemies on a network. Works regardless of cameras. EMP'd or severed targets are immune."
     },
@@ -1551,7 +1551,7 @@
         "parentId": "thinkpad",
         "SubMunition": true,
         "class": "Trapper",
-        "cost": "[???]",
+        "cost": 21000,
         "description": "Brute forcing one's way into all local networks, this locks out all enemy users from the datalink. However, it will also spread to the rest of the connected signals, leading a mass lockout that spreads to vehicles, drones, and more.",
         "rulesText": "[-4 traceability] Blocks all enemy connections on a network. Disables radio, cameras, and tech like HUDs, turrets, and drones. Effective against vehicles to narrow crew awareness. Erases all enemy pings. lasts for 2 turns."
     },
@@ -1561,7 +1561,7 @@
         "parentId": "thinkpad",
         "SubMunition": true,
         "class": "Trapper",
-        "cost": "[???]",
+        "cost": 19000,
         "description": "Connects to all devices on a network and overclocks the CPU of the to burn and disable them. Takes one turn to overclock, but permanently disables that device if successful. When used against vehicles, it automatically leads to a shutdown of non-essential systems to protect itself, effectively kneecapping them until the reboot proces can start.",
         "rulesText": "[-5 Traceability] Causes a one turn timer to start on all enemy electronics, if the enemies dont react within that turn and disable their equipment- it burns and is permanently disabled. Vehciles electronics are disabled for the next turn and need to restart."
     },
@@ -1571,7 +1571,7 @@
         "parentId": "thinkpad",
         "SubMunition": true,
         "class": "Trapper",
-        "cost": "[???]",
+        "cost": 26000,
         "description": "Much like Mass Hack and Burnout, Mass Crash also penetrates into an enemy's network- but goes even deeper. Going as far as to intrude into the local power grid to disable everything in the local area. Lights, power, and all enemy electronics are severed and shut down. Useful for creating either perfect darkness to escape, or an opening to push while hostiles. are confused and dazed.",
         "rulesText": "[-5 traceability] Same effect as Mass Hack, however also disables all non-natural lighting in the operational area."
     }

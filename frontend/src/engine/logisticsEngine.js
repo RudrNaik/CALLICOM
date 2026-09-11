@@ -57,7 +57,11 @@ import {
   getExcludedPrimaryCategories,
   getExcludedSecondaryCategories,
 } from "./weaponEngine";
-import { getClassEligibleGadgets, sanitizeEquipmentOwnership } from "./equipmentEngine";
+import {
+  getClassEligibleGadgets,
+  sanitizeEquipmentOwnership,
+  getPurchasedGadgetIds,
+} from "./equipmentEngine";
 import { getMoneyTotal, recordPurchaseOnLatestMission } from "./logsEngine";
 
 /**
@@ -290,6 +294,32 @@ export function getPurchaseEntries(logs, type) {
 }
 
 /**
+ * Buying a gadget auto-buys any of its submunitions that are free (e.g. an
+ * UGL variant with no cost) and not already owned — each submunition is
+ * still its own individual purchase record (that's what ownership derives
+ * from, see equipmentEngine.getPurchasedGadgetIds), but a $0 one shouldn't
+ * need a separate manual purchase through the dropdown to unlock.
+ */
+function purchaseFreeSubmunitions(logs, gadgetId, equipmentData) {
+  const gadget = (equipmentData ?? []).find((item) => item.id === gadgetId);
+  const freeSubmunitions = getGadgetSubmunitionOptions(gadget, equipmentData).filter(
+    (sub) => !sub.cost,
+  );
+  if (freeSubmunitions.length === 0) return logs;
+
+  const owned = new Set(getPurchasedGadgetIds(logs));
+  return freeSubmunitions.reduce((accLogs, sub) => {
+    if (owned.has(sub.id)) return accLogs;
+    const submunitionPurchase = createSubmunitionPurchase({
+      submunitionId: sub.id,
+      label: sub.title,
+      cost: 0,
+    });
+    return recordPurchaseOnLatestMission(accLogs, submunitionPurchase);
+  }, logs);
+}
+
+/**
  * Spends money on a purchase, updating equipment and recording it onto the
  * latest mission's receipt. Blocked if the character can't afford it.
  * @returns {{equipment: object, logs: array}|null} null if blocked
@@ -300,7 +330,11 @@ export function applyPurchase(character, logs, purchase, equipmentData) {
   if (money < 0) return null;
 
   const equipment = applyPurchaseToEquipment(character?.equipment, purchase);
-  const nextLogs = recordPurchaseOnLatestMission(logs, { ...purchase, cost });
+  let nextLogs = recordPurchaseOnLatestMission(logs, { ...purchase, cost });
+
+  if (purchase.type === "gadget") {
+    nextLogs = purchaseFreeSubmunitions(nextLogs, purchase.value, equipmentData);
+  }
 
   return { equipment, logs: nextLogs };
 }
@@ -313,6 +347,13 @@ export function applyPurchase(character, logs, purchase, equipmentData) {
  * logged, that receipt locks and its purchases are committed for good.
  * Refunds the purchase's current cost (see getPurchaseCost) and rebuilds
  * every equip slot from scratch (see rebuildEquipmentFromLogs).
+ *
+ * Selling a gadget also sells any of its submunitions (e.g. a UGL's 40mm
+ * variants) that were bought in this same buy period — an owned submunition
+ * with no parent gadget owned doesn't mean anything on its own, so it can't
+ * be left behind. Submunitions bought in an earlier, now-locked buy period
+ * are untouched (they're already committed on their own, independently of
+ * the gadget).
  * @returns {{logs: array, equipment: object}|null} null if the purchase can't be found or isn't in the current buy period
  */
 export function sellPurchase(character, logs, missionIndex, purchaseIndex, equipmentData) {
@@ -323,7 +364,18 @@ export function sellPurchase(character, logs, missionIndex, purchaseIndex, equip
   const purchase = purchases[purchaseIndex];
   if (!purchase) return null;
 
-  const nextPurchases = purchases.filter((_, i) => i !== purchaseIndex);
+  let nextPurchases;
+  if (purchase.type === "gadget") {
+    const gadget = (equipmentData ?? []).find((item) => item.id === purchase.value);
+    const submunitionIds = new Set((gadget?.options ?? []).map((option) => option.id));
+    nextPurchases = purchases.filter(
+      (p, i) =>
+        i !== purchaseIndex &&
+        !(p.type === "submunition" && submunitionIds.has(p.value)),
+    );
+  } else {
+    nextPurchases = purchases.filter((_, i) => i !== purchaseIndex);
+  }
 
   const nextLogs = [...logs];
   nextLogs[missionIndex] = {

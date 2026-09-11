@@ -132,13 +132,29 @@ function GadgetPurchaseSection({ character, logs, refreshCharacter }) {
   // it's just another option here rather than a separate card. Grouped per
   // gadget (rather than one flat "Submunitions" bucket) so it stays clear
   // which gadget each submunition belongs to once there's more than one.
+  //
+  // Gated: a gadget already owned drops out of the list (nothing left to
+  // buy from it besides its submunitions), and a gadget's submunitions
+  // don't appear at all until the gadget itself is owned — you have to buy
+  // the thinkpad before its hacks show up. An already-owned submunition
+  // drops out the same way its parent gadget does. A gadget with nothing
+  // left to offer (owned, and every submunition owned too, or none exist)
+  // disappears from the list entirely.
+  const unlocked = getPurchasedGadgetIds(logs);
   const gadgets = getGadgetOptions(character, equipmentData);
-  const groups = gadgets.map((gadget) => ({
-    gadget,
-    submunitions: getGadgetSubmunitionOptions(gadget, equipmentData),
-  }));
-  const options = groups.flatMap(({ gadget, submunitions }) => [
-    gadget,
+  const groups = gadgets
+    .map((gadget) => {
+      const gadgetOwned = unlocked.includes(gadget.id);
+      const submunitions = gadgetOwned
+        ? getGadgetSubmunitionOptions(gadget, equipmentData).filter(
+            (sub) => !unlocked.includes(sub.id),
+          )
+        : [];
+      return { gadget, gadgetOwned, submunitions };
+    })
+    .filter(({ gadgetOwned, submunitions }) => !gadgetOwned || submunitions.length > 0);
+  const options = groups.flatMap(({ gadget, gadgetOwned, submunitions }) => [
+    ...(gadgetOwned ? [] : [gadget]),
     ...submunitions,
   ]);
   const selected = options.find((g) => g.id === gadgetId);
@@ -148,7 +164,6 @@ function GadgetPurchaseSection({ character, logs, refreshCharacter }) {
 
   const currentId = character?.equipment?.gadget;
   const current = equipmentData.find((g) => g.id === currentId);
-  const unlocked = getPurchasedGadgetIds(logs);
 
   const handlePurchase = () => {
     const purchase = selected?.SubMunition
@@ -180,15 +195,16 @@ function GadgetPurchaseSection({ character, logs, refreshCharacter }) {
         onChange={(e) => setGadgetId(e.target.value)}
       >
         <option value="">Select Gadget</option>
-        {groups.map(({ gadget, submunitions }) => (
+        {groups.map(({ gadget, gadgetOwned, submunitions }) => (
           <optgroup key={gadget.id} label={gadget.title}>
-            <option value={gadget.id}>
-              {gadget.title} ({gadget.cost})
-              {unlocked.includes(gadget.id) ? " — Owned" : ""}
-            </option>
+            {!gadgetOwned && (
+              <option value={gadget.id}>
+                {gadget.title} ({gadget.cost})
+              </option>
+            )}
             {submunitions.map((sub) => (
               <option key={sub.id} value={sub.id}>
-                {`   ${sub.title} (${sub.cost})${unlocked.includes(sub.id) ? " — Owned" : ""}`}
+                {`   ${sub.title} (${sub.cost})`}
               </option>
             ))}
           </optgroup>
@@ -349,6 +365,28 @@ function LogisticsView({ character, refreshCharacter }) {
     })
     .filter(Boolean);
 
+  // Listed alongside their parent gadget rather than folded into just the
+  // "X/Y unlocked" count on it, so each one can be sold on its own (see
+  // logisticsEngine.sellPurchase — selling the parent gadget instead sells
+  // these too, if they're still in the same buy period).
+  const submunitionEntries = getPurchaseEntries(logs, "submunition")
+    .map(({ missionIndex, purchaseIndex, purchase }) => {
+      const submunition = equipmentData.find((i) => i.id === purchase.value);
+      if (!submunition) return null;
+      const parentGadget = equipmentData.find((item) =>
+        (item.options ?? []).some((option) => option.id === submunition.id),
+      );
+      return {
+        label: parentGadget
+          ? `${parentGadget.title}: ${submunition.title}`
+          : submunition.title,
+        missionIndex,
+        purchaseIndex,
+        sellable: missionIndex === currentMissionIndex,
+      };
+    })
+    .filter(Boolean);
+
   const weaponEntries = getPurchaseEntries(logs, "weapon").map(
     ({ missionIndex, purchaseIndex, purchase }) => ({
       label: `${purchase.value.name || "Unnamed Weapon"} (${purchase.value.category}${
@@ -421,7 +459,7 @@ function LogisticsView({ character, refreshCharacter }) {
         <div className="mt-2 grid md:grid-cols-4 gap-2 ">
           <PurchasedList
             title="Purchased Gadgets"
-            items={gadgetEntries}
+            items={[...gadgetEntries, ...submunitionEntries]}
             onSell={handleSell}
           />
           <div className="md:col-span-2">
