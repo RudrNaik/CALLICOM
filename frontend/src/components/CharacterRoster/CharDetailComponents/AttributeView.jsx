@@ -19,7 +19,9 @@ function AttributeView({
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
       {items.map(({ key, label }) => {
         const val = attributes?.[key] ?? 0;
-        const canBuy = isEditing && xp >= ATTR_EXP_COST;
+        function canBuy(attr){ 
+           return isEditing && xp >= ATTR_EXP_COST && attr<4;
+        }
         const canSell = isEditing && val > (originalAttributes?.[key] ?? 0);
         return (
           <div
@@ -47,10 +49,10 @@ function AttributeView({
                 <button
                   type="button"
                   onClick={() => onIncrease?.(key)}
-                  disabled={!canBuy}
+                  disabled={!canBuy(val)}
                   title="Increase attribute (40 XP)"
                   className={`px-2 py-0.5 rounded text-xs
-                    ${canBuy
+                    ${canBuy(val)
                       ? "bg-orange-600 hover:bg-orange-700"
                       : "bg-neutral-700 cursor-not-allowed"}`}
                 >
