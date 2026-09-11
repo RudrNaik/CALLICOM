@@ -105,7 +105,7 @@ function CharacterRoster({ userId }) {
 
   return (
     <div
-      className="scroll-anchor-none sm:max-w-full md:max-w-95/100 mx-auto space-y-1 text-white bg-neutral-900/70"
+      className="scroll-anchor-none sm:max-w-full md:max-w-95/100 mx-auto space-y-1 text-white bg-neutral-900/80"
       style={{ fontFamily: "Geist_Mono" }}
     >
       <h1 className="text-2xl font-bold text-orange-400 px-2">
