@@ -234,6 +234,123 @@ export const getArmorClassDescription = (armorClass) => {
   return "";
 };
 
+// --- Gearsets ---
+
+/**
+ * geasrSets.json blocks are keyed by a camelCase class id that doesn't match
+ * Character.class's Title Case ("Technical Engineer"). Maps the latter to
+ * the former; classes with no entry here (e.g. Trapper) simply have no
+ * class-specific gearsets, though universal ones are still available to them.
+ */
+const CLASS_TO_GEARSET_KEY = {
+  Rifleman: "rifleman",
+  Raider: "raider",
+  "Technical Engineer": "technicalEngineer",
+  "Combat Engineer": "combatEngineer",
+  "Fire Support": "fireSupport",
+  Medic: "medic",
+  Sharpshooter: "sharpshooter",
+};
+
+/** The 4 selectable gear slots, keyed as stored on Equipment.gearSlots. */
+export const GEAR_SLOT_KEYS = ["headgear", "vest", "gloves", "equipment"];
+
+const gearSlotKeyToTitle = (slotKey) =>
+  slotKey.charAt(0).toUpperCase() + slotKey.slice(1);
+
+/**
+ * Every gearset (class-specific + universal) a character is eligible to
+ * equip pieces from, flattened out of geasrSets.json's per-class blocks.
+ * @param {object} character
+ * @param {Array} gearSetsData - geasrSets.json
+ * @returns {Array} gearset objects ({id, name, manufacturer, pieces})
+ */
+export const getGearsetsForClass = (character, gearSetsData) => {
+  const classKey = CLASS_TO_GEARSET_KEY[character?.class];
+  return (gearSetsData ?? [])
+    .filter((block) => block.class === classKey || block.class === "universal")
+    .flatMap((block) => block.gearsets ?? []);
+};
+
+/**
+ * Pieces available for one gear slot across a set of gearsets, each
+ * annotated with which gearset it belongs to (for grouping/labeling in a
+ * selector).
+ * @param {Array} gearsets - as returned by getGearsetsForClass
+ * @param {string} slotKey - one of GEAR_SLOT_KEYS
+ * @returns {Array}
+ */
+export const getGearPiecesBySlot = (gearsets, slotKey) => {
+  const slotTitle = gearSlotKeyToTitle(slotKey);
+  return (gearsets ?? []).flatMap((gearset) =>
+    (gearset.pieces ?? [])
+      .filter((piece) => piece.slot === slotTitle)
+      .map((piece) => ({
+        ...piece,
+        gearsetId: gearset.id,
+        gearsetName: gearset.name,
+        manufacturer: gearset.manufacturer,
+      })),
+  );
+};
+
+/**
+ * Looks up a single equipped piece by id across a set of gearsets.
+ * @param {Array} gearsets - as returned by getGearsetsForClass
+ * @param {string} pieceId
+ * @returns {object|null}
+ */
+export const getGearPieceById = (gearsets, pieceId) => {
+  if (!pieceId) return null;
+  for (const gearset of gearsets ?? []) {
+    const piece = (gearset.pieces ?? []).find((p) => p.id === pieceId);
+    if (piece) {
+      return {
+        ...piece,
+        gearsetId: gearset.id,
+        gearsetName: gearset.name,
+        manufacturer: gearset.manufacturer,
+      };
+    }
+  }
+  return null;
+};
+
+/**
+ * Determines whether all 4 gear slots are filled with pieces belonging to
+ * the same complete gearset, and if so returns that gearset's Patch piece —
+ * the loyalty bonus, only active while the full set (Headgear/Vest/Gloves/
+ * Equipment) is equipped. Gearsets missing one of the 4 slots (unfinished
+ * entries in geasrSets.json) can never activate their patch this way.
+ * @param {Array} gearsets - as returned by getGearsetsForClass
+ * @param {object} gearSlots - character.equipment.gearSlots
+ * @returns {object|null} the Patch piece (annotated with gearset info), or null
+ */
+export const getActiveGearsetPatch = (gearsets, gearSlots) => {
+  for (const gearset of gearsets ?? []) {
+    const pieces = gearset.pieces ?? [];
+    const requiredPieces = GEAR_SLOT_KEYS.map((slotKey) =>
+      pieces.find((p) => p.slot === gearSlotKeyToTitle(slotKey)),
+    );
+    if (requiredPieces.some((piece) => !piece)) continue;
+
+    const fullyEquipped = GEAR_SLOT_KEYS.every(
+      (slotKey, i) => gearSlots?.[slotKey] === requiredPieces[i].id,
+    );
+    if (!fullyEquipped) continue;
+
+    const patchPiece = pieces.find((p) => p.slot === "Patch");
+    if (!patchPiece) continue;
+    return {
+      ...patchPiece,
+      gearsetId: gearset.id,
+      gearsetName: gearset.name,
+      manufacturer: gearset.manufacturer,
+    };
+  }
+  return null;
+};
+
 // --- Gadget Ammo Logic ---
 
 export const MIXED_GADGETS = [

@@ -7,6 +7,7 @@ import {
 } from "react";
 import equipmentData from "../../../data/Equipment.json";
 import secondaryGadgets from "../../../data/classSkills.json";
+import gearSetsData from "../../../data/geasrSets.json";
 import WeaponSlot from "./WeaponCards";
 import GadgetAmmo from "./GadgetAmmo";
 import {
@@ -19,6 +20,11 @@ import {
   getArmorClassCap,
   getSecondaryGadgetForClass,
   getArmorClassDescription,
+  getGearsetsForClass,
+  getGearPiecesBySlot,
+  getGearPieceById,
+  getActiveGearsetPatch,
+  GEAR_SLOT_KEYS,
 } from "../../../engine/equipmentEngine";
 import {
   getWeaponCategoriesLookup,
@@ -88,8 +94,18 @@ function deriveEquipmentState(character, weaponCatsLookup) {
 
     //Secondary gadget (class gadget) assigned to this character's class.
     secondaryGadget: getSecondaryGadgetForClass(secondaryGadgets, character),
+
+    //Gearsets available to this character's class, plus any universal ones.
+    gearsets: getGearsetsForClass(character, gearSetsData),
   };
 }
+
+const GEAR_SLOT_LABELS = {
+  headgear: "Headgear",
+  vest: "Vest",
+  gloves: "Gloves",
+  equipment: "Equipment",
+};
 
 const EquipmentSelection = forwardRef(function EquipmentSelection(
   {
@@ -139,7 +155,23 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
     primaryWeaponInstances,
     secondaryWeaponInstances,
     maxArmor,
+    gearsets,
   } = derived;
+
+  const safeGearSlots = useMemo(() => gear?.gearSlots ?? {}, [gear?.gearSlots]);
+
+  const gearOptionsBySlot = useMemo(() => {
+    const options = {};
+    GEAR_SLOT_KEYS.forEach((slotKey) => {
+      options[slotKey] = getGearPiecesBySlot(gearsets, slotKey);
+    });
+    return options;
+  }, [gearsets]);
+
+  const activePatch = useMemo(
+    () => getActiveGearsetPatch(gearsets, safeGearSlots),
+    [gearsets, safeGearSlots],
+  );
 
   const safeGrenades = Array.isArray(gear?.grenades) ? gear.grenades : ["", ""];
   const safeGrenadeCounts =
@@ -170,6 +202,13 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
       ...prev,
       gadget: nextGadgetId,
       gadgetAmmo: {},
+    }));
+  };
+
+  const handleGearSlotChange = (slotKey, pieceId) => {
+    setGear((prev) => ({
+      ...prev,
+      gearSlots: { ...prev.gearSlots, [slotKey]: pieceId },
     }));
   };
 
@@ -555,6 +594,70 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
                   {secondaryGadget.description}
                 </span>
               </p>
+            </div>
+          )}
+        </div>
+
+        {/* Gearsets */}
+        <div
+          className={`bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-4 border-orange-500 p-4 rounded-xs shadow ${wideLayout ? "col-span-2" : ""}`}
+        >
+          <h3 className="font-semibold text-orange-300 mb-1">Gear</h3>
+          <div className="flex flex-col gap-4">
+            {GEAR_SLOT_KEYS.map((slotKey) => {
+              const equippedId = safeGearSlots[slotKey] || "";
+              const equippedPiece = getGearPieceById(gearsets, equippedId);
+              const options = gearOptionsBySlot[slotKey] || [];
+              return (
+                <div key={slotKey} className="flex flex-col">
+                  <span className="text-xs font-semibold text-neutral-300 mb-1">
+                    {GEAR_SLOT_LABELS[slotKey]}
+                  </span>
+                  {isEditing ? (
+                    <select
+                      className="w-full bg-neutral-900 text-white border-1 border-orange-400/60 py-2 px-2 rounded"
+                      value={equippedId}
+                      onChange={(e) =>
+                        handleGearSlotChange(slotKey, e.target.value)
+                      }
+                    >
+                      <option value="">None</option>
+                      {options.map((piece) => (
+                        <option key={piece.id} value={piece.id}>
+                          {piece.gearsetName} — {piece.name}
+                          {Number.isFinite(piece.tier) ? ` (T${piece.tier})` : ""}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <p className="font-semibold text-white text-sm">
+                      {equippedPiece
+                        ? `${equippedPiece.gearsetName} — ${equippedPiece.name}`
+                        : "None Selected"}
+                    </p>
+                  )}
+
+                  {equippedPiece && (
+                    <div className="text-[10px] text-neutral-400 bg-neutral-900 p-2 rounded mt-2 whitespace-pre-line flex flex-grow">
+                      <span className="text-orange-300/80 not-italic font-semibold mr-1">
+                        {equippedPiece.manufacturer}:
+                      </span>
+                      {equippedPiece.effect}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Patch — only surfaces once all 4 slots share the same gearset. */}
+          {activePatch && (
+            <div className="text-xs text-gray-200 whitespace-pre-line border-orange-400/30 border bg-orange-900/20 px-2 py-1 mt-3 rounded-xs">
+              <span className="text-orange-300 text-sm font-semibold">
+                Patch — {activePatch.gearsetName}: {activePatch.name}
+                {"\n"}
+              </span>
+              <span className="text-xs">{activePatch.effect}</span>
             </div>
           )}
         </div>

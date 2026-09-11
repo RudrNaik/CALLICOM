@@ -179,6 +179,13 @@ export const normalizeEquipmentForView = (character) => {
         ? character.equipment.medCounts
         : DEFAULT_MED_COUNTS,
     miscGear: character.equipment?.miscGear ?? "",
+    gearSlots: {
+      headgear: "",
+      vest: "",
+      gloves: "",
+      equipment: "",
+      ...(character.equipment?.gearSlots ?? {}),
+    },
   };
 };
 
