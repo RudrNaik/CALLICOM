@@ -390,7 +390,7 @@ function LogsView({ character, refreshCharacter }) {
               return (
                 <div
                   key={log.id ?? index}
-                  className="bg-neutral-900 border border-l-4 border-l-orange-400 border-neutral-700 rounded p-3 flex items-start justify-between gap-3"
+                  className="bg-neutral-900 border border-l-4 border-l-orange-500 border-neutral-700 rounded p-3 flex items-start justify-between gap-3"
                 >
                   <div className="w-full">
                     {isEditingThis ? (

@@ -679,7 +679,7 @@ function CharacterDetail({ character, onUpdate, user }) {
             <Collapsible
               title={"EXP Spent"}
               color={"orange-400"}
-              autoOpen={false}
+              autoOpen={true}
               headerSize={"xl"}
               bottomMargin={false}
             >
