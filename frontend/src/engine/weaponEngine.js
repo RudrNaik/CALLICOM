@@ -221,10 +221,10 @@ export const getAbilitiesFromFamily = (family) => {
 export const pseudoMagSizes = {
   "Light Pistols": 12,
   "Heavy Pistols": 6,
-  "SMGs": 20,
+  "SMGs": 30,
   "Carbines": 30,
   "Assault Rifles": 30,
-  "Marksman Rifles": 10,
+  "Marksman Rifles": 20,
   "Shotguns": 8,
   "Sniper Rifles": 5,
   "Machine Guns": 100,

@@ -1,0 +1,809 @@
+[
+    {
+        "class": "rifleman",
+        "gearsets": [
+            {
+                "id": "thumper",
+                "name": "Thumper",
+                "manufacturer": "GC_STL",
+                "pieces": [
+                    {
+                        "id": "thumper_nitroVille",
+                        "name": "Nitro-Ville Compound",
+                        "slot": "Equipment",
+                        "tier": 4,
+                        "flavor": "Gold Coast Seattle has a lot of chemical RnD going on in their underground limestone deposit. One of those projects is to design new explosive compounds to provide you more bang for your buck. We've stuffed more nitro into your 40mm explosives. Have fun.",
+                        "effect": "Explosive 40mm rounds now have a 3 hex AOE, however can only be fired to a max of long range due to the weight."
+                    },
+                    {
+                        "id": "thumper_advTrajAlgo",
+                        "name": "Advanced Trajectory Algorithms",
+                        "slot": "Headgear",
+                        "tier": 2,
+                        "flavor": "Figuring out the math of something as unpredictable as the 40mm LBV is... Difficult. However- we've come up with an advanced simulation algorithm to predict with a 90% success rate exactly where your 40mm will go when it bounces off the wall.",
+                        "effect": "You can now make a navigate test against a threshold of 4 to guarantee it will land on the exact hex you want."
+                    },
+                    {
+                        "id": "thumper_spaceOptimization",
+                        "name": "Space Optimized Bandolier",
+                        "slot": "Vest",
+                        "tier": 1,
+                        "flavor": "We managed to pack more 40mms onto your bandolier as well as find simpler ways to have them be easily accessible on your vest and belt. Your 40mms now have a similar manual of arms to grabbing a pistol mag off your belt, just... You load them horizontally, not vertically usually.",
+                        "effect": "Your first and second use of your 40mm munitions with the [Explosive] tag are free."
+                    },
+                    {
+                        "id": "thumper_fastLoad",
+                        "name": "Fast-Load Gloves",
+                        "slot": "Gloves",
+                        "tier": 3,
+                        "flavor": "Using thinner, grippier materials at the tips of one's gloves makes it easier to catch the lip of the 40mm round as the breech opens. Makes loading rounds incredibly easy compared to standard issue gloves, or even bare hands.",
+                        "effect": "The UBGL/GL now uses a deploy action instead of a shooting action."
+                    },
+                    {
+                        "id": "thumper_rotaryEngi",
+                        "name": "Rotary Engineering",
+                        "slot": "Patch",
+                        "tier": 0,
+                        "flavor": "A patch of a Mazda Rx7's rotary engine is attached alongside a larger package... A rotary grenade launcher. A note is attached: \"Do some crowd control.\"",
+                        "effect": "Replaces your UBGL with a 40mm rotary launcher. You can now [Spray] when using the UBGL."
+                    }
+                ]
+            },
+            {
+                "id": "forwardController",
+                "name": "Forward Controller",
+                "manufacturer": "MSMK",
+                "pieces": [
+                    {
+                        "id": "forwardController_helmetLAM",
+                        "name": "Helmet Mounted LAM",
+                        "slot": "Headgear",
+                        "tier": 3,
+                        "flavor": "With the advent of improved laser gear and the need for a faster, more intuitive way to designate a target, we've opted for the unique solution of a helmet mounted LAM. Using eye tracking technology along with your ARDs, where you look is now where you lase.",
+                        "effect": "When a vehicle is pinged, it can now be lased using a deploy bonus action. This lase has a guaranteed result of 5 before any modifiers are applied like the environment or wounds."
+                    },
+                    {
+                        "id": "forwardController_boomBoxRouter",
+                        "name": "BoomBox Datalink Router Kit",
+                        "slot": "Vest",
+                        "tier": 1,
+                        "flavor": "Condensing the JukeBox was one of the greatest challenges of Mirrorsmoke's 20+ years in the industry, however, we did it. The BoomBox allows riflemen to stream data live to other units and assets within a battlespace, improving coordination between the metal birds and the little green men.",
+                        "effect": "CAS and Artillery can now gain the benefits of Team Rallies and Pings."
+                    },
+                    {
+                        "id": "forwardController_ardAutoSignal",
+                        "name": "ARD Auto-Signal Gloves",
+                        "slot": "Gloves",
+                        "tier": 2,
+                        "flavor": "Automatically translating hand signs to other units required functionally making our own command language that would get translated from hand gestures to text above the user. But now everyone knows what you're saying as it's directly relayed to them above your head.",
+                        "effect": "Using rally on a specific target always provides them with a flat +1. Stacks with the effects gained from the roll."
+                    },
+                    {
+                        "id": "forwardController_longExposureSpotting",
+                        "name": "Long Exposure Spotting Sensors",
+                        "slot": "Equipment",
+                        "tier": 4,
+                        "flavor": "Utilizing a longer exposure time for the spotter grenades after they've taken their first snapshot, we are able to have them loiter around to keep track of targets.",
+                        "effect": "Pings from the 40mm Spotter on vehicles now lase them. Pings from the 40mm spotter now last for 2 turns."
+                    },
+                    {
+                        "id": "forwardController_voiceOfCommand",
+                        "name": "Voice Of Command",
+                        "slot": "Patch",
+                        "tier": 0,
+                        "flavor": "A small motivational speaking for combat roles book was developed with input from some of the veteran members in the company. Along with an improved microphone for your headset. Make use of both.",
+                        "effect": "Rally is now a bonus action. Rally can be used on downed characters to get them back on their feet with 3 deep wounds."
+                    }
+                ]
+            },
+            {
+                "id": "precisionBurst",
+                "name": "Precision Burst",
+                "manufacturer": "GC_AUS",
+                "pieces": [
+                    {
+                        "id": "precisionBurst_shredderRounds",
+                        "name": "Shredder Rounds",
+                        "slot": "Equipment",
+                        "tier": 4,
+                        "flavor": "Improving the ability for the shrapnel of the airburst round to lacerate targets was an interesting adventure. And a waste of a whole lot of full size gel dummies.",
+                        "effect": "Airburst 40mm rounds now apply Bleed if they hit a target. Airburst rounds now have a 2 hex AOE."
+                    },
+                    {
+                        "id": "precisionBurst_improvedAeroShells",
+                        "name": "Improved Aero Shells",
+                        "slot": "Vest",
+                        "tier": 2,
+                        "flavor": "Simple, add some more powder and improve the shape of the round as these aren't impact munitions, and now they go farther and faster.",
+                        "effect": "Increases the range band that 40mm rounds can travel by 1. Allows the X-50 and UBGL/GL to fire into EELR unless impeded by something else."
+                    },
+                    {
+                        "id": "precisionBurst_builtInRangefinder",
+                        "name": "Built in Rangefinder",
+                        "slot": "Headgear",
+                        "tier": 3,
+                        "flavor": "Utilizing similar technology to the BUDDI HUD integration, we've integrated a rangefinder into your ARDs. As well as making sure it's linked with your X-50 to make things one continuous motion.",
+                        "effect": "Designating a target to airburst no longer requires a Deploy bonus action."
+                    },
+                    {
+                        "id": "precisionBurst_curveballGloves",
+                        "name": "Curveball Gloves",
+                        "slot": "Gloves",
+                        "tier": 1,
+                        "flavor": "Improving the padding and the grip of gloves has always been a continuous effort. However, we've improved them more towards one's ability to throw grenades with this set, with some members remarking they can 'curveball' their grenades, hence the name.",
+                        "effect": "When throwing a frag grenade, you can curveball its trajectory up to one hex in any direction from where it would originally land."
+                    },
+                    {
+                        "id": "precisionBurst_cloudOfAngryBees",
+                        "name": "Cloud of Angry Bees",
+                        "slot": "Patch",
+                        "tier": 0,
+                        "flavor": "A patch of a swarm of angry bees flying out of a hive is attached, alongside a new thermal optic for the X-50.",
+                        "effect": "When using the X-50, gain the benefits of Thermal."
+                    }
+                ]
+            },
+            {
+                "id": "multirole",
+                "name": "Multirole",
+                "manufacturer": "TS_Dynamics",
+                "pieces": [
+                    {
+                        "id": "multirole_gunBag",
+                        "name": "Gun Bag",
+                        "slot": "Vest",
+                        "tier": 4,
+                        "flavor": "It's a bag. With a gun. Same stuff snipers use.",
+                        "effect": "You now can carry a Fun Size Sniper Rifle, you don't gain the benefits of the family, and only have one magazine (3 turns) of ammo."
+                    },
+                    {
+                        "id": "multirole_1014Conversion",
+                        "name": "1014 Conversion",
+                        "slot": "Equipment",
+                        "tier": 2,
+                        "flavor": "This conversion kit turns the MSS semi automatic, allowing this small, mag fed shotgun to spray targets down in a pinch with a hail of buckshot.",
+                        "effect": "MSS underbarrel shotgun can now [Spray]."
+                    },
+                    {
+                        "id": "multirole_improvedDatalinkTransceiver",
+                        "name": "Improved Datalink Transceiver",
+                        "slot": "Headgear",
+                        "tier": 3,
+                        "flavor": "By mounting an improved datalink transceiver to your headgear and comms, we can now make your life a lot easier as a leader with better command and control of your units.",
+                        "effect": "Whenever Jamming forces you to LAN, ignore it. You remain in datalink to characters in your party and can still provide bonuses to them."
+                    },
+                    {
+                        "id": "multirole_speedballGloves",
+                        "name": "Speedball Gloves",
+                        "slot": "Gloves",
+                        "tier": 1,
+                        "flavor": "Improving the padding and grip of gloves is a continuous effort, but we've narrowed these ones down to improve your ability to throw harder and faster.",
+                        "effect": "Ignore the throwing malus for long range. When in close range of a target, their defensive action against anything you throw at them comes at a -1 Dice Malus."
+                    },
+                    {
+                        "id": "multirole_jackInTheBox",
+                        "name": "Jack In The Box",
+                        "slot": "Patch",
+                        "tier": 0,
+                        "flavor": "A patch of a jack springing from a box with an arsenal of guns on it is attached, alongside an improved laser-light module. One less thing to strap to your gun.",
+                        "effect": "In all cases, you will at least roll with one dice in all weapon tests."
+                    }
+                ]
+            },
+            {
+                "id": "fireBender",
+                "name": "Fire Bender",
+                "manufacturer": "ISHIDA",
+                "pieces": [
+                    {
+                        "id": "fireBender_fearRounds",
+                        "name": "FEAR Rounds",
+                        "slot": "Equipment",
+                        "tier": 4,
+                        "flavor": "Fuel Explosive Air Released rounds. Converts the X-50 to rapidly disperse a special gas compound above the target allows us to essentially turn the shrapnel of the airburst into a thermobaric explosive. Spicy.",
+                        "effect": "40mm Airburst Rounds now apply Aflame if they hit the target. Increase AOE to 3 hexes."
+                    },
+                    {
+                        "id": "fireBender_40mmOnibi",
+                        "name": "40mm Onibi",
+                        "slot": "Equipment",
+                        "tier": 4,
+                        "flavor": "Onibi are small, floating balls of blue or white demon fire that appear in rural areas or rainy days to drain human energy. These rounds may not be Onibi themselves, but shower a target with a bright, vibrant blue when they detonate.",
+                        "effect": "40mm Incendiary now applies an improved Aflame effect where targets must make the test aflame causes both at the start of their turn and at the end until the fire is put out."
+                    },
+                    {
+                        "id": "fireBender_flameRetardantMaterials",
+                        "name": "Flame Retardant Materials",
+                        "slot": "Vest",
+                        "tier": 2,
+                        "flavor": "It's quite simple. Just don't let it be flammable, and then bam, all the worries of incendiaries are mostly resolved. Just uh, it's a bit heavy.",
+                        "effect": "You are unable to be set Aflame. However, you gain the maluses of AC2. -1 to movement related tests [Acrobatics][Jump][Climb][Endurance]."
+                    },
+                    {
+                        "id": "fireBender_incendiaryRounds",
+                        "name": "Incendiary Rounds",
+                        "slot": "Vest",
+                        "tier": 3,
+                        "flavor": "Are we 'sure' this isn't going to cause issues with HR? I mean- it's incendiary rounds.",
+                        "effect": "MSS underbarrel shotgun, when it causes wounds, now applies Aflame to the target."
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "class": "raider",
+        "gearsets": [
+            {
+                "id": "shinobisShawl",
+                "name": "Shinobi's Shawl",
+                "manufacturer": "MSMK",
+                "pieces": [
+                    {
+                        "id": "shinobisShawl_featherStepBoots",
+                        "name": "Feather Step Boots",
+                        "slot": "Equipment",
+                        "tier": 2,
+                        "flavor": "Improved gel tech from the civilian running market, gel soles not only give the wearer an incredibly comfy shoe but also enable the wearer to move near silently.",
+                        "effect": "+1 to Stealth."
+                    },
+                    {
+                        "id": "shinobisShawl_razorEdgeGloves",
+                        "name": "Razor Edge Gloves",
+                        "slot": "Gloves",
+                        "tier": 1,
+                        "flavor": "Combat modified throwing knife sport gloves that combined durability with dexterity, allowing the user to channel their inner shinobi warrior. Notably banned from competitive bar targets competitions across Japan.",
+                        "effect": "Applies Spray to throwing knives."
+                    },
+                    {
+                        "id": "shinobisShawl_devilsGlareGlasses",
+                        "name": "Devils Glare Glasses",
+                        "slot": "Headgear",
+                        "tier": 3,
+                        "flavor": "A small modification to the ARD glasses that projects an uncannily menacing light onto the users eyes, allowing them to strike fear into unsuspecting enemies more easily.",
+                        "effect": "Forces an intimidation check to all characters within close range if you kill someone while exiting Octo Camo."
+                    },
+                    {
+                        "id": "shinobisShawl_batteryEnhancers",
+                        "name": "Battery Enhancers",
+                        "slot": "Vest",
+                        "tier": 4,
+                        "flavor": "Specialised Armour that enhances the battery capacity of Octo Camouflage and STALKER Digital Presence Reducer, allowing the user to operate both devices for extended periods.",
+                        "effect": "Adds an additional turn to both Octo Camo and STALKER digital Presence Reducer."
+                    }
+                ]
+            },
+            {
+                "id": "trailblazer",
+                "name": "Trailblazer",
+                "manufacturer": "TS_Dynamics",
+                "pieces": [
+                    {
+                        "id": "trailblazer_counterFlashGating",
+                        "name": "Counter-Flash Gating",
+                        "slot": "Headgear",
+                        "tier": 3,
+                        "flavor": "Using the Augmented reality display alongside a special counter-frequency, your comms and ARD will automatically negate the effects of flashbangs.",
+                        "effect": "Negates the maluses of flashbangs and ninebangs."
+                    },
+                    {
+                        "id": "trailblazer_extraGrenadePouch",
+                        "name": "Extra Grenade Pouch",
+                        "slot": "Vest",
+                        "tier": 2,
+                        "flavor": "Through the highly advanced wonders of slapping things into your plate carrier with velcro, we have discovered a way to raise the number of grenades you can carry on the field.",
+                        "effect": "The first two uses of your grenades are free."
+                    },
+                    {
+                        "id": "trailblazer_improvedThrowingGloves",
+                        "name": "Improved Throwing Gloves",
+                        "slot": "Gloves",
+                        "tier": 4,
+                        "flavor": "Gloves designed with a better grip in mind, allowing you to keep holding your grenades tightly without fear of dropping them, and to throw them faster.",
+                        "effect": "Allows you to use a [Deploy] action instead of a [Throw] action to throw your grenades. Throwing grenades no longer causes MAP effects. Results of 1 no longer cause a fumble, but instead automatically resolve to a 3."
+                    },
+                    {
+                        "id": "trailblazer_lightweightBoots",
+                        "name": "Lightweight Boots",
+                        "slot": "Equipment",
+                        "tier": 1,
+                        "flavor": "A lighter, more comfortable version of your standard issue boots. Less prone to give you calluses, probably.",
+                        "effect": "Adds a +1 to any Acrobatic rolls you might make."
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "class": "technicalEngineer",
+        "gearsets": [
+            {
+                "id": "stormCaller",
+                "name": "Storm Caller",
+                "manufacturer": "GC_STL",
+                "pieces": [
+                    {
+                        "id": "stormCaller_semiautomatedLaunchSystem",
+                        "name": "Semiautomated Launch System",
+                        "slot": "Vest",
+                        "tier": 3,
+                        "flavor": "Using dedicated autopilot algorithms, loitering munitions can be used while on the move.",
+                        "effect": "Deploying UCAV or UCAV-AT is treated as a Shooting action and does not end your turn."
+                    },
+                    {
+                        "id": "stormCaller_ultraHighDensityBatteries",
+                        "name": "Ultra High Density Batteries",
+                        "slot": "Equipment",
+                        "tier": 2,
+                        "flavor": "New generations of polymerized battery technology has drastically increased the flight time of small drones.",
+                        "effect": "UCAV and UCAV-AT can be launched into adjacent world hexes against specific targets."
+                    },
+                    {
+                        "id": "stormCaller_advancedHandControllers",
+                        "name": "Advanced Hand Controllers",
+                        "slot": "Gloves",
+                        "tier": 1,
+                        "flavor": "Using position sensors embedded into a pair of gloves the AHC allows a trained operator to maneuver drones around cover intuitively.",
+                        "effect": "Enemies attempting to take cover or brace against UCAV attacks must flip a coin, on Tails their defensive bonus is negated."
+                    },
+                    {
+                        "id": "stormCaller_sensorFusionGoggles",
+                        "name": "Sensor Fusion Goggles",
+                        "slot": "Headgear",
+                        "tier": 4,
+                        "flavor": "Loitering munitions already have sophisticated targeting sensors, why shouldn't we use that to spot targets as well?",
+                        "effect": "UCAV and UCAV-AT apply Pinged to other enemies in a 3 hex AOE from the point of impact."
+                    },
+                    {
+                        "id": "stormCaller_sevenThousandFpvs",
+                        "name": "SEVEN THOUSAND FUCKING FPVs",
+                        "slot": "Patch",
+                        "tier": 0,
+                        "flavor": "Sent as a gift with purchase when ordering the entire Storm Caller line, this patch depicts a shirtless wizard casting a spell that emits dozens of FPV drones from his hands.",
+                        "effect": "UCAVs and UCAV-ATs can be set to loiter mode, flying to a specific hex within Long Range of the launch point and will proceed to autonomously strike enemies when they move within Medium Range of the loiter point, prioritizing a selected class."
+                    }
+                ]
+            },
+            {
+                "id": "technicalSymbiosis",
+                "name": "Technical Symbiosis",
+                "manufacturer": "GC_AUS",
+                "pieces": [
+                    {
+                        "id": "technicalSymbiosis_gaussianSplatInterpreter",
+                        "name": "Gaussian Splat Interpreter",
+                        "slot": "Headgear",
+                        "tier": 3,
+                        "flavor": "Combine targeting information from both self and your drone to better engage the enemy - together!",
+                        "effect": "Gain +1 to ranged combat Actions made against enemies that both you and your drone have line of sight on. Your drone gains the same bonus."
+                    },
+                    {
+                        "id": "technicalSymbiosis_overrideCommandGestureGloves",
+                        "name": "Override Command Gesture Gloves",
+                        "slot": "Gloves",
+                        "tier": 2,
+                        "flavor": "While drone autonomy has advanced by leaps and bounds and will continue to do so, it is not infallible. In those edge cases, these gesture control gloves give you a chance to forcibly improve the situation.",
+                        "effect": "Once per encounter as a [Deploy], if your drone would fail a Skill test, they may re-do it using your equivalent stat."
+                    },
+                    {
+                        "id": "technicalSymbiosis_hyperNarrowQuantumSafeFieldRouter",
+                        "name": "HyperNarrow Quantum-Safe Field Router",
+                        "slot": "Vest",
+                        "tier": 4,
+                        "flavor": "Never lose connection to your drone - not with multiple layers of post-quantum cryptographic security paired with transceiver antennas derived from low-probability-of-intercept AESA radar technology. All in a package that fits in your backpack - just be aware it can get a bit toasty after prolonged usage.",
+                        "effect": "Maintain a local connection to your drone even when you and/or it are otherwise Severed. This does not protect against EMPs, however."
+                    },
+                    {
+                        "id": "technicalSymbiosis_improvedAmmunitionControl",
+                        "name": "Improved Ammunition Control",
+                        "slot": "Equipment",
+                        "tier": 1,
+                        "flavor": "Optimise your drone's ammunition usage to keep it mission-capable for longer. Every shot counts, both yours and theirs.",
+                        "effect": "Your drone's first use of their weapon is free."
+                    },
+                    {
+                        "id": "technicalSymbiosis_commandDomainExpansion",
+                        "name": "Command Domain Expansion",
+                        "slot": "Patch",
+                        "tier": 0,
+                        "flavor": "Reconfigure your operator-drone connection to dynamically synchronise with nearby friendly drones around both ends of the main link. The bandwidth is available; might as well fill it.",
+                        "effect": "Effects of this Gear Set's pieces, excluding Improved Ammunition Control, apply to every drone within close range of you."
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "class": "combatEngineer",
+        "gearsets": [
+            {
+                "id": "burrowingBeaver",
+                "name": "Burrowing Beaver",
+                "manufacturer": "GC_STL",
+                "pieces": [
+                    {
+                        "id": "burrowingBeaver_burrowingMunitionsCarrier",
+                        "name": "Burrowing Munitions Carrier",
+                        "slot": "Vest",
+                        "tier": null,
+                        "flavor": "Replaces Rocket Launchers conventional High Explosive munitions with slow firing, burrowing munitions that tunnel through armour and cover before shooting out steel ball bearings in a 4 hex diagonal blast radius. Effective at clearing out dug in enemies and killing unprotected vehicle crews without excessive damage to the vehicle's structure.",
+                        "effect": "Replaces HE rockets for Unguided Rocket with burrowing munitions (8 damage, x4 hex of diagonal damage) that can burrow into walls and enemy vehicles to kill infantry on the other side. Has a maximum of medium range, defender countermeasures get +1 dice when defending against it."
+                    },
+                    {
+                        "id": "burrowingBeaver_enhancedTrajectoryTrackerOptic",
+                        "name": "Enhanced Trajectory Tracker Optic",
+                        "slot": "Headgear",
+                        "tier": null,
+                        "flavor": "State of the art helmet mounted optical device that utilises predictive trajectory patterns to allow the user to more accurately hit targets at further distances and or target weak points with greater ease.",
+                        "effect": "Adds a +1 effect to long range and for extreme long range shots on unguided rocket launchers, or -1 to enemy alertness checks when using wire guided or guided launchers."
+                    },
+                    {
+                        "id": "burrowingBeaver_beaverGripGloves",
+                        "name": "Beaver Grip Gloves",
+                        "slot": "Gloves",
+                        "tier": null,
+                        "flavor": "Made with a synthetic gel layer cushioning, and a durable rubberised leather outer coating, Beaver Grip Gloves give its users a firm grip that makes every shot count.",
+                        "effect": "When aiming a heavy weapon, the first round of aiming is free."
+                    },
+                    {
+                        "id": "burrowingBeaver_shockAbsorbingGel",
+                        "name": "Shock Absorbing Gel",
+                        "slot": "Equipment",
+                        "tier": null,
+                        "flavor": "A high tech shock absorbing gel applied to the back of armour plates designed to minimise shock from ballistics and blunt force trauma.",
+                        "effect": "Allows the user to Brace when prone and outside of cover."
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "class": "fireSupport",
+        "gearsets": [
+            {
+                "id": "directlyIndirect",
+                "name": "Directly Indirect",
+                "manufacturer": "GC_STL",
+                "pieces": [
+                    {
+                        "id": "directlyIndirect_improvedParabolicCalculator",
+                        "name": "Improved Parabolic Calculator",
+                        "slot": "Equipment",
+                        "tier": null,
+                        "flavor": "Integrating new parabolic calculators that take into account weather conditions as well as the aerodynamics of the specific shell, you can now calculate and visually see where your rounds will land with greater accuracy when separated from the mortar system itself.",
+                        "effect": "Allows the mortar to have a range of five world hexes and fire into EELR when unmanned. When out of the hex the character is in, the mortar will function like artillery with a one turn delay on munitions."
+                    },
+                    {
+                        "id": "directlyIndirect_weightSavingMeasures",
+                        "name": "Weight Saving Measures",
+                        "slot": "Vest",
+                        "tier": null,
+                        "flavor": "We've been able to provide improved propellant charges, along with using a new compound for the explosive mortar shells themselves. It should make it easier to carry more of them into a fight, as well as store more propellant charges in the rapid fire system itself.",
+                        "effect": "Your first use of a mortar shell is now free."
+                    },
+                    {
+                        "id": "directlyIndirect_improvedOrdnanceGloves",
+                        "name": "Improved Ordnance Gloves",
+                        "slot": "Gloves",
+                        "tier": null,
+                        "flavor": "Ordnance is heavy, and dangerous. As such we've improved gloves so that they now are slightly more magnetized to your hand to make sure they don't fall out.",
+                        "effect": "You cannot fumble with Frag Grenades or your X-89 AMS when operating it manually. Upon a fumble, it will automatically resolve to a 3."
+                    },
+                    {
+                        "id": "directlyIndirect_geospatialDatalinkNetworking",
+                        "name": "Geospatial Datalink Networking",
+                        "slot": "Headgear",
+                        "tier": null,
+                        "flavor": "Using networked data streamed from both GPS and optical sensors, we can construct a crudely accurate recreation of an area that a target is in. As well as place it more accurately in the digital battlespace relative to the launcher.",
+                        "effect": "Riflemen can now use their SOFLAM to call on your mortar like artillery. Abides by CAS and Artillery rules."
+                    },
+                    {
+                        "id": "directlyIndirect_recursiveRepetition",
+                        "name": "Recursive Repetition",
+                        "slot": "Patch",
+                        "tier": null,
+                        "flavor": "A patch of a mortar shell with",
+                        "effect": ""
+                    }
+                ]
+            },
+            {
+                "id": "stimJunkie",
+                "name": "Stim Junkie",
+                "manufacturer": "Syntek",
+                "pieces": [
+                    {
+                        "id": "stimJunkie_integratedDefibrillator",
+                        "name": "Integrated Defibrillator",
+                        "slot": "Vest",
+                        "tier": null,
+                        "flavor": "A low profile integrated defibrillator integrated into the back of the front plate bag that sends an electrical shockwave through the users chest the moment the operators systems indicate their heart has stopped.",
+                        "effect": "Defibrillator administers a one time revive the moment the operator enters a DBNO state. Defibrillators have the same effect as a Shock Nanite Kit and revive the character with just one flesh wound, with said flesh wound being removed the turn after."
+                    },
+                    {
+                        "id": "stimJunkie_advancedBiomonitorTraumaAdministerer",
+                        "name": "Advanced biomonitor trauma administerer",
+                        "slot": "Gloves",
+                        "tier": null,
+                        "flavor": "A company standard biomonitor watch modified to take a single use regenerative nanite stim on its underside in the event it detects a sharp spike in heart rate associated with grave injury.",
+                        "effect": "The first time the character receives a deep wound or greater, the biomonitor administers a regen nanite stimulant that lasts for 1d6 turns/2 + medical skill level turns."
+                    },
+                    {
+                        "id": "stimJunkie_traumadolInjector",
+                        "name": "Traumadol Injector",
+                        "slot": "Equipment",
+                        "tier": null,
+                        "flavor": "A quick access Traumadol injector to be used in the most dire of circumstances.",
+                        "effect": "A 1x use Traumadol stimulant that temporarily removes all wounds. Lasts for (1d6 + medical skill level) turns divided by 2."
+                    },
+                    {
+                        "id": "stimJunkie_adrenalSpinalShot",
+                        "name": "Adrenal Spinal Shot",
+                        "slot": "Headgear",
+                        "tier": null,
+                        "flavor": "An experimental helmet attachment that allows for an embedded needle to inject an adrenal shot into the top of the user's spine.",
+                        "effect": "A x1 use Adrenal Shot that adds another Standard Action that lasts the turn upon the Juggernaut suit dropping below 50 HP."
+                    },
+                    {
+                        "id": "stimJunkie_stimJunkiesPatch",
+                        "name": "Stim Junkies Patch",
+                        "slot": "Patch",
+                        "tier": null,
+                        "flavor": "A complimentary patch courtesy of Syntek for your continued service in pushing the medical field forward towards a brighter tomorrow.",
+                        "effect": "Upgrades the Adrenal Spinal Shot into a Nootropic Spinal Shot which also prevents wound overflow onto the user at the point/action of juggernaut suit's destruction."
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "class": "medic",
+        "gearsets": [
+            {
+                "id": "minoanMedicSystem",
+                "name": "Minoan Medic System",
+                "manufacturer": "TS_Dynamics",
+                "pieces": [
+                    {
+                        "id": "minoanMedicSystem_icarusEnhancedBallisticVest",
+                        "name": "Icarus Enhanced Ballistic Vest",
+                        "slot": "Vest",
+                        "tier": 1,
+                        "flavor": "Developed with inspiration from EOD and other heavy ballistic gear, this vest and accessory set attempts to extend heavier ballistic protection against both blast waves and shrapnel from explosives, using a kevlar and reinforcing gel. Includes shoulder pads, lightweight side plates, and forward thigh guards.",
+                        "effect": "Allows for the user to use AC instead of Acrobatics when contesting against explosives (requires AC1 or 2). If using without the Minotauran Exoskeleton, suffer a -1 range band movement penalty."
+                    },
+                    {
+                        "id": "minoanMedicSystem_daedalusSpecializedHelmetArdUnit",
+                        "name": "Daedalus Specialized Helmet-ARD Unit",
+                        "slot": "Headgear",
+                        "tier": 3,
+                        "flavor": "Developed with inspiration from EOD and other heavy ballistic gear, this modified AirFrame helmet incorporates similar materials as the Icarus Enhanced Ballistic Vest, offers average protection while mounting a modified ARD module to assist medical personnel in identifying, diagnosing, and treating battlefield injuries at a rapid pace.",
+                        "effect": "Allows for the first medical treatment on another character within an engagement to be made as a free action. If using without the Minotauran Exoskeleton, suffer a -1 malus to your next test after use, and only allow two uses for an entire mission."
+                    },
+                    {
+                        "id": "minoanMedicSystem_ariadneDefibrillationGloves",
+                        "name": "Ariadne Defibrillation Gloves",
+                        "slot": "Gloves",
+                        "tier": 2,
+                        "flavor": "Based on recently acquired and reverse engineered gear, the Ariadne Defibrillation Gloves act as a directly integrated defibrillation paddle set for medical personnel in the field for emergency situations. Flexible, easy to clean, and features a secondary combat mode for CQC.",
+                        "effect": "Allows for the user to instantly revive another from DBNO in a similar manner to regular defibrillators, and even can attempt to revive fully-dead persons. In combat, if the user executes a successful Grapple at an MOS of 1/2 or higher, then a shocking Stun can be administered, Stunning the target for one turn. If using a Minotauran Exoskeleton, then only one use of these gloves is available for an engagement unless an Action is deliberately taken to charge them after said use."
+                    },
+                    {
+                        "id": "minoanMedicSystem_minotauranExoskeleton",
+                        "name": "Minotauran Exoskeleton",
+                        "slot": "Equipment",
+                        "tier": 4,
+                        "flavor": "Despite what the name evokes, this low-profile exoskeleton offers a moderate boost to a person's loadbearing capability and comes natively with an enhanced and extended battery system able to be used with other parts of the Enhanced Medic Survivability And Treatment System (EMSADS). While not offering any direct combat benefit to the user save for more effective steps, this exoskeleton helps the user bear the weight of other systems and supply the power for two of the three pieces. Also has the added benefit of lessening strain on the joints and tendons of the user.",
+                        "effect": "Nullifies any drawback in relation to not using this Equipment. If the Icarus system is not being used, gain +2 hex movement; if the Daedalus system is not being used, gain +1 hex movement; if neither are used, gain a +1 to Climb and Endurance."
+                    },
+                    {
+                        "id": "minoanMedicSystem_theGoldenThread",
+                        "name": "The Golden Thread",
+                        "slot": "Patch",
+                        "tier": 0,
+                        "flavor": "It was a golden thread given to Theseus by Ariadne to trace his path back out from the Minotaur's Labyrinth once he had slayed the beast. One wonders what else one could do with that thread.",
+                        "effect": "Each character's first use of the Medic Bag deployed by the user counts as a free charge, including for the user themselves."
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "class": "sharpshooter",
+        "gearsets": [
+            {
+                "id": "throughDarkestNight",
+                "name": "Through Darkest Night",
+                "manufacturer": "TS_Dynamics",
+                "pieces": [
+                    {
+                        "id": "throughDarkestNight_nvIrPackage",
+                        "name": "NV-IR Package",
+                        "slot": "Headgear",
+                        "tier": 3,
+                        "flavor": "Using a clip-on system, your ARDs can now inherently show thermal and night vision individually with a seamless transition.",
+                        "effect": "You can now freely swap between Night Vision and Thermal in one package."
+                    },
+                    {
+                        "id": "throughDarkestNight_roundBandolier",
+                        "name": "Round Bandolier",
+                        "slot": "Vest",
+                        "tier": 1,
+                        "flavor": "Stowing a few extra rounds on your chest never hurt, and this improved pouch and bandolier allows you to carry a fair few more.",
+                        "effect": "The first use of your special ammo types is now free."
+                    },
+                    {
+                        "id": "throughDarkestNight_multiSourcePingAdjustment",
+                        "name": "Multi-Source Ping Adjustment",
+                        "slot": "Equipment",
+                        "tier": 4,
+                        "flavor": "Using data from multiple sources, we can now make contacts appear with a silhouette to make your shots easier to hit from range and in obscured conditions.",
+                        "effect": "Any pings you create from your gadgets or yourself are now applied as stacks onto targets, where pings can apply multiple times onto a target and can be consumed individually or all at once. Pings you create now linger for 2 turns each."
+                    },
+                    {
+                        "id": "throughDarkestNight_speedboltGloves",
+                        "name": "Speedbolt Gloves",
+                        "slot": "Gloves",
+                        "tier": 2,
+                        "flavor": "Integrating a minor magnetic effect to your gloves allows you to make sure your grip isnt lost when cycling the bolt fast. Namely included in the webbing between your fingers.",
+                        "effect": "Loading special ammo now no longer requires a deploy action."
+                    },
+                    {
+                        "id": "throughDarkestNight_allSeeingEye",
+                        "name": "All Seeing Eye",
+                        "slot": "Patch",
+                        "tier": 0,
+                        "flavor": "A patch of a red eye peering through an optic is attached, alongside a license for RFID-tagging rounds.",
+                        "effect": "Rounds that connect from any of your special ammo types apply a ping, and on the turn afterward, add another ping."
+                    }
+                ]
+            },
+            {
+                "id": "futureFalconer",
+                "name": "Future Falconer",
+                "manufacturer": "GC_AUS",
+                "pieces": [
+                    {
+                        "id": "futureFalconer_counterFireDatalink",
+                        "name": "Counter-Fire Datalink",
+                        "slot": "Headgear",
+                        "tier": 2,
+                        "flavor": "Modified threat-detection algorithms on your ARD to identify the last hostile to engage your drones. Traces muzzle flashes and round trajectories to pinpoint exactly what was firing at it.",
+                        "effect": "Any character that fires at your drones are now Pinged."
+                    },
+                    {
+                        "id": "futureFalconer_atakGimbalController",
+                        "name": "ATAK Gimbal Controller",
+                        "slot": "Vest",
+                        "tier": 1,
+                        "flavor": "Using an FPV drone controller attached to your ATAK, you now have improved control over the SUAV along with fine control over its optics.",
+                        "effect": "While your SUAV is in the air, you can now manually ping a target during its uptime. Make an opposed notice test using your skill against the defender's stealth or disguise. This counts as a bonus action."
+                    },
+                    {
+                        "id": "futureFalconer_glideCaptureGloves",
+                        "name": "Glide-Capture Gloves",
+                        "slot": "Gloves",
+                        "tier": 3,
+                        "flavor": "Specialised high-traction gloves with paired millimetre-wave location emitters that allow your SUAV to lock onto your hand automatically as it glides back into you. Also comes with a handy patch and repair kit for any field damage.",
+                        "effect": "As a bonus action, you may recall your SUAV early. When recalling your drone early, you now make an athletics test and record the result. On a result of 5+, you catch the drone and reduce the downtime by 1 turn."
+                    },
+                    {
+                        "id": "futureFalconer_autoNuisanceSystem",
+                        "name": "Auto-Nuisance System",
+                        "slot": "Equipment",
+                        "tier": 4,
+                        "flavor": "Implements a nuisance system that can be used by the drone alongside improved motors for control surfaces. Your SUAV can now make low, sweeping passes on targets to be, as it says on the tin, a 'nuisance'.",
+                        "effect": "At the cost of 1 turn of uptime and as a [Deploy], your SUAV may make a diving low pass over a single target; make an opposed acrobatics test for the SUAV against the defender's acrobatics or spirit. Upon attacker success, the target is Suppressed for the turn."
+                    },
+                    {
+                        "id": "futureFalconer_falconersConnection",
+                        "name": "Falconer's Connection",
+                        "slot": "Patch",
+                        "tier": 0,
+                        "flavor": "A patch of a falcon with a SUAV's optical gimbal for a head, includes a hardened downlink module for your SUAV.",
+                        "effect": "You retain connection with your SUAV even while Severed. Pings generated from your SUAVs are now Marks."
+                    }
+                ]
+            },
+            {
+                "id": "floatAndSting",
+                "name": "Float and Sting",
+                "manufacturer": "GC_STL",
+                "pieces": [
+                    {
+                        "id": "floatAndSting_bumblebeeBuddiIntegration",
+                        "name": "Bumblebee-BUDDI Integration",
+                        "slot": "Headgear",
+                        "tier": null,
+                        "flavor": "With the additional target marking data from the Bumblebee, BUDDI is now able to provide pinpoint ballistic solutions all the way down to recoil and breath-shift compensation.",
+                        "effect": "You gain +1 bonus on enemies [Marked] by your Bumblebee at Close and Medium Ranges, and +2 bonus at Long and Extreme Long Ranges. This stacks with BUDDI's own bonus where applicable."
+                    },
+                    {
+                        "id": "floatAndSting_fieldReplaceableEcholocationEmitterBattery",
+                        "name": "Field-Replacable Echolocation Emitter Battery",
+                        "slot": "Vest",
+                        "tier": null,
+                        "flavor": "Carry a replacement battery to provide the Bumblebee with additional power for the echolocator. These batteries are not small nor highly mass-produced, so use them wisely.",
+                        "effect": "Gain a battery that can be used to reset the Bumblebee's echolocation charge count to its maximum; you cannot [Resupply] this battery during a mission. To recharge the Bumblebee, spend a standard action to recall it and change the battery, then a [Deploy] to re-launch the drone."
+                    },
+                    {
+                        "id": "floatAndSting_stingerGloves",
+                        "name": "Stinger Gloves",
+                        "slot": "Gloves",
+                        "tier": null,
+                        "flavor": "Give your enemy a very personal punch on behalf of your Bumblebee.",
+                        "effect": "You may [Deploy] a Bumblebee's echolocation charge as an automatically-successful offensive CQC action; the defender makes a Spirit test against a threshold of 5. On defender success, they are [Winded], otherwise they are [Concussed]."
+                    },
+                    {
+                        "id": "floatAndSting_antiVisualStealthRefit",
+                        "name": "Anti-Visual-Stealth Refit",
+                        "slot": "Equipment",
+                        "tier": null,
+                        "flavor": "A tuning of echolocation frequency harmonics and an additional echolocation-activated laser dazzler turret enable even the most sneakily cloaked enemies to be flushed out into the visible.",
+                        "effect": "Enemies with active visual stealth systems like OctoCamo and STALKER Digital Presence Reducer get said systems [Disabled] whenever you [Deploy] a Bumblebee's echolocation charge within Medium Range of them."
+                    },
+                    {
+                        "id": "floatAndSting_queenMeshDisseminationNetwork",
+                        "name": "Queen Mesh Dissemination Network",
+                        "slot": "Patch",
+                        "tier": null,
+                        "flavor": "A hexagonal patch depicting a queen bee at the center of a mesh wireless network, delivered alongside the latest, cutting edge codebase for the Bumblebee that unlocks drone coordination functionality patterned after pheromonic control mechanisms in nature.",
+                        "effect": "Whenever you [Deploy] a Bumblebee's echolocation charge, all friendly combat drones in [Datalink] (except Magic Missiles, they don't stay up for very long anyways) individually gain an additional standard action on their next turn."
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "class": "universal",
+        "gearsets": [
+            {
+                "id": "soheiDojo",
+                "name": "Sohei's Dojo",
+                "manufacturer": "Koi_Precision",
+                "pieces": [
+                    {
+                        "id": "soheisDojo_increasedLethalityGloves",
+                        "name": "Increased Lethality Gloves",
+                        "slot": "Gloves",
+                        "tier": null,
+                        "flavor": "Competition grade pistol shooting gloves that give the user added dexterity and support when manipulating off handed items.",
+                        "effect": "Allows you to do a melee attack with your shove action. Upon success of both, you push the target off and can use your secondary weapon to shoot them."
+                    },
+                    {
+                        "id": "soheisDojo_highAlertHeadset",
+                        "name": "High Alert Headset",
+                        "slot": "Headgear",
+                        "tier": null,
+                        "flavor": "Standard military grade comms headset with aftermarket speakers with heightened surround sound audio detection, giving the user a greatly heightened sense of awareness.",
+                        "effect": "When an enemy shoots at you from Close/Medium range, roll an acrobatics check to try and dodge their shot. If the MOS is +2 or higher you successfully dodge the attack. If you fail, roll armour as normal."
+                    },
+                    {
+                        "id": "soheisDojo_lightweightPlates",
+                        "name": "Lightweight Plates",
+                        "slot": "Vest",
+                        "tier": null,
+                        "flavor": "State of the art composite ballistic plates that retain level IV protection for a fraction of the weight.",
+                        "effect": "Removes malice for sprinting and shooting."
+                    },
+                    {
+                        "id": "soheisDojo_fierySpeedloader",
+                        "name": "Fiery Speed loader",
+                        "slot": "Equipment",
+                        "tier": null,
+                        "flavor": "A 3 Gun competition shotgun belt with a specially modified shell holder for x4 'dragons breath' incendiary shells.",
+                        "effect": "If using a shotgun, burn a bonus action to reload an incendiary shell into the chamber. Incendiary shell reduces damage to 4 but adds ignite upon a successful hit on a target."
+                    },
+                    {
+                        "id": "soheisDojo_koiCoin",
+                        "name": "Koi Coin",
+                        "slot": "Patch",
+                        "tier": null,
+                        "flavor": "A complimentary coin from the Koi Precision Plant in Osaka as a token of appreciation for your continued brand loyalty.",
+                        "effect": "When firing the last shot from a magazine, roll acrobatics: 1-3 Fail, no effect. 4-5 Free reload. 6 Reload and gain another shooting action with a -1 malice."
+                    }
+                ]
+            }
+        ]
+    }
+]

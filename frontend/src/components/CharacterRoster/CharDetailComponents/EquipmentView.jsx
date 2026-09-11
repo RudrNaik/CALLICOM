@@ -369,7 +369,7 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
                       )}
                       {charActive && (
                         <div>
-                          <div className="px-2 py-1 rounded bg-neutral-900 mb-2">
+                          <div className="px-2 py-1 rounded-xs bg-neutral-900 mb-2">
                             <span className="text-yellow-400">
                               {safeGrenadeCounts[i]} / 2
                             </span>{" "}
@@ -422,7 +422,7 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
                   type="number"
                   min={0}
                   max={maxArmor}
-                  className="w-full bg-neutral-900 border-1 border-orange-400/60 text-white p-2 rounded"
+                  className="w-full bg-neutral-900 border-1 border-orange-400/60 text-white p-2 rounded-xs"
                   value={gear.armorClass}
                   onChange={(e) => {
                     let val = parseInt(e.target.value, 10);
@@ -450,7 +450,7 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
                 <p>
                   <span className="font-semibold text-neutral-300">{med}</span>
                 </p>
-                <p className="px-2 py-1 rounded bg-neutral-900 mb-2">
+                <p className="px-2 py-1 rounded-xs bg-neutral-900 mb-2">
                   <span className="text-yellow-400">{safeMedCounts[i]}</span>{" "}
                   <span className="text-gray-400 italic">remaining</span>
                 </p>
