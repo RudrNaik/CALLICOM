@@ -31,6 +31,66 @@ import { normalizeEquipmentForView } from "../../../engine/characterDataHandler"
 const DEFAULT_GRENADE_COUNTS = [2, 2];
 const DEFAULT_MED_COUNTS = [1, 2, 1]; // [AFAK, IFAK, Painkiller]
 
+/**
+ * Everything in the equipment panel that's a pure derivation of the
+ * character (+ static equipment data, + the weapon category lookup) rather
+ * than something the user edits directly. Pulled into one function so it can
+ * seed state on mount (no flash of empty lists before an effect fires) and
+ * be recomputed the same way whenever the character actually changes.
+ */
+function deriveEquipmentState(character, weaponCatsLookup) {
+  const excludedPrimary = getExcludedPrimaryCategories(character);
+  const excludedSecondary = getExcludedSecondaryCategories();
+
+  const primaryFilter = Object.fromEntries(
+    Object.entries(weaponCatsLookup).filter(
+      ([key]) => !excludedPrimary.includes(key),
+    ),
+  );
+  const secondaryFilter = Object.fromEntries(
+    Object.entries(weaponCatsLookup).filter(
+      ([key]) => !excludedSecondary.includes(key),
+    ),
+  );
+
+  const ownedWeapons = getPurchasedWeapons(character.logs);
+
+  return {
+    //Gadgets are restricted to what's actually been bought in Logistics
+    //(derived from the mission logs' receipts, nothing stored on equipment).
+    classGadgets: getAvailableClassGadgets(character.logs, equipmentData),
+
+    //Grenades likewise: only types bought in Logistics are selectable.
+    grenades: getOwnedGrenades(character.logs, equipmentData),
+
+    //Excludes primaries based on main and sub classes, then further
+    //restricts to categories/families actually bought in Logistics.
+    primaryOptions: getOwnedWeaponCategories(character.logs, primaryFilter),
+
+    //Excludes secondaries universally, then restricts to what's been bought.
+    secondaryOptions: getOwnedWeaponCategories(character.logs, secondaryFilter),
+
+    //Individual purchased weapons (name/category/family, as bought in
+    //Logistics) available to pick from directly in each slot's selector,
+    //rather than filtering by category/family independently.
+    primaryWeaponInstances: ownedWeapons.filter(
+      (w) => !excludedPrimary.includes(w.category),
+    ),
+    secondaryWeaponInstances: ownedWeapons.filter(
+      (w) =>
+        !excludedSecondary.includes(w.category) &&
+        // Secondary SMGs are restricted to the Machine Pistols family.
+        (w.category !== "SMGs" || w.family === "Machine Pistols"),
+    ),
+
+    //Restrics Armor per SUPP getting AC3 as max (to use the juggernaut suit), everyone else has max of AC1
+    maxArmor: getArmorClassCap(character),
+
+    //Secondary gadget (class gadget) assigned to this character's class.
+    secondaryGadget: getSecondaryGadgetForClass(secondaryGadgets, character),
+  };
+}
+
 const EquipmentSelection = forwardRef(function EquipmentSelection(
   {
     character,
@@ -44,18 +104,6 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
 ) {
   const characterId = character.uniqueId;
 
-  const defaultGear = {
-    primaryWeapon: { name: "", category: "" },
-    secondaryWeapon: { name: "", category: "" },
-    grenades: ["", ""],
-    grenadeCounts: DEFAULT_GRENADE_COUNTS,
-    gadget: "",
-    gadgetAmmo: {},
-    armorClass: 0,
-    medCounts: DEFAULT_MED_COUNTS,
-    miscGear: "",
-  };
-
   //percolates items from the equipment data into an easy to use lookup table.
   const itemById = useMemo(() => getItemByIdLookup(equipmentData), []);
 
@@ -67,7 +115,31 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
     [character?.logs],
   );
 
-  const [gear, setGear] = useState(defaultGear);
+  const weaponCatsLookup = useMemo(
+    () => getWeaponCategoriesLookup(equipmentData),
+    [],
+  );
+
+  // Lazily seeded from the character on first render (rather than starting
+  // from empty defaults and waiting for an effect to fill them in) so a
+  // fresh mount — e.g. switching characters, keyed by characterKey in
+  // CharacterDetail — shows the right data immediately instead of a visible
+  // flash of blank equipment. The effect below only re-syncs these when the
+  // character actually changes afterwards.
+  const [gear, setGear] = useState(() => normalizeEquipmentForView(character));
+  const [derived, setDerived] = useState(() =>
+    deriveEquipmentState(character, weaponCatsLookup),
+  );
+  const {
+    classGadgets,
+    grenades,
+    secondaryGadget,
+    primaryOptions,
+    secondaryOptions,
+    primaryWeaponInstances,
+    secondaryWeaponInstances,
+    maxArmor,
+  } = derived;
 
   const safeGrenades = Array.isArray(gear?.grenades) ? gear.grenades : ["", ""];
   const safeGrenadeCounts =
@@ -78,78 +150,15 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
     Array.isArray(gear?.medCounts) && gear.medCounts.length === 3
       ? gear.medCounts
       : DEFAULT_MED_COUNTS;
-  const [classGadgets, setClassGadgets] = useState([]);
-  const [grenades, setGrenades] = useState([]);
-  const [secondaryGadget, setSecGadget] = useState([]);
   const activeGadgetConfig = useMemo(
     () => getGadgetAmmoConfig(gear.gadget, equipmentData),
     [gear.gadget],
   );
-  const weaponCatsLookup = useMemo(
-    () => getWeaponCategoriesLookup(equipmentData),
-    [],
-  );
-  const [primaryOptions, setPrimaries] = useState({});
-  const [secondaryOptions, setSecondary] = useState({});
-  const [primaryWeaponInstances, setPrimaryWeaponInstances] = useState([]);
-  const [secondaryWeaponInstances, setSecondaryWeaponInstances] = useState([]);
-  const [maxArmor, setArmor] = useState(1);
 
   useEffect(() => {
     if (!character) return;
-
-    const normalizedEquipment = normalizeEquipmentForView(character);
-
-    setGear(normalizedEquipment);
-
-    //Gadgets are restricted to what's actually been bought in Logistics
-    //(derived from the mission logs' receipts, nothing stored on equipment).
-    const filtered = getAvailableClassGadgets(character.logs, equipmentData);
-    setClassGadgets(filtered);
-
-    //Grenades likewise: only types bought in Logistics are selectable.
-    setGrenades(getOwnedGrenades(character.logs, equipmentData));
-
-    //Excludes primaries based on main and sub classes, then further
-    //restricts to categories/families actually bought in Logistics.
-    const excludedPrimary = getExcludedPrimaryCategories(character);
-    const primaryFilter = Object.fromEntries(
-      Object.entries(weaponCatsLookup).filter(
-        ([key]) => !excludedPrimary.includes(key),
-      ),
-    );
-    setPrimaries(getOwnedWeaponCategories(character.logs, primaryFilter));
-
-    //Restrics Armor per SUPP getting AC3 as max (to use the juggernaut suit), everyone else has max of AC1
-    setArmor(getArmorClassCap(character));
-
-    //Excludes secondaries universally, then restricts to what's been bought.
-    const excludedSecondary = getExcludedSecondaryCategories();
-    const secondaryFilter = Object.fromEntries(
-      Object.entries(weaponCatsLookup).filter(
-        ([key]) => !excludedSecondary.includes(key),
-      ),
-    );
-    setSecondary(getOwnedWeaponCategories(character.logs, secondaryFilter));
-
-    //Individual purchased weapons (name/category/family, as bought in
-    //Logistics) available to pick from directly in each slot's selector,
-    //rather than filtering by category/family independently.
-    const ownedWeapons = getPurchasedWeapons(character.logs);
-    setPrimaryWeaponInstances(
-      ownedWeapons.filter((w) => !excludedPrimary.includes(w.category)),
-    );
-    setSecondaryWeaponInstances(
-      ownedWeapons.filter(
-        (w) =>
-          !excludedSecondary.includes(w.category) &&
-          // Secondary SMGs are restricted to the Machine Pistols family.
-          (w.category !== "SMGs" || w.family === "Machine Pistols"),
-      ),
-    );
-
-    //Grabs secondary gadget (class gadget) and assigns it.
-    setSecGadget(getSecondaryGadgetForClass(secondaryGadgets, character));
+    setGear(normalizeEquipmentForView(character));
+    setDerived(deriveEquipmentState(character, weaponCatsLookup));
   }, [character, weaponCatsLookup]);
 
   const handleChange = (field, value) => {

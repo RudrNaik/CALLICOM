@@ -79,7 +79,11 @@ function CharacterDetail({ character, onUpdate, user }) {
   const [activeTab, setActiveTab] = useState("gameplay");
   const [multiClass, setMulticlass] = useState(character?.multiClass || "");
   const [showMultiClassModal, setShowMultiClassModal] = useState(false);
-  const [Biography, setBio] = useState("");
+  const [Biography, setBio] = useState(() =>
+    character?.Bio && typeof character.Bio === "object"
+      ? { ...emptyBiography, ...character.Bio }
+      : character?.Bio || "",
+  );
   const [attributes, setAttributes] = useState({ ...character?.attributes });
   const [fleshWounds, setFleshWounds] = useState(character?.fleshWounds || 0);
   const [deepWounds, setDeepWounds] = useState(character?.deepWounds || 0);
@@ -94,36 +98,38 @@ function CharacterDetail({ character, onUpdate, user }) {
   const characterKey =
     character?._id || character?.uniqueId || character?.callsign;
 
-  useEffect(() => {
-    if (character) {
-      setSpecializations([...character.specializations]);
-      setAttributes({ ...character.attributes });
-      setEditedSkills({ ...character.skills });
-      setEmergencyDice(character.emergencyDice || 0);
-      setOriginalEmergencyDice(character.emergencyDice || 0);
-      setEmergencyDiceXPSpent(character.emergencyDiceXPSpent || 0);
-      setCampaignInput(character.campaignId || "");
-      setMulticlass(character.multiClass || "");
-      setBio(
-        character?.Bio && typeof character.Bio === "object"
-          ? { ...emptyBiography, ...character.Bio }
-          : character?.Bio || "",
-      );
+  // Reseed every editing-draft field when switching to a *different*
+  // character. This runs during render (React's documented pattern for
+  // "adjusting state when a prop changes") rather than in a useEffect, so
+  // the mismatched frame — showing the previous character's skills/attributes
+  // for one tick before an effect corrects them — never gets painted. It's
+  // also keyed on characterKey (not `character` itself) so an in-place
+  // refresh of the *same* character (e.g. a wound autosave) can't clobber an
+  // unsaved edit in progress.
+  const [prevCharacterKey, setPrevCharacterKey] = useState(characterKey);
+  if (character && characterKey !== prevCharacterKey) {
+    setPrevCharacterKey(characterKey);
+    setSpecializations([...character.specializations]);
+    setAttributes({ ...character.attributes });
+    setEditedSkills({ ...character.skills });
+    setEmergencyDice(character.emergencyDice || 0);
+    setOriginalEmergencyDice(character.emergencyDice || 0);
+    setEmergencyDiceXPSpent(character.emergencyDiceXPSpent || 0);
+    setCampaignInput(character.campaignId || "");
+    setMulticlass(character.multiClass || "");
+    setBio(
+      character?.Bio && typeof character.Bio === "object"
+        ? { ...emptyBiography, ...character.Bio }
+        : character?.Bio || "",
+    );
 
-      const fw = character.fleshWounds || 0;
-      const dw = character.deepWounds || 0;
-      setFleshWounds(fw);
-      setDeepWounds(dw);
-      prevWounds.current = { fleshWounds: fw, deepWounds: dw };
-    }
-  }, [character]);
-
-  // Only reset "active" (mission) state when switching to a different
-  // character, not on every in-place refresh of the same one (e.g. a
-  // live ammo update writing back to the character object).
-  useEffect(() => {
+    const fw = character.fleshWounds || 0;
+    const dw = character.deepWounds || 0;
+    setFleshWounds(fw);
+    setDeepWounds(dw);
+    prevWounds.current = { fleshWounds: fw, deepWounds: dw };
     setCharActive(false);
-  }, [characterKey]);
+  }
 
   // 700ms debounce because rapidly spamming the deep and flesh wounds causes
   // desync with the backend as master so it reverts. Shared by DerivedStats
