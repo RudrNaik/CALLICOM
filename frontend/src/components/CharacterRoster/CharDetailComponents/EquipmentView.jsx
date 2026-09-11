@@ -1,4 +1,10 @@
-import { forwardRef, useEffect, useImperativeHandle, useState, useMemo } from "react";
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useState,
+  useMemo,
+} from "react";
 import equipmentData from "../../../data/Equipment.json";
 import secondaryGadgets from "../../../data/classSkills.json";
 import WeaponSlot from "./WeaponCards";
@@ -36,7 +42,6 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
   },
   ref,
 ) {
-
   const characterId = character.uniqueId;
 
   const defaultGear = {
@@ -145,7 +150,6 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
 
     //Grabs secondary gadget (class gadget) and assigns it.
     setSecGadget(getSecondaryGadgetForClass(secondaryGadgets, character));
-
   }, [character, weaponCatsLookup]);
 
   const handleChange = (field, value) => {
@@ -225,7 +229,7 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
 
   /**
    * Handles the armor class flavor text
-   * @param {*} armorClass 
+   * @param {*} armorClass
    * @returns the bonuses/maluses from that armor level
    */
   const renderArmorClassDescription = (armorClass) => {
@@ -263,7 +267,11 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
 
   return (
     <div className=" text-white" style={{ fontFamily: "Geist_Mono" }}>
-      <div className={wideLayout ? "grid grid-cols-2 gap-2" : "flex flex-col gap-2"}>
+      <div
+        className={
+          wideLayout ? "grid grid-cols-2 gap-2" : "flex flex-col gap-2"
+        }
+      >
         {/* Weapons */}
         <div className={wideLayout ? "col-span-2 md:col-span-1" : ""}>
           <WeaponSlot
@@ -295,8 +303,10 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
         </div>
 
         {/* Grenades */}
-        <div className={`bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-6 rounded shadow ${wideLayout ? "col-span-2 md:col-span-1" : ""}`}>
-          <h3 className="font-semibold text-orange-300">Grenades</h3>
+        <div
+          className={`bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-4 border-orange-500 p-4 rounded-xs shadow ${wideLayout ? "col-span-2 md:col-span-1" : ""}`}
+        >
+          <h3 className="font-semibold text-orange-300 mb-1">Grenades</h3>
 
           {isEditing ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -327,18 +337,24 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4" style={{ gridAutoRows: '1fr' }}>
+              <div
+                className="grid grid-cols-1 md:grid-cols-2 gap-4"
+                style={{ gridAutoRows: "1fr" }}
+              >
                 {safeGrenades.map((grenadeId, i) => {
                   const grenadeData = itemById[grenadeId];
                   return (
-                    <div key={i} className="text-sm text-white space-y-1 flex flex-col">
+                    <div
+                      key={i}
+                      className="text-sm text-white space-y-1 flex flex-col"
+                    >
                       <div>
-                        <span className="font-semibold text-orange-300">
+                        <span className="font-semibold text-neutral-300">
                           {grenadeData?.title || `Grenade ${i + 1}`}
                         </span>
                       </div>
                       {grenadeData && (
-                        <div className="text-[10px] text-neutral-400 bg-neutral-900 p-2 rounded mb-2 whitespace-pre-line flex-grow">
+                        <div className="text-[10px] text-neutral-400 mb-2 whitespace-pre-line flex-grow">
                           {grenadeData?.rulesText}
                         </div>
                       )}
@@ -386,8 +402,10 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
         </div>
 
         {/* Armor Class */}
-        <div className={`bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-6 rounded shadow ${wideLayout ? "col-span-2 md:col-span-1" : ""}`}>
-          <h3 className="font-semibold text-orange-300">Armor Class</h3>
+        <div
+          className={`bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-4 border-orange-500 p-4 rounded-xs shadow ${wideLayout ? "col-span-2 md:col-span-1" : ""}`}
+        >
+          <h3 className="font-semibold text-orange-300">Armor/Medical</h3>
           {isEditing ? (
             <div>
               <div>
@@ -405,33 +423,29 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
                   }}
                 />
               </div>
-              <div>
-                {renderArmorClassDescription(gear.armorClass)}
-              </div>
+              <div>{renderArmorClassDescription(gear.armorClass)}</div>
             </div>
           ) : (
             <div>
               <p>
                 <span>AC{gear.armorClass}</span>
               </p>
-              <div>
-                {renderArmorClassDescription(gear.armorClass)}
-              </div>
+              <div>{renderArmorClassDescription(gear.armorClass)}</div>
             </div>
           )}
 
           {/* Medicine and meds. */}
-          {charActive ? (
-            <div className="grid sm:grid-cols-1 md:grid-cols-3 gap-4 mt-2">
-              {["AFAK", "IFAK"].map((med, i) => (
-                <div key={med} className="text-sm text-white space-y-1">
-                  <p>
-                    <span className="font-semibold text-orange-300">{med}</span>
-                  </p>
-                  <p className="px-2 py-1 rounded bg-neutral-900 mb-2">
-                    <span className="text-yellow-400">{safeMedCounts[i]}</span>{" "}
-                    <span className="text-gray-400 italic">remaining</span>
-                  </p>
+          <div className="grid sm:grid-cols-1 md:grid-cols-3 gap-4 mt-2">
+            {["AFAK", "IFAK"].map((med, i) => (
+              <div key={med} className="text-sm text-white space-y-1">
+                <p>
+                  <span className="font-semibold text-orange-300">{med}</span>
+                </p>
+                <p className="px-2 py-1 rounded bg-neutral-900 mb-2">
+                  <span className="text-yellow-400">{safeMedCounts[i]}</span>{" "}
+                  <span className="text-gray-400 italic">remaining</span>
+                </p>
+                {charActive ? (
                   <div className="flex gap-1">
                     <button
                       onClick={() => {
@@ -455,18 +469,18 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
                       Resupply
                     </button>
                   </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-gray-400 italic">
-              No meds shown unless on a mission.
-            </p>
-          )}
+                ) : (
+                  <></>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Gadget */}
-        <div className={`bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-6 rounded shadow ${wideLayout ? "col-span-2" : ""}`}>
+        <div
+          className={`bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-4 border-orange-500 p-4 rounded-xs shadow ${wideLayout ? "col-span-2" : ""}`}
+        >
           <h3 className="font-semibold text-orange-300">Class Gadget</h3>
           {isEditing ? (
             <select
@@ -489,7 +503,7 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
           )}
 
           {gear.gadget && (
-            <div className="text-sm text-gray-300 space-y-2 mt-2">
+            <div className="text-xs text-gray-300 space-y-2 mt-2">
               <p className="whitespace-pre-line">
                 {equipmentData.find((gadget) => gadget.id === gear.gadget)
                   ?.rulesText || "n/a"}
@@ -520,7 +534,7 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
 
           {secondaryGadget && (
             <div className="text-sm text-gray-300 space-y-2 mt-2">
-              <p className="text-xs text-gray-200 whitespace-pre-line bg-orange-900/20 px-2 py-1 mt-2 rounded">
+              <p className="text-xs text-gray-200 whitespace-pre-line border-orange-400/30 border bg-orange-900/20 px-2 py-1 mt-2 rounded-xs">
                 <span className="text-orange-300 text-sm font-semibold">
                   Secondary Gadget: {secondaryGadget.id} {"\n"}
                 </span>
@@ -537,7 +551,9 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
         </div>
 
         {/* inventory */}
-        <div className={`bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-6 rounded shadow ${wideLayout ? "col-span-2" : ""}`}>
+        <div
+          className={`bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-4 border-orange-500 p-4 rounded-xs shadow ${wideLayout ? "col-span-2" : ""}`}
+        >
           <h3 className="font-semibold text-orange-300">Inventory</h3>
           {isEditing ? (
             <textarea

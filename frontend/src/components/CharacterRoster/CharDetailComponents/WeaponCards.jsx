@@ -120,7 +120,11 @@ const WeaponSlot = ({
     });
     if (!result) return;
 
-    const { firedThisMag: nextFiredThisMag, totalFired: nextTotalFired, pseudoAmmo: nextPseudoAmmo } = result;
+    const {
+      firedThisMag: nextFiredThisMag,
+      totalFired: nextTotalFired,
+      pseudoAmmo: nextPseudoAmmo,
+    } = result;
     setFiredThisMag(nextFiredThisMag);
     setTotalFired(nextTotalFired);
     if (pseudoAmmo !== null) {
@@ -135,22 +139,30 @@ const WeaponSlot = ({
   };
 
   const handleResupply = () => {
-    const { firedThisMag: nextFiredThisMag, totalFired: nextTotalFired, pseudoAmmo: nextPseudoAmmo } =
-      resupplyWeaponAmmo(weapon?.category);
+    const {
+      firedThisMag: nextFiredThisMag,
+      totalFired: nextTotalFired,
+      pseudoAmmo: nextPseudoAmmo,
+    } = resupplyWeaponAmmo(weapon?.category);
     setFiredThisMag(nextFiredThisMag);
     setTotalFired(nextTotalFired);
     setPseudoAmmo(nextPseudoAmmo);
 
-    pushAmmo({ firedThisMag: nextFiredThisMag, totalFired: nextTotalFired, pseudoAmmo: nextPseudoAmmo });
+    pushAmmo({
+      firedThisMag: nextFiredThisMag,
+      totalFired: nextTotalFired,
+      pseudoAmmo: nextPseudoAmmo,
+    });
   };
 
   const handleReload = () => {
-    const { firedThisMag: nextFiredThisMag, pseudoAmmo: nextPseudoAmmo } = computeReloadResult({
-      firedThisMag,
-      turnsRemaining,
-      magazineSize,
-      category: weapon?.category,
-    });
+    const { firedThisMag: nextFiredThisMag, pseudoAmmo: nextPseudoAmmo } =
+      computeReloadResult({
+        firedThisMag,
+        turnsRemaining,
+        magazineSize,
+        category: weapon?.category,
+      });
     setFiredThisMag(nextFiredThisMag);
     setPseudoAmmo(nextPseudoAmmo);
 
@@ -164,9 +176,9 @@ const WeaponSlot = ({
   return (
     <div
       key={`${slot}-${characterId}`}
-      className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-4 lg:p-6 rounded shadow mt-2"
+      className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-4 border-orange-500 p-4 rounded-xs shadow"
     >
-      <h3 className="font-semibold text-orange-300 mb-2">
+      <h3 className="font-semibold text-orange-300 mb-1">
         {slot === "primaryWeapon" ? "Primary Weapon" : "Secondary Weapon"}
       </h3>
 
@@ -177,12 +189,18 @@ const WeaponSlot = ({
             value={selectedInstanceIndex >= 0 ? selectedInstanceIndex : ""}
             onChange={(e) => {
               const value = e.target.value;
-              onSelectWeapon(slot, value === "" ? null : ownedWeaponsList[Number(value)]);
+              onSelectWeapon(
+                slot,
+                value === "" ? null : ownedWeaponsList[Number(value)],
+              );
             }}
           >
             <option value="">Select Weapon</option>
             {ownedWeaponsList.map((w, i) => (
-              <option key={`${w.name}-${w.category}-${w.family}-${i}`} value={i}>
+              <option
+                key={`${w.name}-${w.category}-${w.family}-${i}`}
+                value={i}
+              >
                 {w.name || "Unnamed Weapon"} — {w.category}
                 {w.family ? ` — ${w.family}` : ""}
               </option>
@@ -198,7 +216,7 @@ const WeaponSlot = ({
               <div>Total Ammo (Turns): {categoryData.totalTurns}</div>
               <div>Magazine Size (Turns): {categoryData.magazineSize}</div>
               {selectedFamily && categoryData?.families && (
-                <div >
+                <div>
                   <div>------------------</div>
                   <div>Family: {selectedFamily}</div>
                   <div className="text-gray-400 mt-1">
@@ -216,8 +234,7 @@ const WeaponSlot = ({
       ) : (
         <>
           <p>
-            <strong className="text-orange-300">{weapon?.name}</strong> —{" "}
-            {weapon?.category || "No category selected"}
+            <strong className="text-orange-300">{weapon?.name}</strong>
           </p>
           {categoryData && (
             <>
@@ -225,19 +242,20 @@ const WeaponSlot = ({
                 DMG {modifiedCategoryData.damage} | PEN{" "}
                 {modifiedCategoryData.penetration} | Range:{" "}
                 {modifiedCategoryData.range} | <br></br> Class:{" "}
+                <strong>{weapon?.category || "No category selected"}</strong> //{" "}
                 <strong>{modifiedCategoryData.class}</strong>
                 {selectedFamily && categoryData?.families && (
-                <div>
-                  Family: <strong>{selectedFamily}</strong>
                   <div>
-                    {
-                      categoryData.families.find(
-                        (f) => f.family === selectedFamily,
-                      )?.effect
-                    }
+                    Family: <strong>{selectedFamily}</strong>
+                    <div>
+                      {
+                        categoryData.families.find(
+                          (f) => f.family === selectedFamily,
+                        )?.effect
+                      }
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
                 <hr />
                 TOTAL: {totalTurns} turns | MAG: {magazineSize} turns
               </div>
@@ -286,11 +304,11 @@ const WeaponSlot = ({
 
                   {/* Right: Pseudo Ammo Readout */}
                   {displayedAmmo !== null && (
-                    <div className="text-2xl px-2 py-1 rounded bg-neutral-900 text-yellow-400 shadow">
+                    <div className="text-xl px-2 py-1 rounded-xs bg-neutral-900 text-yellow-400 shadow">
                       <span
                         className={`${
                           isAnimating ? "motion-blur-vertical" : ""
-                        } transition-all duration-200`}
+                        } transition-all duration-200 ${displayedAmmo < pseudoMagSizes[weapon?.category] * (1 / 3) ? "animate-[pulse_0.75s_cubic-bezier(0.4,0,0.6,1)_infinite] text-red-500" : ""}`}
                       >
                         {displayedAmmo}
                       </span>{" "}

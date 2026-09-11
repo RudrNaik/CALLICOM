@@ -50,7 +50,7 @@ function DerivedStats({
         )}
       </div>
 
-      <div className="rounded-md bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-3">
+      <div className="rounded-xs bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-4 border-orange-500 p-2">
         {/* mobile specific view*/}
         <div className="grid grid-cols-2 gap-3 sm:hidden">
           <StatCard label="Health" value={Health} />
