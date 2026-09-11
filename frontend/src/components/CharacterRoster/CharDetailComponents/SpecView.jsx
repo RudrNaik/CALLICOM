@@ -15,7 +15,7 @@ function SpecView({ specializations, isEditing, removeSpec }) {
 
       <ul className="list-disc list-inside text-md space-y-1">
         {specializations.map((s, i) => (
-          <li key={i} className="flex justify-between items-center rounded-sm bg-gradient-to-r mt-1 from-neutral-800 to-neutral-850 border-l-4 border-orange-500 p-2">
+          <li key={i} className="flex justify-between items-center rounded-xs bg-gradient-to-r mt-1 from-neutral-800 to-neutral-850 border-l-4 border-orange-500 p-2">
             <span>
               <span className="text-orange-400 font-medium">{s.skill}:</span>{" "}
               {s.label} | <span className="text-neutral-300">{s.details}</span>
