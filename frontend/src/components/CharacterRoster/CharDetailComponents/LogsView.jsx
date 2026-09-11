@@ -29,8 +29,10 @@ const emptyAchievementDraft = {
 // awarding it) drops the "+" and shows red instead of its usual color, so
 // it reads as a cost at a glance rather than looking like a typo'd bonus.
 const formatSigned = (value) => (value < 0 ? `${value}` : `+${value}`);
-const formatSignedCash = (value) => (value < 0 ? `-$${Math.abs(value)}` : `+$${value}`);
-const signedClass = (value, positiveClass) => (value < 0 ? "text-red-400" : positiveClass);
+const formatSignedCash = (value) =>
+  value < 0 ? `-$${Math.abs(value)}` : `+$${value}`;
+const signedClass = (value, positiveClass) =>
+  value < 0 ? "text-red-400" : positiveClass;
 
 /** One already-added achievement, shown wherever a mission's achievements are listed (the add-mission form's staged list, and the latest mission's edit view). */
 function AchievementListItem({ achievement, onRemove }) {
@@ -39,13 +41,19 @@ function AchievementListItem({ achievement, onRemove }) {
       <div>
         <div className="text-orange-300 font-medium">{achievement.name}</div>
         {achievement.criteria && (
-          <div className="text-neutral-500">Criteria/Reason: {achievement.criteria}</div>
+          <div className="text-neutral-500">
+            Criteria/Reason: {achievement.criteria}
+          </div>
         )}
         <div className="space-x-3 mt-0.5">
-          <span className={signedClass(achievement.xpPayout, "text-orange-300")}>
+          <span
+            className={signedClass(achievement.xpPayout, "text-orange-300")}
+          >
             {formatSigned(achievement.xpPayout)} XP
           </span>
-          <span className={signedClass(achievement.cashPayout, "text-green-400")}>
+          <span
+            className={signedClass(achievement.cashPayout, "text-green-400")}
+          >
             {formatSigned(achievement.cashPayout)} Money
           </span>
         </div>
@@ -98,7 +106,7 @@ function AchievementDraftForm({ draft, setDraft, onSave, onCancel }) {
           onClick={onSave}
           className="bg-green-600 hover:bg-green-700 px-3 py-1 rounded text-xs cursor-pointer"
         >
-          Save Achievement
+          Save
         </button>
         <button
           onClick={onCancel}
@@ -124,13 +132,17 @@ function LogsView({ character, refreshCharacter }) {
   // than requiring the mission to be saved first and edited afterward.
   const [newMissionAchievements, setNewMissionAchievements] = useState([]);
   const [showNewAchievementForm, setShowNewAchievementForm] = useState(false);
-  const [newAchievementDraft, setNewAchievementDraft] = useState(emptyAchievementDraft);
+  const [newAchievementDraft, setNewAchievementDraft] = useState(
+    emptyAchievementDraft,
+  );
 
   const [editingLatest, setEditingLatest] = useState(false);
   const [editDraft, setEditDraft] = useState(null);
 
   const [showAchievementForm, setShowAchievementForm] = useState(false);
-  const [achievementDraft, setAchievementDraft] = useState(emptyAchievementDraft);
+  const [achievementDraft, setAchievementDraft] = useState(
+    emptyAchievementDraft,
+  );
 
   const logs = ensureStartingLog(character, character?.logs ?? []);
   const money = getMoneyTotal(character, equipmentData);
@@ -187,9 +199,7 @@ function LogsView({ character, refreshCharacter }) {
   const handleRemoveMission = (index) => {
     const result = applyMissionLogRemove(character, logs, index, equipmentData);
     if (!result) {
-      alert(
-        "Can't remove this mission — its payout has already been spent.",
-      );
+      alert("Can't remove this mission — its payout has already been spent.");
       return;
     }
     refreshCharacter(result);
@@ -214,7 +224,13 @@ function LogsView({ character, refreshCharacter }) {
   };
 
   const handleSaveEditLatest = (index) => {
-    const result = applyMissionLogEdit(character, logs, index, editDraft, equipmentData);
+    const result = applyMissionLogEdit(
+      character,
+      logs,
+      index,
+      editDraft,
+      equipmentData,
+    );
     if (!result) {
       alert(
         "Can't save that — it would take available XP or money below zero.",
@@ -254,12 +270,18 @@ function LogsView({ character, refreshCharacter }) {
     <div className="text-white">
       <div className="flex flex-wrap gap-4 mb-4">
         <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-4 border-orange-500 px-4 py-2 rounded-sm">
-          <span className="block text-xs text-neutral-400">Total XP Earned</span>
-          <span className="text-lg font-bold text-orange-400">{totalMissionXP}</span>
+          <span className="block text-xs text-neutral-400">
+            Total XP Earned
+          </span>
+          <span className="text-lg font-bold text-orange-400">
+            {totalMissionXP}
+          </span>
         </div>
         <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-4 border-orange-500 px-4 py-2 rounded-sm">
           <span className="block text-xs text-neutral-400">Total Payout</span>
-          <span className="text-lg font-bold text-orange-400">${totalPayout}</span>
+          <span className="text-lg font-bold text-orange-400">
+            ${totalPayout}
+          </span>
         </div>
         <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-4 border-orange-500 px-4 py-2 rounded-sm">
           <span className="block text-xs text-neutral-400">Current Cash</span>
@@ -317,7 +339,9 @@ function LogsView({ character, refreshCharacter }) {
             />
 
             <div className="pt-2 border-t border-neutral-800 space-y-2">
-              <div className="text-xs text-neutral-500">Achievements/Tasks/Etc. (optional)</div>
+              <div className="text-xs text-neutral-500">
+                Achievements/Tasks/Etc. (optional)
+              </div>
               {newMissionAchievements.map((achievement, achIndex) => (
                 <AchievementListItem
                   key={achievement.id ?? achIndex}
@@ -340,7 +364,7 @@ function LogsView({ character, refreshCharacter }) {
                   onClick={() => setShowNewAchievementForm(true)}
                   className="text-xs text-orange-400 hover:text-orange-300 cursor-pointer"
                 >
-                  + Add Achievement
+                  + Add Achievement/Task/Etc.
                 </button>
               )}
             </div>
@@ -364,7 +388,9 @@ function LogsView({ character, refreshCharacter }) {
       </div>
 
       {logs.length === 0 ? (
-        <p className="text-neutral-500 italic text-sm">No missions logged yet.</p>
+        <p className="text-neutral-500 italic text-sm">
+          No missions logged yet.
+        </p>
       ) : (
         <div className="space-y-2">
           {logs
@@ -374,7 +400,11 @@ function LogsView({ character, refreshCharacter }) {
               const canRemove = index === logs.length - 1;
               const isEditingThis = editingLatest && canRemove;
               const receipt = describeReceipt(log.receipt, equipmentData);
-              const ediceXPSpent = getEmergencyDiceXPDuring(logs, index, character);
+              const ediceXPSpent = getEmergencyDiceXPDuring(
+                logs,
+                index,
+                character,
+              );
               const totalXPSpent = receipt.xpSpent + ediceXPSpent;
               const hasReceipt =
                 receipt.skills.length > 0 ||
@@ -401,7 +431,10 @@ function LogsView({ character, refreshCharacter }) {
                             className="w-full bg-neutral-800 border border-gray-500 rounded px-3 py-1 text-white"
                             value={editDraft.name}
                             onChange={(e) =>
-                              setEditDraft({ ...editDraft, name: e.target.value })
+                              setEditDraft({
+                                ...editDraft,
+                                name: e.target.value,
+                              })
                             }
                           />
                           <input
@@ -409,7 +442,10 @@ function LogsView({ character, refreshCharacter }) {
                             className="bg-neutral-800 border border-gray-500 rounded px-3 py-1 text-white"
                             value={editDraft.date}
                             onChange={(e) =>
-                              setEditDraft({ ...editDraft, date: e.target.value })
+                              setEditDraft({
+                                ...editDraft,
+                                date: e.target.value,
+                              })
                             }
                           />
                         </div>
@@ -420,7 +456,10 @@ function LogsView({ character, refreshCharacter }) {
                             className="w-full bg-neutral-800 border border-gray-500 rounded px-3 py-1 text-white"
                             value={editDraft.missionXP}
                             onChange={(e) =>
-                              setEditDraft({ ...editDraft, missionXP: e.target.value })
+                              setEditDraft({
+                                ...editDraft,
+                                missionXP: e.target.value,
+                              })
                             }
                           />
                           <input
@@ -429,7 +468,10 @@ function LogsView({ character, refreshCharacter }) {
                             className="w-full bg-neutral-800 border border-gray-500 rounded px-3 py-1 text-white"
                             value={editDraft.payout}
                             onChange={(e) =>
-                              setEditDraft({ ...editDraft, payout: e.target.value })
+                              setEditDraft({
+                                ...editDraft,
+                                payout: e.target.value,
+                              })
                             }
                           />
                         </div>
@@ -438,18 +480,25 @@ function LogsView({ character, refreshCharacter }) {
                           className="w-full bg-neutral-800 border border-gray-500 rounded px-3 py-1 text-white resize-y min-h-[60px]"
                           value={editDraft.notes}
                           onChange={(e) =>
-                            setEditDraft({ ...editDraft, notes: e.target.value })
+                            setEditDraft({
+                              ...editDraft,
+                              notes: e.target.value,
+                            })
                           }
                         />
 
                         {/* Achievements are managed here, folded into the mission's edit view. */}
                         <div className="pt-2 border-t border-neutral-800 space-y-2">
-                          <div className="text-xs text-neutral-500">Achievements/Tasks/Etc.</div>
+                          <div className="text-xs text-neutral-500">
+                            Achievements/Tasks/Etc.
+                          </div>
                           {achievements.map((achievement, achIndex) => (
                             <AchievementListItem
                               key={achievement.id ?? achIndex}
                               achievement={achievement}
-                              onRemove={() => handleRemoveAchievement(index, achIndex)}
+                              onRemove={() =>
+                                handleRemoveAchievement(index, achIndex)
+                              }
                             />
                           ))}
 
@@ -468,7 +517,7 @@ function LogsView({ character, refreshCharacter }) {
                               onClick={() => setShowAchievementForm(true)}
                               className="text-xs text-orange-400 hover:text-orange-300 cursor-pointer"
                             >
-                              + Add Achievement
+                              + Add Achievement/Task/Etc.
                             </button>
                           )}
                         </div>
@@ -490,27 +539,37 @@ function LogsView({ character, refreshCharacter }) {
                       </div>
                     ) : (
                       <>
-                        <div className="font-semibold text-orange-400">{log.name}</div>
-                        <div className="text-xs text-neutral-400">{log.date}</div>
+                        <div className="font-semibold text-orange-400">
+                          {log.name}
+                        </div>
+                        <div className="text-xs text-neutral-400">
+                          {log.date}
+                        </div>
                         {log.notes && (
                           <p className="text-sm text-neutral-300 mt-1 whitespace-pre-wrap">
                             {log.notes}
                           </p>
                         )}
                         <div className="text-xs mt-1 space-x-3">
-                          <span className="text-orange-300">+{log.missionXP} XP</span>
+                          <span className="text-orange-300">
+                            +{log.missionXP} XP
+                          </span>
                           {log.metadata?.starting_cash != null ? (
                             <span className="text-green-400">
                               Starting Cash: ${log.metadata.starting_cash}
                             </span>
                           ) : (
-                            <span className="text-green-400">+${log.payout}</span>
+                            <span className="text-green-400">
+                              +${log.payout}
+                            </span>
                           )}
                         </div>
 
                         {achievements.length > 0 && (
                           <div className="text-xs mt-2 pt-2 border-t border-neutral-800 space-y-1">
-                            <div className="text-neutral-500">Achievements/Tasks/Etc.:</div>
+                            <div className="text-neutral-500">
+                              Achievements/Tasks/Etc.:
+                            </div>
                             {achievements.map((achievement, achIndex) => (
                               <div
                                 key={achievement.id ?? achIndex}
@@ -525,10 +584,20 @@ function LogsView({ character, refreshCharacter }) {
                                   </div>
                                 )}
                                 <div className="space-x-3 mt-0.5">
-                                  <span className={signedClass(achievement.xpPayout, "text-orange-300")}>
+                                  <span
+                                    className={signedClass(
+                                      achievement.xpPayout,
+                                      "text-orange-300",
+                                    )}
+                                  >
                                     {formatSigned(achievement.xpPayout)} XP
                                   </span>
-                                  <span className={signedClass(achievement.cashPayout, "text-green-400")}>
+                                  <span
+                                    className={signedClass(
+                                      achievement.cashPayout,
+                                      "text-green-400",
+                                    )}
+                                  >
                                     {formatSignedCash(achievement.cashPayout)}
                                   </span>
                                 </div>
@@ -552,16 +621,21 @@ function LogsView({ character, refreshCharacter }) {
 
                         {hasReceipt && (
                           <div className="text-xs mt-2 pt-2 border-t border-neutral-800 text-neutral-400 space-y-0.5">
-                            <div className="text-neutral-500">Bought since:</div>
+                            <div className="text-neutral-500">
+                              Bought since:
+                            </div>
                             {receipt.skills.length > 0 && (
                               <div>Skills: {receipt.skills.join(", ")}</div>
                             )}
                             {receipt.attributes.length > 0 && (
-                              <div>Attributes: {receipt.attributes.join(", ")}</div>
+                              <div>
+                                Attributes: {receipt.attributes.join(", ")}
+                              </div>
                             )}
                             {receipt.specializations.length > 0 && (
                               <div>
-                                Specializations: {receipt.specializations.join(", ")}
+                                Specializations:{" "}
+                                {receipt.specializations.join(", ")}
                               </div>
                             )}
                             {ediceXPSpent !== 0 && (
@@ -572,7 +646,9 @@ function LogsView({ character, refreshCharacter }) {
                             </div>
                             {receipt.purchases.length > 0 && (
                               <div>
-                                <div className="text-neutral-500">Purchased:</div>
+                                <div className="text-neutral-500">
+                                  Purchased:
+                                </div>
                                 {receipt.purchases.map((purchase, pIndex) => (
                                   <div key={pIndex} className="pl-2">
                                     {purchase.label} — ${purchase.cost}
@@ -584,7 +660,8 @@ function LogsView({ character, refreshCharacter }) {
                         )}
                         {receipt.emergencyDiceBefore !== undefined && (
                           <div className="text-xs text-neutral-500 mt-1">
-                            E-Dice at mission start: {receipt.emergencyDiceBefore}
+                            E-Dice at mission start:{" "}
+                            {receipt.emergencyDiceBefore}
                           </div>
                         )}
                       </>

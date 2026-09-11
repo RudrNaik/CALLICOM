@@ -558,7 +558,7 @@
         "title": "UBGL/Grenade Launcher",
         "parentId": "Rifleman",
         "class": "Rifleman",
-        "cost": 0,
+        "cost": 6500,
         "description": "THOONK’",
         "rulesText": "[M-Wep]\nRange modifier: -3C | +1M | -1L | -2ELR\nAmmo: 4\nCapacity: 1",
         "maxGrenades": 4,
@@ -605,7 +605,7 @@
         "parentId": "Rifleman",
         "SubMunition": true,
         "class": "Rifleman",
-        "cost": 6500,
+        "cost": 0,
         "description": "Frag grenade in a 40mm can. Detonates on impact.",
         "rulesText": "[Explosive]\n7 DMG\nM-Weapons attacker check, Acrobatics defender check. 1 hex AOE."
     },
