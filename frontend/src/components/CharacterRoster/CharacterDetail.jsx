@@ -751,6 +751,7 @@ function CharacterDetail({ character, onUpdate, user }) {
           </div>
 
           <EquipmentSelection
+            key={characterKey}
             ref={equipmentRef}
             character={character}
             isEditing={isEditingEquipment}

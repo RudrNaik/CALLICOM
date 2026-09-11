@@ -50,6 +50,9 @@ function Calculator({
 
   const [navigateRoll, setNavigateRoll] = useState(null);
 
+  const characterKey =
+    characterData?._id || characterData?.uniqueId || characterData?.callsign;
+
   useEffect(() => {
     if (characterData) {
       setCharacter(characterData);
@@ -58,6 +61,24 @@ function Calculator({
       setSkills(characterData?.skills);
     }
   }, [characterData]);
+
+  // Reset the roll-builder selections (not just the synced character/gear
+  // above) when switching to a different character, so picks from the
+  // previous character's weapons/skills don't linger in the UI.
+  useEffect(() => {
+    setRollMode("weapon");
+    setSelectedWeapon(null);
+    setSelectedSkill(null);
+    setSelectedRange("M");
+    setModifiers([]);
+    setNewModValue(0);
+    setNewModLabel("");
+    setDiceModifiers([]);
+    setNewDiceModValue(0);
+    setNewDiceModLabel("");
+    setPingEnabled(false);
+    setNavigateRoll(null);
+  }, [characterKey]);
 
   const getSkillLevel = () => {
     if (rollMode === "skill") return skills?.[selectedSkill] ?? 0;

@@ -32,8 +32,6 @@ export default function GadgetAmmo({
   characterId, // distinguishes which character this ammo belongs to for reload effects
   ownedOptionIds = [], // ids purchased in Logistics (see equipmentEngine.getPurchasedGadgetIds) — narrows option pickers below to what's actually been bought
 }) {
-  if (!config) return null;
-
   const options = config?.options || [];
   const optionIds = useMemo(() => new Set(options.map((o) => o.id)), [options]);
 
@@ -66,8 +64,6 @@ export default function GadgetAmmo({
     [config, gadgetId, isExpendable, isMixed],
   );
 
-  if (!shouldRender) return null;
-
   const currentUses = Number.isFinite(gadgetAmmo?.[EX_KEY]) ? gadgetAmmo[EX_KEY] : null;
 
   const { title, max } = useMemo(
@@ -85,22 +81,25 @@ export default function GadgetAmmo({
    * selection (or what counts as its pool) changes.
    */
   useEffect(() => {
+    if (!config) return;
     const initial = getInitialGadgetAmmo(gadgetId, charClass, config, gadgetAmmo);
     setGadgetAmmo(initial);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gadgetId, characterId, isMixed, isExpendable, effectiveMax]);
+  }, [gadgetId, characterId, isMixed, isExpendable, effectiveMax, config]);
 
   /**
    * get rid of unknown keys when the weapon selection changes.
    */
   useEffect(() => {
-    if (!isMixed) return;
+    if (!config || !isMixed) return;
     const pruned = sanitize(gadgetAmmo || {});
     if (JSON.stringify(pruned) !== JSON.stringify(gadgetAmmo || {})) {
       setGadgetAmmo(pruned);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [optionIds, isMixed, effectiveMax]);
+  }, [optionIds, isMixed, effectiveMax, config]);
+
+  if (!config || !shouldRender) return null;
 
   const setMixedValue = (id, nextVal) => {
     const next = updateMixedGadgetAmmo(gadgetAmmo, id, nextVal, max);
