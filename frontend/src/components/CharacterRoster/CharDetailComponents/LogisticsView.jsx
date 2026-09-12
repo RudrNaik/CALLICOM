@@ -58,7 +58,9 @@ function SelectionPreview({ title, cost, description, effect, rulesText }) {
         <span className="text-green-400">${cost}</span>
       </div>
       {description && <div className="whitespace-pre-line">{description}</div>}
-      {effect && <div className="whitespace-pre-line text-orange-300">{effect}</div>}
+      {effect && (
+        <div className="whitespace-pre-line text-orange-300">{effect}</div>
+      )}
       {rulesText && <div className="whitespace-pre-line">{rulesText}</div>}
     </div>
   );
@@ -139,11 +141,16 @@ function EquipmentPurchaseCard({
         : [];
       return { gadget, gadgetOwned, submunitions };
     })
-    .filter(({ gadgetOwned, submunitions }) => !gadgetOwned || submunitions.length > 0);
-  const gadgetOptions = gadgetGroups.flatMap(({ gadget, gadgetOwned, submunitions }) => [
-    ...(gadgetOwned ? [] : [gadget]),
-    ...submunitions,
-  ]);
+    .filter(
+      ({ gadgetOwned, submunitions }) =>
+        !gadgetOwned || submunitions.length > 0,
+    );
+  const gadgetOptions = gadgetGroups.flatMap(
+    ({ gadget, gadgetOwned, submunitions }) => [
+      ...(gadgetOwned ? [] : [gadget]),
+      ...submunitions,
+    ],
+  );
   const selectedGadget = gadgetOptions.find((g) => g.id === gadgetId);
 
   // Grenade selection
@@ -189,7 +196,11 @@ function EquipmentPurchaseCard({
             label: selectedGadget?.title,
             cost,
           })
-        : createGadgetPurchase({ gadgetId, label: selectedGadget?.title, cost });
+        : createGadgetPurchase({
+            gadgetId,
+            label: selectedGadget?.title,
+            cost,
+          });
     } else if (isWeapon) {
       purchase = createWeaponPurchase({
         slot: type,
@@ -323,33 +334,31 @@ function EquipmentPurchaseCard({
               Purchase
             </button>
           </div>
-
-          <div className="space-y-2 pt-2 border-t border-neutral-800">
-            <PurchasedList
-              title="Purchased Gadgets"
-              items={[...gadgetEntries, ...submunitionEntries]}
-              onSell={onSell}
-            />
-            <PurchasedList
-              title="Purchased Weapons"
-              items={weaponEntries}
-              onSell={onSell}
-            />
-            <PurchasedList
-              title="Purchased Grenade Types"
-              items={grenadeEntries}
-              onSell={onSell}
+          <div>
+            <SelectionPreview
+              title={preview?.title}
+              cost={cost}
+              description={preview?.description}
+              effect={preview?.effect}
+              rulesText={preview?.rulesText}
             />
           </div>
         </div>
-
-        <div>
-          <SelectionPreview
-            title={preview?.title}
-            cost={cost}
-            description={preview?.description}
-            effect={preview?.effect}
-            rulesText={preview?.rulesText}
+        <div className="space-y-2 pt-2 border-t border-neutral-800">
+          <PurchasedList
+            title="Purchased Gadgets"
+            items={[...gadgetEntries, ...submunitionEntries]}
+            onSell={onSell}
+          />
+          <PurchasedList
+            title="Purchased Weapons"
+            items={weaponEntries}
+            onSell={onSell}
+          />
+          <PurchasedList
+            title="Purchased Grenade Types"
+            items={grenadeEntries}
+            onSell={onSell}
           />
         </div>
       </div>
@@ -399,7 +408,13 @@ function GearSlotPurchaseCard({
       label: selected ? `${selected.gearsetName} — ${selected.name}` : "",
       cost,
     });
-    const result = applyPurchase(character, logs, purchase, equipmentData, gearSetsData);
+    const result = applyPurchase(
+      character,
+      logs,
+      purchase,
+      equipmentData,
+      gearSetsData,
+    );
     if (!result) {
       alert("Not enough money for that purchase.");
       return;
@@ -449,20 +464,21 @@ function GearSlotPurchaseCard({
             </button>
           </div>
 
-          <div className="pt-2 border-t border-neutral-800">
-            <PurchasedList
-              title="Purchased Gear"
-              items={gearSlotEntries}
-              onSell={onSell}
+          <div>
+            <SelectionPreview
+              title={
+                selected ? `${selected.gearsetName} — ${selected.name}` : null
+              }
+              cost={cost}
+              effect={selected?.effect}
             />
           </div>
         </div>
-
-        <div>
-          <SelectionPreview
-            title={selected ? `${selected.gearsetName} — ${selected.name}` : null}
-            cost={cost}
-            effect={selected?.effect}
+        <div className="pt-2 border-t border-neutral-800">
+          <PurchasedList
+            title="Purchased Gear"
+            items={gearSlotEntries}
+            onSell={onSell}
           />
         </div>
       </div>
@@ -480,10 +496,12 @@ function GearSlotPurchaseCard({
  */
 function PurchasedList({ title, items, onSell }) {
   if (items.length === 0) return null;
-  const hasGroups = items.some((item) => typeof item !== "string" && item.group);
+  const hasGroups = items.some(
+    (item) => typeof item !== "string" && item.group,
+  );
 
   return (
-    <div className="h-full bg-neutral-900 border border-neutral-700 rounded p-3">
+    <div className="bg-neutral-900 border border-neutral-700 rounded p-3">
       <div className="text-xs text-orange-400 mb-1">{title}</div>
       <ul className="text-xs text-neutral-300 space-y-1">
         {items.map((item, index) => {
@@ -636,7 +654,9 @@ function LogisticsView({ character, refreshCharacter }) {
       const piece = getGearPieceByIdAnyClass(gearSetsData, purchase.value);
       const slotLabel = GEAR_SLOT_LABELS[purchase.slot] || purchase.slot;
       return {
-        label: piece ? `${slotLabel}: ${piece.name}` : `${slotLabel}: ${purchase.label}`,
+        label: piece
+          ? `${slotLabel}: ${piece.name}`
+          : `${slotLabel}: ${purchase.label}`,
         group: piece?.gearsetName || "Other",
         missionIndex,
         purchaseIndex,
