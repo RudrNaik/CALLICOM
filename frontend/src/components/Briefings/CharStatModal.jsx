@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import equipmentData from "../../data/Equipment.json";
-import SkillsView from "../CharacterRoster/CharDetailComponents/SkillsView";
+import SkillsView from "../CharacterRoster/CharDetailComponents/Skills/SkillsView";
 import skillGroups from "../../data/skills.json";
-import SpecView from "../CharacterRoster/CharDetailComponents/SpecView";
+import SpecView from "../CharacterRoster/CharDetailComponents/Skills/SpecView";
 
 function getGadgetTitleById(id) {
   const match = equipmentData.find((item) => item.id === id);

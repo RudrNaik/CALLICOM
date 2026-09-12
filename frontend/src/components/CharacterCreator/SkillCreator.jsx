@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import skillGroups from "../../data/skills.json";
 import classStartingSkills from "../../data/classSkills.json";
-import SpecModal from "../CharacterRoster/CharDetailComponents/SpecModal";
+import SpecModal from "../CharacterRoster/CharDetailComponents/Skills/SpecModal";
 import {
   initializeCharacterSkills,
   upgradeSkill,

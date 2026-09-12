@@ -4,7 +4,7 @@ import {
   getOwnedGearPiecesBySlot,
   getActiveGearsetPatch,
   GEAR_SLOT_KEYS,
-} from "../../../engine/equipmentEngine";
+} from "../../../../engine/equipmentEngine";
 
 const GEAR_SLOT_LABELS = {
   headgear: "Headgear",

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import "../../../assets/css/ammoBlur.css";
+import "../../../../assets/css/ammoBlur.css";
 import {
   applyModifiers,
   pseudoMagSizes,
@@ -7,7 +7,7 @@ import {
   computeFireResult,
   resupplyWeaponAmmo,
   computeReloadResult,
-} from "../../../engine/weaponEngine";
+} from "../../../../engine/weaponEngine";
 
 const WeaponSlot = ({
   slot,

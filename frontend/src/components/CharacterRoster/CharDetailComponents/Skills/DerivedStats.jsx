@@ -1,4 +1,4 @@
-import { calculateDerivedStats } from "../../../engine/characterEngine";
+import { calculateDerivedStats } from "../../../../engine/characterEngine";
 
 function DerivedStats({
   character,

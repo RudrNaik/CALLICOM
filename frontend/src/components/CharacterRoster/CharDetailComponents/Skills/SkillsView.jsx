@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import skilldesc from "../../../data/skillsDescriptions.json";
+import skilldesc from "../../../../data/skillsDescriptions.json";
 
 function SkillsView({
   skillGroups,

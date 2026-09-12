@@ -1,4 +1,4 @@
-import { getArmorClassDescription } from "../../../engine/equipmentEngine";
+import { getArmorClassDescription } from "../../../../engine/equipmentEngine";
 
 /**
  * Renders the armor-class flavor text; only shown for AC0/1/2/4+ to match

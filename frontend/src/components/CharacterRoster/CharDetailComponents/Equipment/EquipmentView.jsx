@@ -5,9 +5,9 @@ import {
   useState,
   useMemo,
 } from "react";
-import equipmentData from "../../../data/Equipment.json";
-import secondaryGadgets from "../../../data/classSkills.json";
-import gearSetsData from "../../../data/geasrSets.json";
+import equipmentData from "../../../../data/Equipment.json";
+import secondaryGadgets from "../../../../data/classSkills.json";
+import gearSetsData from "../../../../data/geasrSets.json";
 import WeaponSlot from "./WeaponCards";
 import GrenadesPanel from "./GrenadesPanel";
 import ArmorMedicalPanel from "./ArmorMedicalPanel";
@@ -23,14 +23,14 @@ import {
   getArmorClassCap,
   getSecondaryGadgetForClass,
   getGearsetsForClass,
-} from "../../../engine/equipmentEngine";
+} from "../../../../engine/equipmentEngine";
 import {
   getWeaponCategoriesLookup,
   getOwnedWeaponCategories,
   getExcludedPrimaryCategories,
   getExcludedSecondaryCategories,
-} from "../../../engine/weaponEngine";
-import { normalizeEquipmentForView } from "../../../engine/characterDataHandler";
+} from "../../../../engine/weaponEngine";
+import { normalizeEquipmentForView } from "../../../../engine/characterDataHandler";
 
 const DEFAULT_GRENADE_COUNTS = [2, 2];
 const DEFAULT_MED_COUNTS = [1, 2]; // [AFAK, IFAK]

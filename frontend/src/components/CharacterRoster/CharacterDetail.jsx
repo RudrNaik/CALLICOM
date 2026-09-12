@@ -21,13 +21,13 @@ import {
   diffCounts,
   recordSpendOnLatestMission,
 } from "../../engine/logsEngine";
-import Edice from "./CharDetailComponents/EDice";
-import SpecModal from "./CharDetailComponents/SpecModal";
-import SpecView from "./CharDetailComponents/SpecView";
-import SkillsView from "./CharDetailComponents/SkillsView";
-import AttributeView from "./CharDetailComponents/AttributeView";
-import DerivedStats from "./CharDetailComponents/DerivedStats";
-import EquipmentSelection from "./CharDetailComponents/EquipmentView";
+import Edice from "./CharDetailComponents/Skills/EDice";
+import SpecModal from "./CharDetailComponents/Skills/SpecModal";
+import SpecView from "./CharDetailComponents/Skills/SpecView";
+import SkillsView from "./CharDetailComponents/Skills/SkillsView";
+import AttributeView from "./CharDetailComponents/Skills/AttributeView";
+import DerivedStats from "./CharDetailComponents/Skills/DerivedStats";
+import EquipmentSelection from "./CharDetailComponents/Equipment/EquipmentView";
 import XpControls from "./CharDetailComponents/XpHandler";
 import MultiClassModal from "./CharDetailComponents/MultiClassModal";
 import Collapsible from "../Collapsible";

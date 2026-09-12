@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import skillGroups from "../../data/skills.json";
-import SpecView from "../CharacterRoster/CharDetailComponents/SpecView";
+import SpecView from "../CharacterRoster/CharDetailComponents/Skills/SpecView";
 
 const FinalReview = ({ formData, onBack, onSubmit }) => {
   const {

@@ -18,7 +18,7 @@ import {
   useExpendableGadget,
   resupplyExpendableGadget,
   hasExplicitGadgetAmmo,
-} from "../../../engine/equipmentEngine";
+} from "../../../../engine/equipmentEngine";
 
 export default function GadgetAmmo({
   isEditing,

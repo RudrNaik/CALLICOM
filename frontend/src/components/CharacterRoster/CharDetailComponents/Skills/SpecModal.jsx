@@ -1,5 +1,5 @@
 import {useState} from "react";
-import { SPEC_EXP_COST } from "../../../engine/characterEngine";
+import { SPEC_EXP_COST } from "../../../../engine/characterEngine";
 
 function SpecModal({
   editedSkills,
