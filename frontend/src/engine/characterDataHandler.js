@@ -1,3 +1,5 @@
+import { getJsonMemory, setJsonMemory } from "./memoryEngine";
+
 const isRecord = (value) => {
   return !!value && typeof value === "object" && !Array.isArray(value);
 };
@@ -54,10 +56,11 @@ export const normalizeCharacterAttributes = (value) => {
 
 /**
  * Normalizes a character's identity fields to the current shape:
- * `uniqueId` lives on the character itself, `userId`/`starting_cash` live in
- * `metadata`. Also migrates older shapes seen in already-stored data: a
- * fully flat legacy shape (userId/uniqueId/starting_cash all top-level) and
- * an intermediate shape where uniqueId was nested inside metadata too.
+ * `uniqueId` and `userId` live on the character itself, `starting_cash`
+ * lives in `metadata` — this also matches the backend's schema, which keys
+ * character-create requests off a top-level `userId`. Also migrates older
+ * shapes seen in already-stored data: an intermediate shape where
+ * `userId`/`uniqueId` were nested inside `metadata`.
  */
 export const normalizeCharacterMetadata = (value) => {
   if (!isRecord(value)) return value;
@@ -77,9 +80,9 @@ export const normalizeCharacterMetadata = (value) => {
   return {
     ...rest,
     uniqueId: uniqueId ?? nestedUniqueId ?? "",
+    userId: userId ?? nestedUserId ?? "",
     metadata: {
       ...restMetadata,
-      userId: nestedUserId ?? userId ?? "",
       starting_cash: unwrapNumberLike(nestedStartingCash ?? starting_cash) ?? 0,
     },
   };
@@ -216,6 +219,41 @@ export const isEquipment = (value) => {
   );
 };
 
+export const rosterCacheKey = (userId) => `roster_characters_${userId}`;
+
+/**
+ * Reads the cached character roster for a user from localStorage,
+ * normalizing every entry to the current shape.
+ * @param {string} userId
+ * @returns {object[]} the cached characters, or [] if none/unreadable.
+ */
+export const readCharacterRosterCache = (userId) => {
+  try {
+    const cached = getJsonMemory(rosterCacheKey(userId));
+    const value = cached?.data ?? cached ?? null;
+    return Array.isArray(value) ? value.map(normalizeCharacterData) : [];
+  } catch {
+    return [];
+  }
+};
+
+/**
+ * Writes a user's character roster to localStorage, normalizing every
+ * entry first so downstream reads always see the current shape.
+ * @param {string} userId
+ * @param {object[]} characters
+ */
+export const writeCharacterRosterCache = (userId, characters) => {
+  try {
+    setJsonMemory(rosterCacheKey(userId), {
+      data: characters.map(normalizeCharacterData),
+      ts: Date.now(),
+    });
+  } catch {
+    // localStorage full or unavailable, silently skip
+  }
+};
+
 export const isCharacter = (value) => {
   if (!isRecord(value)) return false;
 
@@ -238,7 +276,7 @@ export const isCharacter = (value) => {
     value.deepWounds === undefined || isNumberLike(value.deepWounds);
 
   return (
-    typeof value.metadata?.userId === "string" &&
+    typeof value.userId === "string" &&
     typeof value.name === "string" &&
     typeof value.callsign === "string" &&
     typeof value.background === "string" &&

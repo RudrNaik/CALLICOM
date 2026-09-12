@@ -7,7 +7,6 @@ export interface Attributes {
 
 export interface MetaData {
   starting_cash: number,
-  userId: string,
 }
 
 /**
@@ -80,6 +79,7 @@ export interface Specialization {
 export interface Character {
   _id?: string;
   uniqueId: string;
+  userId: string;
   metadata: MetaData
   name: string;
   callsign: string;

@@ -7,6 +7,8 @@ import SkillCreator from "./components/CharacterCreator/SkillCreator";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "./AuthContext";
+import { createRemoteCharacter } from "./engine/syncEngine";
+import { getToken } from "./engine/memoryEngine";
 
 const createCharacterId = () => {
   if (typeof crypto !== "undefined" && crypto.randomUUID) {
@@ -32,8 +34,8 @@ const createBiographyDraft = () => ({
 const createCharacterDraft = (userName) => ({
   _id: undefined,
   uniqueId: createCharacterId(),
+  userId: userName,
   metadata: {
-    userId: userName,
     starting_cash: 0,
   },
   name: "",
@@ -85,12 +87,13 @@ const CharacterCreator = () => {
       ...createCharacterDraft(user?.userName || ""),
       ...formData,
       uniqueId: formData.uniqueId || createCharacterId(),
+      userId: user?.userName || formData.userId || "",
       metadata: {
-        userId: user?.userName || formData.metadata?.userId || "",
         starting_cash: Number(formData.metadata?.starting_cash || 0),
       },
       XP: Number(formData.XP || 0),
       createdAt: formData.createdAt || new Date().toISOString(),
+      updatedAt: Date.now(),
       equipment: {
         ...createCharacterDraft(user?.userName || "").equipment,
         ...formData.equipment,
@@ -114,7 +117,7 @@ const CharacterCreator = () => {
       emergencyDiceXPSpent: Number(formData.emergencyDiceXPSpent || 0),
     };
 
-    const storageKey = `roster_characters_${fullCharacter.metadata.userId}`;
+    const storageKey = `roster_characters_${fullCharacter.userId}`;
     const cachedCharacters = JSON.parse(
       localStorage.getItem(storageKey) || "[]",
     );
@@ -124,6 +127,16 @@ const CharacterCreator = () => {
         ? cachedCharacters.data
         : [];
     localStorage.setItem(storageKey, JSON.stringify([...storedCharacters, fullCharacter]));
+
+    const token = getToken();
+    if (token) {
+      createRemoteCharacter(fullCharacter, token).catch((err) => {
+        // Best-effort; a character missing on the backend is picked up as
+        // local-only and pushed silently the next time the roster loads.
+        console.error("Failed to push new character to backend:", err);
+      });
+    }
+
     navigate("/CALLICOM/CharacterManager");
   };
 

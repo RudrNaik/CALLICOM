@@ -1,16 +1,21 @@
 import { useEffect, useState } from "react";
 import CharacterCard from "./CharacterCard";
 import CharacterDetail from "./CharacterDetail";
+import SyncConflictPanel from "./SyncConflictPanel";
 import {
   isCharacter,
   normalizeCharacterData,
+  readCharacterRosterCache,
+  writeCharacterRosterCache,
 } from "../../engine/characterDataHandler";
 import {
-  setJsonMemory,
   getJsonMemory,
+  getToken,
+  addDeletedCharacterKey,
 } from "../../engine/memoryEngine";
+import { deleteRemoteCharacter, updateRemoteCharacter, characterKey } from "../../engine/syncEngine";
+import { useCharacterRosterSync } from "../../hooks/useBackgroundCharacterSync";
 
-const CACHE_KEY_CHARS = (userId) => `roster_characters_${userId}`;
 const CACHE_KEY_EQUIP = `roster_equipment`;
 
 /**
@@ -29,19 +34,6 @@ function readCache(key) {
 }
 
 /**
- * Writes data and the timestamp of said data into the cache
- * @param {*} key the key of the character
- * @param {*} data the data of said character
- */
-function writeCache(key, data) {
-  try {
-    setJsonMemory(key, { data: normalizeCharacterData(data), ts: Date.now() });
-  } catch {
-    // localStorage full or unavailable, silently skip
-  }
-}
-
-/**
  * The main component that's exported.
  * @param userId the username of the current user.
  */
@@ -51,18 +43,26 @@ function CharacterRoster({ userId }) {
   const [selectedCharacter, setSelectedCharacter] = useState();
   const [isLoading, setIsLoading] = useState(false);
 
+  const {
+    conflicts,
+    deletionConflicts,
+    resolveContentConflict,
+    resolveDeletionConflict,
+  } = useCharacterRosterSync(userId, characters, setCharacters);
+
   const updateCharacter = (updates) => {
     if (!updates) return;
 
+    let updatedChar = null;
     const nextCharacters = characters.map((char) => {
       const charKey = char._id || char.uniqueId || char.callsign;
       const selectedKey = selectedCharacter?._id || selectedCharacter?.uniqueId || selectedCharacter?.callsign;
-      return charKey === selectedKey
-        ? normalizeCharacterData({ ...char, ...updates })
-        : char;
+      if (charKey !== selectedKey) return char;
+      updatedChar = normalizeCharacterData({ ...char, ...updates, updatedAt: Date.now() });
+      return updatedChar;
     });
 
-    writeCache(CACHE_KEY_CHARS(userId), nextCharacters);
+    writeCharacterRosterCache(userId, nextCharacters);
     setCharacters(nextCharacters);
     setSelectedCharacter((current) => {
       if (!current) return current;
@@ -71,36 +71,62 @@ function CharacterRoster({ userId }) {
           (current._id || current.uniqueId || current.callsign),
       ) || current;
     });
+
+    if (updatedChar?.callsign) {
+      const token = getToken();
+      if (token) {
+        updateRemoteCharacter(userId, updatedChar.callsign, updatedChar, token).catch((err) => {
+          // Best-effort; any drift this leaves behind surfaces as a conflict next time the roster loads.
+          console.error("Failed to push character update to backend:", err);
+        });
+      }
+    }
   };
 
   /**
    * UseEffect to fetch all of the data needed. Also gathers cached data from localstorage
    */
   useEffect(() => {
-    const cachedChars = readCache(CACHE_KEY_CHARS(userId));
+    const cachedChars = readCharacterRosterCache(userId);
     const cachedEquip = readCache(CACHE_KEY_EQUIP);
-    setCharacters(Array.isArray(cachedChars) ? cachedChars.filter(isCharacter) : []);
+    setCharacters(cachedChars.filter(isCharacter));
     setEquipment(Array.isArray(cachedEquip) ? cachedEquip : []);
     setIsLoading(false);
   }, [userId]);
 
   /**
-   * Handles deleting a character via their characterID.
+   * Handles deleting a character via their characterID. Removes it from
+   * localStorage immediately, then tries a best-effort delete on the
+   * backend; if that fails (offline, backend down), the deletion is
+   * tombstoned so background sync can flag it if the character is still
+   * present there instead of silently resurrecting it.
    * @param {*} id
-   * @returns nothing if the deletion was a success. Or throws an alert if there was an issue doing so.
    */
   const handleDeleteCharacter = (id) => {
-    const nextCharacters = characters.filter((char) => {
-      return ![char._id, char.uniqueId, char.callsign].includes(id);
-    });
+    const target = characters.find((char) =>
+      [char._id, char.uniqueId, char.callsign].includes(id),
+    );
+    const nextCharacters = characters.filter((char) => char !== target);
 
-    writeCache(CACHE_KEY_CHARS(userId), nextCharacters);
+    writeCharacterRosterCache(userId, nextCharacters);
     setCharacters(nextCharacters);
     setSelectedCharacter((current) => {
       if (!current) return current;
       const currentId = current._id || current.uniqueId || current.callsign;
       return currentId === id ? undefined : current;
     });
+
+    if (target?.callsign) {
+      const key = characterKey(userId, target);
+      const token = getToken();
+      if (token) {
+        deleteRemoteCharacter(userId, target.callsign, token).catch(() => {
+          addDeletedCharacterKey(userId, key);
+        });
+      } else {
+        addDeletedCharacterKey(userId, key);
+      }
+    }
   };
 
   return (
@@ -206,6 +232,13 @@ function CharacterRoster({ userId }) {
           </div>
         )}
       </div>
+
+      <SyncConflictPanel
+        conflicts={conflicts}
+        deletionConflicts={deletionConflicts}
+        onResolveContent={resolveContentConflict}
+        onResolveDeletion={resolveDeletionConflict}
+      />
     </div>
   );
 }

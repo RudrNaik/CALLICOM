@@ -269,7 +269,7 @@ function LogsView({ character, refreshCharacter }) {
   return (
     <div className="text-white">
       <div className="flex flex-wrap gap-4 mb-4">
-        <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-4 border-orange-500 px-4 py-2 rounded-sm">
+        <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-4 border-orange-500 px-4 py-2 rounded-xs">
           <span className="block text-xs text-neutral-400">
             Total XP Earned
           </span>
@@ -277,13 +277,13 @@ function LogsView({ character, refreshCharacter }) {
             {totalMissionXP}
           </span>
         </div>
-        <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-4 border-orange-500 px-4 py-2 rounded-sm">
+        <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-4 border-orange-500 px-4 py-2 rounded-xs">
           <span className="block text-xs text-neutral-400">Total Payout</span>
           <span className="text-lg font-bold text-orange-400">
             ${totalPayout}
           </span>
         </div>
-        <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-4 border-orange-500 px-4 py-2 rounded-sm">
+        <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-4 border-orange-500 px-4 py-2 rounded-xs">
           <span className="block text-xs text-neutral-400">Current Cash</span>
           <span className="text-lg font-bold text-green-400">${money}</span>
         </div>

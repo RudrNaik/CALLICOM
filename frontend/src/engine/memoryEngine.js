@@ -152,3 +152,28 @@ export const clearRosterCache = (userId) => {
   clearMemory("roster_equipment");
 };
 
+/**
+ * Tracks characters deleted locally so background sync can tell "deleted
+ * here, still on the backend" apart from "new on the backend, never seen
+ * here" instead of silently resurrecting a character the user removed.
+ */
+export const getDeletedCharacterKeys = (userId) => {
+  const list = getJsonMemory(`deleted_characters_${userId}`);
+  return Array.isArray(list) ? list : [];
+};
+
+export const addDeletedCharacterKey = (userId, key) => {
+  const existing = getDeletedCharacterKeys(userId);
+  if (!existing.includes(key)) {
+    setJsonMemory(`deleted_characters_${userId}`, [...existing, key]);
+  }
+};
+
+export const removeDeletedCharacterKey = (userId, key) => {
+  const existing = getDeletedCharacterKeys(userId);
+  setJsonMemory(
+    `deleted_characters_${userId}`,
+    existing.filter((existingKey) => existingKey !== key),
+  );
+};
+
