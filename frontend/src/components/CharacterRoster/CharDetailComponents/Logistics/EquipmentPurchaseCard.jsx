@@ -13,7 +13,10 @@ import {
   applyPurchase,
 } from "../../../../engine/logisticsEngine";
 import { getFamilyOptions } from "../../../../engine/weaponEngine";
-import { getPurchasedGadgetIds } from "../../../../engine/equipmentEngine";
+import {
+  getPurchasedGadgetIds,
+  getPurchasedGrenadeIds,
+} from "../../../../engine/equipmentEngine";
 import { getMoneyTotal } from "../../../../engine/logsEngine";
 import PurchasedList from "./PurchasedList";
 
@@ -147,8 +150,12 @@ function EquipmentPurchaseCard({
   );
   const selectedGadget = gadgetOptions.find((g) => g.id === gadgetId);
 
-  // Grenade selection
-  const grenadeOptions = getGrenadeOptions(equipmentData);
+  // Grenade selection — each type can only be bought once, so drop
+  // already-purchased types from the picker.
+  const ownedGrenadeIds = getPurchasedGrenadeIds(logs);
+  const grenadeOptions = getGrenadeOptions(equipmentData).filter(
+    (g) => !ownedGrenadeIds.includes(g.id),
+  );
   const selectedGrenade = grenadeOptions.find((g) => g.id === grenadeId);
 
   let cost = 0;
