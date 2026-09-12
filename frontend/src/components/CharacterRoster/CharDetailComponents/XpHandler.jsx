@@ -23,7 +23,7 @@ function XpControls({ xpRemaining, setIsEditing, patchXP }) {
         Spend XP | {xpRemaining}
       </button>
 
-      {!showXpInput && (
+      {/* {!showXpInput && (
         <button
           onClick={() => setShowXpInput(true)}
           className="bg-orange-600 hover:bg-orange-700 px-2 py-1 rounded text-xs"
@@ -52,7 +52,7 @@ function XpControls({ xpRemaining, setIsEditing, patchXP }) {
             Confirm
           </button>
         </>
-      )}
+      )} */}
     </div>
   );
 }

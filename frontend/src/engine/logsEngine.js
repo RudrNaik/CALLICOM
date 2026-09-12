@@ -49,6 +49,7 @@ function emptyReceipt(character) {
     skills: {},
     attributes: {},
     specializations: [],
+    multiClass: null,
     xpSpent: 0,
     emergencyDiceBefore: character?.emergencyDice ?? 0,
     emergencyDiceXPSpentBefore: character?.emergencyDiceXPSpent ?? 0,
@@ -207,7 +208,13 @@ export function diffCounts(before, after) {
  */
 export function recordSpendOnLatestMission(
   logs,
-  { skillDeltas, attributeDeltas, newSpecializations, xpSpentDelta = 0 } = {},
+  {
+    skillDeltas,
+    attributeDeltas,
+    newSpecializations,
+    multiClass,
+    xpSpentDelta = 0,
+  } = {},
 ) {
   if (!logs || logs.length === 0) return logs;
 
@@ -230,12 +237,21 @@ export function recordSpendOnLatestMission(
     ...(newSpecializations ?? []),
   ];
 
+  const multiClassPurchased = multiClass ?? receipt.multiClass ?? null;
+
   const xpSpent = (receipt.xpSpent ?? 0) + xpSpentDelta;
 
   const nextLogs = [...logs];
   nextLogs[lastIndex] = {
     ...last,
-    receipt: { ...receipt, skills, attributes, specializations, xpSpent },
+    receipt: {
+      ...receipt,
+      skills,
+      attributes,
+      specializations,
+      multiClass: multiClassPurchased,
+      xpSpent,
+    },
   };
   return nextLogs;
 }
@@ -290,6 +306,7 @@ export function describeReceipt(receipt, equipmentData) {
     skills,
     attributes,
     specializations,
+    multiClass: receipt?.multiClass ?? null,
     xpSpent: receipt?.xpSpent ?? 0,
     emergencyDiceBefore: receipt?.emergencyDiceBefore,
     purchases,
@@ -338,7 +355,7 @@ export function applyMissionLogAdd(character, logs, entry) {
  * (an older receipt can't be safely unwound once later missions/spending
  * have layered on top of it), or if doing so would leave the character's
  * money negative.
- * @returns {{logs, skills, attributes, specializations, emergencyDice, emergencyDiceXPSpent, equipment}|null} null if blocked
+ * @returns {{logs, skills, attributes, specializations, multiClass, emergencyDice, emergencyDiceXPSpent, equipment}|null} null if blocked
  */
 export function applyMissionLogRemove(character, logs, index, equipmentData) {
   const entry = logs[index];
@@ -369,11 +386,18 @@ export function applyMissionLogRemove(character, logs, index, equipmentData) {
       ? (character.specializations ?? []).slice(0, -specCount)
       : [...(character.specializations ?? [])];
 
+  // Multiclassing is a one-time purchase, so undoing the mission it was
+  // bought on just clears it back off, same as any other receipt line.
+  const multiClass = receipt.multiClass
+    ? null
+    : character.multiClass ?? null;
+
   return {
     logs: nextLogs,
     skills,
     attributes,
     specializations,
+    multiClass,
     emergencyDice: receipt.emergencyDiceBefore ?? character.emergencyDice ?? 0,
     emergencyDiceXPSpent:
       receipt.emergencyDiceXPSpentBefore ?? character.emergencyDiceXPSpent ?? 0,

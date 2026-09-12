@@ -20,6 +20,7 @@ import {
   getLogTotals,
   diffCounts,
   recordSpendOnLatestMission,
+  ensureStartingLog,
 } from "../../engine/logsEngine";
 import Edice from "./CharDetailComponents/Skills/EDice";
 import SpecModal from "./CharDetailComponents/Skills/SpecModal";
@@ -293,9 +294,15 @@ function CharacterDetail({ character, onUpdate, user }) {
       return;
     }
 
+    const logs = ensureStartingLog(character, character.logs ?? []);
+    const nextLogs = recordSpendOnLatestMission(logs, {
+      multiClass: result.multiClass,
+      xpSpentDelta: MULTICLASS_EXP_COST,
+    });
+
     setMulticlass(result.multiClass);
     setShowMultiClassModal(false);
-    onUpdate({ multiClass: result.multiClass });
+    onUpdate({ multiClass: result.multiClass, logs: nextLogs });
   };
 
   /**

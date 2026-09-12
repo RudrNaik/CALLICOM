@@ -233,7 +233,7 @@ function LogsView({ character, refreshCharacter }) {
     );
     if (!result) {
       alert(
-        "Can't save that — it would take available XP or money below zero.",
+        "Cant save due to money or xp being negative.",
       );
       return;
     }
@@ -411,6 +411,7 @@ function LogsView({ character, refreshCharacter }) {
                 receipt.attributes.length > 0 ||
                 receipt.specializations.length > 0 ||
                 receipt.purchases.length > 0 ||
+                Boolean(receipt.multiClass) ||
                 ediceXPSpent !== 0;
               const earnings = getMissionEarnings(log);
               const hasAchievementBonus =
@@ -637,6 +638,9 @@ function LogsView({ character, refreshCharacter }) {
                                 Specializations:{" "}
                                 {receipt.specializations.join(", ")}
                               </div>
+                            )}
+                            {receipt.multiClass && (
+                              <div>Multiclass: {receipt.multiClass}</div>
                             )}
                             {ediceXPSpent !== 0 && (
                               <div>Emergency Dice: {ediceXPSpent} XP</div>
