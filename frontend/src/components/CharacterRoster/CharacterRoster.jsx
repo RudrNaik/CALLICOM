@@ -104,12 +104,17 @@ function CharacterRoster({ userId }) {
   // away from (or the roster unmounts), so a debounce window doesn't strand
   // the last burst of edits when the user moves on before it fires.
   useEffect(() => {
+    const callsign = selectedCharacter?.callsign;
     return () => {
-      if (selectedCharacter?.callsign) {
-        flushRemoteCharacterUpdate(userId, selectedCharacter.callsign);
+      if (callsign) {
+        flushRemoteCharacterUpdate(userId, callsign);
       }
     };
-  }, [selectedCharacter, userId]);
+    // Keyed on the callsign (not the character object) so this only fires on
+    // an actual switch/unmount — the object is re-created on every edit to
+    // the *same* character, which was flushing (and killing the debounce)
+    // after every single change.
+  }, [selectedCharacter?.callsign, userId]);
 
   // Same idea for closing the tab/navigating away entirely: flush everything
   // still queued instead of letting it wait out the debounce.

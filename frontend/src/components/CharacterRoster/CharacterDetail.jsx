@@ -422,7 +422,7 @@ function CharacterDetail({ character, onUpdate, user }) {
         </span>
         {saveStatus !== "idle" && (
           <span
-            className={`save-throbber transition-all text-sm font-mono uppercase tracking-widest ${
+            className={`save-throbber transition-all text-xs font-mono ${
               saveStatus === "saving"
                 ? "save-throbber--saving text-red-500"
                 : "text-yellow-400"
@@ -433,7 +433,7 @@ function CharacterDetail({ character, onUpdate, user }) {
                 : "Changes pending — will sync shortly"
             }
           >
-            ■ {saveStatus === "saving" ? "SYNCING" : "UNSAVED"}
+            ■ {saveStatus === "saving" ? "[SYNC]" : "[STAGED]"}
           </span>
         )}
       </h1>

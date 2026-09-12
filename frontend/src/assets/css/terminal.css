@@ -58,7 +58,7 @@
 }
 
 .save-throbber.save-throbber--saving {
-  animation-duration: 0.7s;
+  animation-duration: 0.2s;
 }
 
 .scanlines::before {
