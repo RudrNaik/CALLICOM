@@ -43,6 +43,24 @@
   }
 }
 
+@keyframes saveThrobber {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.save-throbber {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  animation: saveThrobber 1.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  letter-spacing: 0.08em;
+  transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+.save-throbber.save-throbber--saving {
+  animation-duration: 0.7s;
+}
+
 .scanlines::before {
   content: "";
   position: absolute;

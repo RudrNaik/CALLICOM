@@ -49,10 +49,125 @@ export const updateRemoteCharacter = async (userId, callsign, character, token) 
       method: "PATCH",
       headers: authHeaders(token),
       body: JSON.stringify(body),
+      // Lets a request started right before tab close / navigation finish
+      // in the background instead of being aborted with the page.
+      keepalive: true,
     },
   );
   if (!res.ok) throw new Error(`Failed to update character (${res.status})`);
   return res.json();
+};
+
+// Per-character (userId+callsign) debounce/coalescing for update pushes.
+// Every local edit funnels into CharacterRoster's updateCharacter, which used
+// to PATCH immediately on each call — rapid actions (spending several XP
+// entries, buying multiple items, adding log lines) fired one overlapping,
+// unordered request per edit. This delays each push briefly and, if further
+// edits land before it fires, coalesces them: only the latest full character
+// state is ever sent, and only one request per character is ever in flight.
+const UPDATE_DEBOUNCE_MS = 8000;
+const updateQueues = new Map();
+
+// Lets UI (a "saving" throbber) observe queue state without polling.
+// Status is "idle" (nothing queued), "pending" (queued, waiting out the
+// debounce) or "saving" (request in flight).
+const statusListeners = new Map();
+
+const getCharacterSaveStatus = (key) => {
+  const entry = updateQueues.get(key);
+  if (!entry) return "idle";
+  return entry.sending ? "saving" : "pending";
+};
+
+const notifyStatus = (key) => {
+  const status = getCharacterSaveStatus(key);
+  for (const listener of statusListeners.get(key) ?? []) listener(status);
+};
+
+export const getRemoteCharacterSaveStatus = (userId, callsign) =>
+  getCharacterSaveStatus(`${userId}::${callsign}`);
+
+export const subscribeToRemoteCharacterSaveStatus = (userId, callsign, listener) => {
+  const key = `${userId}::${callsign}`;
+  if (!statusListeners.has(key)) statusListeners.set(key, new Set());
+  statusListeners.get(key).add(listener);
+  return () => {
+    const listeners = statusListeners.get(key);
+    if (!listeners) return;
+    listeners.delete(listener);
+    if (listeners.size === 0) statusListeners.delete(key);
+  };
+};
+
+const flushCharacterUpdate = (key) => {
+  const entry = updateQueues.get(key);
+  if (!entry || entry.sending) return;
+
+  entry.timeoutId = null;
+  entry.sending = true;
+  notifyStatus(key);
+  const payload = entry.latestPayload;
+
+  updateRemoteCharacter(entry.userId, entry.callsign, payload, entry.token)
+    .catch((err) => {
+      console.error("Failed to push character update to backend:", err);
+    })
+    .finally(() => {
+      entry.sending = false;
+      if (entry.latestPayload !== payload) {
+        // A newer edit landed while this request was in flight; send it
+        // right away rather than waiting out another debounce window.
+        flushCharacterUpdate(key);
+      } else {
+        updateQueues.delete(key);
+        notifyStatus(key);
+      }
+    });
+};
+
+export const queueRemoteCharacterUpdate = (userId, callsign, character, token) => {
+  const key = `${userId}::${callsign}`;
+  let entry = updateQueues.get(key);
+  if (!entry) {
+    entry = { timeoutId: null, sending: false, latestPayload: null };
+    updateQueues.set(key, entry);
+  }
+
+  entry.userId = userId;
+  entry.callsign = callsign;
+  entry.token = token;
+  entry.latestPayload = character;
+  if (entry.timeoutId) clearTimeout(entry.timeoutId);
+  entry.timeoutId = setTimeout(() => flushCharacterUpdate(key), UPDATE_DEBOUNCE_MS);
+  notifyStatus(key);
+};
+
+/**
+ * Sends a character's queued update immediately instead of waiting out the
+ * debounce — used when the user switches away from a character or the page
+ * is about to unload, so the last burst of edits isn't stranded. No-op if
+ * nothing is queued for that character.
+ */
+export const flushRemoteCharacterUpdate = (userId, callsign) => {
+  const key = `${userId}::${callsign}`;
+  const entry = updateQueues.get(key);
+  if (!entry) return;
+  if (entry.timeoutId) {
+    clearTimeout(entry.timeoutId);
+    entry.timeoutId = null;
+  }
+  flushCharacterUpdate(key);
+};
+
+/** Flushes every character with a pending queued update. */
+export const flushAllRemoteCharacterUpdates = () => {
+  for (const [key, entry] of updateQueues) {
+    if (entry.timeoutId) {
+      clearTimeout(entry.timeoutId);
+      entry.timeoutId = null;
+    }
+    flushCharacterUpdate(key);
+  }
 };
 
 export const deleteRemoteCharacter = async (userId, callsign, token) => {

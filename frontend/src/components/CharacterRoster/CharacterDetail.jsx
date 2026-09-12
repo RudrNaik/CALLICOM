@@ -37,6 +37,8 @@ import ExpAddedCalc from "./CharDetailComponents/expAddedCalc";
 import LogsView from "./CharDetailComponents/LogsView";
 import LogisticsView from "./CharDetailComponents/Logistics/LogisticsView";
 import { normalizeCharacterData } from "../../engine/characterDataHandler";
+import { useCharacterSaveStatus } from "../../hooks/useCharacterSaveStatus";
+import "../../assets/css/terminal.css";
 
 const biographyFields = [
   ["bio", "Biography"],
@@ -55,6 +57,7 @@ const emptyBiography = Object.fromEntries(
 );
 
 function CharacterDetail({ character, onUpdate, user }) {
+  const saveStatus = useCharacterSaveStatus(user, character?.callsign);
   const [isEditing, setIsEditing] = useState(false);
   const [isEditingBio, setIsEditingBio] = useState(false);
   const [isEditingEquipment, setIsEditingEquipment] = useState(false);
@@ -413,8 +416,26 @@ function CharacterDetail({ character, onUpdate, user }) {
       className="mx-auto p-6 space-y-3 text-white"
       style={{ fontFamily: "Geist_Mono" }}
     >
-      <h1 className="text-4xl font-bold text-orange-400 mb-1">
-        {character.name} [{character.callsign}]
+      <h1 className="text-4xl font-bold text-orange-400 mb-1 flex items-center flex-wrap gap-x-4">
+        <span>
+          {character.name} [{character.callsign}]
+        </span>
+        {saveStatus !== "idle" && (
+          <span
+            className={`save-throbber transition-all text-sm font-mono uppercase tracking-widest ${
+              saveStatus === "saving"
+                ? "save-throbber--saving text-red-500"
+                : "text-yellow-400"
+            }`}
+            title={
+              saveStatus === "saving"
+                ? "Pushing changes to the backend"
+                : "Changes pending — will sync shortly"
+            }
+          >
+            ■ {saveStatus === "saving" ? "SYNCING" : "UNSAVED"}
+          </span>
+        )}
       </h1>
       <h2 className="text-gray-400 mb-5">
         {character.class} {character.multiClass}

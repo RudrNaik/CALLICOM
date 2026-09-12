@@ -13,7 +13,13 @@ import {
   getToken,
   addDeletedCharacterKey,
 } from "../../engine/memoryEngine";
-import { deleteRemoteCharacter, updateRemoteCharacter, characterKey } from "../../engine/syncEngine";
+import {
+  deleteRemoteCharacter,
+  queueRemoteCharacterUpdate,
+  flushRemoteCharacterUpdate,
+  flushAllRemoteCharacterUpdates,
+  characterKey,
+} from "../../engine/syncEngine";
 import { useCharacterRosterSync } from "../../hooks/useBackgroundCharacterSync";
 
 const CACHE_KEY_EQUIP = `roster_equipment`;
@@ -75,10 +81,10 @@ function CharacterRoster({ userId }) {
     if (updatedChar?.callsign) {
       const token = getToken();
       if (token) {
-        updateRemoteCharacter(userId, updatedChar.callsign, updatedChar, token).catch((err) => {
-          // Best-effort; any drift this leaves behind surfaces as a conflict next time the roster loads.
-          console.error("Failed to push character update to backend:", err);
-        });
+        // Debounced/coalesced: rapid successive edits (multiple XP spends,
+        // equipment buys, log entries, etc.) collapse into one PATCH instead
+        // of piling up overlapping requests. See syncEngine.js.
+        queueRemoteCharacterUpdate(userId, updatedChar.callsign, updatedChar, token);
       }
     }
   };
@@ -93,6 +99,28 @@ function CharacterRoster({ userId }) {
     setEquipment(Array.isArray(cachedEquip) ? cachedEquip : []);
     setIsLoading(false);
   }, [userId]);
+
+  // Flush the selected character's queued update the moment it's switched
+  // away from (or the roster unmounts), so a debounce window doesn't strand
+  // the last burst of edits when the user moves on before it fires.
+  useEffect(() => {
+    return () => {
+      if (selectedCharacter?.callsign) {
+        flushRemoteCharacterUpdate(userId, selectedCharacter.callsign);
+      }
+    };
+  }, [selectedCharacter, userId]);
+
+  // Same idea for closing the tab/navigating away entirely: flush everything
+  // still queued instead of letting it wait out the debounce.
+  useEffect(() => {
+    window.addEventListener("beforeunload", flushAllRemoteCharacterUpdates);
+    window.addEventListener("pagehide", flushAllRemoteCharacterUpdates);
+    return () => {
+      window.removeEventListener("beforeunload", flushAllRemoteCharacterUpdates);
+      window.removeEventListener("pagehide", flushAllRemoteCharacterUpdates);
+    };
+  }, []);
 
   /**
    * Handles deleting a character via their characterID. Removes it from
