@@ -528,7 +528,7 @@ function LogsView({ character, refreshCharacter }) {
                             onClick={() => handleSaveEditLatest(index)}
                             className="bg-green-600 hover:bg-green-700 px-3 py-1 rounded text-xs cursor-pointer"
                           >
-                            Save
+                            Save Log
                           </button>
                           <button
                             onClick={cancelEditLatest}
