@@ -271,16 +271,19 @@ const gearSlotKeyToTitle = (slotKey) =>
   slotKey.charAt(0).toUpperCase() + slotKey.slice(1);
 
 /**
- * Every gearset (class-specific + universal) a character is eligible to
- * equip pieces from, flattened out of geasrSets.json's per-class blocks.
+ * Every gearset (class-specific + multiclass-specific, if set + universal) a
+ * character is eligible to equip pieces from, flattened out of geasrSets.
+ * json's per-class blocks.
  * @param {object} character
  * @param {Array} gearSetsData - geasrSets.json
  * @returns {Array} gearset objects ({id, name, manufacturer, pieces})
  */
 export const getGearsetsForClass = (character, gearSetsData) => {
-  const classKey = CLASS_TO_GEARSET_KEY[character?.class];
+  const classKeys = [character?.class, character?.multiClass]
+    .map((cls) => CLASS_TO_GEARSET_KEY[cls])
+    .filter(Boolean);
   return (gearSetsData ?? [])
-    .filter((block) => block.class === classKey || block.class === "universal")
+    .filter((block) => classKeys.includes(block.class) || block.class === "universal")
     .flatMap((block) => block.gearsets ?? []);
 };
 

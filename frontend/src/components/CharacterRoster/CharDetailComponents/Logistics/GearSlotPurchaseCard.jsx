@@ -11,7 +11,7 @@ import { getMoneyTotal } from "../../../../engine/logsEngine";
 import PurchasedList from "./PurchasedList";
 
 const buttonClass = (enabled) =>
-  `px-3 py-1 rounded text-xs cursor-pointer ${
+  `px-3 py-1 rounded-xs text-xs cursor-pointer ${
     enabled
       ? "bg-orange-600 hover:bg-orange-700"
       : "bg-neutral-700 cursor-not-allowed"
@@ -21,7 +21,7 @@ const selectClass =
   "w-full bg-neutral-800 border border-gray-500 rounded px-2 py-1 text-white text-xs";
 
 const tabClass = (active) =>
-  `px-2 py-1 rounded text-xs cursor-pointer ${
+  `px-2 py-1 rounded-xs text-xs cursor-pointer ${
     active
       ? "bg-orange-600 text-white"
       : "bg-neutral-800 text-neutral-300 hover:bg-neutral-700"

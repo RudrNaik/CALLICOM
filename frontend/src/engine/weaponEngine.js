@@ -412,6 +412,30 @@ export const getExcludedPrimaryCategories = (character) => {
  */
 export const getExcludedSecondaryCategories = () => SECONDARY_EXCLUDED_CATEGORIES;
 
+/**
+ * SMGs are allowed as a secondary weapon, but only the Machine Pistols
+ * family — the other SMG families (and the bare/Default category with no
+ * family) are sized for a primary slot only.
+ */
+export const SECONDARY_SMG_ONLY_FAMILY = "Machine Pistols";
+
+/**
+ * The family options purchasable for a weapon category in a given slot —
+ * every family, except when buying an SMG into the secondary slot, which is
+ * restricted to Machine Pistols (see SECONDARY_SMG_ONLY_FAMILY).
+ * @param {object} categoryData - category data as returned by getWeaponCategoriesLookup
+ * @param {string} category - category name (e.g. "SMGs")
+ * @param {string} slot - "primaryWeapon" or "secondaryWeapon"
+ * @returns {Array} family entries
+ */
+export const getFamilyOptions = (categoryData, category, slot) => {
+  const families = categoryData?.families ?? [];
+  if (slot === "secondaryWeapon" && category === "SMGs") {
+    return families.filter((f) => f.family === SECONDARY_SMG_ONLY_FAMILY);
+  }
+  return families;
+};
+
 // --- RollCalculator helpers ---
 
 /**

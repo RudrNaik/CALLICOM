@@ -12,6 +12,7 @@ import {
   createSubmunitionPurchase,
   applyPurchase,
 } from "../../../../engine/logisticsEngine";
+import { getFamilyOptions } from "../../../../engine/weaponEngine";
 import { getPurchasedGadgetIds } from "../../../../engine/equipmentEngine";
 import { getMoneyTotal } from "../../../../engine/logsEngine";
 import PurchasedList from "./PurchasedList";
@@ -113,6 +114,11 @@ function EquipmentPurchaseCard({
     : {};
   const categoryData = categories[category];
   const weaponCost = category ? getWeaponCost(categoryData, family) : 0;
+  const familyOptions = getFamilyOptions(categoryData, category, type);
+  // SMGs bought as a secondary are restricted to Machine Pistols (see
+  // weaponEngine.getFamilyOptions) — the bare/Default category has no
+  // family and isn't sized for a sidearm, so a family must be chosen.
+  const requiresFamily = type === "secondaryWeapon" && category === "SMGs";
 
   // Gadget selection — see GadgetPurchaseSection's old comment: submunitions
   // share the gadget dropdown, grouped under their parent, gated on the
@@ -159,7 +165,8 @@ function EquipmentPurchaseCard({
     };
   } else if (isWeapon) {
     cost = weaponCost;
-    canBuy = Boolean(category) && money >= cost;
+    canBuy =
+      Boolean(category) && money >= cost && (!requiresFamily || Boolean(family));
     preview = category && {
       title: category,
       description: categoryData?.description,
@@ -244,8 +251,23 @@ function EquipmentPurchaseCard({
                   className={selectClass}
                   value={category}
                   onChange={(e) => {
-                    setCategory(e.target.value);
-                    setFamily("");
+                    const nextCategory = e.target.value;
+                    setCategory(nextCategory);
+                    // SMGs bought as a secondary have exactly one buyable
+                    // family (Machine Pistols) — pick it automatically
+                    // rather than making the user pick the only option.
+                    const nextFamilies = getFamilyOptions(
+                      categories[nextCategory],
+                      nextCategory,
+                      type,
+                    );
+                    setFamily(
+                      type === "secondaryWeapon" &&
+                        nextCategory === "SMGs" &&
+                        nextFamilies.length === 1
+                        ? nextFamilies[0].family
+                        : "",
+                    );
                   }}
                 >
                   <option value="">Select Category</option>
@@ -255,14 +277,14 @@ function EquipmentPurchaseCard({
                     </option>
                   ))}
                 </select>
-                {categoryData?.families && (
+                {familyOptions.length > 0 && (
                   <select
                     className={selectClass}
                     value={family}
                     onChange={(e) => setFamily(e.target.value)}
                   >
-                    <option value="">Default</option>
-                    {categoryData.families.map((f) => (
+                    {!requiresFamily && <option value="">Default</option>}
+                    {familyOptions.map((f) => (
                       <option key={f.family} value={f.family}>
                         {f.family}
                       </option>
