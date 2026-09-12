@@ -34,7 +34,7 @@ import Collapsible from "../Collapsible";
 import RollCalculator from "./CharDetailComponents/RollCalculator";
 import ExpAddedCalc from "./CharDetailComponents/expAddedCalc";
 import LogsView from "./CharDetailComponents/LogsView";
-import LogisticsView from "./CharDetailComponents/LogisticsView";
+import LogisticsView from "./CharDetailComponents/Logistics/LogisticsView";
 import { normalizeCharacterData } from "../../engine/characterDataHandler";
 
 const biographyFields = [
