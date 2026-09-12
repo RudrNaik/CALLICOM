@@ -755,12 +755,64 @@
         ]
     },
     {
+        "class": "trapper",
+        "gearsets": [
+            {
+                "id": "iceColdCoder",
+                "name": "Ice Cold Coder",
+                "manufacturer": null,
+                "pieces": [
+                    {
+                        "id": "iceColdCoder_improvedTracebackScrambler",
+                        "name": "Improved Traceback Scrambler",
+                        "slot": "Headgear",
+                        "tier": null,
+                        "flavor": "",
+                        "effect": "You may make a Tech check when initiating Cooldown; on a 6+ roll, reduce your HEAT by 2 instead of 1. On a Fumble, raise your HEAT by 1 instead."
+                    },
+                    {
+                        "id": "iceColdCoder_macroButtonGauntlets",
+                        "name": "Macro-Button Gauntlets",
+                        "slot": "Gloves",
+                        "tier": null,
+                        "flavor": "",
+                        "effect": "You may [Deploy] 2 Hacks per turn, even if either or both would normally end your turn. When doing both hacks, you also consume your standard action to do so, and you take an additional -1 trace malus to both Hacks."
+                    },
+                    {
+                        "id": "iceColdCoder_meshAggregatorAntennas",
+                        "name": "Mesh Aggregator Antennas",
+                        "slot": "Vest",
+                        "tier": null,
+                        "flavor": "",
+                        "effect": "Your Counterspell Infiltration Device now benefits all friendlies within three hexes of your position."
+                    },
+                    {
+                        "id": "iceColdCoder_emergencyClockBoostManagement",
+                        "name": "Emergency Clock Boost Management",
+                        "slot": "Equipment",
+                        "tier": null,
+                        "flavor": "",
+                        "effect": "If inflicted with Burnout, your Thinkpad takes 2 turns to become unusable from the overclock frying its internals. In these 2 turns, gain +1 bonus to cyberwarfare-related Tech rolls, but gain +1 HEAT from each roll."
+                    },
+                    {
+                        "id": "iceColdCoder_blackwallCredentials",
+                        "name": "Blackwall Credentials",
+                        "slot": "Patch",
+                        "tier": null,
+                        "flavor": "",
+                        "effect": "You no longer take the minimum +1 HEAT gain from non-Cooldown Hacks. Winning opposed cyberwarfare tests as the defender now also reduces your HEAT by 1 each time."
+                    }
+                ]
+            }
+        ]
+    },
+    {
         "class": "universal",
         "gearsets": [
             {
                 "id": "soheiDojo",
                 "name": "Sohei's Dojo",
-                "manufacturer": "Koi_Precision",
+                "manufacturer": "Koi Precision",
                 "pieces": [
                     {
                         "id": "soheisDojo_increasedLethalityGloves",

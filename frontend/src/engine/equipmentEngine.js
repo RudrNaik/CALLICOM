@@ -250,6 +250,7 @@ const CLASS_TO_GEARSET_KEY = {
   "Fire Support": "fireSupport",
   Medic: "medic",
   Sharpshooter: "sharpshooter",
+  Trapper: "trapper"
 };
 
 /** The 4 selectable gear slots, keyed as stored on Equipment.gearSlots. */
