@@ -353,6 +353,7 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
           <GearsetsPanel
             gearsets={gearsets}
             gearSlots={safeGearSlots}
+            logs={character?.logs}
             isEditing={isEditing}
             onGearSlotChange={handleGearSlotChange}
           />

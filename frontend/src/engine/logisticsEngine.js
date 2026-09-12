@@ -15,28 +15,34 @@
  * the first empty grenade slot — the first purchase fills slot 1, the
  * second fills slot 2, and once both are full further purchases just
  * unlock the type without touching either slot), gear slots (headgear/
- * vest/equipment/gloves — a placeholder catalog for now, no real items
- * yet), and submunitions (a gadget's ammo variants, e.g. the UGL's 40mm
+ * vest/gloves/equipment — one piece per slot from the character's eligible
+ * gearsets in geasrSets.json, priced off tier via
+ * equipmentEngine.getGearPieceCost; Patch pieces are never sold on their
+ * own), and submunitions (a gadget's ammo variants, e.g. the UGL's 40mm
  * rounds — each one, even a $0 one, is its own individual purchase, not
  * bundled in with buying the parent gadget).
  *
  * Nothing about "ownership" is stored on Equipment — what a character can
  * select in the Gameplay tab (equipmentEngine.getAvailableClassGadgets /
- * weaponEngine.getOwnedWeaponCategories / equipmentEngine.getOwnedGrenades)
- * is derived fresh from `logs` every time, by scanning every receipt's
- * `purchases`. That's what replaces the old campaign-code (Siberia2022)
- * restriction, and it's also why removing a mission or undoing a purchase
- * needs no separate bookkeeping to stay consistent — there's nothing to go
- * stale.
+ * weaponEngine.getOwnedWeaponCategories / equipmentEngine.getOwnedGrenades /
+ * equipmentEngine.getOwnedGearPiecesBySlot) is derived fresh from `logs`
+ * every time, by scanning every receipt's `purchases`. That's what replaces
+ * the old campaign-code (Siberia2022) restriction, and it's also why
+ * removing a mission or undoing a purchase needs no separate bookkeeping to
+ * stay consistent — there's nothing to go stale.
  *
- * Cost itself is never trusted from a stored value either: a purchase
- * record keeps whatever `cost` it was made at (mostly for the gear-slot
- * placeholder, which has no real catalog yet), but every money calculation
- * re-prices it from the live Equipment.json via getPurchaseCost. That means
- * changing an item's cost in the catalog immediately changes what every
- * character who ever bought it is considered to have paid, everywhere
- * (getMoneyTotal, sellPurchase refunds, receipt display) — nothing needs a
- * migration when a price changes.
+ * Cost itself is never trusted from a stored value either for weapons/
+ * gadgets/grenades/submunitions: a purchase record keeps whatever `cost` it
+ * was made at, but every money calculation (getMoneyTotal, in logsEngine.js)
+ * re-prices those live from Equipment.json via getPurchaseCost, so changing
+ * an item's cost in the catalog immediately changes what every character
+ * who ever bought it is considered to have paid — nothing needs a migration
+ * when a price changes. Gear-slot purchases are the exception: applyPurchase
+ * prices them live from geasrSets.json's tiers at the moment of purchase
+ * (see getGearPieceCost), but getMoneyTotal doesn't carry geasrSets.json
+ * through, so afterward they're summed from whatever `cost` got stored then
+ * — a tier's price would need to change and the piece be re-bought to pick
+ * up a new value, same as the old gear-slot placeholder's behavior.
  *
  * Selling (sellPurchase) is scoped to the current "buy period": only
  * purchases recorded on the most recently logged mission's receipt can be
@@ -61,6 +67,11 @@ import {
   getClassEligibleGadgets,
   sanitizeEquipmentOwnership,
   getPurchasedGadgetIds,
+  getGearsetsForClass,
+  getGearPiecesBySlot,
+  getGearPieceByIdAnyClass,
+  getGearPieceCost,
+  getPurchasedGearPieceIds,
 } from "./equipmentEngine";
 import { getMoneyTotal, recordPurchaseOnLatestMission } from "./logsEngine";
 
@@ -109,6 +120,19 @@ export function getGrenadeOptions(equipmentData) {
 }
 
 /**
+ * The gear pieces a character can buy for one slot — their class's (and
+ * universal) gearset pieces for that slot, excluding Patch pieces (never
+ * sold on their own — see equipmentEngine.getActiveGearsetPatch) and
+ * excluding pieces already purchased (each piece, like a gadget, can only
+ * be bought once).
+ */
+export function getGearSlotBuyOptions(character, gearSetsData, slotKey, logs) {
+  const gearsets = getGearsetsForClass(character, gearSetsData);
+  const owned = new Set(getPurchasedGearPieceIds(logs));
+  return getGearPiecesBySlot(gearsets, slotKey).filter((piece) => !owned.has(piece.id));
+}
+
+/**
  * A gadget's ammo-variant submunitions (e.g. the UGL's 40mm rounds), resolved
  * from its `options` list to their full catalog entries (for `title`/`cost`).
  * Returns an empty array for gadgets with no variant options.
@@ -127,10 +151,11 @@ export function getGadgetSubmunitionOptions(gadgetItem, equipmentData) {
  * character is considered to have paid for it. Weapons re-derive from their
  * category + family (the same catalog lookup the buy form uses); gadgets,
  * grenades and submunitions re-derive from their catalog id. Gear-slot
- * purchases have no real catalog yet, so they fall back to their stored
- * `cost`.
+ * purchases re-derive from the piece's tier in geasrSets.json (see
+ * equipmentEngine.getGearPieceCost), falling back to whatever was stored if
+ * the piece can no longer be found there.
  */
-export function getPurchaseCost(purchase, equipmentData) {
+export function getPurchaseCost(purchase, equipmentData, gearSetsData) {
   switch (purchase?.type) {
     case "weapon": {
       const lookup = getWeaponCategoriesLookup(equipmentData ?? []);
@@ -141,6 +166,10 @@ export function getPurchaseCost(purchase, equipmentData) {
     case "submunition": {
       const item = (equipmentData ?? []).find((i) => i.id === purchase.value);
       return item?.cost || 0;
+    }
+    case "gearSlot": {
+      const piece = getGearPieceByIdAnyClass(gearSetsData, purchase.value);
+      return piece ? getGearPieceCost(piece) : purchase?.cost || 0;
     }
     default:
       return purchase?.cost || 0;
@@ -199,16 +228,17 @@ export function createGrenadePurchase({ grenadeId, label, cost }) {
 }
 
 /**
- * Placeholder — gear slots (headgear/vest/equipment/gloves) have no real
- * catalog yet, so this just stores whatever label the caller passes.
+ * Buys one gear piece for a slot (headgear/vest/gloves/equipment) — `pieceId`
+ * is what actually fills the slot once purchased (see
+ * applyPurchaseToEquipment's "gearSlot" case).
  */
-export function createGearSlotPurchase({ slot, label, cost }) {
+export function createGearSlotPurchase({ slot, pieceId, label, cost }) {
   return {
     type: "gearSlot",
     slot,
-    label: label || "",
+    label: label || pieceId || "",
     cost: Number(cost) || 0,
-    value: label || "",
+    value: pieceId || "",
   };
 }
 
@@ -322,10 +352,12 @@ function purchaseFreeSubmunitions(logs, gadgetId, equipmentData) {
 /**
  * Spends money on a purchase, updating equipment and recording it onto the
  * latest mission's receipt. Blocked if the character can't afford it.
+ * `gearSetsData` is only needed to price a "gearSlot" purchase; omit it for
+ * every other purchase type.
  * @returns {{equipment: object, logs: array}|null} null if blocked
  */
-export function applyPurchase(character, logs, purchase, equipmentData) {
-  const cost = getPurchaseCost(purchase, equipmentData);
+export function applyPurchase(character, logs, purchase, equipmentData, gearSetsData) {
+  const cost = getPurchaseCost(purchase, equipmentData, gearSetsData);
   const money = getMoneyTotal(character, equipmentData) - cost;
   if (money < 0) return null;
 

@@ -1,22 +1,30 @@
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import equipmentData from "../../../data/Equipment.json";
+import gearSetsData from "../../../data/geasrSets.json";
 import {
   getWeaponCategoryOptions,
   getWeaponCost,
   getGadgetOptions,
   getGrenadeOptions,
   getGadgetSubmunitionOptions,
+  getGearSlotBuyOptions,
   createWeaponPurchase,
   createGadgetPurchase,
   createGrenadePurchase,
   createSubmunitionPurchase,
+  createGearSlotPurchase,
   applyPurchase,
   undoLastPurchase,
   sellPurchase,
   getPurchaseEntries,
   getPurchaseCost,
 } from "../../../engine/logisticsEngine";
-import { getPurchasedGadgetIds } from "../../../engine/equipmentEngine";
+import {
+  getPurchasedGadgetIds,
+  getGearPieceCost,
+  getGearPieceByIdAnyClass,
+  GEAR_SLOT_KEYS,
+} from "../../../engine/equipmentEngine";
 import { getMoneyTotal, ensureStartingLog } from "../../../engine/logsEngine";
 
 const buttonClass = (enabled) =>
@@ -282,35 +290,137 @@ function GrenadePurchaseForm({ character, logs, refreshCharacter }) {
   );
 }
 
-function PurchasedList({ title, items, onSell }) {
-  if (items.length === 0) return null;
+const GEAR_SLOT_LABELS = {
+  headgear: "Headgear",
+  vest: "Vest",
+  gloves: "Gloves",
+  equipment: "Equipment",
+};
+
+function GearSlotPurchaseForm({ slotKey, character, logs, refreshCharacter }) {
+  const [pieceId, setPieceId] = useState("");
+
+  // Patch pieces are excluded by getGearSlotBuyOptions (it only ever looks
+  // up this one slot, and Patch has its own slot), and already-purchased
+  // pieces drop out once bought — each piece, like a gadget, is bought once.
+  const options = getGearSlotBuyOptions(character, gearSetsData, slotKey, logs);
+  const selected = options.find((piece) => piece.id === pieceId);
+  const cost = selected ? getGearPieceCost(selected) : 0;
+  const money = getMoneyTotal(character, equipmentData);
+  const canBuy = Boolean(pieceId) && money >= cost;
+
+  const handlePurchase = () => {
+    const purchase = createGearSlotPurchase({
+      slot: slotKey,
+      pieceId,
+      label: selected ? `${selected.gearsetName} — ${selected.name}` : "",
+      cost,
+    });
+    const result = applyPurchase(character, logs, purchase, equipmentData, gearSetsData);
+    if (!result) {
+      alert("Not enough money for that purchase.");
+      return;
+    }
+    refreshCharacter(result);
+    setPieceId("");
+  };
+
   return (
-    <div className="bg-neutral-900 border border-neutral-700 rounded p-3">
-      <div className="text-xs text-orange-400 mb-1">{title}</div>
-      <ul className="text-xs text-neutral-300 space-y-1">
-        {items.map((item, index) => (
-          <li key={index} className="flex items-center justify-between gap-2">
-            <span>{typeof item === "string" ? item : item.label}</span>
-            {onSell &&
-              typeof item !== "string" &&
-              (item.sellable ? (
-                <button
-                  onClick={() => onSell(item)}
-                  className="text-neutral-500 hover:text-red-400 shrink-0 cursor-pointer"
-                >
-                  Sell
-                </button>
-              ) : (
-                <span className="text-neutral-700 shrink-0">N/A</span>
-              ))}
-          </li>
+    <div className="bg-neutral-900 border border-neutral-700 border-l-4 border-l-orange-500 rounded-xs p-3 space-y-2">
+      <div className="font-semibold text-orange-400">
+        {GEAR_SLOT_LABELS[slotKey]}
+      </div>
+
+      <select
+        className={selectClass}
+        value={pieceId}
+        onChange={(e) => setPieceId(e.target.value)}
+      >
+        <option value="">Select {GEAR_SLOT_LABELS[slotKey]}</option>
+        {options.map((piece) => (
+          <option key={piece.id} value={piece.id}>
+            {piece.gearsetName} — {piece.name} ({getGearPieceCost(piece)})
+          </option>
         ))}
-      </ul>
+      </select>
+
+      {selected && (
+        <div className="text-[10px] text-neutral-400 bg-neutral-800 p-2 rounded whitespace-pre-line">
+          {selected.effect}
+        </div>
+      )}
+
+      <div className="flex items-center justify-between">
+        <span className="text-xs text-neutral-400">Cost: {cost}</span>
+        <button
+          onClick={handlePurchase}
+          disabled={!canBuy}
+          className={buttonClass(canBuy)}
+        >
+          Purchase
+        </button>
+      </div>
     </div>
   );
 }
 
-const GEAR_SLOT_LABELS = ["Headgear", "Vest", "Equipment", "Gloves"];
+/**
+ * Renders a sold/owned list. Items may carry an optional `group` label (e.g.
+ * a gearset's name) — when any do, a divider + header is inserted wherever
+ * the group changes between adjacent items, so callers that want grouping
+ * just need to sort `items` so same-group entries are adjacent first (see
+ * gearSlotEntries below). Callers with no `group` field render exactly as
+ * before: one flat list.
+ */
+function PurchasedList({ title, items, onSell }) {
+  if (items.length === 0) return null;
+  const hasGroups = items.some((item) => typeof item !== "string" && item.group);
+
+  return (
+    <div className="h-full bg-neutral-900 border border-neutral-700 rounded p-3">
+      <div className="text-xs text-orange-400 mb-1">{title}</div>
+      <ul className="text-xs text-neutral-300 space-y-1">
+        {items.map((item, index) => {
+          const group = typeof item === "string" ? null : item.group;
+          const prevGroup =
+            index > 0 && typeof items[index - 1] !== "string"
+              ? items[index - 1].group
+              : null;
+          const isNewGroup = hasGroups && group !== prevGroup;
+
+          return (
+            <Fragment key={index}>
+              {isNewGroup && (
+                <li
+                  className={`text-[10px] uppercase tracking-wide text-neutral-500 pt-1 ${
+                    index > 0 ? "mt-1 border-t border-neutral-700" : ""
+                  }`}
+                >
+                  {group || "Other"}
+                </li>
+              )}
+              <li className="flex items-center justify-between gap-2">
+                <span>{typeof item === "string" ? item : item.label}</span>
+                {onSell &&
+                  typeof item !== "string" &&
+                  (item.sellable ? (
+                    <button
+                      onClick={() => onSell(item)}
+                      className="text-neutral-500 hover:text-red-400 shrink-0 cursor-pointer"
+                    >
+                      Sell
+                    </button>
+                  ) : (
+                    <span className="text-neutral-700 shrink-0">N/A</span>
+                  ))}
+              </li>
+            </Fragment>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
 
 function LogisticsView({ character, refreshCharacter }) {
   const money = getMoneyTotal(character, equipmentData);
@@ -409,6 +519,31 @@ function LogisticsView({ character, refreshCharacter }) {
     }),
   );
 
+  // Grouped by gearset (see PurchasedList) so it's clear at a glance how
+  // much of a set you actually own — the gearset name only needs to appear
+  // once, as the group header, rather than repeated on every line. Sorted so
+  // same-gearset entries end up adjacent for that grouping to work; "Other"
+  // (a piece whose gearset can no longer be found in geasrSets.json) always
+  // sorts last.
+  const gearSlotEntries = getPurchaseEntries(logs, "gearSlot")
+    .map(({ missionIndex, purchaseIndex, purchase }) => {
+      const piece = getGearPieceByIdAnyClass(gearSetsData, purchase.value);
+      const slotLabel = GEAR_SLOT_LABELS[purchase.slot] || purchase.slot;
+      return {
+        label: piece ? `${slotLabel}: ${piece.name}` : `${slotLabel}: ${purchase.label}`,
+        group: piece?.gearsetName || "Other",
+        missionIndex,
+        purchaseIndex,
+        sellable: missionIndex === currentMissionIndex,
+      };
+    })
+    .sort((a, b) => {
+      if (a.group === b.group) return 0;
+      if (a.group === "Other") return 1;
+      if (b.group === "Other") return -1;
+      return a.group.localeCompare(b.group);
+    });
+
   const latestReceipt = logs[logs.length - 1]?.receipt;
   const latestPurchases = latestReceipt?.purchases ?? [];
   const lastPurchase = latestPurchases[latestPurchases.length - 1];
@@ -456,38 +591,52 @@ function LogisticsView({ character, refreshCharacter }) {
             refreshCharacter={refreshCharacter}
           />
         </div>
-        <div className="mt-2 grid md:grid-cols-4 gap-2 ">
-          <PurchasedList
-            title="Purchased Gadgets"
-            items={[...gadgetEntries, ...submunitionEntries]}
-            onSell={handleSell}
-          />
-          <div className="md:col-span-2">
+        <div className="mt-2 flex flex-col md:flex-row gap-2">
+          <div className="w-full md:w-1/4">
+            <PurchasedList
+              title="Purchased Gadgets"
+              items={[...gadgetEntries, ...submunitionEntries]}
+              onSell={handleSell}
+            />
+          </div>
+          <div className="w-full md:w-2/4">
             <PurchasedList
               title="Purchased Weapons"
               items={weaponEntries}
               onSell={handleSell}
             />
           </div>
-          <PurchasedList
-            title="Purchased Grenade Types"
-            items={grenadeEntries}
-            onSell={handleSell}
-          />
+          <div className="w-full md:w-1/4">
+            <PurchasedList
+              title="Purchased Grenade Types"
+              items={grenadeEntries}
+              onSell={handleSell}
+            />
+          </div>
         </div>
       </div>
 
       <div>
         <h2 className="text-xl font-bold text-orange-400 mb-2">Gear Slots</h2>
-        <div className="grid md:grid-cols-2 gap-3">
-          {GEAR_SLOT_LABELS.map((label) => (
-            <div
-              key={label}
-              className="bg-neutral-900 border border-neutral-700 rounded p-3 text-xs text-neutral-500 italic"
-            >
-              {label}: Coming soon.
-            </div>
+        <div className="grid md:grid-cols-4 gap-2">
+          {GEAR_SLOT_KEYS.map((slotKey) => (
+            <GearSlotPurchaseForm
+              key={slotKey}
+              slotKey={slotKey}
+              character={character}
+              logs={logs}
+              refreshCharacter={refreshCharacter}
+            />
           ))}
+        </div>
+        <div className="mt-2 grid md:grid-cols-4 gap-2">
+          <div className="md:col-span-4">
+            <PurchasedList
+              title="Purchased Gear"
+              items={gearSlotEntries}
+              onSell={handleSell}
+            />
+          </div>
         </div>
       </div>
     </div>

@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import {
-  getGearPiecesBySlot,
   getGearPieceById,
+  getOwnedGearPiecesBySlot,
   getActiveGearsetPatch,
   GEAR_SLOT_KEYS,
 } from "../../../engine/equipmentEngine";
@@ -16,16 +16,19 @@ const GEAR_SLOT_LABELS = {
 const GearsetsPanel = ({
   gearsets,
   gearSlots,
+  logs,
   isEditing,
   onGearSlotChange,
 }) => {
+  // Restricted to what's actually been bought in Logistics, same as
+  // classGadgets/grenades elsewhere in the Gameplay tab.
   const gearOptionsBySlot = useMemo(() => {
     const options = {};
     GEAR_SLOT_KEYS.forEach((slotKey) => {
-      options[slotKey] = getGearPiecesBySlot(gearsets, slotKey);
+      options[slotKey] = getOwnedGearPiecesBySlot(gearsets, slotKey, logs);
     });
     return options;
-  }, [gearsets]);
+  }, [gearsets, logs]);
 
   const activePatch = useMemo(
     () => getActiveGearsetPatch(gearsets, gearSlots),

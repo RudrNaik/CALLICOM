@@ -177,6 +177,17 @@ export const sanitizeEquipmentOwnership = (equipment, logs) => {
     );
   }
 
+  if (sanitized.gearSlots) {
+    const ownedGearPieceIds = getPurchasedGearPieceIds(logs);
+    const nextGearSlots = { ...sanitized.gearSlots };
+    Object.keys(nextGearSlots).forEach((slotKey) => {
+      if (nextGearSlots[slotKey] && !ownedGearPieceIds.includes(nextGearSlots[slotKey])) {
+        nextGearSlots[slotKey] = "";
+      }
+    });
+    sanitized.gearSlots = nextGearSlots;
+  }
+
   return sanitized;
 };
 
@@ -350,6 +361,81 @@ export const getActiveGearsetPatch = (gearsets, gearSlots) => {
     };
   }
   return null;
+};
+
+/**
+ * Price curve for gear pieces, keyed by tier (see the rules text: tier 1
+ * "niche use case" up to tier 4 "requires a specific gadget/equipment").
+ * A piece with a null tier (several unfinished entries in geasrSets.json
+ * never got one assigned) is treated as free until it's priced.
+ */
+export const GEAR_TIER_PRICES = {
+  1: 3000,
+  2: 5000,
+  3: 10000,
+  4: 14000,
+};
+
+/**
+ * A gear piece's price, from its tier. Patches are never sold on their own
+ * (they're the loyalty bonus for owning the full set), but this doesn't
+ * special-case that — callers simply never list Patch pieces for purchase.
+ * @param {object} piece - a piece as returned by getGearPiecesBySlot/getGearPieceById
+ * @returns {number}
+ */
+export const getGearPieceCost = (piece) =>
+  piece?.tier == null ? 0 : (GEAR_TIER_PRICES[piece.tier] ?? 0);
+
+/**
+ * Looks up a gear piece by id across every class's gearsets (not just one
+ * character's eligible ones) — used when re-pricing a purchase record
+ * live, which has no character context of its own.
+ * @param {Array} gearSetsData - geasrSets.json
+ * @param {string} pieceId
+ * @returns {object|null}
+ */
+export const getGearPieceByIdAnyClass = (gearSetsData, pieceId) => {
+  if (!pieceId) return null;
+  for (const block of gearSetsData ?? []) {
+    const found = getGearPieceById(block.gearsets ?? [], pieceId);
+    if (found) return found;
+  }
+  return null;
+};
+
+/**
+ * Derives every gear piece id a character has ever purchased from their
+ * mission logs' receipts — mirrors getPurchasedGadgetIds/GrenadeIds. Nothing
+ * about ownership is stored on Equipment itself; what's currently equipped
+ * (Equipment.gearSlots) and what's owned are two different things, same as
+ * gadgets/weapons/grenades.
+ * @param {Array} logs - character.logs
+ * @returns {Array<string>}
+ */
+export const getPurchasedGearPieceIds = (logs) => {
+  const ids = new Set();
+  (logs ?? []).forEach((log) => {
+    (log?.receipt?.purchases ?? []).forEach((purchase) => {
+      if (purchase.type === "gearSlot") ids.add(purchase.value);
+    });
+  });
+  return [...ids];
+};
+
+/**
+ * Gear pieces a character can currently select per slot in the Gameplay
+ * tab — restricted to what they've actually purchased in Logistics, same
+ * pattern as getAvailableClassGadgets/getOwnedGrenades.
+ * @param {Array} gearsets - as returned by getGearsetsForClass
+ * @param {string} slotKey - one of GEAR_SLOT_KEYS
+ * @param {Array} logs - character.logs
+ * @returns {Array}
+ */
+export const getOwnedGearPiecesBySlot = (gearsets, slotKey, logs) => {
+  const owned = getPurchasedGearPieceIds(logs);
+  return getGearPiecesBySlot(gearsets, slotKey).filter((piece) =>
+    owned.includes(piece.id),
+  );
 };
 
 // --- Gadget Ammo Logic ---
