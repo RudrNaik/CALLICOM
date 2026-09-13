@@ -6,7 +6,10 @@ import {
   createGearSlotPurchase,
   applyPurchase,
 } from "../../../../engine/logisticsEngine";
-import { getGearPieceCost, GEAR_SLOT_KEYS } from "../../../../engine/equipmentEngine";
+import {
+  getGearPieceCost,
+  GEAR_SLOT_KEYS,
+} from "../../../../engine/equipmentEngine";
 import { getMoneyTotal } from "../../../../engine/logsEngine";
 import PurchasedList from "./PurchasedList";
 
@@ -21,7 +24,7 @@ const selectClass =
   "w-full bg-neutral-800 border border-gray-500 rounded px-2 py-1 text-white text-xs";
 
 const tabClass = (active) =>
-  `px-2 py-1 rounded-xs text-xs cursor-pointer ${
+  `px-2 py-1 rounded-xs text-xs cursor-pointer mr-2 ${
     active
       ? "bg-orange-600 text-white"
       : "bg-neutral-800 text-neutral-300 hover:bg-neutral-700"
@@ -75,6 +78,10 @@ function GearSlotPurchaseCard({
 }) {
   const [slotKey, setSlotKey] = useState(GEAR_SLOT_KEYS[0]);
   const [pieceId, setPieceId] = useState("");
+  // A GM-granted field find: same picker, same class-eligible options as a
+  // normal buy, just $0 — see logisticsEngine.getPurchaseCost, which always
+  // prices a `source: "looted"` purchase at $0 regardless of catalog cost.
+  const [isLoot, setIsLoot] = useState(false);
 
   const handleSlotChange = (newSlot) => {
     setSlotKey(newSlot);
@@ -87,16 +94,18 @@ function GearSlotPurchaseCard({
   const options = getGearSlotBuyOptions(character, gearSetsData, slotKey, logs);
   const selected = options.find((piece) => piece.id === pieceId);
   const cost = selected ? getGearPieceCost(selected) : 0;
-  const money = getMoneyTotal(character, equipmentData);
-  const canBuy = Boolean(pieceId) && money >= cost;
+  const money = getMoneyTotal(character, equipmentData, gearSetsData);
+  const canBuy = Boolean(pieceId) && (isLoot || money >= cost);
 
   const handlePurchase = () => {
-    const purchase = createGearSlotPurchase({
+    let purchase = createGearSlotPurchase({
       slot: slotKey,
       pieceId,
       label: selected ? `${selected.gearsetName} — ${selected.name}` : "",
-      cost,
     });
+    if (isLoot) {
+      purchase = { ...purchase, source: "looted" };
+    }
     const result = applyPurchase(
       character,
       logs,
@@ -110,6 +119,7 @@ function GearSlotPurchaseCard({
     }
     refreshCharacter(result);
     setPieceId("");
+    setIsLoot(false);
   };
 
   return (
@@ -143,14 +153,25 @@ function GearSlotPurchaseCard({
           </select>
 
           <div className="flex items-center justify-between">
-            <span className="text-xs text-neutral-400">Cost: {cost}</span>
-            <button
-              onClick={handlePurchase}
-              disabled={!canBuy}
-              className={buttonClass(canBuy)}
-            >
-              Purchase
-            </button>
+            <span className="text-xs text-neutral-400">
+              Cost: {isLoot ? "Free" : cost}
+            </span>
+            <div>
+              <button
+                type="button"
+                onClick={() => setIsLoot((prev) => !prev)}
+                className={tabClass(isLoot)}
+              >
+                {isLoot ? "[✓] " : "[X]"}Loot Item
+              </button>
+              <button
+                onClick={handlePurchase}
+                disabled={!canBuy}
+                className={buttonClass(canBuy)}
+              >
+                {isLoot ? "Grant" : "Purchase"}
+              </button>
+            </div>
           </div>
 
           <div>
@@ -158,7 +179,7 @@ function GearSlotPurchaseCard({
               title={
                 selected ? `${selected.gearsetName} — ${selected.name}` : null
               }
-              cost={cost}
+              cost={isLoot ? 0 : cost}
               effect={selected?.effect}
               description={selected?.flavor}
             />

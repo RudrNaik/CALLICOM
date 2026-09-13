@@ -175,6 +175,10 @@ export const normalizeEquipmentForView = (character) => {
         : DEFAULT_GRENADE_COUNTS,
     gadget: character.equipment?.gadget ?? "",
     gadgetAmmo: character.equipment?.gadgetAmmo ?? {},
+    // Which of the character's classes the innate secondary gadget (e.g.
+    // SOFLAM, Repair Tool) is drawn from, for multiclassed characters.
+    secondaryGadgetSource:
+      character.equipment?.secondaryGadgetSource === "multi" ? "multi" : "main",
     armorClass: character.equipment?.armorClass ?? 0,
     medCounts:
       Array.isArray(character.equipment?.medCounts) &&

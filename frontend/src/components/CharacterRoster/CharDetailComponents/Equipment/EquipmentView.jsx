@@ -90,9 +90,6 @@ function deriveEquipmentState(character, weaponCatsLookup) {
     //Restrics Armor per SUPP getting AC3 as max (to use the juggernaut suit), everyone else has max of AC1
     maxArmor: getArmorClassCap(character),
 
-    //Secondary gadget (class gadget) assigned to this character's class.
-    secondaryGadget: getSecondaryGadgetForClass(secondaryGadgets, character),
-
     //Gearsets available to this character's class, plus any universal ones.
     gearsets: getGearsetsForClass(character, gearSetsData),
   };
@@ -140,7 +137,6 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
   const {
     classGadgets,
     grenades,
-    secondaryGadget,
     primaryOptions,
     secondaryOptions,
     primaryWeaponInstances,
@@ -148,6 +144,16 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
     maxArmor,
     gearsets,
   } = derived;
+
+  // Which class's innate secondary gadget (SOFLAM, Repair Tool, etc.) is
+  // shown/equipped. Falls back to "main" if the character has no multiclass
+  // or the stored source is stale from before they multiclassed away from it.
+  const secondaryGadgetSource =
+    character.multiClass && gear.secondaryGadgetSource === "multi" ? "multi" : "main";
+  const secondaryGadget = useMemo(
+    () => getSecondaryGadgetForClass(secondaryGadgets, character, secondaryGadgetSource),
+    [character.class, character.multiClass, secondaryGadgetSource],
+  );
 
   const safeGearSlots = useMemo(() => gear?.gearSlots ?? {}, [gear?.gearSlots]);
 
@@ -181,6 +187,10 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
       gadget: nextGadgetId,
       gadgetAmmo: {},
     }));
+  };
+
+  const handleSecondaryGadgetSourceChange = (source) => {
+    setGear((prev) => ({ ...prev, secondaryGadgetSource: source }));
   };
 
   const handleGearSlotChange = (slotKey, pieceId) => {
@@ -338,8 +348,12 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
             activeGadgetConfig={activeGadgetConfig}
             gadgetAmmo={gear.gadgetAmmo}
             secondaryGadget={secondaryGadget}
+            secondaryGadgetSource={secondaryGadgetSource}
+            hasMulticlass={!!character.multiClass}
+            onSecondaryGadgetSourceChange={handleSecondaryGadgetSourceChange}
             characterId={characterId}
             charClass={character.class}
+            multiClass={character.multiClass}
             charActive={charActive}
             ownedGadgetIds={ownedGadgetIds}
             itemById={itemById}

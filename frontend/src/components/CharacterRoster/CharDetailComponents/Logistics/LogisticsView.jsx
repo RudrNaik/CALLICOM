@@ -15,7 +15,7 @@ import EquipmentPurchaseCard from "./EquipmentPurchaseCard";
 import GearSlotPurchaseCard, { GEAR_SLOT_LABELS } from "./GearSlotPurchaseCard";
 
 function LogisticsView({ character, refreshCharacter }) {
-  const money = getMoneyTotal(character, equipmentData);
+  const money = getMoneyTotal(character, equipmentData, gearSetsData);
   const logs = ensureStartingLog(character, character?.logs ?? []);
 
   // Guarantees the starting log exists even if this tab is opened before the
@@ -59,7 +59,7 @@ function LogisticsView({ character, refreshCharacter }) {
           ? ` — ${unlockedCount}/${submunitions.length} submunitions unlocked`
           : "";
       return {
-        label: `${gadget.title}${submunitionNote}`,
+        label: `${gadget.title}${submunitionNote}${purchase.source === "looted" ? " (Field Find)" : ""}`,
         missionIndex,
         purchaseIndex,
         sellable: missionIndex === currentMissionIndex,
@@ -93,7 +93,7 @@ function LogisticsView({ character, refreshCharacter }) {
     ({ missionIndex, purchaseIndex, purchase }) => ({
       label: `${purchase.value.name || "Unnamed Weapon"} (${purchase.value.category}${
         purchase.value.family ? ` / ${purchase.value.family}` : ""
-      })`,
+      })${purchase.source === "looted" ? " (Field Find)" : ""}`,
       missionIndex,
       purchaseIndex,
       sellable: missionIndex === currentMissionIndex,
@@ -102,9 +102,10 @@ function LogisticsView({ character, refreshCharacter }) {
 
   const grenadeEntries = getPurchaseEntries(logs, "grenade").map(
     ({ missionIndex, purchaseIndex, purchase }) => ({
-      label:
+      label: `${
         equipmentData.find((g) => g.id === purchase.value)?.title ||
-        purchase.value,
+        purchase.value
+      }${purchase.source === "looted" ? " (Field Find)" : ""}`,
       missionIndex,
       purchaseIndex,
       sellable: missionIndex === currentMissionIndex,
@@ -121,10 +122,11 @@ function LogisticsView({ character, refreshCharacter }) {
     .map(({ missionIndex, purchaseIndex, purchase }) => {
       const piece = getGearPieceByIdAnyClass(gearSetsData, purchase.value);
       const slotLabel = GEAR_SLOT_LABELS[purchase.slot] || purchase.slot;
+      const lootTag = purchase.source === "looted" ? " (Field Find)" : "";
       return {
         label: piece
-          ? `${slotLabel}: ${piece.name}`
-          : `${slotLabel}: ${purchase.label}`,
+          ? `${slotLabel}: ${piece.name}${lootTag}`
+          : `${slotLabel}: ${purchase.label}${lootTag}`,
         group: piece?.gearsetName || "Other",
         missionIndex,
         purchaseIndex,

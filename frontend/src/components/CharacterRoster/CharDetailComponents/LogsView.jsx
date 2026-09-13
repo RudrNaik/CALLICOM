@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import equipmentData from "../../../data/Equipment.json";
+import gearSetsData from "../../../data/geasrSets.json";
 import {
   createMissionLog,
   createAchievement,
@@ -101,6 +102,7 @@ function AchievementDraftForm({ draft, setDraft, onSave, onCancel }) {
           onChange={(e) => setDraft({ ...draft, cashPayout: e.target.value })}
         />
       </div>
+
       <div className="flex gap-2">
         <button
           onClick={onSave}
@@ -145,7 +147,7 @@ function LogsView({ character, refreshCharacter }) {
   );
 
   const logs = ensureStartingLog(character, character?.logs ?? []);
-  const money = getMoneyTotal(character, equipmentData);
+  const money = getMoneyTotal(character, equipmentData, gearSetsData);
   const { totalMissionXP, totalPayout } = getLogTotals(logs);
 
   // Every character needs a first log to attach receipts to (see
@@ -197,7 +199,7 @@ function LogsView({ character, refreshCharacter }) {
   };
 
   const handleRemoveMission = (index) => {
-    const result = applyMissionLogRemove(character, logs, index, equipmentData);
+    const result = applyMissionLogRemove(character, logs, index, equipmentData, gearSetsData);
     if (!result) {
       alert("Can't remove this mission — its payout has already been spent.");
       return;
@@ -230,6 +232,7 @@ function LogsView({ character, refreshCharacter }) {
       index,
       editDraft,
       equipmentData,
+      gearSetsData,
     );
     if (!result) {
       alert(
@@ -256,6 +259,7 @@ function LogsView({ character, refreshCharacter }) {
       missionIndex,
       achievementIndex,
       equipmentData,
+      gearSetsData,
     );
     if (!result) {
       alert(
@@ -399,7 +403,7 @@ function LogsView({ character, refreshCharacter }) {
             .map(({ log, index }) => {
               const canRemove = index === logs.length - 1;
               const isEditingThis = editingLatest && canRemove;
-              const receipt = describeReceipt(log.receipt, equipmentData);
+              const receipt = describeReceipt(log.receipt, equipmentData, gearSetsData);
               const ediceXPSpent = getEmergencyDiceXPDuring(
                 logs,
                 index,
@@ -416,7 +420,7 @@ function LogsView({ character, refreshCharacter }) {
               const earnings = getMissionEarnings(log);
               const hasAchievementBonus =
                 earnings.xp !== log.missionXP || earnings.cash !== log.payout;
-              const achievements = log.achievements ?? [];
+              const achievements = log.achievements ?? log.logEntries ?? [];
 
               return (
                 <div
@@ -655,7 +659,8 @@ function LogsView({ character, refreshCharacter }) {
                                 </div>
                                 {receipt.purchases.map((purchase, pIndex) => (
                                   <div key={pIndex} className="pl-2">
-                                    {purchase.label} — ${purchase.cost}
+                                    {purchase.label} —{" "}
+                                    {purchase.looted ? "Loot" : `$${purchase.cost}`}
                                   </div>
                                 ))}
                               </div>

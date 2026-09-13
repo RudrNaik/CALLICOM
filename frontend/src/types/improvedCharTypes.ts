@@ -137,7 +137,7 @@ export interface MissionLog {
   notes: string;
   /** In-character date the mission took place ("YYYY-MM-DD"), set by the user on the form — not the real-world date it was logged. */
   date: string;
-  /** Bonus objectives logged after the fact; their XP/cash add on top of missionXP/payout (see logsEngine.getMissionEarnings). */
+  /** Bonus objectives logged after the fact; their XP/cash add on top of missionXP/payout (see logsEngine.getMissionEarnings). Read as `log.achievements ?? log.logEntries` for backward compatibility with characters saved during the brief LogEntry rename. */
   achievements: Achievement[];
   receipt: MissionReceipt;
   /** Only set on the synthetic "Starting Loadout" entry (see logsEngine.createStartingLog) — records the character's starting cash distinctly from an earned mission payout, for display. */
@@ -146,7 +146,8 @@ export interface MissionLog {
 
 /**
  * A bonus XP/money award logged against a mission (e.g. an optional
- * objective). Loot-granting achievements aren't modeled yet.
+ * objective). Loot finds are granted separately, as a $0 Logistics purchase
+ * (see logisticsEngine.getPurchaseCost's "looted" source), not through this.
  */
 export interface Achievement {
   id: string;
@@ -194,9 +195,10 @@ export interface LogisticsPurchase {
   /** Which equipment field this touches: an Equipment key for weapons/gadget/grenades, or a gearSlots key. Empty for `type: "submunition"`, which touches no equipment field — being in `purchases` is what makes it derive as owned (see equipmentEngine.getPurchasedGadgetIds). */
   slot: string;
   label: string;
-  cost: number;
   /** The value written into the first empty grenades[] slot for `type: "grenade"` (or left unequipped if both are full). */
   value: unknown;
+  /** Set to "looted" for a gadget/weapon/grenade granted for free in Logistics (a field find) — see logisticsEngine.getPurchaseCost, which always prices these at $0 regardless of catalog cost. Cost itself is never stored here (see getPurchaseCost) — it's always computed fresh from Equipment.json/geasrSets.json. */
+  source?: "looted";
 }
 
 export interface Biography {

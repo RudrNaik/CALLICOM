@@ -1,5 +1,6 @@
 import { useState } from "react";
 import equipmentData from "../../../../data/Equipment.json";
+import gearSetsData from "../../../../data/geasrSets.json";
 import {
   getWeaponCategoryOptions,
   getWeaponCost,
@@ -31,7 +32,7 @@ const selectClass =
   "w-full bg-neutral-800 border border-gray-500 rounded px-2 py-1 text-white text-sm";
 
 const tabClass = (active) =>
-  `px-2 py-1 rounded-xs text-xs cursor-pointer ${
+  `px-2 py-1 rounded-xs text-xs cursor-pointer mr-2 ${
     active
       ? "bg-orange-600 text-white"
       : "bg-neutral-800 text-neutral-300 hover:bg-neutral-700"
@@ -94,8 +95,13 @@ function EquipmentPurchaseCard({
   const [family, setFamily] = useState("");
   const [gadgetId, setGadgetId] = useState("");
   const [grenadeId, setGrenadeId] = useState("");
+  // A GM-granted field find: same picker, same class/multiclass eligibility
+  // as a normal buy, just $0 — see logisticsEngine.getPurchaseCost, which
+  // always prices a `source: "looted"` purchase at $0 regardless of catalog
+  // cost, so it stays free even if the item's price changes later.
+  const [isLoot, setIsLoot] = useState(false);
 
-  const money = getMoneyTotal(character, equipmentData);
+  const money = getMoneyTotal(character, equipmentData, gearSetsData);
   const isWeapon = type === "primaryWeapon" || type === "secondaryWeapon";
 
   const resetSelectors = () => {
@@ -164,7 +170,7 @@ function EquipmentPurchaseCard({
 
   if (type === "gadget") {
     cost = selectedGadget?.cost || 0;
-    canBuy = Boolean(gadgetId) && money >= cost;
+    canBuy = Boolean(gadgetId) && (isLoot || money >= cost);
     preview = selectedGadget && {
       title: selectedGadget.title,
       description: selectedGadget.description,
@@ -173,7 +179,9 @@ function EquipmentPurchaseCard({
   } else if (isWeapon) {
     cost = weaponCost;
     canBuy =
-      Boolean(category) && money >= cost && (!requiresFamily || Boolean(family));
+      Boolean(category) &&
+      (isLoot || money >= cost) &&
+      (!requiresFamily || Boolean(family));
     preview = category && {
       title: category,
       description: categoryData?.description,
@@ -181,7 +189,7 @@ function EquipmentPurchaseCard({
     };
   } else {
     cost = selectedGrenade?.cost || 0;
-    canBuy = Boolean(grenadeId) && money >= cost;
+    canBuy = Boolean(grenadeId) && (isLoot || money >= cost);
     preview = selectedGrenade && {
       title: selectedGrenade.title,
       description: selectedGrenade.description,
@@ -196,12 +204,10 @@ function EquipmentPurchaseCard({
         ? createSubmunitionPurchase({
             submunitionId: gadgetId,
             label: selectedGadget?.title,
-            cost,
           })
         : createGadgetPurchase({
             gadgetId,
             label: selectedGadget?.title,
-            cost,
           });
     } else if (isWeapon) {
       purchase = createWeaponPurchase({
@@ -209,22 +215,30 @@ function EquipmentPurchaseCard({
         name: weaponName,
         category,
         family,
-        cost,
       });
     } else {
       purchase = createGrenadePurchase({
         grenadeId,
         label: selectedGrenade?.title,
-        cost,
       });
     }
-    const result = applyPurchase(character, logs, purchase, equipmentData);
+    if (isLoot) {
+      purchase = { ...purchase, source: "looted" };
+    }
+    const result = applyPurchase(
+      character,
+      logs,
+      purchase,
+      equipmentData,
+      gearSetsData,
+    );
     if (!result) {
       alert("Not enough money for that purchase.");
       return;
     }
     refreshCharacter(result);
     resetSelectors();
+    setIsLoot(false);
   };
 
   return (
@@ -342,19 +356,30 @@ function EquipmentPurchaseCard({
           )}
 
           <div className="flex items-center justify-between">
-            <span className="text-xs text-neutral-400">Cost: {cost}</span>
-            <button
-              onClick={handlePurchase}
-              disabled={!canBuy}
-              className={buttonClass(canBuy)}
-            >
-              Purchase
-            </button>
+            <span className="text-xs text-neutral-400">
+              Cost: {isLoot ? "Free" : cost}
+            </span>
+            <div>
+              <button
+                type="button"
+                onClick={() => setIsLoot((prev) => !prev)}
+                className={tabClass(isLoot)}
+              >
+                {isLoot ? "[✓] " : "[X] "}Loot Item
+              </button>
+              <button
+                onClick={handlePurchase}
+                disabled={!canBuy}
+                className={buttonClass(canBuy)}
+              >
+                {isLoot ? "Grant" : "Purchase"}
+              </button>
+            </div>
           </div>
           <div>
             <SelectionPreview
               title={preview?.title}
-              cost={cost}
+              cost={isLoot ? 0 : cost}
               description={preview?.description}
               effect={preview?.effect}
               rulesText={preview?.rulesText}

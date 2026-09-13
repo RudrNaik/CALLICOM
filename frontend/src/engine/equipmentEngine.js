@@ -213,13 +213,18 @@ export const getArmorClassCap = (character) => {
 
 /**
  * Looks up a class's secondary (innate) gadget from the classSkills map.
+ * `source` picks which of the character's classes to look up — "main" (the
+ * default) uses `character.class`, "multi" uses `character.multiClass` — so
+ * a multiclassed character can equip either class's innate gadget.
  * @param {object} secondaryGadgetsMap - classSkills.json shape, keyed by class
  * @param {object} character
- * @returns {*} the classGadget entry, or null if the class has none
+ * @param {"main"|"multi"} [source]
+ * @returns {*} the classGadget entry, or null if that class has none
  */
-export const getSecondaryGadgetForClass = (secondaryGadgetsMap, character) => {
-  if (secondaryGadgetsMap[character.class]) {
-    return secondaryGadgetsMap[character.class].classGadget;
+export const getSecondaryGadgetForClass = (secondaryGadgetsMap, character, source = "main") => {
+  const className = source === "multi" ? character.multiClass : character.class;
+  if (className && secondaryGadgetsMap[className]) {
+    return secondaryGadgetsMap[className].classGadget;
   }
   return null;
 };

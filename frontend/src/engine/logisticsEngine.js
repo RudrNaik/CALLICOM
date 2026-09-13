@@ -31,18 +31,16 @@
  * removing a mission or undoing a purchase needs no separate bookkeeping to
  * stay consistent — there's nothing to go stale.
  *
- * Cost itself is never trusted from a stored value either for weapons/
- * gadgets/grenades/submunitions: a purchase record keeps whatever `cost` it
- * was made at, but every money calculation (getMoneyTotal, in logsEngine.js)
- * re-prices those live from Equipment.json via getPurchaseCost, so changing
- * an item's cost in the catalog immediately changes what every character
- * who ever bought it is considered to have paid — nothing needs a migration
- * when a price changes. Gear-slot purchases are the exception: applyPurchase
- * prices them live from geasrSets.json's tiers at the moment of purchase
- * (see getGearPieceCost), but getMoneyTotal doesn't carry geasrSets.json
- * through, so afterward they're summed from whatever `cost` got stored then
- * — a tier's price would need to change and the piece be re-bought to pick
- * up a new value, same as the old gear-slot placeholder's behavior.
+ * Nothing about cost is stored on a purchase record either: every money
+ * calculation (getMoneyTotal, in logsEngine.js) re-prices every purchase
+ * live via getPurchaseCost — weapons/gadgets/grenades/submunitions from
+ * Equipment.json, gear slots from geasrSets.json's tiers (see
+ * getGearPieceCost) — so changing an item's cost in either catalog
+ * immediately changes what every character who ever bought it is considered
+ * to have paid, with no migration needed when a price changes. A purchase
+ * tagged `source: "looted"` (a GM-granted field find, see
+ * EquipmentPurchaseCard's "Field find" toggle) always prices at $0 instead,
+ * regardless of catalog cost.
  *
  * Selling (sellPurchase) is scoped to the current "buy period": only
  * purchases recorded on the most recently logged mission's receipt can be
@@ -145,17 +143,21 @@ export function getGadgetSubmunitionOptions(gadgetItem, equipmentData) {
 }
 
 /**
- * A purchase's current cost, re-priced live from Equipment.json rather than
- * trusted from whatever was stored on the purchase when it was made — so
- * editing an item's cost in the catalog retroactively changes what every
- * character is considered to have paid for it. Weapons re-derive from their
+ * A purchase's current cost — nothing about cost is stored on a purchase
+ * record, so this is always computed fresh from the catalog data, meaning
+ * editing an item's cost retroactively changes what every character who
+ * bought it is considered to have paid. Weapons re-derive from their
  * category + family (the same catalog lookup the buy form uses); gadgets,
- * grenades and submunitions re-derive from their catalog id. Gear-slot
- * purchases re-derive from the piece's tier in geasrSets.json (see
- * equipmentEngine.getGearPieceCost), falling back to whatever was stored if
- * the piece can no longer be found there.
+ * grenades and submunitions re-derive from their catalog id in
+ * Equipment.json. Gear-slot purchases re-derive from the piece's tier in
+ * geasrSets.json (see equipmentEngine.getGearPieceCost). Either falls back
+ * to $0 if the item/piece can no longer be found in the catalog.
  */
 export function getPurchaseCost(purchase, equipmentData, gearSetsData) {
+  // A field-found item (see EquipmentPurchaseCard's "Field find" toggle) is
+  // always free, regardless of what it would otherwise cost in the catalog.
+  if (purchase?.source === "looted") return 0;
+
   switch (purchase?.type) {
     case "weapon": {
       const lookup = getWeaponCategoriesLookup(equipmentData ?? []);
@@ -169,19 +171,18 @@ export function getPurchaseCost(purchase, equipmentData, gearSetsData) {
     }
     case "gearSlot": {
       const piece = getGearPieceByIdAnyClass(gearSetsData, purchase.value);
-      return piece ? getGearPieceCost(piece) : purchase?.cost || 0;
+      return piece ? getGearPieceCost(piece) : 0;
     }
     default:
-      return purchase?.cost || 0;
+      return 0;
   }
 }
 
-export function createWeaponPurchase({ slot, name, category, family, cost }) {
+export function createWeaponPurchase({ slot, name, category, family }) {
   return {
     type: "weapon",
     slot,
     label: `${name?.trim() || "Unnamed Weapon"} (${category}${family ? ` / ${family}` : ""})`,
-    cost: Number(cost) || 0,
     value: {
       name: name?.trim() || "",
       category: category || "",
@@ -190,12 +191,11 @@ export function createWeaponPurchase({ slot, name, category, family, cost }) {
   };
 }
 
-export function createGadgetPurchase({ gadgetId, label, cost }) {
+export function createGadgetPurchase({ gadgetId, label }) {
   return {
     type: "gadget",
     slot: "gadget",
     label: label || gadgetId,
-    cost: Number(cost) || 0,
     value: gadgetId,
   };
 }
@@ -207,22 +207,20 @@ export function createGadgetPurchase({ gadgetId, label, cost }) {
  * in the receipt's `purchases` is what makes it show up as owned (see
  * equipmentEngine.getPurchasedGadgetIds).
  */
-export function createSubmunitionPurchase({ submunitionId, label, cost }) {
+export function createSubmunitionPurchase({ submunitionId, label }) {
   return {
     type: "submunition",
     slot: "",
     label: label || submunitionId,
-    cost: Number(cost) || 0,
     value: submunitionId,
   };
 }
 
-export function createGrenadePurchase({ grenadeId, label, cost }) {
+export function createGrenadePurchase({ grenadeId, label }) {
   return {
     type: "grenade",
     slot: "grenades",
     label: label || grenadeId,
-    cost: Number(cost) || 0,
     value: grenadeId,
   };
 }
@@ -232,12 +230,11 @@ export function createGrenadePurchase({ grenadeId, label, cost }) {
  * is what actually fills the slot once purchased (see
  * applyPurchaseToEquipment's "gearSlot" case).
  */
-export function createGearSlotPurchase({ slot, pieceId, label, cost }) {
+export function createGearSlotPurchase({ slot, pieceId, label }) {
   return {
     type: "gearSlot",
     slot,
     label: label || pieceId || "",
-    cost: Number(cost) || 0,
     value: pieceId || "",
   };
 }
@@ -343,7 +340,6 @@ function purchaseFreeSubmunitions(logs, gadgetId, equipmentData) {
     const submunitionPurchase = createSubmunitionPurchase({
       submunitionId: sub.id,
       label: sub.title,
-      cost: 0,
     });
     return recordPurchaseOnLatestMission(accLogs, submunitionPurchase);
   }, logs);
@@ -352,17 +348,18 @@ function purchaseFreeSubmunitions(logs, gadgetId, equipmentData) {
 /**
  * Spends money on a purchase, updating equipment and recording it onto the
  * latest mission's receipt. Blocked if the character can't afford it.
- * `gearSetsData` is only needed to price a "gearSlot" purchase; omit it for
- * every other purchase type.
+ * `gearSetsData` is needed both to price a "gearSlot" purchase and to
+ * compute the character's current money total (see getMoneyTotal); omit it
+ * only if the character owns no gear-slot purchases.
  * @returns {{equipment: object, logs: array}|null} null if blocked
  */
 export function applyPurchase(character, logs, purchase, equipmentData, gearSetsData) {
   const cost = getPurchaseCost(purchase, equipmentData, gearSetsData);
-  const money = getMoneyTotal(character, equipmentData) - cost;
+  const money = getMoneyTotal(character, equipmentData, gearSetsData) - cost;
   if (money < 0) return null;
 
   const equipment = applyPurchaseToEquipment(character?.equipment, purchase);
-  let nextLogs = recordPurchaseOnLatestMission(logs, { ...purchase, cost });
+  let nextLogs = recordPurchaseOnLatestMission(logs, purchase);
 
   if (purchase.type === "gadget") {
     nextLogs = purchaseFreeSubmunitions(nextLogs, purchase.value, equipmentData);
