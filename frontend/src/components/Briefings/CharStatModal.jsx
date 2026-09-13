@@ -223,7 +223,7 @@ export default function CharacterSheetModal({ char, open, onClose }) {
                     Specializations:
                   </h2>
                   <SpecView
-                    specializations={char.specializations}
+                    specializations={char.specializations || []}
                     isEditing={false}
                     removeSpec={() => {}}
                   />
@@ -253,8 +253,8 @@ function LoadoutSection({ char }) {
   const SPR = Number(A.Spirit ?? 0);
   const BDY = Number(A.Body ?? 0);
   const EXP = Number(A.Alertness ?? A.Expertise ?? 0);
-  const unrmd = Math.max(4, Math.ceil((3 + BDY + char.skills.CQC)/1.5));
-  const armd = Math.max(4, Math.ceil((3 +BDY + char.skills.Melee)/1.5));
+  const unrmd = Math.max(4, Math.ceil((3 + BDY + (char.skills?.CQC ?? 0)) / 1.5));
+  const armd = Math.max(4, Math.ceil((3 + BDY + (char.skills?.Melee ?? 0)) / 1.5));
   const inventory = (char.equipment && char.equipment.miscGear)
 
   return (
@@ -390,6 +390,8 @@ function BioSection({ char }) {
 
 function GearSlotsSection({ char }) {
   const gearsets = getGearsetsForClass(char, gearSetsData);
+  if (gearsets.length === 0) return null;
+
   const gearSlots = char?.equipment?.gearSlots || {};
   const activePatch = getActiveGearsetPatch(gearsets, gearSlots);
 
@@ -447,6 +449,16 @@ function GearSlotsSection({ char }) {
   );
 }
 
+// ensureStartingLog needs character.metadata.starting_cash to synthesize a
+// first entry — a Briefings snapshot missing that field would otherwise
+// crash Logs/Purchases instead of just showing "no data" (see
+// logsEngine.createStartingLog).
+function getSafeLogs(char) {
+  if (char?.logs?.length) return char.logs;
+  if (char?.metadata) return ensureStartingLog(char, []);
+  return [];
+}
+
 function StatTile({ label, value, color }) {
   return (
     <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-4 border-orange-500 px-4 py-2 rounded-xs inline-block">
@@ -457,9 +469,15 @@ function StatTile({ label, value, color }) {
 }
 
 function LogsSection({ char }) {
-  const logs = ensureStartingLog(char, char?.logs ?? []);
+  const logs = getSafeLogs(char);
   const totals = getLogTotals(logs);
   const money = getMoneyTotal(char, equipmentData, gearSetsData);
+
+  if (logs.length === 0) {
+    return (
+      <p className="text-neutral-500 text-xs mt-4">No logs on file.</p>
+    );
+  }
 
   return (
     <div className="mt-4 space-y-4">
@@ -543,7 +561,7 @@ function LogsSection({ char }) {
 }
 
 function PurchasesSection({ char }) {
-  const logs = ensureStartingLog(char, char?.logs ?? []);
+  const logs = getSafeLogs(char);
 
   const gadgetEntries = getPurchaseEntries(logs, "gadget")
     .map(({ purchase }) => {
