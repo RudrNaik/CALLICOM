@@ -317,26 +317,6 @@ app.put("/api/missions/:id", async (req, res) => {
   }
 });
 
-app.post("/api/missions", async (req, res) => {
-  const client = new MongoClient(url);
-
-  try {
-    await client.connect();
-    const db = client.db(dbName);
-
-    const mission = req.body;
-    if (!mission.campaignId.id) {
-      return res.status(400).send({ error: "Missing campaign info." });
-    }
-
-    const result = await db.collection("missions").insertOne(mission);
-    res.status(201).send(result);
-  } catch (err) {
-    console.error("Error saving character:", err.message);
-    res.status(500).send({ error: err.message });
-  }
-});
-
 app.delete("/api/missions/:id", async (req, res) => {
   const client = new MongoClient(url);
 

@@ -1,5 +1,5 @@
 // src/components/GadgetAmmo.jsx
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo } from "react";
 import {
   MIXED_GADGETS,
   EX_KEY,
@@ -18,14 +18,7 @@ import {
   useExpendableGadget,
   resupplyExpendableGadget,
   hasExplicitGadgetAmmo,
-} from "../../../engine/equipmentEngine";
-import {
-  getMemory,
-  setMemory,
-  getJsonMemory,
-  setJsonMemory,
-  getGadgetAmmoKey,
-} from "../../../engine/memoryEngine";
+} from "../../../../engine/equipmentEngine";
 
 export default function GadgetAmmo({
   isEditing,
@@ -36,13 +29,9 @@ export default function GadgetAmmo({
   setGadgetAmmo,
   itemById,
   charClass,
-  characterCallsign, // for per-character storage key
-  campActive,
-  campaignEquipment,
-  campaignId,
+  characterId, // distinguishes which character this ammo belongs to for reload effects
+  ownedOptionIds = [], // ids purchased in Logistics (see equipmentEngine.getPurchasedGadgetIds) — narrows option pickers below to what's actually been bought
 }) {
-  if (!config) return null;
-
   const options = config?.options || [];
   const optionIds = useMemo(() => new Set(options.map((o) => o.id)), [options]);
 
@@ -54,22 +43,26 @@ export default function GadgetAmmo({
     [gadgetId],
   );
 
-  // Everything that isn't mixed + has a max pool is considered expendable here
+  // Determines if this is an expendable gadget. Everything that isn't mixed + has a max pool is considered expendable.
   const isExpendable = useMemo(
     () => isExpendableGadget(gadgetId, config),
     [gadgetId, config],
   );
 
+  /** 
+   * The effective maximum of that gadget.
+   */
   const effectiveMax = useMemo(() => getEffectiveMax(gadgetId, charClass, config), [gadgetId, charClass, config]);
 
   const sanitize = (obj) => sanitizeGadgetAmmo(obj, isMixed, isExpendable, optionIds, effectiveMax);
 
+  /**
+   * Determines if the gadgetAmmo UI should render if it is either an expendable gadget (has charges/ammo) or is mixed munitions (has charges/ammo but also multiple selections)
+   */
   const shouldRender = useMemo(
     () => hasExplicitGadgetAmmo(gadgetId, config, isMixed, isExpendable),
     [config, gadgetId, isExpendable, isMixed],
   );
-
-  if (!shouldRender) return null;
 
   const currentUses = Number.isFinite(gadgetAmmo?.[EX_KEY]) ? gadgetAmmo[EX_KEY] : null;
 
@@ -83,94 +76,45 @@ export default function GadgetAmmo({
     [config, gadgetId, isExpendable, effectiveMax]
   );
 
-  const localStorageKey = useMemo(
-    () => getGadgetAmmoKey(characterCallsign, gadgetId),
-    [characterCallsign, gadgetId],
-  );
-  const hasLoadedStorage = useRef(false);
-  const skipSaveAfterLoad = useRef(false);
-
   /**
-   * Load new data from localstorage as needed.
+   * Re-sanitize the ammo state stored on the character whenever the gadget
+   * selection (or what counts as its pool) changes.
    */
   useEffect(() => {
-    hasLoadedStorage.current = false;
-
-    try {
-      const raw = getMemory(localStorageKey);
-      const parsed = raw ? getJsonMemory(localStorageKey) : null;
-
-      const initial = getInitialGadgetAmmo(
-        gadgetId,
-        charClass,
-        config,
-        parsed,
-        gadgetAmmo
-      );
-
-      if (raw) {
-        skipSaveAfterLoad.current = true;
-      }
-
-      setGadgetAmmo(initial);
-      hasLoadedStorage.current = true;
-    } catch (e) {
-      console.error("GadgetAmmo parse error:", e);
-      setGadgetAmmo(getInitialGadgetAmmo(gadgetId, charClass, config, null, {}));
-      hasLoadedStorage.current = true;
-    }
+    if (!config) return;
+    const initial = getInitialGadgetAmmo(gadgetId, charClass, config, gadgetAmmo);
+    setGadgetAmmo(initial);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [localStorageKey, isMixed, isExpendable, effectiveMax]);
-
-  /**
-   * if the ammo changes, save to localstorage.
-   */
-  useEffect(() => {
-    try {
-      if (!hasLoadedStorage.current) return;
-      if (skipSaveAfterLoad.current) {
-        skipSaveAfterLoad.current = false;
-        return;
-      }
-      const clean = sanitize(gadgetAmmo || {});
-      setJsonMemory(localStorageKey, clean);
-    } catch (e) {
-      console.error("GadgetAmmo save error:", e);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gadgetAmmo, isActive, localStorageKey, effectiveMax]);
+  }, [gadgetId, characterId, isMixed, isExpendable, effectiveMax, config]);
 
   /**
    * get rid of unknown keys when the weapon selection changes.
    */
   useEffect(() => {
-    if (!isMixed) return;
+    if (!config || !isMixed) return;
     const pruned = sanitize(gadgetAmmo || {});
     if (JSON.stringify(pruned) !== JSON.stringify(gadgetAmmo || {})) {
       setGadgetAmmo(pruned);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [optionIds, isMixed, effectiveMax]);
+  }, [optionIds, isMixed, effectiveMax, config]);
 
-  //console.log(max)
+  if (!config || !shouldRender) return null;
 
   const setMixedValue = (id, nextVal) => {
     const next = updateMixedGadgetAmmo(gadgetAmmo, id, nextVal, max);
     if (!next) return;
 
     setGadgetAmmo(next);
-    try {
-      setJsonMemory(localStorageKey, sanitize(next));
-    } catch {}
   };
 
   // ------- Render -------
   return (
-    <div className="mt-1 rounded border border-orange-500/40 bg-neutral-900/50 p-3">
+    <div className="mt-1 rounded-xs border border-orange-500/40 bg-neutral-900/50 p-3">
       <h4 className="text-orange-300 font-semibold mb-2">{title}</h4>
       {headerText && <p className="text-xs text-gray-400 mb-2">{headerText}</p>}
 
-      {/* MIXED MUNITIONS (UBGL / AMS / Spec / Stims/ Demo Dogs) */}
+      {/* MIXED MUNITIONS (UBGL / AMS / Spec / Stims / Demo Dogs) */}
       {isMixed && (
         <div className="text-xs">
           {options.map((opt) => {
@@ -180,15 +124,10 @@ export default function GadgetAmmo({
               : 0;
 
             if (!isEditing && count <= -1) return null;
-            if (
-              campActive &&
-              campaignEquipment?.[opt.id]?.cost !== 0 &&
-              campaignId
-                ?.replace(/\s/g, "")
-                ?.split(",")
-                ?.includes("Siberia2022")
-            )
-              return null; //Specific to the current campaign where it will filter out gadgets based on cost.
+            // Only show ammo variants actually bought in Logistics (see
+            // equipmentEngine.getPurchasedGadgetIds) — even a $0 one needs
+            // its own purchase now, not just owning the parent gadget.
+            if (!ownedOptionIds.includes(opt.id)) return null;
             return (
               <div
                 key={opt.id}
@@ -245,7 +184,7 @@ export default function GadgetAmmo({
                     </button>
                   </div>
                 ) : (
-                  <p className="px-2 py-1 rounded bg-neutral-900">
+                  <p className="px-2 py-1 rounded-xs bg-neutral-900">
                     <span className="text-yellow-400">{count}</span>
                   </p>
                 )}
@@ -261,15 +200,7 @@ export default function GadgetAmmo({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {options.map((opt) => {
               const rules = itemById?.[opt.id]?.rulesText;
-              if (
-                campActive &&
-                itemById?.[opt.id]?.cost != 0 &&
-                campaignId
-                  ?.replace(/\s/g, "")
-                  ?.split(",")
-                  ?.includes("Siberia2022")
-              )
-                return null; //Specific to the current campaign where it will filter out gadgets based on cost.
+              if (!ownedOptionIds.includes(opt.id)) return null;
               return (
                 <div
                   key={opt.id}
@@ -298,7 +229,6 @@ export default function GadgetAmmo({
               {currentUses === null ? "" : Math.max(0, currentUses)}
             </span>
             {currentUses !== null && <> / {effectiveMax}</>}
-            <div className="text-[10px] text-gray-400 italic">Uses</div>
           </div>
 
           {isActive && (
@@ -308,9 +238,6 @@ export default function GadgetAmmo({
                   const next = useExpendableGadget(gadgetAmmo, effectiveMax);
                   if (!next) return;
                   setGadgetAmmo(next);
-                  try {
-                    setJsonMemory(localStorageKey, sanitize(next));
-                  } catch {}
                 }}
                 disabled={
                   !isActive ||
@@ -327,9 +254,6 @@ export default function GadgetAmmo({
                 onClick={() => {
                   const next = resupplyExpendableGadget(gadgetAmmo, effectiveMax);
                   setGadgetAmmo(next);
-                  try {
-                    setJsonMemory(localStorageKey, sanitize(next));
-                  } catch {}
                 }}
                 className="bg-green-700 hover:bg-green-800 text-white px-3 py-1 rounded text-sm"
               >

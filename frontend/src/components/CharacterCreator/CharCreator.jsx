@@ -19,6 +19,18 @@ const CharCreator = ({ formData, setFormData, onNext }) => {
         : "border-orange-400"
     }`;
 
+  const biographyFields = [
+    ["age", "Age"],
+    ["height", "Height"],
+    ["weight", "Weight"],
+    ["gender", "Gender"],
+    ["psych", "Psychological Profile"],
+    ["bio", "Biography"],
+    ["notes", "Notes"],
+  ];
+
+  const biography = formData.Bio || {};
+
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-6" style={{ fontFamily: 'Geist_Mono' }}>
       <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-6 rounded shadow">
@@ -34,7 +46,7 @@ const CharCreator = ({ formData, setFormData, onNext }) => {
           Welcome to the United Nations Contracting Council IDENT registration
           service. IDENT is the contractor certification system that helps
           ensure contractors meet regulatory and policy requirements through the
-          use of BFTC and intelligence tracking. Contractors that have already
+          use of BFTC and intelligence networks. Contractors that have already
           been issued an IDENT-BFTC tag should not complete this form unless
           instructed to by a UNCC representative or liason.
         </p>
@@ -98,6 +110,57 @@ const CharCreator = ({ formData, setFormData, onNext }) => {
               <p className="text-red-400 text-sm mt-1">Required</p>
             )}
           </div>
+
+          <div>
+            <p className="text-sm text-orange-400/80"> LC-218-E // Starting Cash</p>
+            <input
+              type="number"
+              min={0}
+              placeholder="Starting Cash"
+              value={formData.metadata?.starting_cash ?? 0}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  metadata: {
+                    ...formData.metadata,
+                    starting_cash: Number(e.target.value) || 0,
+                  },
+                })
+              }
+              className="border-orange-400 text-neutral-400/80"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-6 rounded shadow">
+        <h1 className="inline-block text-4xl font-bold px-3 py-2 bg-orange-500">
+          Biography ::/
+        </h1>
+        <p className="italic text-sm py-2 text-neutral-400/80">
+          These fields are optional and can be completed or updated later.
+        </p>
+        <div className="grid sm:grid-cols-2 gap-4 py-2">
+          {biographyFields.map(([field, label]) => (
+            <div key={field} className={field === "bio" || field === "notes" || field === "psych" ? "col-span-2" : ""}>
+              <p className="text-sm text-orange-400/80">{label}</p>
+              <textarea
+                type="text"
+                placeholder={label}
+                rows={field === "bio" || field === "notes" ? 6 : 2}
+                value={biography[field] || ""}
+                onChange={(event) =>
+                  setFormData({
+                    ...formData,
+                    Bio: { ...biography, [field]: event.target.value },
+                  })
+                }
+                className={`input-style w-full border-orange-400 ${
+                  field === "bio" || field === "notes" || field=="psych" ? "min-h-32" : "min-h-10"
+                }`}
+              />
+            </div>
+          ))}
         </div>
       </div>
 
@@ -129,7 +192,14 @@ const CharCreator = ({ formData, setFormData, onNext }) => {
         classData={classData}
         selectedClass={formData.class}
         onSelect={(selected) => {
-          setFormData({ ...formData, class: selected });
+          setFormData({
+            ...formData,
+            class: selected,
+            equipment: {
+              ...formData.equipment,
+              classGadget: classData[selected]?.classGadget?.id || "",
+            },
+          });
           handleBlur("class");
         }}
         touched={touched.class}

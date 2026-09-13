@@ -1,8 +1,28 @@
 import { useState, useEffect, useMemo } from "react";
 import equipmentData from "../../../data/Equipment.json";
-import { getModifiedWeaponStats, getWeaponCategoriesLookup } from "../../../engine/equipmentEngine";
+import {
+  getWeaponCategoriesLookup,
+  getWeaponData,
+  getRangeModifier,
+  getNavigateModifier,
+  totalModifierValue as computeTotalModifierValue,
+  rollExpression as buildRollExpression,
+} from "../../../engine/weaponEngine";
+import {
+  getWoundPenalty,
+  getBaseDiceCount,
+  getEffectiveDiceCount,
+} from "../../../engine/characterEngine";
 
-function Calculator({ characterData }) {
+function Calculator({
+  characterData,
+  fleshWounds,
+  deepWounds,
+  onIncreaseFlesh,
+  onDecreaseFlesh,
+  onIncreaseDeep,
+  onDecreaseDeep,
+}) {
   const [character, setCharacter] = useState(null);
   const [primary, setPrimary] = useState(null);
   const [secondary, setSecondary] = useState(null);
@@ -28,9 +48,10 @@ function Calculator({ characterData }) {
 
   const [pingEnabled, setPingEnabled] = useState(false);
 
-  const [fleshWounds, setFleshWounds] = useState(0);
-  const [deepWounds, setDeepWounds] = useState(0);
   const [navigateRoll, setNavigateRoll] = useState(null);
+
+  const characterKey =
+    characterData?._id || characterData?.uniqueId || characterData?.callsign;
 
   useEffect(() => {
     if (characterData) {
@@ -38,93 +59,61 @@ function Calculator({ characterData }) {
       setPrimary(characterData?.equipment?.primaryWeapon);
       setSecondary(characterData?.equipment?.secondaryWeapon);
       setSkills(characterData?.skills);
-      setFleshWounds(characterData?.fleshWounds ?? 0);
-      setDeepWounds(characterData?.deepWounds ?? 0);
     }
   }, [characterData]);
 
-  const getWeaponData = (weapon) => {
-    if (!weapon?.category) return null;
-    return weaponCatsLookup[weapon.category] || null;
-  };
-
-  const parseRangeProfile = (rangeString) => {
-    const profile = {};
-    if (!rangeString) return profile;
-    rangeString.split("|").forEach((part) => {
-      const match = part.trim().match(/([+-]?\d+)\s*(C|M|L|ELR|Bipod)/i);
-      if (!match) return;
-      const [, value, band] = match;
-      profile[band.toUpperCase()] = Number(value);
-    });
-    return profile;
-  };
-
-  const getRangeModifier = () => {
-    if (!selectedWeapon) return 0;
-    const weaponData = getWeaponData(selectedWeapon);
-    if (!weaponData?.range) return 0;
-    
-    let rangeString = weaponData.range;
-    
-    if (selectedWeapon?.family) {
-      const modifiedStats = getModifiedWeaponStats(selectedWeapon, weaponCatsLookup, selectedWeapon.family);
-      if (modifiedStats?.range) {
-        rangeString = modifiedStats.range;
-      }
-    }
-    
-    const profile = parseRangeProfile(rangeString);
-    if (selectedRange === "EELR") return profile.ELR ?? 0;
-    return profile[selectedRange] ?? 0;
-  };
+  // Reset the roll-builder selections (not just the synced character/gear
+  // above) when switching to a different character, so picks from the
+  // previous character's weapons/skills don't linger in the UI.
+  useEffect(() => {
+    setRollMode("weapon");
+    setSelectedWeapon(null);
+    setSelectedSkill(null);
+    setSelectedRange("M");
+    setModifiers([]);
+    setNewModValue(0);
+    setNewModLabel("");
+    setDiceModifiers([]);
+    setNewDiceModValue(0);
+    setNewDiceModLabel("");
+    setPingEnabled(false);
+    setNavigateRoll(null);
+  }, [characterKey]);
 
   const getSkillLevel = () => {
     if (rollMode === "skill") return skills?.[selectedSkill] ?? 0;
     if (!selectedWeapon) return 0;
-    const weaponData = getWeaponData(selectedWeapon);
+    const weaponData = getWeaponData(selectedWeapon, weaponCatsLookup);
     return skills?.[weaponData?.class] ?? 0;
   };
 
-  const getNavigateModifier = () => {
-    if (navigateRoll === null || navigateRoll === "") return 0;
-    const roll = Number(navigateRoll);
-    if (roll <= 1) return -2;
-    if (roll <= 3) return -1;
-    if (roll <= 5) return 0;
-    if (roll >= 6) return 1;
-    return 0;
-  };
+  const rangeMod = rollMode === "weapon"
+    ? getRangeModifier(selectedWeapon, weaponCatsLookup, selectedWeapon?.family, selectedRange)
+    : 0;
+
+  const navigateMod = getNavigateModifier(navigateRoll);
 
   const woundPenalty = useMemo(() => {
-    return fleshWounds + deepWounds * 2;
+    return getWoundPenalty(fleshWounds, deepWounds);
   }, [fleshWounds, deepWounds]);
 
   const totalDiceChange = useMemo(() => {
     return diceModifiers.reduce((sum, m) => sum + Number(m.value), 0);
   }, [diceModifiers]);
 
-  const getBaseDiceCount = () => {
-    const skillLevel = getSkillLevel();
-    return skillLevel <= 0 ? 2 : skillLevel;
-  };
+  const skillLevel = getSkillLevel();
+  const baseDiceCount = getBaseDiceCount(skillLevel);
+  const effectiveDiceCount = getEffectiveDiceCount(skillLevel, totalDiceChange);
 
-  const getEffectiveDiceCount = () => {
-    const skillLevel = getSkillLevel();
-    const min = skillLevel <= 0 ? 2 : 0;
-    return Math.max(min, getBaseDiceCount() + totalDiceChange);
-  };
-
-  const totalModifierValue = useMemo(() => {
-    const namedMods = modifiers.reduce((sum, m) => sum + Number(m.value), 0);
-    const rangeMod = rollMode === "weapon" ? getRangeModifier() : 0;
-    const ping = pingEnabled ? 1 : 0;
-    const navigate =
-      rollMode === "weapon" &&
-      (selectedRange === "ELR" || selectedRange === "EELR")
-        ? getNavigateModifier()
-        : 0;
-    return namedMods + rangeMod + ping + navigate;
+  const totalModValue = useMemo(() => {
+    return computeTotalModifierValue({
+      modifiers,
+      rollMode,
+      rangeMod,
+      pingEnabled,
+      selectedRange,
+      navigateMod,
+    });
   }, [
     modifiers,
     selectedWeapon,
@@ -132,63 +121,25 @@ function Calculator({ characterData }) {
     rollMode,
     pingEnabled,
     navigateRoll,
+    rangeMod,
+    navigateMod,
   ]);
 
-  const rollExpression = useMemo(() => {
-    const skillLevel = getSkillLevel();
-    const effectiveCount = getEffectiveDiceCount();
-    // Unskilled = take-lower; skilled = keep-highest
-    const dice =
-      skillLevel <= 0 ? `.r ${effectiveCount}d6l` : `.r ${effectiveCount}d6k1`;
-
-    let expr = dice;
-    const comments = [];
-
-    if (rollMode === "weapon") {
-      const rangeMod = getRangeModifier();
-      if (rangeMod !== 0) {
-        expr += rangeMod > 0 ? ` + ${rangeMod}` : ` - ${Math.abs(rangeMod)}`;
-        comments.push(`RNG ${rangeMod > 0 ? "+" : ""}${rangeMod}`);
-      }
-    }
-
-    if (
-      rollMode === "weapon" &&
-      (selectedRange === "ELR" || selectedRange === "EELR")
-    ) {
-      const navMod = getNavigateModifier();
-      if (navMod !== 0) {
-        expr += navMod > 0 ? ` + ${navMod}` : ` - ${Math.abs(navMod)}`;
-        comments.push(`NAV ${navMod > 0 ? "+" : ""}${navMod}`);
-      }
-    }
-
-    if (pingEnabled) {
-      expr += " + 1";
-      comments.push("PING +1");
-    }
-
-    modifiers.forEach((mod) => {
-      expr += mod.value > 0 ? ` + ${mod.value}` : ` - ${Math.abs(mod.value)}`;
-      comments.push(`${mod.label} ${mod.value > 0 ? "+" : ""}${mod.value}`);
+  const rollExpr = useMemo(() => {
+    return buildRollExpression({
+      skillLevel,
+      effectiveCount: effectiveDiceCount,
+      rollMode,
+      rangeMod,
+      selectedRange,
+      navigateMod,
+      pingEnabled,
+      modifiers,
+      diceModifiers,
+      woundPenalty,
     });
-
-    diceModifiers.forEach((mod) => {
-      comments.push(`${mod.label} ${mod.value > 0 ? "+" : ""}${mod.value}d`);
-    });
-
-    if (woundPenalty > 0) {
-      expr += ` - ${woundPenalty}`;
-      comments.push(`WND -${woundPenalty}`);
-    }
-
-    if (comments.length > 0) {
-      expr += ` # ${comments.map((c) => `(${c})`).join(" ")}`;
-    }
-
-    return expr;
   }, [
-    totalModifierValue,
+    totalModValue,
     totalDiceChange,
     woundPenalty,
     selectedWeapon,
@@ -199,6 +150,10 @@ function Calculator({ characterData }) {
     selectedRange,
     pingEnabled,
     navigateRoll,
+    skillLevel,
+    effectiveDiceCount,
+    rangeMod,
+    navigateMod,
   ]);
 
   const addModifier = () => {
@@ -231,7 +186,7 @@ function Calculator({ characterData }) {
   const removeDiceModifier = (id) =>
     setDiceModifiers(diceModifiers.filter((m) => m.id !== id));
 
-  const copyToClipboard = () => navigator.clipboard.writeText(rollExpression);
+  const copyToClipboard = () => navigator.clipboard.writeText(rollExpr);
 
   if (!character) {
     return (
@@ -241,7 +196,7 @@ function Calculator({ characterData }) {
     );
   }
 
-  const weaponData = selectedWeapon ? getWeaponData(selectedWeapon) : null;
+  const weaponData = selectedWeapon ? getWeaponData(selectedWeapon, weaponCatsLookup) : null;
 
   const setMode = (mode) => {
     setRollMode(mode);
@@ -359,10 +314,10 @@ function Calculator({ characterData }) {
                   />
                   {navigateRoll !== null && navigateRoll !== "" && (
                     <span
-                      className={`text-sm font-bold ${getNavigateModifier() >= 0 ? "text-green-400" : "text-red-400"}`}
+                      className={`text-sm font-bold ${navigateMod >= 0 ? "text-green-400" : "text-red-400"}`}
                     >
-                      {getNavigateModifier() > 0 ? "+" : ""}
-                      {getNavigateModifier()}
+                      {navigateMod > 0 ? "+" : ""}
+                      {navigateMod}
                     </span>
                   )}
                   <button
@@ -510,7 +465,7 @@ function Calculator({ characterData }) {
             <div className="flex items-center gap-2">
               <label>FW:</label>
               <button
-                onClick={() => setFleshWounds(Math.max(0, fleshWounds - 1))}
+                onClick={onDecreaseFlesh}
                 className="px-2 py-1 bg-neutral-800 border border-neutral-700 text-neutral-400 rounded hover:bg-neutral-700"
               >
                 -
@@ -519,7 +474,7 @@ function Calculator({ characterData }) {
                 {fleshWounds}
               </div>
               <button
-                onClick={() => setFleshWounds(fleshWounds + 1)}
+                onClick={onIncreaseFlesh}
                 className="px-2 py-1 bg-neutral-800 border border-neutral-700 text-neutral-400 rounded hover:bg-neutral-700"
               >
                 +
@@ -529,7 +484,7 @@ function Calculator({ characterData }) {
             <div className="flex items-center gap-2">
               <label>DW:</label>
               <button
-                onClick={() => setDeepWounds(Math.max(0, deepWounds - 1))}
+                onClick={onDecreaseDeep}
                 className="px-2 py-1 bg-neutral-800 border border-neutral-700 text-neutral-400 rounded hover:bg-neutral-700"
               >
                 -
@@ -538,7 +493,7 @@ function Calculator({ characterData }) {
                 {deepWounds}
               </div>
               <button
-                onClick={() => setDeepWounds(deepWounds + 1)}
+                onClick={onIncreaseDeep}
                 className="px-2 py-1 bg-neutral-800 border border-neutral-700 text-neutral-400 rounded hover:bg-neutral-700"
               >
                 +
@@ -556,12 +511,12 @@ function Calculator({ characterData }) {
         <div className="px-2 py-2 bg-black bg-[radial-gradient(circle,_rgba(255,120,0,0.05)_1px,_transparent_1px)] [background-size:8px_8px] rounded-lg p-4 border border-orange-400 hover:border-neutral-100 transition">
           <p className="text-xs text-neutral-500 uppercase mb-2">Final Roll</p>
           <p className="text-2xl font-mono text-orange-400 break-words">
-            {rollExpression}
+            {rollExpr}
           </p>
           <div className="text-xs text-neutral-500 mt-3">
             <div>
-              Dice: {getEffectiveDiceCount()}d6
-              {getSkillLevel() <= 0 ? "l" : "k1"}
+              Dice: {effectiveDiceCount}d6
+              {skillLevel <= 0 ? "l" : "k1"}
               {totalDiceChange !== 0 && (
                 <span
                   className={
@@ -569,23 +524,23 @@ function Calculator({ characterData }) {
                   }
                 >
                   {" "}
-                  ({getBaseDiceCount()} base {totalDiceChange > 0 ? "+" : ""}
+                  ({baseDiceCount} base {totalDiceChange > 0 ? "+" : ""}
                   {totalDiceChange} dice)
                 </span>
               )}
             </div>
-            {rollMode === "weapon" && getRangeModifier() !== 0 && (
+            {rollMode === "weapon" && rangeMod !== 0 && (
               <div>
-                Range ({selectedRange}): {getRangeModifier()}
+                Range ({selectedRange}): {rangeMod}
               </div>
             )}
             {pingEnabled && <div>Ping: +1</div>}
             {rollMode === "weapon" &&
               (selectedRange === "ELR" || selectedRange === "EELR") &&
-              getNavigateModifier() !== 0 && (
+              navigateMod !== 0 && (
                 <div>
-                  Navigate: {getNavigateModifier() > 0 ? "+" : ""}
-                  {getNavigateModifier()}
+                  Navigate: {navigateMod > 0 ? "+" : ""}
+                  {navigateMod}
                 </div>
               )}
             {modifiers.map((mod) => (

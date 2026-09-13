@@ -1,22 +1,8 @@
 /**
  * Equipment Engine
- * Centralizes all weapon and gadget ammo logic.
+ * Centralizes gadget ammo logic and general equipment/gear rules.
+ * Weapon-stat logic (category lookups, range/modifier math) lives in weaponEngine.js.
  */
-
-/**
- * Transforms the equipment list into a lookup object for weapon categories using IDs.
- * @param {Array} equipmentData - The equipment data array
- * @returns {object} Mapping of category IDs to their data
- */
-export const getWeaponCategoriesByIdLookup = (equipmentData) => {
-  const lookup = {};
-  equipmentData.forEach(item => {
-    if (item.categoryName) {
-      lookup[item.id] = item;
-    }
-  });
-  return lookup;
-};
 
 /**
  * Retrieves gadget ammo configuration from the equipment list.
@@ -29,165 +15,435 @@ export const getGadgetAmmoConfig = (gadgetId, equipmentData) => {
 };
 
 /**
- * Retrieves weapon category data from the equipment list by category name.
- * @param {string} categoryName - Name of the category (e.g., "Light Pistols")
- * @param {Array} equipmentData - The equipment data array
- * @returns {object|null} Category data
+ * Generic id-keyed lookup builder for an array of items with an `id` field.
+ * @param {Array} items
+ * @returns {object} Mapping of item id to item
  */
-export const getWeaponCategoryData = (categoryName, equipmentData) => {
-  return equipmentData.find(item => item.categoryName === categoryName) || null;
-};
-
-/**
- * Transforms the equipment list into a lookup object for weapon categories.
- * @param {Array} equipmentData - The equipment data array
- * @returns {object} Mapping of category names to their data
- */
-export const getWeaponCategoriesLookup = (equipmentData) => {
+export const getItemByIdLookup = (items) => {
   const lookup = {};
-  equipmentData.forEach(item => {
-    if (item.categoryName) {
-      lookup[item.categoryName] = item;
-    }
+  (items || []).forEach((it) => {
+    lookup[it.id] = it;
   });
   return lookup;
 };
 
-// --- Weapon Logic ---
-
 /**
- * Parse range string into an object
- * @param {string} rangeString - Range string like "+1 C | -2 L | -3 ELR"
- * @returns {object} Range object like { C: 1, L: -2, ELR: -3 }
+ * Derives every gadget/submunition id a character has ever purchased by
+ * scanning their mission logs' receipts (see logisticsEngine.js) — nothing
+ * is stored on Equipment itself for this, so removing a mission or undoing
+ * a purchase updates what's "owned" for free, just by re-deriving from the
+ * (now shorter) `logs`. A gadget's submunitions are always their own
+ * individual purchases (see logisticsEngine.createSubmunitionPurchase),
+ * never bundled with buying the gadget itself, but both fold into this same
+ * id set — there's no separate "unlocked submunitions" concept; a
+ * submunition is just another item that either shows up here or doesn't.
+ * @param {Array} logs - character.logs
+ * @returns {Array<string>}
  */
-export const parseRangeString = (rangeString) => {
-  const rangeObj = {};
-  if (!rangeString) return rangeObj;
-
-  rangeString.split("|").forEach((part) => {
-    const trimmed = part.trim();
-    const match = trimmed.match(/([+-]?\d+)\s*(C|M|L|ELR|EELR)/i);
-    if (match) {
-      const [, value, band] = match;
-      rangeObj[band.toUpperCase()] = parseInt(value, 10);
-    }
-  });
-
-  return rangeObj;
-};
-
-/**
- * Convert range object back to string format
- * @param {object} rangeObj - Range object like { C: 1, L: -2, ELR: -3 }
- * @returns {string} Range string like "+1 C | -2 L | -3 ELR"
- */
-export const rangeObjectToString = (rangeObj) => {
-  const bands = ["C", "M", "L", "ELR", "EELR"];
-  const parts = [];
-
-  bands.forEach((band) => {
-    if (rangeObj[band] !== undefined && rangeObj[band] !== 0) {
-      const sign = rangeObj[band] >= 0 ? "+" : "";
-      parts.push(`${sign}${rangeObj[band]} ${band}`);
-    }
-  });
-
-  return parts.join(" | ");
-};
-
-/**
- * Apply family modifiers to base weapon stats
- * @param {object} baseStats - Original weapon stats
- * @param {object} modifiers - Modifier object from family definition
- * @returns {object} Modified stats
- */
-export const applyModifiers = (baseStats, modifiers) => {
-  if (!modifiers || Object.keys(modifiers).length === 0) {
-    return baseStats;
-  }
-
-  const modified = { ...baseStats };
-
-  // Calculate original magazine count from base stats
-  const baselineMagazineCount = Math.floor((baseStats.totalTurns || 0) / (baseStats.magazineSize || 1));
-
-  if (modifiers.damage) {
-    modified.damage = (modified.damage || 0) + modifiers.damage;
-  }
-  if (modifiers.penetration) {
-    modified.penetration = (modified.penetration || 0) + modifiers.penetration;
-  }
-
-  // Handle range band modifiers
-  const rangeModKeys = ["C", "M", "L", "ELR", "EELR"];
-  const hasRangeModifiers = rangeModKeys.some(band => modifiers[band] !== undefined);
-
-  if (hasRangeModifiers && baseStats.range) {
-    const baseParsedRange = parseRangeString(baseStats.range);
-    rangeModKeys.forEach(band => {
-      if (modifiers[band] !== undefined) {
-        baseParsedRange[band] = (baseParsedRange[band] || 0) + modifiers[band];
+export const getPurchasedGadgetIds = (logs) => {
+  const ids = new Set();
+  (logs ?? []).forEach((log) => {
+    (log?.receipt?.purchases ?? []).forEach((purchase) => {
+      if (purchase.type === "gadget" || purchase.type === "submunition") {
+        ids.add(purchase.value);
       }
     });
-    modified.range = rangeObjectToString(baseParsedRange);
-  }
-
-  if (modifiers.magazineSize) {
-    modified.magazineSize = (modified.magazineSize || 0) + modifiers.magazineSize;
-  }
-
-  // Recalculate totalTurns with original magazine count and new magazineSize
-  modified.totalTurns = baselineMagazineCount * (modified.magazineSize || 1);
-
-  // Apply totalTurns modifier
-  if (modifiers.totalTurns) {
-    modified.totalTurns = (modified.totalTurns || 0) + modifiers.totalTurns;
-  }
-
-  // Apply additional magazine count modifiers using new magazineSize
-  if (modifiers.magazines) {
-    modified.totalTurns = (modified.totalTurns || 0) + (modifiers.magazines * (modified.magazineSize || 1));
-  }
-
-  return modified;
+  });
+  return [...ids];
 };
 
 /**
- * Get the complete modified stats for a weapon with family selected
- * @param {object} weapon - Weapon object with category
- * @param {object} weaponCategories - All weapon category definitions
- * @param {string} selectedFamilyName - Name of selected family
- * @returns {object} Complete modified stats
+ * Derives every weapon a character has ever purchased (one entry per
+ * purchase, name included) from their mission logs' receipts.
+ * @param {Array} logs - character.logs
+ * @returns {Array<{name: string, category: string, family: string}>}
  */
-export const getModifiedWeaponStats = (
-  weapon,
-  weaponCategories,
-  selectedFamilyName
-) => {
-  const baseStats = weaponCategories[weapon?.category];
+export const getPurchasedWeapons = (logs) => {
+  const weapons = [];
+  (logs ?? []).forEach((log) => {
+    (log?.receipt?.purchases ?? []).forEach((purchase) => {
+      if (purchase.type === "weapon") weapons.push(purchase.value);
+    });
+  });
+  return weapons;
+};
 
-  if (!baseStats || !selectedFamilyName) {
-    return baseStats;
-  }
+/**
+ * Derives every grenade type id a character has ever purchased from their
+ * mission logs' receipts.
+ * @param {Array} logs - character.logs
+ * @returns {Array<string>}
+ */
+export const getPurchasedGrenadeIds = (logs) => {
+  const ids = new Set();
+  (logs ?? []).forEach((log) => {
+    (log?.receipt?.purchases ?? []).forEach((purchase) => {
+      if (purchase.type === "grenade") ids.add(purchase.value);
+    });
+  });
+  return [...ids];
+};
 
-  const selectedFamily = baseStats.families?.find(
-    (f) => f.family === selectedFamilyName
+/**
+ * Gadgets a character can currently select as their Class Gadget in the
+ * Gameplay tab — restricted to what they've actually purchased in
+ * Logistics, derived from `logs` (see getPurchasedGadgetIds). Excludes
+ * SubMunition items (ammo variants like 40mm rounds): those are selected
+ * via the gadget's own ammo UI (GadgetAmmo.jsx), not as a main gadget in
+ * their own right. Availability used to be gated by a campaign-specific
+ * equipment list (Siberia2022); that's been replaced entirely by this
+ * purchase-based check, which applies uniformly regardless of campaign.
+ * @param {Array} logs - character.logs
+ * @param {Array} equipmentData - full equipment data list
+ * @returns {Array}
+ */
+export const getAvailableClassGadgets = (logs, equipmentData) => {
+  const owned = getPurchasedGadgetIds(logs);
+  return equipmentData.filter((item) => owned.includes(item.id) && !item.SubMunition);
+};
+
+/**
+ * Gadgets a character is eligible to buy in Logistics: their class's (and
+ * multiclass's, if set) catalog entries. Ownership isn't required here —
+ * it's the outcome of buying, not a prerequisite. Excludes SubMunition
+ * items (ammo variants like 40mm rounds), which aren't standalone gadgets.
+ * @param {object} character
+ * @param {Array} equipmentData - full equipment data list
+ * @returns {Array}
+ */
+export const getClassEligibleGadgets = (character, equipmentData) => {
+  return equipmentData.filter(
+    (item) =>
+      (item.class === character.class || item.class === character.multiClass) &&
+      !item?.SubMunition,
   );
-
-  if (!selectedFamily) {
-    return baseStats;
-  }
-
-  return applyModifiers(baseStats, selectedFamily.modifiers);
 };
 
 /**
- * Get abilities from a weapon family
- * @param {object} family - Family object from weaponCategories
- * @returns {array} Array of ability names
+ * Grenade types a character can select in the Gameplay tab — restricted to
+ * what they've actually purchased in Logistics, derived from `logs`.
+ * @param {Array} logs - character.logs
+ * @param {Array} equipmentData - full equipment data list
+ * @returns {Array}
  */
-export const getAbilitiesFromFamily = (family) => {
-  return family?.modifiers?.abilities || [];
+export const getOwnedGrenades = (logs, equipmentData) => {
+  const owned = getPurchasedGrenadeIds(logs);
+  return equipmentData.filter(
+    (item) => item?.parentId === "grenades" && owned.includes(item.id),
+  );
+};
+
+/**
+ * Clears any currently-equipped gadget/weapon/grenade that no longer has a
+ * matching purchase in `logs` (see getPurchasedGadgetIds/Weapons/
+ * GrenadeIds) — e.g. after a purchase undo (see logisticsEngine.js) or on
+ * legacy data predating purchase tracking. Ownership itself is never
+ * stored, so this only ever touches the equip pointers, not `logs`.
+ * @param {object} equipment
+ * @param {Array} logs - character.logs
+ * @returns {object} a new equipment object with dangling equip pointers cleared
+ */
+export const sanitizeEquipmentOwnership = (equipment, logs) => {
+  const base = equipment ?? {};
+  const ownedGadgetIds = getPurchasedGadgetIds(logs);
+  const ownedWeapons = getPurchasedWeapons(logs);
+  const ownedGrenadeIds = getPurchasedGrenadeIds(logs);
+
+  const sanitized = { ...base };
+
+  if (sanitized.gadget && !ownedGadgetIds.includes(sanitized.gadget)) {
+    sanitized.gadget = "";
+    sanitized.gadgetAmmo = {};
+  }
+
+  ["primaryWeapon", "secondaryWeapon"].forEach((slot) => {
+    const weapon = sanitized[slot];
+    if (!weapon?.category) return;
+
+    const stillOwned = ownedWeapons.some(
+      (w) =>
+        w.name === weapon.name &&
+        w.category === weapon.category &&
+        (w.family || "") === (weapon.family || ""),
+    );
+    if (!stillOwned) {
+      sanitized[slot] = { name: "", category: "", family: "" };
+    }
+  });
+
+  if (Array.isArray(sanitized.grenades)) {
+    sanitized.grenades = sanitized.grenades.map((id) =>
+      id && !ownedGrenadeIds.includes(id) ? "" : id,
+    );
+  }
+
+  if (sanitized.gearSlots) {
+    const ownedGearPieceIds = getPurchasedGearPieceIds(logs);
+    const nextGearSlots = { ...sanitized.gearSlots };
+    Object.keys(nextGearSlots).forEach((slotKey) => {
+      if (nextGearSlots[slotKey] && !ownedGearPieceIds.includes(nextGearSlots[slotKey])) {
+        nextGearSlots[slotKey] = "";
+      }
+    });
+    sanitized.gearSlots = nextGearSlots;
+  }
+
+  return sanitized;
+};
+
+/**
+ * Returns the max armor class a character's class can equip.
+ * Combat Engineer/Technical Engineer/Medic -> 2, Fire Support -> 3, else 1.
+ * @param {object} character
+ * @returns {number}
+ */
+export const getArmorClassCap = (character) => {
+  if (
+    character.class === "Combat Engineer" ||
+    character.class === "Technical Engineer" ||
+    character.class === "Medic"
+  ) {
+    return 2;
+  }
+  if (character.class === "Fire Support") {
+    return 3;
+  }
+  return 1;
+};
+
+/**
+ * Looks up a class's secondary (innate) gadget from the classSkills map.
+ * `source` picks which of the character's classes to look up — "main" (the
+ * default) uses `character.class`, "multi" uses `character.multiClass` — so
+ * a multiclassed character can equip either class's innate gadget.
+ * @param {object} secondaryGadgetsMap - classSkills.json shape, keyed by class
+ * @param {object} character
+ * @param {"main"|"multi"} [source]
+ * @returns {*} the classGadget entry, or null if that class has none
+ */
+export const getSecondaryGadgetForClass = (secondaryGadgetsMap, character, source = "main") => {
+  const className = source === "multi" ? character.multiClass : character.class;
+  if (className && secondaryGadgetsMap[className]) {
+    return secondaryGadgetsMap[className].classGadget;
+  }
+  return null;
+};
+
+/**
+ * Returns the flavor-text description for a given armor class value.
+ * @param {number} armorClass
+ * @returns {string|null} null when armorClass is 1 (no bonuses) matches original blank-vs-text rendering? see below.
+ */
+export const getArmorClassDescription = (armorClass) => {
+  if (armorClass == 0) {
+    return "No maluses for sprinting and shooting, +1 to [Acrobatics][Jump][Climb][Endurance][Stealth]";
+  }
+  if (armorClass == 1) {
+    return "No Bonuses";
+  }
+  if (armorClass == 2) {
+    return "-1 to movement related checks [Acrobatics][Jump][Climb][Endurance]";
+  }
+  if (armorClass >= 3) {
+    return "[N/A // Cannot have an AC past 2.]";
+  }
+  return "";
+};
+
+// --- Gearsets ---
+
+/**
+ * geasrSets.json blocks are keyed by a camelCase class id that doesn't match
+ * Character.class's Title Case ("Technical Engineer"). Maps the latter to
+ * the former; classes with no entry here (e.g. Trapper) simply have no
+ * class-specific gearsets, though universal ones are still available to them.
+ */
+const CLASS_TO_GEARSET_KEY = {
+  Rifleman: "rifleman",
+  Raider: "raider",
+  "Technical Engineer": "technicalEngineer",
+  "Combat Engineer": "combatEngineer",
+  "Fire Support": "fireSupport",
+  Medic: "medic",
+  Sharpshooter: "sharpshooter",
+  Trapper: "trapper"
+};
+
+/** The 4 selectable gear slots, keyed as stored on Equipment.gearSlots. */
+export const GEAR_SLOT_KEYS = ["headgear", "vest", "gloves", "equipment"];
+
+const gearSlotKeyToTitle = (slotKey) =>
+  slotKey.charAt(0).toUpperCase() + slotKey.slice(1);
+
+/**
+ * Every gearset (class-specific + multiclass-specific, if set + universal) a
+ * character is eligible to equip pieces from, flattened out of geasrSets.
+ * json's per-class blocks.
+ * @param {object} character
+ * @param {Array} gearSetsData - geasrSets.json
+ * @returns {Array} gearset objects ({id, name, manufacturer, pieces})
+ */
+export const getGearsetsForClass = (character, gearSetsData) => {
+  const classKeys = [character?.class, character?.multiClass]
+    .map((cls) => CLASS_TO_GEARSET_KEY[cls])
+    .filter(Boolean);
+  return (gearSetsData ?? [])
+    .filter((block) => classKeys.includes(block.class) || block.class === "universal")
+    .flatMap((block) => block.gearsets ?? []);
+};
+
+/**
+ * Pieces available for one gear slot across a set of gearsets, each
+ * annotated with which gearset it belongs to (for grouping/labeling in a
+ * selector).
+ * @param {Array} gearsets - as returned by getGearsetsForClass
+ * @param {string} slotKey - one of GEAR_SLOT_KEYS
+ * @returns {Array}
+ */
+export const getGearPiecesBySlot = (gearsets, slotKey) => {
+  const slotTitle = gearSlotKeyToTitle(slotKey);
+  return (gearsets ?? []).flatMap((gearset) =>
+    (gearset.pieces ?? [])
+      .filter((piece) => piece.slot === slotTitle)
+      .map((piece) => ({
+        ...piece,
+        gearsetId: gearset.id,
+        gearsetName: gearset.name,
+        manufacturer: gearset.manufacturer,
+      })),
+  );
+};
+
+/**
+ * Looks up a single equipped piece by id across a set of gearsets.
+ * @param {Array} gearsets - as returned by getGearsetsForClass
+ * @param {string} pieceId
+ * @returns {object|null}
+ */
+export const getGearPieceById = (gearsets, pieceId) => {
+  if (!pieceId) return null;
+  for (const gearset of gearsets ?? []) {
+    const piece = (gearset.pieces ?? []).find((p) => p.id === pieceId);
+    if (piece) {
+      return {
+        ...piece,
+        gearsetId: gearset.id,
+        gearsetName: gearset.name,
+        manufacturer: gearset.manufacturer,
+      };
+    }
+  }
+  return null;
+};
+
+/**
+ * Determines whether all 4 gear slots are filled with pieces belonging to
+ * the same complete gearset, and if so returns that gearset's Patch piece —
+ * the loyalty bonus, only active while the full set (Headgear/Vest/Gloves/
+ * Equipment) is equipped. Gearsets missing one of the 4 slots (unfinished
+ * entries in geasrSets.json) can never activate their patch this way.
+ * @param {Array} gearsets - as returned by getGearsetsForClass
+ * @param {object} gearSlots - character.equipment.gearSlots
+ * @returns {object|null} the Patch piece (annotated with gearset info), or null
+ */
+export const getActiveGearsetPatch = (gearsets, gearSlots) => {
+  for (const gearset of gearsets ?? []) {
+    const pieces = gearset.pieces ?? [];
+    const requiredPieces = GEAR_SLOT_KEYS.map((slotKey) =>
+      pieces.find((p) => p.slot === gearSlotKeyToTitle(slotKey)),
+    );
+    if (requiredPieces.some((piece) => !piece)) continue;
+
+    const fullyEquipped = GEAR_SLOT_KEYS.every(
+      (slotKey, i) => gearSlots?.[slotKey] === requiredPieces[i].id,
+    );
+    if (!fullyEquipped) continue;
+
+    const patchPiece = pieces.find((p) => p.slot === "Patch");
+    if (!patchPiece) continue;
+    return {
+      ...patchPiece,
+      gearsetId: gearset.id,
+      gearsetName: gearset.name,
+      manufacturer: gearset.manufacturer,
+    };
+  }
+  return null;
+};
+
+/**
+ * Price curve for gear pieces, keyed by tier (see the rules text: tier 1
+ * "niche use case" up to tier 4 "requires a specific gadget/equipment").
+ * A piece with a null tier (several unfinished entries in geasrSets.json
+ * never got one assigned) is treated as free until it's priced.
+ */
+export const GEAR_TIER_PRICES = {
+  1: 3000,
+  2: 5000,
+  3: 10000,
+  4: 14000,
+};
+
+/**
+ * A gear piece's price, from its tier. Patches are never sold on their own
+ * (they're the loyalty bonus for owning the full set), but this doesn't
+ * special-case that — callers simply never list Patch pieces for purchase.
+ * @param {object} piece - a piece as returned by getGearPiecesBySlot/getGearPieceById
+ * @returns {number}
+ */
+export const getGearPieceCost = (piece) =>
+  piece?.tier == null ? 0 : (GEAR_TIER_PRICES[piece.tier] ?? 0);
+
+/**
+ * Looks up a gear piece by id across every class's gearsets (not just one
+ * character's eligible ones) — used when re-pricing a purchase record
+ * live, which has no character context of its own.
+ * @param {Array} gearSetsData - geasrSets.json
+ * @param {string} pieceId
+ * @returns {object|null}
+ */
+export const getGearPieceByIdAnyClass = (gearSetsData, pieceId) => {
+  if (!pieceId) return null;
+  for (const block of gearSetsData ?? []) {
+    const found = getGearPieceById(block.gearsets ?? [], pieceId);
+    if (found) return found;
+  }
+  return null;
+};
+
+/**
+ * Derives every gear piece id a character has ever purchased from their
+ * mission logs' receipts — mirrors getPurchasedGadgetIds/GrenadeIds. Nothing
+ * about ownership is stored on Equipment itself; what's currently equipped
+ * (Equipment.gearSlots) and what's owned are two different things, same as
+ * gadgets/weapons/grenades.
+ * @param {Array} logs - character.logs
+ * @returns {Array<string>}
+ */
+export const getPurchasedGearPieceIds = (logs) => {
+  const ids = new Set();
+  (logs ?? []).forEach((log) => {
+    (log?.receipt?.purchases ?? []).forEach((purchase) => {
+      if (purchase.type === "gearSlot") ids.add(purchase.value);
+    });
+  });
+  return [...ids];
+};
+
+/**
+ * Gear pieces a character can currently select per slot in the Gameplay
+ * tab — restricted to what they've actually purchased in Logistics, same
+ * pattern as getAvailableClassGadgets/getOwnedGrenades.
+ * @param {Array} gearsets - as returned by getGearsetsForClass
+ * @param {string} slotKey - one of GEAR_SLOT_KEYS
+ * @param {Array} logs - character.logs
+ * @returns {Array}
+ */
+export const getOwnedGearPiecesBySlot = (gearsets, slotKey, logs) => {
+  const owned = getPurchasedGearPieceIds(logs);
+  return getGearPiecesBySlot(gearsets, slotKey).filter((piece) =>
+    owned.includes(piece.id),
+  );
 };
 
 // --- Gadget Ammo Logic ---
@@ -208,6 +464,7 @@ export const RES_KEY = "__res";
 export const isMixedGadget = (gadgetId) => MIXED_GADGETS.includes(gadgetId);
 export const isExpendableGadget = (gadgetId, config = null) => {
   if (!config || typeof config !== "object") return false;
+  if (isMixedGadget(gadgetId)) return false;
   const max = getGadgetAmmoMax(config);
   return Number.isFinite(max) && max > 0;
 };
@@ -272,6 +529,9 @@ export const getGadgetAmmoHeader = (gadgetId, config, isExpendable, effectiveMax
   return { title: "", max: 0 };
 };
 
+/** 
+ * Checks if a gadget explicitly has an ammo count. Some gadgets dont have ammo and are instead function outside of this.
+ */
 export const hasExplicitGadgetAmmo = (gadgetId, config, isMixed, isExpendable) => {
   if (!config || typeof config !== "object") return false;
   if (isMixed || isExpendable) return true;
@@ -333,6 +593,18 @@ export const sanitizeGadgetAmmo = (obj, isMixed, isExpendable, optionIds, effect
       return out;
     }
 
+    const hasLegacyMagRes =
+      Object.prototype.hasOwnProperty.call(obj, MAG_KEY) ||
+      Object.prototype.hasOwnProperty.call(obj, RES_KEY);
+    if (!hasLegacyMagRes) {
+      // No ammo state recorded at all — a gadget just selected, not one
+      // that's been fired down — so it starts full. A real 0 is only ever
+      // reached afterward, by using ammo down (see useExpendableGadget),
+      // which always leaves EX_KEY set and is caught by the branch above.
+      out[EX_KEY] = effectiveMax;
+      return out;
+    }
+
     const mag = clamp0(obj[MAG_KEY]);
     const res = clamp0(obj[RES_KEY]);
     const total = Math.min(mag + res, effectiveMax);
@@ -353,31 +625,22 @@ export const sumNonNeg = (obj) =>
   );
 
 /**
- * Determines the initial ammo state for a gadget.
+ * Determines the initial ammo state for a gadget, sanitized from whatever is
+ * currently stored on the character's equipment.gadgetAmmo.
  * @param {string} gadgetId - ID of the gadget
  * @param {string} charClass - Character class
  * @param {object} config - Gadget configuration
- * @param {any} parsedStorage - Data loaded from storage (if any)
- * @param {object} currentAmmo - Current ammo state (if any)
+ * @param {object} currentAmmo - Ammo state currently stored on the character
  * @returns {object} The initial ammo object
  */
-export const getInitialGadgetAmmo = (gadgetId, charClass, config, parsedStorage = null, currentAmmo = {}) => {
+export const getInitialGadgetAmmo = (gadgetId, charClass, config, currentAmmo = {}) => {
   const isMixed = isMixedGadget(gadgetId);
   const isExpendable = isExpendableGadget(gadgetId, config);
   const effectiveMax = getEffectiveMax(gadgetId, charClass, config);
   const options = config?.options || [];
   const optionIds = new Set(options.map((o) => o.id));
 
-  if (parsedStorage !== null) {
-    if (isExpendable && typeof parsedStorage === "number") {
-      return { [EX_KEY]: Math.max(0, Math.min(parsedStorage, effectiveMax)) };
-    }
-    return sanitizeGadgetAmmo(parsedStorage, isMixed, isExpendable, optionIds, effectiveMax);
-  }
-
-  if (isExpendable) {
-    return {};
-  } else if (isMixed) {
+  if (isMixed || isExpendable) {
     return sanitizeGadgetAmmo(currentAmmo, isMixed, isExpendable, optionIds, effectiveMax);
   }
   return {};

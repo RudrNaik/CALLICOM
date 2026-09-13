@@ -1,4 +1,13 @@
-function AttributeView({ attributes, xp, isEditing, onBuy }) {
+import { ATTR_EXP_COST } from "../../../../engine/characterEngine";
+
+function AttributeView({
+  attributes,
+  originalAttributes,
+  xp,
+  isEditing,
+  onIncrease,
+  onDecrease,
+}) {
   const items = [
     { key: "Alertness", label: "Alertness" },
     { key: "Body", label: "Body" },
@@ -10,7 +19,10 @@ function AttributeView({ attributes, xp, isEditing, onBuy }) {
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
       {items.map(({ key, label }) => {
         const val = attributes?.[key] ?? 0;
-        const canBuy = isEditing && xp >= 40;
+        function canBuy(attr){ 
+           return isEditing && xp >= ATTR_EXP_COST && attr<4;
+        }
+        const canSell = isEditing && val > (originalAttributes?.[key] ?? 0);
         return (
           <div
             key={key}
@@ -18,19 +30,33 @@ function AttributeView({ attributes, xp, isEditing, onBuy }) {
           >
             <div className="font-semibold text-orange-300">{label}</div>
             <div className="flex items-center gap-2">
+              {isEditing && (
+                <button
+                  type="button"
+                  onClick={() => onDecrease?.(key)}
+                  disabled={!canSell}
+                  title="Undo attribute increase (refund 40 XP)"
+                  className={`px-2 py-0.5 rounded text-xs
+                    ${canSell
+                      ? "bg-orange-600 hover:bg-orange-700"
+                      : "bg-neutral-700 cursor-not-allowed"}`}
+                >
+                  -
+                </button>
+              )}
               <span>{val}</span>
               {isEditing && (
                 <button
                   type="button"
-                  onClick={() => onBuy?.(key)}
-                  disabled={!canBuy}
+                  onClick={() => onIncrease?.(key)}
+                  disabled={!canBuy(val)}
                   title="Increase attribute (40 XP)"
                   className={`px-2 py-0.5 rounded text-xs
-                    ${canBuy
+                    ${canBuy(val)
                       ? "bg-orange-600 hover:bg-orange-700"
                       : "bg-neutral-700 cursor-not-allowed"}`}
                 >
-                  40 XP
+                  {ATTR_EXP_COST} XP
                 </button>
               )}
             </div>

@@ -1,25 +1,19 @@
-import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { calculateDerivedStats } from "../../../engine/characterEngine";
-import { getToken } from "../../../engine/memoryEngine";
+import { calculateDerivedStats } from "../../../../engine/characterEngine";
 
-function DerivedStats({ character, userId, refreshCharacter }) {
-  const navigate = useNavigate();
-
+function DerivedStats({
+  character,
+  fleshWounds,
+  deepWounds,
+  isSavingWounds,
+  onIncreaseFlesh,
+  onDecreaseFlesh,
+  onIncreaseDeep,
+  onDecreaseDeep,
+}) {
   // Safe defaults
   const attrs = character?.attributes ?? {};
   const skills = character?.skills ?? {};
   const equip = character?.equipment ?? {};
-
-  const [fleshWounds, setFleshWounds] = useState(character?.fleshWounds || 0);
-  const [deepWounds, setDeepWounds] = useState(character?.deepWounds || 0);
-  const prevWounds = useRef({
-    fleshWounds: character?.fleshWounds || 0,
-    deepWounds: character?.deepWounds || 0,
-  });
-
-  const [isSaving, setIsSaving] = useState(false);
-  const timerRef = useRef(null);
 
   // the 'derivation' of stats
   const stats = calculateDerivedStats({
@@ -42,88 +36,11 @@ function DerivedStats({ character, userId, refreshCharacter }) {
     woundMod: woundMod,
   } = stats;
 
-  // 700ms debounce because rapidly spamming the deep and flesh wounds causes desync with the backend as master so it reverts.
-  useEffect(() => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-    }
-
-    timerRef.current = setTimeout(async () => {
-      const token = getToken();
-      if (!token) {
-        console.log("No token found, redirecting to login.");
-        navigate("/login");
-        return;
-      }
-
-      const changed =
-        fleshWounds !== prevWounds.current.fleshWounds ||
-        deepWounds !== prevWounds.current.deepWounds;
-
-      if (!changed) return;
-
-      setIsSaving(true);
-      try {
-        const res = await fetch(
-          `https://callicom.onrender.com/api/characters/${userId}/${character?.callsign}`,
-          {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({ fleshWounds, deepWounds }),
-          }
-        );
-
-        if (res.ok) {
-          prevWounds.current = { fleshWounds, deepWounds };
-          //refreshCharacter?.();
-        } else {
-          console.error("Failed to update wounds:", await res.text());
-        }
-      } catch (err) {
-        console.error("Error updating wounds:", err);
-      } finally {
-        setIsSaving(false);
-      }
-    }, 700);
-
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-    };
-  }, [
-    fleshWounds,
-    deepWounds,
-    userId,
-    character?.callsign,
-    navigate,
-    refreshCharacter,
-  ]);
-
-  // Reset when character changes
-  useEffect(() => {
-    if (!character) return;
-    const fw = character.fleshWounds || 0;
-    const dw = character.deepWounds || 0;
-    setFleshWounds(fw);
-    setDeepWounds(dw);
-    prevWounds.current = { fleshWounds: fw, deepWounds: dw };
-  }, [character]);
-
-  const handleDecreaseFleshWounds = () =>
-    setFleshWounds((v) => Math.max(v - 1, 0));
-  const handleIncreaseFleshWounds = () => setFleshWounds((v) => v + 1);
-
-  const handleDecreaseDeepWounds = () =>
-    setDeepWounds((v) => Math.max(v - 1, 0));
-  const handleIncreaseDeepWounds = () => setDeepWounds((v) => v + 1);
-
   return (
     <div className="mt-8 text-white font-geist">
       {/* Save state */}
       <div className="flex items-center gap-3 text-sm">
-        {isSaving ? (
+        {isSavingWounds ? (
           <div className="flex items-center text-orange-400 font-semibold">
             <div className="w-4 h-4 border-2 border-neutral-700 border-t-orange-500 rounded-full animate-spin mr-2" />
             Saving…
@@ -133,7 +50,7 @@ function DerivedStats({ character, userId, refreshCharacter }) {
         )}
       </div>
 
-      <div className="rounded-md bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-3">
+      <div className="rounded-xs bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-4 border-orange-500 p-2">
         {/* mobile specific view*/}
         <div className="grid grid-cols-2 gap-3 sm:hidden">
           <StatCard label="Health" value={Health} />
@@ -151,7 +68,7 @@ function DerivedStats({ character, userId, refreshCharacter }) {
           <StatCard label="Instant Death" value={InstantDeath} accent="red" />
 
           <div className="col-span-2 text-center text-sm font-semibold text-red-400">
-            Wound Modifier: −{woundMod}
+            Wound Malus: -{woundMod}
           </div>
         </div>
 
@@ -191,16 +108,16 @@ function DerivedStats({ character, userId, refreshCharacter }) {
           <CounterCell
             title="Flesh Wounds"
             value={fleshWounds}
-            onDec={handleDecreaseFleshWounds}
-            onInc={handleIncreaseFleshWounds}
-            disabled={isSaving}
+            onDec={onDecreaseFlesh}
+            onInc={onIncreaseFlesh}
+            disabled={isSavingWounds}
           />
           <CounterCell
             title="Deep Wounds"
             value={deepWounds}
-            onDec={handleDecreaseDeepWounds}
-            onInc={handleIncreaseDeepWounds}
-            disabled={isSaving}
+            onDec={onDecreaseDeep}
+            onInc={onIncreaseDeep}
+            disabled={isSavingWounds}
           />
         </div>
       </div>

@@ -1,3 +1,5 @@
+import { getJsonMemory, setJsonMemory } from "./memoryEngine";
+
 const isRecord = (value) => {
   return !!value && typeof value === "object" && !Array.isArray(value);
 };
@@ -52,6 +54,40 @@ export const normalizeCharacterAttributes = (value) => {
   return normalized;
 };
 
+/**
+ * Normalizes a character's identity fields to the current shape:
+ * `uniqueId` and `userId` live on the character itself, `starting_cash`
+ * lives in `metadata` — this also matches the backend's schema, which keys
+ * character-create requests off a top-level `userId`. Also migrates older
+ * shapes seen in already-stored data: an intermediate shape where
+ * `userId`/`uniqueId` were nested inside `metadata`.
+ */
+export const normalizeCharacterMetadata = (value) => {
+  if (!isRecord(value)) return value;
+
+  const nestedMetadata = isRecord(value.metadata) ? value.metadata : {};
+  const hasIdentityFields =
+    value.userId !== undefined ||
+    value.uniqueId !== undefined ||
+    value.starting_cash !== undefined ||
+    isRecord(value.metadata);
+
+  if (!hasIdentityFields) return value;
+
+  const { userId, uniqueId, starting_cash, metadata: _metadata, ...rest } = value;
+  const { userId: nestedUserId, uniqueId: nestedUniqueId, starting_cash: nestedStartingCash, ...restMetadata } = nestedMetadata;
+
+  return {
+    ...rest,
+    uniqueId: uniqueId ?? nestedUniqueId ?? "",
+    userId: userId ?? nestedUserId ?? "",
+    metadata: {
+      ...restMetadata,
+      starting_cash: unwrapNumberLike(nestedStartingCash ?? starting_cash) ?? 0,
+    },
+  };
+};
+
 export const normalizeValue = (value) => {
   if (Array.isArray(value)) {
     return value.map(normalizeValue);
@@ -77,8 +113,19 @@ export const normalizeValue = (value) => {
   return unwrapNumberLike(value) ?? value;
 };
 
+/**
+ * Recursively normalizes every value on a character, then fixes up its
+ * identity fields exactly once, at the character root (see
+ * normalizeCharacterMetadata). That has to happen only at the root and not
+ * inside normalizeValue's generic per-record recursion: `metadata` itself
+ * is a record shaped like `{userId, starting_cash}`, which independently
+ * satisfies normalizeCharacterMetadata's "looks like identity data" check —
+ * running it again on that sub-object as if it were the character wraps it
+ * in a spurious extra `metadata` layer and loses `starting_cash`.
+ */
 export const normalizeCharacterData = (value) => {
-  return normalizeValue(value);
+  const normalized = normalizeValue(value);
+  return normalizeCharacterMetadata(normalized);
 };
 
 export const repairLegacyCharacterData = (value) => {
@@ -91,6 +138,62 @@ export const repairLegacyCharacterData = (value) => {
   }
 
   return normalizeCharacterData(value);
+};
+
+const DEFAULT_GRENADE_COUNTS = [2, 2];
+const DEFAULT_MED_COUNTS = [1, 2, 1]; // [AFAK, IFAK, Painkiller]
+
+/**
+ * Normalizes a character's `equipment` shape for the Equipment view,
+ * defaulting/filling in weapons, grenades, gadget, armorClass, medCounts, and
+ * misc gear so the view always has a fully-shaped object to render from.
+ * @param {object} character
+ * @returns {object} normalized equipment object
+ */
+export const normalizeEquipmentForView = (character) => {
+  return {
+    ...(character.equipment ?? {}),
+    primaryWeapon: {
+      name: "",
+      category: "",
+      family: "",
+      ...(character.equipment?.primaryWeapon ?? {}),
+    },
+    secondaryWeapon: {
+      name: "",
+      category: "",
+      family: "",
+      ...(character.equipment?.secondaryWeapon ?? {}),
+    },
+    grenades: Array.isArray(character.equipment?.grenades)
+      ? character.equipment.grenades
+      : ["", ""],
+    grenadeCounts:
+      Array.isArray(character.equipment?.grenadeCounts) &&
+      character.equipment.grenadeCounts.length === 2
+        ? character.equipment.grenadeCounts
+        : DEFAULT_GRENADE_COUNTS,
+    gadget: character.equipment?.gadget ?? "",
+    gadgetAmmo: character.equipment?.gadgetAmmo ?? {},
+    // Which of the character's classes the innate secondary gadget (e.g.
+    // SOFLAM, Repair Tool) is drawn from, for multiclassed characters.
+    secondaryGadgetSource:
+      character.equipment?.secondaryGadgetSource === "multi" ? "multi" : "main",
+    armorClass: character.equipment?.armorClass ?? 0,
+    medCounts:
+      Array.isArray(character.equipment?.medCounts) &&
+      character.equipment.medCounts.length === 3
+        ? character.equipment.medCounts
+        : DEFAULT_MED_COUNTS,
+    miscGear: character.equipment?.miscGear ?? "",
+    gearSlots: {
+      headgear: "",
+      vest: "",
+      gloves: "",
+      equipment: "",
+      ...(character.equipment?.gearSlots ?? {}),
+    },
+  };
 };
 
 export const isWeaponSlot = (value) => {
@@ -118,6 +221,41 @@ export const isEquipment = (value) => {
     (value.gadget === undefined || typeof value.gadget === "string") &&
     (value.miscGear === undefined || typeof value.miscGear === "string")
   );
+};
+
+export const rosterCacheKey = (userId) => `roster_characters_${userId}`;
+
+/**
+ * Reads the cached character roster for a user from localStorage,
+ * normalizing every entry to the current shape.
+ * @param {string} userId
+ * @returns {object[]} the cached characters, or [] if none/unreadable.
+ */
+export const readCharacterRosterCache = (userId) => {
+  try {
+    const cached = getJsonMemory(rosterCacheKey(userId));
+    const value = cached?.data ?? cached ?? null;
+    return Array.isArray(value) ? value.map(normalizeCharacterData) : [];
+  } catch {
+    return [];
+  }
+};
+
+/**
+ * Writes a user's character roster to localStorage, normalizing every
+ * entry first so downstream reads always see the current shape.
+ * @param {string} userId
+ * @param {object[]} characters
+ */
+export const writeCharacterRosterCache = (userId, characters) => {
+  try {
+    setJsonMemory(rosterCacheKey(userId), {
+      data: characters.map(normalizeCharacterData),
+      ts: Date.now(),
+    });
+  } catch {
+    // localStorage full or unavailable, silently skip
+  }
 };
 
 export const isCharacter = (value) => {

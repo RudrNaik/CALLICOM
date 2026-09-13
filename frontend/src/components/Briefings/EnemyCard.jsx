@@ -1,7 +1,22 @@
 import React, { useState, useEffect, useMemo } from "react";
 import equipmentData from "../../data/Equipment.json";
 import classes from "../../data/classSkills.json";
-import { applyModifiers, getWeaponCategoriesByIdLookup } from "../../engine/equipmentEngine";
+import gearSetsData from "../../data/geasrSets.json";
+import { applyModifiers, getWeaponCategoriesByIdLookup } from "../../engine/weaponEngine";
+import {
+  getGearsetsForClass,
+  getGearPiecesBySlot,
+  getGearPieceById,
+  GEAR_SLOT_KEYS,
+} from "../../engine/equipmentEngine";
+import Collapsible from "../Collapsible";
+
+const GEAR_SLOT_LABELS = {
+  headgear: "Headgear",
+  vest: "Vest",
+  gloves: "Gloves",
+  equipment: "Equipment",
+};
 
 /* =======================
    DEFAULT STATE
@@ -33,6 +48,12 @@ const DEFAULT_STATE = {
     FW: 0,
     DW: 0,
   },
+  gearSlots: {
+    headgear: "",
+    vest: "",
+    gloves: "",
+    equipment: "",
+  },
 };
 
 function EnemyCard({ id, onDelete }) {
@@ -48,7 +69,14 @@ function EnemyCard({ id, onDelete }) {
   useEffect(() => {
     try {
       const saved = localStorage.getItem(`enemy-${id}`);
-      if (saved) setState(JSON.parse(saved));
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        setState({
+          ...DEFAULT_STATE,
+          ...parsed,
+          gearSlots: { ...DEFAULT_STATE.gearSlots, ...parsed.gearSlots },
+        });
+      }
     } catch (err) {
       console.error("Failed to load enemy:", err);
     }
@@ -92,7 +120,12 @@ function EnemyCard({ id, onDelete }) {
   /* =======================
      DERIVED VALUES
   ======================= */
-  const { identity, stats, loadout, wounds } = state;
+  const { identity, stats, loadout, wounds, gearSlots } = state;
+
+  const gearsets = useMemo(
+    () => getGearsetsForClass({ class: identity.class }, gearSetsData),
+    [identity.class],
+  );
 
   const Body = Number(stats.Body) || 0;
   const Spirit = Number(stats.Spirit) || 0;
@@ -377,6 +410,40 @@ function EnemyCard({ id, onDelete }) {
           </div>
         )}
       </div>
+
+      {/* GEAR SLOTS */}
+      {identity.class && gearsets.length > 0 && (
+        <Collapsible title="Gear Slots" color="orange-400" headerSize="xs" bottomMargin={false}>
+          <div className="space-y-2 text-xs">
+            {GEAR_SLOT_KEYS.map((slotKey) => {
+              const options = getGearPiecesBySlot(gearsets, slotKey);
+              const equippedPiece = getGearPieceById(gearsets, gearSlots[slotKey]);
+              return (
+                <div key={slotKey}>
+                  <div className="text-orange-300">{GEAR_SLOT_LABELS[slotKey]}</div>
+                  <select
+                    className="w-full bg-neutral-900 text-xs mt-1"
+                    value={gearSlots[slotKey] || ""}
+                    onChange={(e) => update(["gearSlots", slotKey], e.target.value)}
+                  >
+                    <option value="">None</option>
+                    {options.map((piece) => (
+                      <option key={piece.id} value={piece.id}>
+                        {piece.gearsetName} — {piece.name}
+                      </option>
+                    ))}
+                  </select>
+                  {equippedPiece?.effect && (
+                    <div className="mt-1 text-[10px] text-neutral-400 border border-orange-500/20 rounded p-1">
+                      {equippedPiece.effect}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </Collapsible>
+      )}
     </div>
   );
 }

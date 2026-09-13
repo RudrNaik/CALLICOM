@@ -1,11 +1,8 @@
 import {
-  BASE_CLASS_XP,
-  SPEC_EXP_COST,
-  MULTICLASS_EXP_COST,
-  BASE_ATTR_POINTS,
-  ATTR_EXP_COST,
-  calculateTotalSpentXP,
+  getXPBreakdown,
+  getAvailableXP,
 } from "../../../engine/characterEngine";
+import { getLogTotals } from "../../../engine/logsEngine";
 
 function LedgerRow({ label, value, sub, total = false, indent = false }) {
   return (
@@ -48,30 +45,31 @@ function LedgerRow({ label, value, sub, total = false, indent = false }) {
 }
 
 function ExpBreakdown({ character }) {
-  const skills = character?.skills ?? {};
-  const attrs = character?.attributes ?? {};
   const specializations = character?.specializations ?? [];
   const hasMulticlass = Boolean(character?.multiClass);
 
-  const totalSpent = calculateTotalSpentXP(character);
+  const {
+    totalSpent,
+    skillsXp,
+    attrXP,
+    specXP,
+    multiclassXP,
+    purchasedAttrPoints,
+    emergencyDiceXPSpent,
+    baseClassXP,
+  } = getXPBreakdown(character);
 
-  const totalAttrPoints = Object.values(attrs).reduce((a, b) => a + b, 0);
-  const purchasedAttrPoints = Math.max(0, totalAttrPoints - BASE_ATTR_POINTS);
-  const attrXP = purchasedAttrPoints * ATTR_EXP_COST;
-
-  const specXP = specializations.length * SPEC_EXP_COST;
-  const multiclassXP = hasMulticlass ? MULTICLASS_EXP_COST : 0;
-
-  const skillsXp = Math.max(0, totalSpent - BASE_CLASS_XP - multiclassXP - specXP - attrXP);
-  const remainingXP = character?.XP ?? 0;
+  const bonusXP = character?.XP ?? 0;
+  const missionXPTotal = getLogTotals(character?.logs).totalMissionXP;
+  const availableXP = getAvailableXP(character, missionXPTotal);
 
   return (
     <div className="text-white font-geist">
-      <div className="rounded-md bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 px-4 py-3">
+      <div className="rounded-xs bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-4 border-orange-500 px-3 py-2">
 
         <LedgerRow label="Total XP Spent" value={totalSpent} total />
 
-        <LedgerRow label="Base class" value={BASE_CLASS_XP} />
+        <LedgerRow label="Base class" value={baseClassXP} />
 
         {hasMulticlass && (
           <LedgerRow
@@ -99,12 +97,17 @@ function ExpBreakdown({ character }) {
           }
         />
 
-        {remainingXP > 0 && (
-          <div className="mt-2 pt-2 border-t border-neutral-800 flex justify-between text-xs">
-            <span className="text-neutral-500">Unspent XP</span>
-            <span className="text-green-400 font-semibold">{remainingXP}</span>
-          </div>
+        {emergencyDiceXPSpent > 0 && (
+          <LedgerRow label="Emergency Dice" value={emergencyDiceXPSpent} />
         )}
+
+        <LedgerRow label="Bonus XP" value={bonusXP} indent />
+        <LedgerRow label="Mission XP" value={missionXPTotal} indent />
+
+        <div className="mt-2 pt-2 border-t border-neutral-800 flex justify-between text-xs">
+          <span className="text-neutral-500">Available XP</span>
+          <span className="text-green-400 font-semibold">{availableXP}</span>
+        </div>
 
       </div>
     </div>

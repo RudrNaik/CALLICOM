@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import skilldesc from "../../../data/skillsDescriptions.json";
+import skilldesc from "../../../../data/skillsDescriptions.json";
 
 function SkillsView({
   skillGroups,
@@ -8,9 +8,14 @@ function SkillsView({
   character,
   increaseSkill,
   decreaseSkill,
+  wideColumns,
 }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div
+      className={`grid grid-cols-1 sm:grid-cols-2 gap-4 ${
+        wideColumns ? "lg:grid-cols-4" : ""
+      }`}
+    >
       {Object.entries(skillGroups).map(([group, object]) => (
         <div key={group}>
           <h3 className="text-orange-300 font-semibold mb-2">{group}</h3>
@@ -91,7 +96,7 @@ function SkillRow({
   }, [visible]);
 
   return (
-    <div className="bg-gradient-to-r from-neutral-800 px-2 py-1 rounded-xs flex justify-between border-l-4 border-orange-500">
+    <div className="bg-gradient-to-r from-neutral-800 px-2 py-1 rounded-xs flex justify-between items-center border-l-4 border-orange-500">
       <span className="">
         {skill}
           <span className="text-[0.65rem] text-neutral-400 relative inline-block ml-2">
