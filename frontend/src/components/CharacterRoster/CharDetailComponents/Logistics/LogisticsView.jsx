@@ -59,7 +59,7 @@ function LogisticsView({ character, refreshCharacter }) {
           ? ` — ${unlockedCount}/${submunitions.length} submunitions unlocked`
           : "";
       return {
-        label: `${gadget.title}${submunitionNote}${purchase.source === "looted" ? " (Field Find)" : ""}`,
+        label: `${gadget.title}${submunitionNote}${purchase.source === "looted" ? " | [Loot]" : ""}`,
         missionIndex,
         purchaseIndex,
         sellable: missionIndex === currentMissionIndex,
@@ -93,7 +93,7 @@ function LogisticsView({ character, refreshCharacter }) {
     ({ missionIndex, purchaseIndex, purchase }) => ({
       label: `${purchase.value.name || "Unnamed Weapon"} (${purchase.value.category}${
         purchase.value.family ? ` / ${purchase.value.family}` : ""
-      })${purchase.source === "looted" ? " (Field Find)" : ""}`,
+      })${purchase.source === "looted" ? " | [Loot]" : ""}`,
       missionIndex,
       purchaseIndex,
       sellable: missionIndex === currentMissionIndex,
@@ -105,7 +105,7 @@ function LogisticsView({ character, refreshCharacter }) {
       label: `${
         equipmentData.find((g) => g.id === purchase.value)?.title ||
         purchase.value
-      }${purchase.source === "looted" ? " (Field Find)" : ""}`,
+      }${purchase.source === "looted" ? " | [Loot]" : ""}`,
       missionIndex,
       purchaseIndex,
       sellable: missionIndex === currentMissionIndex,
@@ -122,7 +122,7 @@ function LogisticsView({ character, refreshCharacter }) {
     .map(({ missionIndex, purchaseIndex, purchase }) => {
       const piece = getGearPieceByIdAnyClass(gearSetsData, purchase.value);
       const slotLabel = GEAR_SLOT_LABELS[purchase.slot] || purchase.slot;
-      const lootTag = purchase.source === "looted" ? " (Field Find)" : "";
+      const lootTag = purchase.source === "looted" ? " | [Loot]" : "";
       return {
         label: piece
           ? `${slotLabel}: ${piece.name}${lootTag}`
