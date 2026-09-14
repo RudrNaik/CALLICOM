@@ -114,7 +114,7 @@ function GearSlotPurchaseCard({
       gearSetsData,
     );
     if (!result) {
-      alert("Not enough money for that purchase.");
+      alert("Insufficient funds.");
       return;
     }
     refreshCharacter(result);
@@ -169,7 +169,7 @@ function GearSlotPurchaseCard({
                 disabled={!canBuy}
                 className={buttonClass(canBuy)}
               >
-                {isLoot ? "Grant" : "Purchase"}
+                {(isLoot ? "Grant" : !canBuy ? "Insufficient Funds" : "Purchase")}
               </button>
             </div>
           </div>

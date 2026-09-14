@@ -43,7 +43,7 @@ function AchievementListItem({ achievement, onRemove }) {
         <div className="text-orange-300 font-medium">{achievement.name}</div>
         {achievement.criteria && (
           <div className="text-neutral-500">
-            Criteria/Reason: {achievement.criteria}
+            Details: {achievement.criteria}
           </div>
         )}
         <div className="space-x-3 mt-0.5">
@@ -81,7 +81,7 @@ function AchievementDraftForm({ draft, setDraft, onSave, onCancel }) {
         onChange={(e) => setDraft({ ...draft, name: e.target.value })}
       />
       <textarea
-        placeholder="Criteria/Reason"
+        placeholder="Details"
         className="w-full bg-neutral-800 border border-gray-500 rounded px-2 py-1 text-white text-xs resize-y min-h-[40px]"
         value={draft.criteria}
         onChange={(e) => setDraft({ ...draft, criteria: e.target.value })}
@@ -201,7 +201,7 @@ function LogsView({ character, refreshCharacter }) {
   const handleRemoveMission = (index) => {
     const result = applyMissionLogRemove(character, logs, index, equipmentData, gearSetsData);
     if (!result) {
-      alert("Can't remove this mission — its payout has already been spent.");
+      alert("Can't remove this mission.");
       return;
     }
     refreshCharacter(result);
@@ -236,7 +236,7 @@ function LogsView({ character, refreshCharacter }) {
     );
     if (!result) {
       alert(
-        "Cant save due to money or xp being negative.",
+        "Cant save due to the log causing XP earned to be negative.",
       );
       return;
     }
@@ -263,7 +263,7 @@ function LogsView({ character, refreshCharacter }) {
     );
     if (!result) {
       alert(
-        "Can't remove that achievement — its XP or money has already been spent.",
+        "Can't remove achievement as it would cause negative XP.",
       );
       return;
     }
@@ -289,7 +289,9 @@ function LogsView({ character, refreshCharacter }) {
         </div>
         <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-4 border-orange-500 px-4 py-2 rounded-xs">
           <span className="block text-xs text-neutral-400">Current Cash</span>
-          <span className="text-lg font-bold text-green-400">${money}</span>
+          <span className={`text-lg font-bold ${money < 0 ? "text-red-500" : "text-green-400"}`}>
+            {money < 0 ? `-$${Math.abs(money)}` : `$${money}`}
+          </span>
         </div>
       </div>
 
@@ -585,7 +587,7 @@ function LogsView({ character, refreshCharacter }) {
                                 </div>
                                 {achievement.criteria && (
                                   <div className="text-neutral-500">
-                                    Criteria/Reason: {achievement.criteria}
+                                    Details: {achievement.criteria}
                                   </div>
                                 )}
                                 <div className="space-x-3 mt-0.5">

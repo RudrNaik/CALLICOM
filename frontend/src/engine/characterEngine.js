@@ -3,7 +3,7 @@ import classStartingSkills from "../data/classSkills.json";
 export const EXP_COST = [0, 1, 5, 15, 30];
 export const ATTR_EXP_COST = 30;
 export const SPEC_EXP_COST = 5;
-export const MULTICLASS_EXP_COST = 20;
+export const MULTICLASS_EXP_COST = 25;
 export const BASE_ATTR_POINTS = 5;
 
 // Character creation (SkillCreator.jsx): the shared XP budget for buying
