@@ -43,7 +43,7 @@ function AchievementListItem({ achievement, onRemove }) {
         <div className="text-orange-300 font-medium">{achievement.name}</div>
         {achievement.criteria && (
           <div className="text-neutral-500">
-            Criteria/Reason: {achievement.criteria}
+            Details: {achievement.criteria}
           </div>
         )}
         <div className="space-x-3 mt-0.5">
@@ -81,7 +81,7 @@ function AchievementDraftForm({ draft, setDraft, onSave, onCancel }) {
         onChange={(e) => setDraft({ ...draft, name: e.target.value })}
       />
       <textarea
-        placeholder="Criteria/Reason"
+        placeholder="Details"
         className="w-full bg-neutral-800 border border-gray-500 rounded px-2 py-1 text-white text-xs resize-y min-h-[40px]"
         value={draft.criteria}
         onChange={(e) => setDraft({ ...draft, criteria: e.target.value })}
@@ -585,7 +585,7 @@ function LogsView({ character, refreshCharacter }) {
                                 </div>
                                 {achievement.criteria && (
                                   <div className="text-neutral-500">
-                                    Criteria/Reason: {achievement.criteria}
+                                    Details: {achievement.criteria}
                                   </div>
                                 )}
                                 <div className="space-x-3 mt-0.5">
