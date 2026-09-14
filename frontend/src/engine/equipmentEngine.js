@@ -494,11 +494,11 @@ export const getGadgetAmmoMax = (config = {}) => {
 /**
  * Calculates effective ammo pool, accounts for Combat Engineers having 2x ammo.
  */
-export const getEffectiveMax = (gadgetId, charClass, config) => {
+export const getEffectiveMax = (gadgetId, classGadget, config) => {
   let base = getGadgetAmmoMax(config) || config?.max || 0;
   if (
     isExpendableGadget(gadgetId, config) &&
-    charClass === "Combat Engineer" &&
+    classGadget === "Extra Rounds" &&
     (gadgetId === "rocket-launcher" ||
       gadgetId === "wire-launcher" ||
       gadgetId === "guided-launcher")
@@ -628,15 +628,15 @@ export const sumNonNeg = (obj) =>
  * Determines the initial ammo state for a gadget, sanitized from whatever is
  * currently stored on the character's equipment.gadgetAmmo.
  * @param {string} gadgetId - ID of the gadget
- * @param {string} charClass - Character class
+ * @param {string} classGadget - Character's class gadget (secondary gadget)
  * @param {object} config - Gadget configuration
  * @param {object} currentAmmo - Ammo state currently stored on the character
  * @returns {object} The initial ammo object
  */
-export const getInitialGadgetAmmo = (gadgetId, charClass, config, currentAmmo = {}) => {
+export const getInitialGadgetAmmo = (gadgetId, classGadget, config, currentAmmo = {}) => {
   const isMixed = isMixedGadget(gadgetId);
   const isExpendable = isExpendableGadget(gadgetId, config);
-  const effectiveMax = getEffectiveMax(gadgetId, charClass, config);
+  const effectiveMax = getEffectiveMax(gadgetId, classGadget, config);
   const options = config?.options || [];
   const optionIds = new Set(options.map((o) => o.id));
 

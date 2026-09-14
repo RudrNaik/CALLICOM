@@ -28,7 +28,7 @@ export default function GadgetAmmo({
   gadgetAmmo, // Record<string, number>
   setGadgetAmmo,
   itemById,
-  charClass,
+  classGadget,
   characterId, // distinguishes which character this ammo belongs to for reload effects
   ownedOptionIds = [], // ids purchased in Logistics (see equipmentEngine.getPurchasedGadgetIds) — narrows option pickers below to what's actually been bought
 }) {
@@ -52,7 +52,7 @@ export default function GadgetAmmo({
   /** 
    * The effective maximum of that gadget.
    */
-  const effectiveMax = useMemo(() => getEffectiveMax(gadgetId, charClass, config), [gadgetId, charClass, config]);
+  const effectiveMax = useMemo(() => getEffectiveMax(gadgetId, classGadget, config), [gadgetId, classGadget, config]);
 
   const sanitize = (obj) => sanitizeGadgetAmmo(obj, isMixed, isExpendable, optionIds, effectiveMax);
 
@@ -82,7 +82,7 @@ export default function GadgetAmmo({
    */
   useEffect(() => {
     if (!config) return;
-    const initial = getInitialGadgetAmmo(gadgetId, charClass, config, gadgetAmmo);
+    const initial = getInitialGadgetAmmo(gadgetId, classGadget, config, gadgetAmmo);
     setGadgetAmmo(initial);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gadgetId, characterId, isMixed, isExpendable, effectiveMax, config]);
@@ -226,9 +226,9 @@ export default function GadgetAmmo({
         <div className="flex items-center justify-between gap-3">
           <div className="text-2xl px-2 py-1 rounded bg-neutral-900 text-yellow-400 shadow">
             <span>
-              {currentUses === null ? "" : Math.max(0, currentUses)}
+              {Math.max(0, currentUses === null ? effectiveMax : currentUses)}
             </span>
-            {currentUses !== null && <> / {effectiveMax}</>}
+            {" "}/ {effectiveMax}
           </div>
 
           {isActive && (
