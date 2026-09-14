@@ -135,6 +135,27 @@ function CharacterDetail({ character, onUpdate, user }) {
     setCharActive(false);
   }
 
+  // Skills/attributes/specializations/multiclass/emergency dice can also
+  // change out from under this same character — most notably a mission-log
+  // removal reverting a receipt's spend (see logsEngine.applyMissionLogRemove)
+  // — not just via this component's own Save. The reseed above only fires on
+  // an actual character *switch*, so without this, the Skills tab (and the
+  // derived available-XP total, which reads these drafts rather than
+  // `character` directly) would keep showing the pre-revert values until the
+  // roster was reselected. Skipped while actively editing so it can't clobber
+  // an in-progress, unsaved draft.
+  useEffect(() => {
+    if (isEditing) return;
+    setEditedSkills({ ...character?.skills });
+    setAttributes({ ...character?.attributes });
+    setSpecializations([...(character?.specializations || [])]);
+    setMulticlass(character?.multiClass || "");
+    setEmergencyDice(character?.emergencyDice || 0);
+    setOriginalEmergencyDice(character?.emergencyDice || 0);
+    setEmergencyDiceXPSpent(character?.emergencyDiceXPSpent || 0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [character?.updatedAt, isEditing]);
+
   // 700ms debounce because rapidly spamming the deep and flesh wounds causes
   // desync with the backend as master so it reverts. Shared by DerivedStats
   // and the Roll Calculator so both read/write the same wound counters.
@@ -399,7 +420,8 @@ function CharacterDetail({ character, onUpdate, user }) {
       netNewSpecCount > 0 ? specializations.slice(-netNewSpecCount) : [];
     const specXPCost = newSpecializations.length * SPEC_EXP_COST;
 
-    const nextLogs = recordSpendOnLatestMission(character.logs ?? [], {
+    const logs = ensureStartingLog(character, character.logs ?? []);
+    const nextLogs = recordSpendOnLatestMission(logs, {
       skillDeltas,
       attributeDeltas,
       newSpecializations,
