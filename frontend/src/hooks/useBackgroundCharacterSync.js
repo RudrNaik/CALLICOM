@@ -11,6 +11,7 @@ import {
   updateRemoteCharacter,
   deleteRemoteCharacter,
   diffCharacterRosters,
+  backfillMissingUniqueIds,
   characterKey,
 } from "../engine/syncEngine";
 
@@ -61,12 +62,27 @@ export function useCharacterRosterSync(userId, characters, setCharacters) {
       const remoteCharacters = await fetchRemoteCharacters(userId, token);
       if (!Array.isArray(remoteCharacters)) return;
 
+      // Legacy characters predating `uniqueId` fall back to matching by
+      // callsign (see characterKey) — backfill a real id onto them first, on
+      // both sides at once, so the diff below never sees one side keyed by
+      // callsign and the other by a freshly-assigned id (which would look
+      // like a brand new character on each side and duplicate it).
+      const backfill = await backfillMissingUniqueIds(
+        userId,
+        charactersRef.current,
+        remoteCharacters,
+        token,
+      );
+      if (backfill.localChanged) {
+        applyLocalUpdate(() => backfill.localCharacters);
+      }
+
       const deletedKeys = getDeletedCharacterKeys(userId);
       const { contentConflicts, deletionConflicts: newDeletionConflicts, toCreateRemote, toPullLocal, staleTombstones } =
         diffCharacterRosters({
           userId,
-          localCharacters: charactersRef.current,
-          remoteCharacters,
+          localCharacters: backfill.localCharacters,
+          remoteCharacters: backfill.remoteCharacters,
           deletedKeys,
         });
 
@@ -129,7 +145,8 @@ export function useCharacterRosterSync(userId, characters, setCharacters) {
       if (choice === "local") {
         if (token) {
           try {
-            await updateRemoteCharacter(userId, conflict.local.callsign, conflict.local, token);
+            const remoteId = conflict.local.uniqueId || conflict.local.callsign;
+            await updateRemoteCharacter(userId, remoteId, conflict.local, token);
           } catch (err) {
             // Will surface again on the next reconciliation if it still disagrees.
             console.error("Failed to push conflict resolution (keep local) to backend:", err);
@@ -155,7 +172,8 @@ export function useCharacterRosterSync(userId, characters, setCharacters) {
       if (choice === "deleteRemote") {
         if (token) {
           try {
-            await deleteRemoteCharacter(userId, conflict.remote.callsign, token);
+            const remoteId = conflict.remote.uniqueId || conflict.remote.callsign;
+            await deleteRemoteCharacter(userId, remoteId, token);
           } catch (err) {
             // Will surface again on the next reconciliation.
             console.error("Failed to push conflict resolution (delete remote) to backend:", err);

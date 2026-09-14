@@ -113,13 +113,17 @@ function CharacterRoster({ userId }) {
       ) || current;
     });
 
-    if (updatedChar?.callsign) {
+    // Backend identifies a character by (userId, uniqueId) — see
+    // syncEngine.characterKey. Falls back to callsign only for legacy
+    // characters that predate the uniqueId field.
+    const remoteId = updatedChar?.uniqueId || updatedChar?.callsign;
+    if (remoteId) {
       const token = getToken();
       if (token) {
         // Debounced/coalesced: rapid successive edits (multiple XP spends,
         // equipment buys, log entries, etc.) collapse into one PATCH instead
         // of piling up overlapping requests. See syncEngine.js.
-        queueRemoteCharacterUpdate(userId, updatedChar.callsign, updatedChar, token);
+        queueRemoteCharacterUpdate(userId, remoteId, updatedChar, token);
       }
     }
   };
@@ -154,17 +158,17 @@ function CharacterRoster({ userId }) {
   // away from (or the roster unmounts), so a debounce window doesn't strand
   // the last burst of edits when the user moves on before it fires.
   useEffect(() => {
-    const callsign = selectedCharacter?.callsign;
+    const remoteId = selectedCharacter?.uniqueId || selectedCharacter?.callsign;
     return () => {
-      if (callsign) {
-        flushRemoteCharacterUpdate(userId, callsign);
+      if (remoteId) {
+        flushRemoteCharacterUpdate(userId, remoteId);
       }
     };
-    // Keyed on the callsign (not the character object) so this only fires on
+    // Keyed on the id (not the character object) so this only fires on
     // an actual switch/unmount — the object is re-created on every edit to
     // the *same* character, which was flushing (and killing the debounce)
     // after every single change.
-  }, [selectedCharacter?.callsign, userId]);
+  }, [selectedCharacter?.uniqueId, selectedCharacter?.callsign, userId]);
 
   // Same idea for closing the tab/navigating away entirely: flush everything
   // still queued instead of letting it wait out the debounce.
@@ -199,11 +203,12 @@ function CharacterRoster({ userId }) {
       return currentId === id ? undefined : current;
     });
 
-    if (target?.callsign) {
+    const remoteId = target?.uniqueId || target?.callsign;
+    if (remoteId) {
       const key = characterKey(userId, target);
       const token = getToken();
       if (token) {
-        deleteRemoteCharacter(userId, target.callsign, token).catch(() => {
+        deleteRemoteCharacter(userId, remoteId, token).catch(() => {
           addDeletedCharacterKey(userId, key);
         });
       } else {

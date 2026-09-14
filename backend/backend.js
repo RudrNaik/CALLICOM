@@ -392,20 +392,41 @@ app.get("/api/characters/:userId", async (req, res) => {
   }
 });
 
-app.get("/api/characters/:userID/:cs", async (req, res) => {
+// Single-character routes key off (userId, uniqueId) rather than callsign:
+// callsign is just a display name and nothing stops two characters from
+// sharing one, which would make a callsign-keyed lookup/update/delete
+// ambiguous between them. `uniqueId` is generated client-side per character
+// (see CharacterCreator.jsx's createCharacterId) and is never reused.
+//
+// A document saved before `uniqueId` existed won't have a real one — either
+// missing entirely, or normalized to "" by the frontend's
+// normalizeCharacterMetadata before it round-trips back in a later PATCH —
+// so the :uid param can legitimately be that old character's callsign
+// instead (see syncEngine.characterKey's fallback). That callsign match only
+// applies when the document has no real uniqueId of its own (covering both
+// cases via Mongo's null-matches-missing behavior), so it can never shadow a
+// real uniqueId match.
+const singleCharacterFilter = (user, uid) => ({
+  userId: user,
+  $or: [
+    { uniqueId: uid },
+    { uniqueId: { $in: [null, ""] }, callsign: uid },
+  ],
+});
+
+app.get("/api/characters/:userID/:uid", async (req, res) => {
   const client = new MongoClient(url);
   try {
     await client.connect();
     const db = client.db(dbName);
     const collection = db.collection("characters");
 
-    const callsign = req.params.cs;
+    const uniqueId = req.params.uid;
     const user = req.params.userID;
 
-    const character = await collection.findOne({
-      callsign: callsign,
-      userId: user,
-    });
+    const character = await collection.findOne(
+      singleCharacterFilter(user, uniqueId),
+    );
     if (!character) {
       return res.status(404).json({ error: "Character not found" });
     }
@@ -418,11 +439,11 @@ app.get("/api/characters/:userID/:cs", async (req, res) => {
   }
 });
 
-app.patch("/api/characters/:userID/:cs", async (req, res) => {
+app.patch("/api/characters/:userID/:uid", async (req, res) => {
   const client = new MongoClient(url);
   try {
     const user = req.params.userID;
-    const name = req.params.cs;
+    const uniqueId = req.params.uid;
 
     await client.connect();
     const db = client.db(dbName);
@@ -431,7 +452,7 @@ app.patch("/api/characters/:userID/:cs", async (req, res) => {
     const updates = req.body;
 
     const result = await collection.updateOne(
-      { callsign: name, userId: user },
+      singleCharacterFilter(user, uniqueId),
       { $set: updates }
     );
 
@@ -439,7 +460,7 @@ app.patch("/api/characters/:userID/:cs", async (req, res) => {
       return res.status(404).json({ error: "Character not found" });
     }
 
-    res.status(200).json({ message: "Character updated", name });
+    res.status(200).json({ message: "Character updated", uniqueId });
   } catch (err) {
     console.error("PATCH error:", err);
     res.status(500).json({ error: "Internal server error" });
@@ -448,7 +469,7 @@ app.patch("/api/characters/:userID/:cs", async (req, res) => {
   }
 });
 
-app.delete("/api/characters/:userId/:cs", async (req, res) => {
+app.delete("/api/characters/:userId/:uid", async (req, res) => {
   const client = new MongoClient(url);
   try {
     await client.connect();
@@ -456,12 +477,11 @@ app.delete("/api/characters/:userId/:cs", async (req, res) => {
     const collection = db.collection("characters");
 
     const user = req.params.userId;
-    const character = req.params.cs;
+    const uniqueId = req.params.uid;
 
-    const result = await collection.deleteOne({
-      callsign: character,
-      userId: user,
-    });
+    const result = await collection.deleteOne(
+      singleCharacterFilter(user, uniqueId),
+    );
 
     if (result.deletedCount === 0) {
       return res.status(404).json({ error: "Character not found" });

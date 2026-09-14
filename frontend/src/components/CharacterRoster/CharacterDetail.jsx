@@ -57,7 +57,10 @@ const emptyBiography = Object.fromEntries(
 );
 
 function CharacterDetail({ character, onUpdate, user }) {
-  const saveStatus = useCharacterSaveStatus(user, character?.callsign);
+  const saveStatus = useCharacterSaveStatus(
+    user,
+    character?.uniqueId || character?.callsign,
+  );
   const [isEditing, setIsEditing] = useState(false);
   const [isEditingBio, setIsEditingBio] = useState(false);
   const [isEditingEquipment, setIsEditingEquipment] = useState(false);

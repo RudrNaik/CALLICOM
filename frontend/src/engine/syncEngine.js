@@ -37,14 +37,14 @@ export const createRemoteCharacter = async (character, token) => {
   return res.json();
 };
 
-export const updateRemoteCharacter = async (userId, callsign, character, token) => {
+export const updateRemoteCharacter = async (userId, uniqueId, character, token) => {
   // _id must never round-trip into a write: it arrives as a plain JSON
   // string (from Mongo's serialized ObjectId), and MongoDB rejects any
   // $set that touches the immutable _id field once its type no longer
   // matches what's actually stored on the document.
   const { _id, ...body } = character ?? {};
   const res = await fetch(
-    `${API_BASE}/api/characters/${encodeURIComponent(userId)}/${encodeURIComponent(callsign)}`,
+    `${API_BASE}/api/characters/${encodeURIComponent(userId)}/${encodeURIComponent(uniqueId)}`,
     {
       method: "PATCH",
       headers: authHeaders(token),
@@ -58,7 +58,7 @@ export const updateRemoteCharacter = async (userId, callsign, character, token) 
   return res.json();
 };
 
-// Per-character (userId+callsign) debounce/coalescing for update pushes.
+// Per-character (userId+uniqueId) debounce/coalescing for update pushes.
 // Every local edit funnels into CharacterRoster's updateCharacter, which used
 // to PATCH immediately on each call — rapid actions (spending several XP
 // entries, buying multiple items, adding log lines) fired one overlapping,
@@ -84,11 +84,11 @@ const notifyStatus = (key) => {
   for (const listener of statusListeners.get(key) ?? []) listener(status);
 };
 
-export const getRemoteCharacterSaveStatus = (userId, callsign) =>
-  getCharacterSaveStatus(`${userId}::${callsign}`);
+export const getRemoteCharacterSaveStatus = (userId, uniqueId) =>
+  getCharacterSaveStatus(`${userId}::${uniqueId}`);
 
-export const subscribeToRemoteCharacterSaveStatus = (userId, callsign, listener) => {
-  const key = `${userId}::${callsign}`;
+export const subscribeToRemoteCharacterSaveStatus = (userId, uniqueId, listener) => {
+  const key = `${userId}::${uniqueId}`;
   if (!statusListeners.has(key)) statusListeners.set(key, new Set());
   statusListeners.get(key).add(listener);
   return () => {
@@ -108,7 +108,7 @@ const flushCharacterUpdate = (key) => {
   notifyStatus(key);
   const payload = entry.latestPayload;
 
-  updateRemoteCharacter(entry.userId, entry.callsign, payload, entry.token)
+  updateRemoteCharacter(entry.userId, entry.uniqueId, payload, entry.token)
     .catch((err) => {
       console.error("Failed to push character update to backend:", err);
     })
@@ -125,8 +125,8 @@ const flushCharacterUpdate = (key) => {
     });
 };
 
-export const queueRemoteCharacterUpdate = (userId, callsign, character, token) => {
-  const key = `${userId}::${callsign}`;
+export const queueRemoteCharacterUpdate = (userId, uniqueId, character, token) => {
+  const key = `${userId}::${uniqueId}`;
   let entry = updateQueues.get(key);
   if (!entry) {
     entry = { timeoutId: null, sending: false, latestPayload: null };
@@ -134,7 +134,7 @@ export const queueRemoteCharacterUpdate = (userId, callsign, character, token) =
   }
 
   entry.userId = userId;
-  entry.callsign = callsign;
+  entry.uniqueId = uniqueId;
   entry.token = token;
   entry.latestPayload = character;
   if (entry.timeoutId) clearTimeout(entry.timeoutId);
@@ -148,8 +148,8 @@ export const queueRemoteCharacterUpdate = (userId, callsign, character, token) =
  * is about to unload, so the last burst of edits isn't stranded. No-op if
  * nothing is queued for that character.
  */
-export const flushRemoteCharacterUpdate = (userId, callsign) => {
-  const key = `${userId}::${callsign}`;
+export const flushRemoteCharacterUpdate = (userId, uniqueId) => {
+  const key = `${userId}::${uniqueId}`;
   const entry = updateQueues.get(key);
   if (!entry) return;
   if (entry.timeoutId) {
@@ -170,9 +170,9 @@ export const flushAllRemoteCharacterUpdates = () => {
   }
 };
 
-export const deleteRemoteCharacter = async (userId, callsign, token) => {
+export const deleteRemoteCharacter = async (userId, uniqueId, token) => {
   const res = await fetch(
-    `${API_BASE}/api/characters/${encodeURIComponent(userId)}/${encodeURIComponent(callsign)}`,
+    `${API_BASE}/api/characters/${encodeURIComponent(userId)}/${encodeURIComponent(uniqueId)}`,
     {
       method: "DELETE",
       headers: authHeaders(token),
@@ -183,21 +183,17 @@ export const deleteRemoteCharacter = async (userId, callsign, token) => {
 };
 
 /**
- * Identifies a character for reconciliation purposes. Every character
- * carries a client-generated `uniqueId` (see CharacterCreator.jsx's
- * createCharacterId) that's stable and never shared between two
- * characters, unlike `callsign` — two characters can legitimately end up
- * with the same callsign (nothing currently stops it), and keying off
- * callsign alone would silently collapse them into one entry wherever this
- * is used to build a Map (see diffCharacterRosters below), hiding one of
- * them from reconciliation entirely. Falls back to callsign only for
- * legacy characters predating `uniqueId`.
- *
- * Note this is a *local* matching key only — the backend's single-character
- * GET/PATCH/DELETE routes still address a character by (userId, callsign),
- * so two backend records that genuinely share a callsign can still have a
- * PATCH/DELETE land on the wrong one. Fixing that would need those routes
- * (and the calls into them) to switch to `uniqueId` too.
+ * Identifies a character, both for local reconciliation (building the Maps
+ * in diffCharacterRosters below) and as what the backend's single-character
+ * GET/PATCH/DELETE routes key off of. Every character carries a
+ * client-generated `uniqueId` (see CharacterCreator.jsx's createCharacterId)
+ * that's stable and never shared between two characters, unlike `callsign`
+ * — two characters can legitimately end up with the same callsign (nothing
+ * stops it), and keying off callsign alone would silently collapse them
+ * into one entry wherever this builds a Map, hiding one of them from
+ * reconciliation entirely, or have a PATCH/DELETE land on the wrong one on
+ * the backend. Falls back to callsign only for legacy characters predating
+ * `uniqueId`.
  */
 export const characterKey = (userId, character) =>
   `${userId}::${character?.uniqueId || character?.callsign || ""}`;
@@ -234,6 +230,98 @@ const deepEqualIgnoringSyncFields = (a, b) => {
 };
 
 export const characterContentEqual = (a, b) => deepEqualIgnoringSyncFields(a, b);
+
+/**
+ * Backfills a real `uniqueId` onto legacy characters that predate the field
+ * (missing entirely, or normalized to "" — see characterDataHandler's
+ * normalizeCharacterMetadata), so they stop relying on the callsign fallback
+ * in characterKey/the backend's singleCharacterFilter. Mutates matched
+ * entries in `remoteCharacters` in place and returns a fresh
+ * `localCharacters` array, so the caller can pass both straight into
+ * diffCharacterRosters afterward using the same keys on both sides — doing
+ * this any later (e.g. after diffing) would already have let one legacy
+ * character's local and remote copies disagree on their key for that pass,
+ * which reads as "local-only" plus "remote-only" and duplicates it.
+ *
+ * A callsign shared by more than one character missing a `uniqueId` is left
+ * alone: the backend's callsign-fallback PATCH filter (see backend.js's
+ * singleCharacterFilter) matches via Mongo's updateOne, which can only ever
+ * reach one of them, so there's no way to safely assign each of two (or
+ * more) same-callsign legacy documents a distinct id through the API alone.
+ * Those need a one-off manual fix directly in the database.
+ */
+export const backfillMissingUniqueIds = async (userId, localCharacters, remoteCharacters, token) => {
+  const missingRealId = (char) => !char?.uniqueId && char?.callsign;
+
+  const groupByCallsign = (list) => {
+    const groups = new Map();
+    list.filter(missingRealId).forEach((char) => {
+      const group = groups.get(char.callsign) ?? [];
+      group.push(char);
+      groups.set(char.callsign, group);
+    });
+    return groups;
+  };
+
+  const remoteGroups = groupByCallsign(remoteCharacters);
+  const localGroups = groupByCallsign(localCharacters);
+
+  let localChanged = false;
+  const nextLocal = [...localCharacters];
+
+  for (const [callsign, remoteGroup] of remoteGroups) {
+    if (remoteGroup.length > 1) continue; // ambiguous remote duplicate
+    const localGroup = localGroups.get(callsign) ?? [];
+    if (localGroup.length > 1) continue; // ambiguous locally too
+
+    const newId = crypto.randomUUID();
+    try {
+      await updateRemoteCharacter(userId, callsign, { uniqueId: newId }, token);
+    } catch (err) {
+      // Best-effort; this character will be retried on the next reconciliation.
+      console.error("Failed to backfill uniqueId for legacy character:", callsign, err);
+      continue;
+    }
+    remoteGroup[0].uniqueId = newId;
+
+    if (localGroup.length === 1) {
+      const index = nextLocal.indexOf(localGroup[0]);
+      if (index !== -1) {
+        nextLocal[index] = { ...nextLocal[index], uniqueId: newId };
+        localChanged = true;
+      }
+    }
+  }
+
+  // Any local character still missing a real id at this point either has no
+  // backend counterpart yet, or its counterpart already has a real uniqueId
+  // that just hasn't made it into this device's cache (e.g. backfilled from
+  // another session before this one last reconciled). Adopt that existing
+  // remote id rather than minting a new one — minting one here would give
+  // the same character two different ids on each side, which reads as two
+  // different characters next reconcile and duplicates it.
+  const allRemoteByCallsign = new Map();
+  remoteCharacters.forEach((char) => {
+    if (!char?.callsign) return;
+    const group = allRemoteByCallsign.get(char.callsign) ?? [];
+    group.push(char);
+    allRemoteByCallsign.set(char.callsign, group);
+  });
+
+  nextLocal.forEach((char, index) => {
+    if (!missingRealId(char)) return;
+    if (remoteGroups.has(char.callsign)) return; // already handled above, or ambiguous
+
+    const remoteMatches = allRemoteByCallsign.get(char.callsign) ?? [];
+    if (remoteMatches.length > 1) return; // ambiguous — more than one remote character with this callsign
+
+    const existingRemoteId = remoteMatches[0]?.uniqueId;
+    nextLocal[index] = { ...char, uniqueId: existingRemoteId || crypto.randomUUID() };
+    localChanged = true;
+  });
+
+  return { remoteCharacters, localCharacters: nextLocal, localChanged };
+};
 
 /**
  * Diffs a local roster against the backend's copy for the same user.
