@@ -190,7 +190,7 @@ function Calculator({
 
   if (!character) {
     return (
-      <div className="border border-orange-500/30 bg-neutral-900 p-4 rounded">
+      <div className="border border-orange-500/30 bg-neutral-900 p-4 rounded-xs">
         Loading character...
       </div>
     );
@@ -204,15 +204,15 @@ function Calculator({
   };
 
   return (
-    <div className="rounded-md bg-neutral-900 border border-orange-500/30 shadow-lg">
+    <div className="rounded-xs bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-4 border-orange-500 shadow-lg">
       <div className="px-4 py-2 border-b border-orange-500/30 bg-neutral-850 flex justify-between items-center">
-        <h3 className="text-sm tracking-widest text-orange-400 font-bold">
+        <h3 className="text-xs tracking-widest text-orange-400 font-bold">
           Mode:
           {["weapon", "skill"].map((mode) => (
             <button
               key={mode}
               onClick={() => setMode(mode)}
-              className={`px-2 py-1 ml-2 text-sm rounded-sm border
+              className={`px-2 py-1 ml-2 text-xs rounded-xs border
                 ${
                   rollMode === mode
                     ? "bg-orange-500/20 border-orange-500 text-orange-400"
@@ -242,7 +242,7 @@ function Calculator({
                   <button
                     key={i}
                     onClick={() => setSelectedWeapon(w)}
-                    className={`px-3 py-1.5 text-sm rounded-sm border
+                    className={`px-3 py-1.5 text-xs rounded-xs border
                       ${
                         selectedWeapon === w
                           ? "bg-orange-500/20 border-orange-500 text-orange-400"
@@ -264,7 +264,7 @@ function Calculator({
                   <button
                     key={range}
                     onClick={() => setSelectedRange(range)}
-                    className={`px-3 py-1.5 text-sm rounded-sm border
+                    className={`px-3 py-1.5 text-xs rounded-xs border
                       ${
                         selectedRange === range
                           ? "bg-orange-500/20 border-orange-500 text-orange-400"
@@ -276,7 +276,7 @@ function Calculator({
                 ))}
                 <button
                   onClick={() => setPingEnabled(!pingEnabled)}
-                  className={`px-3 py-1.5 text-sm rounded-sm border
+                  className={`px-3 py-1.5 text-xs rounded-xs border
                     ${
                       pingEnabled
                         ? "bg-orange-500/20 border-orange-500 text-orange-400"
@@ -310,11 +310,11 @@ function Calculator({
                       setNavigateRoll(val === "" ? null : Number(val));
                     }}
                     placeholder="Enter result"
-                    className="px-2 py-1 bg-neutral-800 border border-neutral-700 rounded text-neutral-300"
+                    className="px-2 py-1 bg-neutral-800 border border-neutral-700 rounded-xs text-neutral-300"
                   />
                   {navigateRoll !== null && navigateRoll !== "" && (
                     <span
-                      className={`text-sm font-bold ${navigateMod >= 0 ? "text-green-400" : "text-red-400"}`}
+                      className={`text-xs font-bold ${navigateMod >= 0 ? "text-green-400" : "text-red-400"}`}
                     >
                       {navigateMod > 0 ? "+" : ""}
                       {navigateMod}
@@ -322,7 +322,7 @@ function Calculator({
                   )}
                   <button
                     onClick={() => setNavigateRoll(null)}
-                    className="px-2 py-1 text-xs bg-neutral-800 border border-neutral-700 text-neutral-400 rounded hover:bg-neutral-700"
+                    className="px-2 py-1 text-xs bg-neutral-800 border border-neutral-700 text-neutral-400 rounded-xs hover:bg-neutral-700"
                   >
                     Clear
                   </button>
@@ -340,7 +340,7 @@ function Calculator({
             <select
               value={selectedSkill || ""}
               onChange={(e) => setSelectedSkill(e.target.value)}
-              className="w-full px-2 py-2 bg-neutral-800 border border-neutral-700 rounded text-neutral-300"
+              className="w-full px-2 py-2 bg-neutral-800 border border-neutral-700 rounded-xs text-neutral-300"
             >
               <option value="">Select Skill</option>
               {Object.keys(skills || {}).map((skill) => (
@@ -365,18 +365,18 @@ function Calculator({
                 const num = Number(e.target.value);
                 setNewModValue(isNaN(num) ? 0 : num);
               }}
-              className="w-15 px-2 bg-neutral-800 border border-neutral-700 rounded text-neutral-300"
+              className="w-15 px-2 bg-neutral-800 border border-neutral-700 rounded-xs text-neutral-300"
             />
             <input
               type="text"
               value={newModLabel}
               onChange={(e) => setNewModLabel(e.target.value)}
-              className="flex-1 px-2 bg-neutral-800 border border-neutral-700 rounded text-neutral-300"
+              className="flex-1 px-2 bg-neutral-800 border border-neutral-700 rounded-xs text-neutral-300"
               placeholder="Reason"
             />
             <button
               onClick={addModifier}
-              className="px-3 py-1 bg-orange-500/20 border border-orange-500 text-orange-400 rounded"
+              className="px-3 py-1 bg-orange-500/20 border border-orange-500 text-orange-400 rounded-xs"
             >
               Add
             </button>
@@ -386,7 +386,7 @@ function Calculator({
               {modifiers.map((mod) => (
                 <div
                   key={mod.id}
-                  className="flex justify-between items-center bg-neutral-850 border border-neutral-800 px-2 rounded"
+                  className="flex justify-between items-center bg-neutral-850 border border-neutral-800 px-2 rounded-xs"
                 >
                   <span className="text-neutral-400">
                     {mod.value > 0 ? "+" : ""}
@@ -417,18 +417,18 @@ function Calculator({
                 const num = Number(e.target.value);
                 setNewDiceModValue(isNaN(num) ? 0 : num);
               }}
-              className="w-15 px-2 bg-neutral-800 border border-neutral-700 rounded text-neutral-300"
+              className="w-15 px-2 bg-neutral-800 border border-neutral-700 rounded-xs text-neutral-300"
             />
             <input
               type="text"
               value={newDiceModLabel}
               onChange={(e) => setNewDiceModLabel(e.target.value)}
-              className="flex-1 px-2 bg-neutral-800 border border-neutral-700 rounded text-neutral-300"
+              className="flex-1 px-2 bg-neutral-800 border border-neutral-700 rounded-xs text-neutral-300"
               placeholder="Reason"
             />
             <button
               onClick={addDiceModifier}
-              className="px-3 py-1 bg-orange-500/20 border border-orange-500 text-orange-400 rounded"
+              className="px-3 py-1 bg-orange-500/20 border border-orange-500 text-orange-400 rounded-xs"
             >
               Add
             </button>
@@ -438,7 +438,7 @@ function Calculator({
               {diceModifiers.map((mod) => (
                 <div
                   key={mod.id}
-                  className="flex justify-between items-center bg-neutral-850 border border-neutral-800 px-2 rounded"
+                  className="flex justify-between items-center bg-neutral-850 border border-neutral-800 px-2 rounded-xs"
                 >
                   <span className="text-neutral-400">
                     {mod.value > 0 ? "+" : ""}
@@ -461,21 +461,21 @@ function Calculator({
           <label className="text-xs uppercase text-neutral-500 block mb-1">
             Wounds
           </label>
-          <div className="flex gap-1 items-center text-xs text-neutral-400 border border-neutral-800 bg-neutral-850 px-3 py-2 rounded">
+          <div className="flex gap-1 items-center text-xs text-neutral-400 border border-neutral-800 bg-neutral-850 px-3 py-2 rounded-xs">
             <div className="flex items-center gap-2">
               <label>FW:</label>
               <button
                 onClick={onDecreaseFlesh}
-                className="px-2 py-1 bg-neutral-800 border border-neutral-700 text-neutral-400 rounded hover:bg-neutral-700"
+                className="px-2 py-1 bg-neutral-800 border border-neutral-700 text-neutral-400 rounded-xs hover:bg-neutral-700"
               >
                 -
               </button>
-              <div className="px-3 py-1 bg-neutral-800 border border-neutral-700 rounded text-neutral-300 text-center">
+              <div className="px-3 py-1 bg-neutral-800 border border-neutral-700 rounded-xs text-neutral-300 text-center">
                 {fleshWounds}
               </div>
               <button
                 onClick={onIncreaseFlesh}
-                className="px-2 py-1 bg-neutral-800 border border-neutral-700 text-neutral-400 rounded hover:bg-neutral-700"
+                className="px-2 py-1 bg-neutral-800 border border-neutral-700 text-neutral-400 rounded-xs hover:bg-neutral-700"
               >
                 +
               </button>
@@ -485,16 +485,16 @@ function Calculator({
               <label>DW:</label>
               <button
                 onClick={onDecreaseDeep}
-                className="px-2 py-1 bg-neutral-800 border border-neutral-700 text-neutral-400 rounded hover:bg-neutral-700"
+                className="px-2 py-1 bg-neutral-800 border border-neutral-700 text-neutral-400 rounded-xs hover:bg-neutral-700"
               >
                 -
               </button>
-              <div className="px-3 py-1 bg-neutral-800 border border-neutral-700 rounded text-neutral-300 text-center">
+              <div className="px-3 py-1 bg-neutral-800 border border-neutral-700 rounded-xs text-neutral-300 text-center">
                 {deepWounds}
               </div>
               <button
                 onClick={onIncreaseDeep}
-                className="px-2 py-1 bg-neutral-800 border border-neutral-700 text-neutral-400 rounded hover:bg-neutral-700"
+                className="px-2 py-1 bg-neutral-800 border border-neutral-700 text-neutral-400 rounded-xs hover:bg-neutral-700"
               >
                 +
               </button>
@@ -508,7 +508,7 @@ function Calculator({
         </div>
 
         {/* final */}
-        <div className="px-2 py-2 bg-black bg-[radial-gradient(circle,_rgba(255,120,0,0.05)_1px,_transparent_1px)] [background-size:8px_8px] rounded-lg p-4 border border-orange-400 hover:border-neutral-100 transition">
+        <div className="px-2 py-2 bg-neutral-950 bg-[radial-gradient(circle,_rgba(255,120,0,0.08)_1px,_transparent_1px)] [background-size:8px_8px] rounded-xs p-4 border border-orange-400">
           <p className="text-xs text-neutral-500 uppercase mb-2">Final Roll</p>
           <p className="text-2xl font-mono text-orange-400 break-words">
             {rollExpr}
@@ -559,7 +559,7 @@ function Calculator({
           </div>
           <button
             onClick={copyToClipboard}
-            className="mt-3 px-3 bg-orange-500/20 border border-orange-500 text-orange-400 rounded"
+            className="mt-3 px-3 bg-orange-500/20 border border-orange-500 text-orange-400 rounded-xs"
           >
             Copy
           </button>

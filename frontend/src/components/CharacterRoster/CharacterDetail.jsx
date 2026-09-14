@@ -214,7 +214,11 @@ function CharacterDetail({ character, onUpdate, user }) {
    * Adds an emergency dice to the character's E-dice count.
    */
   const addEmergencyDie = () => {
-    const result = applyEmergencyDiceIncrease(emergencyDice, emergencyDiceXPSpent, availableXP);
+    const result = applyEmergencyDiceIncrease(
+      emergencyDice,
+      emergencyDiceXPSpent,
+      availableXP,
+    );
     if (!result) return;
     setEmergencyDice(result.emergencyDice);
     setEmergencyDiceXPSpent(result.emergencyDiceXPSpent);
@@ -230,7 +234,11 @@ function CharacterDetail({ character, onUpdate, user }) {
       return;
     }
 
-    const result = applyEmergencyDiceDecrease(emergencyDice, emergencyDiceXPSpent, isEditing);
+    const result = applyEmergencyDiceDecrease(
+      emergencyDice,
+      emergencyDiceXPSpent,
+      isEditing,
+    );
     if (!result) return;
 
     setEmergencyDice(result.emergencyDice);
@@ -348,7 +356,11 @@ function CharacterDetail({ character, onUpdate, user }) {
    * @param {*} attrKey the key of the attribute.
    */
   const decreaseAttribute = (attrKey) => {
-    const result = applyAttributeDecrease(attributes, attrKey, character.attributes);
+    const result = applyAttributeDecrease(
+      attributes,
+      attrKey,
+      character.attributes,
+    );
     if (!result) return;
 
     setAttributes(result.attributes);
@@ -471,453 +483,480 @@ function CharacterDetail({ character, onUpdate, user }) {
 
       {activeTab === "gameplay" && (
         <>
-      <div className="flex justify-end">
-        <button
-          onClick={() => setColumnView((prev) => !prev)}
-          className="bg-neutral-800 hover:bg-neutral-700 border border-orange-500/40 text-orange-300 px-3 py-1 rounded text-xs cursor-pointer"
-        >
-          {columnView ? "Switch to Vertical View" : "Switch to Column View"}
-        </button>
-      </div>
-
-      <div
-        className={
-          columnView ? "grid md:grid-cols-2 gap-6" : "flex flex-col gap-6"
-        }
-      >
-        {!columnView && (
-          <div className="order-1">
-            <div className="relative inline-block group">
-              <h2 className="text-2xl font-bold text-orange-400 mt-4 mb-0">
-                Attributes{" "}
-                <span className="text-xs font-light text-neutral-400">[?]</span>
-              </h2>
-
-              {/* Tooltip modal */}
-              <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-0">
-                <p>
-                  Attributes determine your{" "}
-                  <span className="text-orange-500 font-bold">
-                    wound thresholds, system shock,
-                  </span>{" "}
-                  and other critical attributes of your character via{" "}
-                  <span className="text-orange-500 font-bold">
-                    derived attributes
-                  </span>
-                  .
-                </p>
-              </div>
-            </div>
-
-            <AttributeView
-              attributes={attributes}
-              originalAttributes={character.attributes}
-              xp={availableXP}
-              isEditing={isEditing}
-              onIncrease={increaseAttribute}
-              onDecrease={decreaseAttribute}
-            />
-
-            <DerivedStats
-              character={character}
-              fleshWounds={fleshWounds}
-              deepWounds={deepWounds}
-              isSavingWounds={isSavingWounds}
-              onIncreaseFlesh={handleIncreaseFleshWounds}
-              onDecreaseFlesh={handleDecreaseFleshWounds}
-              onIncreaseDeep={handleIncreaseDeepWounds}
-              onDecreaseDeep={handleDecreaseDeepWounds}
-            />
+          <div className="flex justify-end">
+            <button
+              onClick={() => setColumnView((prev) => !prev)}
+              className="bg-neutral-800 hover:bg-neutral-700 border border-orange-500/40 text-orange-300 px-3 py-1 rounded text-xs cursor-pointer"
+            >
+              {columnView ? "Switch to Vertical View" : "Switch to Column View"}
+            </button>
           </div>
-        )}
 
-        {/* Left column: Attributes / Skills / Specializations */}
-        <div className={columnView ? "" : "order-3"}>
-          <div className="flex items-center justify-between flex-wrap gap-2">
-            <div className="relative inline-block group">
-              <h2 className="text-2xl font-bold text-orange-400 mt-4 mb-0">
-                Attributes{" "}
-                <span className="text-xs font-light text-neutral-400">[?]</span>
-              </h2>
+          <div
+            className={
+              columnView ? "grid md:grid-cols-2 gap-6" : "flex flex-col gap-6"
+            }
+          >
+            {!columnView && (
+              <div className="order-1">
+                <div className="relative inline-block group">
+                  <h2 className="text-2xl font-bold text-orange-400 mt-4 mb-0">
+                    Attributes{" "}
+                    <span className="text-xs font-light text-neutral-400">
+                      [?]
+                    </span>
+                  </h2>
 
-              {/* Tooltip modal */}
-              <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-0">
-                <p>
-                  Attributes determine your{" "}
-                  <span className="text-orange-500 font-bold">
-                    wound thresholds, system shock,
-                  </span>{" "}
-                  and other critical attributes of your character via{" "}
-                  <span className="text-orange-500 font-bold">
-                    derived attributes
-                  </span>
-                  .
-                </p>
+                  {/* Tooltip modal */}
+                  <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-0">
+                    <p>
+                      Attributes determine your{" "}
+                      <span className="text-orange-500 font-bold">
+                        wound thresholds, system shock,
+                      </span>{" "}
+                      and other critical attributes of your character via{" "}
+                      <span className="text-orange-500 font-bold">
+                        derived attributes
+                      </span>
+                      .
+                    </p>
+                  </div>
+                </div>
+
+                <AttributeView
+                  attributes={attributes}
+                  originalAttributes={character.attributes}
+                  xp={availableXP}
+                  isEditing={isEditing}
+                  onIncrease={increaseAttribute}
+                  onDecrease={decreaseAttribute}
+                />
+
+                <DerivedStats
+                  character={character}
+                  fleshWounds={fleshWounds}
+                  deepWounds={deepWounds}
+                  isSavingWounds={isSavingWounds}
+                  onIncreaseFlesh={handleIncreaseFleshWounds}
+                  onDecreaseFlesh={handleDecreaseFleshWounds}
+                  onIncreaseDeep={handleIncreaseDeepWounds}
+                  onDecreaseDeep={handleDecreaseDeepWounds}
+                />
               </div>
-            </div>
+            )}
 
-            {!isEditing ? (
-              <XpControls
-                xpRemaining={availableXP}
-                setIsEditing={setIsEditing}
-                patchXP={patchXP}
-                setMulticlass={setMulticlass}
-                patchMulticlass={patchMulticlass}
-              />
-            ) : (
-              <div className="flex items-center space-x-2">
-                <button
-                  onClick={handleSaveChanges}
-                  className="bg-green-600 hover:bg-green-700 px-2 py-1 rounded text-xs"
-                >
-                  Confirm | {availableXP} XP Remaining
-                </button>
+            {/* Left column: Attributes / Skills / Specializations */}
+            <div className={columnView ? "" : "order-3"}>
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <div className="relative inline-block group">
+                  <h2 className="text-2xl font-bold text-orange-400 mt-4 mb-0">
+                    Attributes{" "}
+                    <span className="text-xs font-light text-neutral-400">
+                      [?]
+                    </span>
+                  </h2>
 
-                {isEditing && !multiClass && (
-                  <button
-                    disabled={availableXP < MULTICLASS_EXP_COST}
-                    onClick={() => setShowMultiClassModal(true)}
-                    className="bg-orange-600 hover:bg-orange-700 disabled:bg-gray-700 disabled:hover:bg-gray-800 px-2 py-1 rounded text-xs"
-                  >
-                    Multiclass | {MULTICLASS_EXP_COST} XP
-                  </button>
+                  {/* Tooltip modal */}
+                  <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-0">
+                    <p>
+                      Attributes determine your{" "}
+                      <span className="text-orange-500 font-bold">
+                        wound thresholds, system shock,
+                      </span>{" "}
+                      and other critical attributes of your character via{" "}
+                      <span className="text-orange-500 font-bold">
+                        derived attributes
+                      </span>
+                      .
+                    </p>
+                  </div>
+                </div>
+
+                {!isEditing ? (
+                  <XpControls
+                    xpRemaining={availableXP}
+                    setIsEditing={setIsEditing}
+                    patchXP={patchXP}
+                    setMulticlass={setMulticlass}
+                    patchMulticlass={patchMulticlass}
+                  />
+                ) : (
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={handleSaveChanges}
+                      className="bg-green-600 hover:bg-green-700 px-2 py-1 rounded text-xs"
+                    >
+                      Confirm | {availableXP} XP Remaining
+                    </button>
+
+                    {isEditing && !multiClass && (
+                      <button
+                        disabled={availableXP < MULTICLASS_EXP_COST}
+                        onClick={() => setShowMultiClassModal(true)}
+                        className="bg-orange-600 hover:bg-orange-700 disabled:bg-gray-700 disabled:hover:bg-gray-800 px-2 py-1 rounded text-xs"
+                      >
+                        Multiclass | {MULTICLASS_EXP_COST} XP
+                      </button>
+                    )}
+                  </div>
                 )}
               </div>
-            )}
-          </div>
 
-          {showMultiClassModal && availableXP >= MULTICLASS_EXP_COST && (
-            <MultiClassModal
-              onClose={setShowMultiClassModal}
-              patchMulticlass={patchMulticlass}
-              charClass={character}
-            />
-          )}
+              {showMultiClassModal && availableXP >= MULTICLASS_EXP_COST && (
+                <MultiClassModal
+                  onClose={setShowMultiClassModal}
+                  patchMulticlass={patchMulticlass}
+                  charClass={character}
+                />
+              )}
 
-          <AttributeView
-            attributes={attributes}
-            originalAttributes={character.attributes}
-            xp={availableXP}
-            isEditing={isEditing}
-            onIncrease={increaseAttribute}
-            onDecrease={decreaseAttribute}
-          />
-
-          {columnView && (
-            <DerivedStats
-              character={character}
-              fleshWounds={fleshWounds}
-              deepWounds={deepWounds}
-              isSavingWounds={isSavingWounds}
-              onIncreaseFlesh={handleIncreaseFleshWounds}
-              onDecreaseFlesh={handleDecreaseFleshWounds}
-              onIncreaseDeep={handleIncreaseDeepWounds}
-              onDecreaseDeep={handleDecreaseDeepWounds}
-            />
-          )}
-
-          {/* Skills */}
-          <div className="mt-4">
-            <div className="relative inline-block group">
-              <h2 className="text-xl font-bold text-orange-400 mt-2 mb-1">
-                Skills{" "}
-                <span className="text-xs font-light text-neutral-400">[?]</span>
-              </h2>
-
-              {/* Tooltip modal */}
-              <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-1">
-                <p>
-                  Skills determine the amount of dice you{" "}
-                  <span className="text-orange-500 font-bold">roll</span> during
-                  a <span className="text-orange-500 font-bold">check</span>.
-                  the higher the level, the more dice you roll.
-                </p>
-                <p className="text-neutral-500 text-xs">
-                  IE: 0 in a skill is 2d6l, 1 in a skill is 1d6, 2 is 2d6l and
-                  so on for a max of 4 levels in a skill.
-                </p>
-              </div>
-            </div>
-
-            <SkillsView
-              skillGroups={skillGroups}
-              isEditing={isEditing}
-              editedSkills={editedSkills}
-              character={character}
-              increaseSkill={increaseSkill}
-              decreaseSkill={decreaseSkill}
-              wideColumns={!columnView}
-            />
-          </div>
-
-          {/* Specializations */}
-          <div className="mt-4">
-            <div className="relative inline-block group">
-              <h2 className="text-xl font-bold text-orange-400">
-                Specializations{" "}
-                <span className="text-xs font-light text-neutral-400">[?]</span>
-              </h2>
-
-              {/* Tooltip modal */}
-              <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-1">
-                <p>
-                  Specialiations provide a{" "}
-                  <span className="text-orange-500 font-bold">+1</span> to rolls
-                  when conditions are met. For example, a specialization in
-                  Carbines provides a +1 when rolling to attack with a Carbine.
-                </p>
-              </div>
-            </div>
-
-            {specializations.length > 0 && (
-              <SpecView
-                specializations={specializations}
+              <AttributeView
+                attributes={attributes}
+                originalAttributes={character.attributes}
+                xp={availableXP}
                 isEditing={isEditing}
-                removeSpec={removeSpecialization}
+                onIncrease={increaseAttribute}
+                onDecrease={decreaseAttribute}
               />
-            )}
 
-            {isEditing && availableXP >= SPEC_EXP_COST && (
+              {columnView && (
+                <DerivedStats
+                  character={character}
+                  fleshWounds={fleshWounds}
+                  deepWounds={deepWounds}
+                  isSavingWounds={isSavingWounds}
+                  onIncreaseFlesh={handleIncreaseFleshWounds}
+                  onDecreaseFlesh={handleDecreaseFleshWounds}
+                  onIncreaseDeep={handleIncreaseDeepWounds}
+                  onDecreaseDeep={handleDecreaseDeepWounds}
+                />
+              )}
+
+              {/* Skills */}
               <div className="mt-4">
-                <button
-                  onClick={() => setShowSpecModal(true)}
-                  className="bg-orange-600 hover:bg-orange-700 px-4 py-1 rounded"
-                >
-                  + Add Specialization (−{SPEC_EXP_COST} XP)
-                </button>
+                <div className="relative inline-block group">
+                  <h2 className="text-xl font-bold text-orange-400 mt-2 mb-1">
+                    Skills{" "}
+                    <span className="text-xs font-light text-neutral-400">
+                      [?]
+                    </span>
+                  </h2>
+
+                  {/* Tooltip modal */}
+                  <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-1">
+                    <p>
+                      Skills determine the amount of dice you{" "}
+                      <span className="text-orange-500 font-bold">roll</span>{" "}
+                      during a{" "}
+                      <span className="text-orange-500 font-bold">check</span>.
+                      the higher the level, the more dice you roll.
+                    </p>
+                    <p className="text-neutral-500 text-xs">
+                      IE: 0 in a skill is 2d6l, 1 in a skill is 1d6, 2 is 2d6l
+                      and so on for a max of 4 levels in a skill.
+                    </p>
+                  </div>
+                </div>
+
+                <SkillsView
+                  skillGroups={skillGroups}
+                  isEditing={isEditing}
+                  editedSkills={editedSkills}
+                  character={character}
+                  increaseSkill={increaseSkill}
+                  decreaseSkill={decreaseSkill}
+                  wideColumns={!columnView}
+                />
               </div>
-            )}
 
-            {showSpecModal && (
-              <SpecModal
-                editedSkills={editedSkills}
-                specializations={specializations}
-                xpRemaining={availableXP}
-                setSpecializations={setSpecializations}
-                setXpRemaining={() => {}} // specializations state alone drives the derived available XP
-                setShowSpecModal={setShowSpecModal}
+              {/* Specializations */}
+              <div className="mt-4">
+                <div className="relative inline-block group">
+                  <h2 className="text-xl font-bold text-orange-400">
+                    Specializations{" "}
+                    <span className="text-xs font-light text-neutral-400">
+                      [?]
+                    </span>
+                  </h2>
+
+                  {/* Tooltip modal */}
+                  <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-1">
+                    <p>
+                      Specialiations provide a{" "}
+                      <span className="text-orange-500 font-bold">+1</span> to
+                      rolls when conditions are met. For example, a
+                      specialization in Carbines provides a +1 when rolling to
+                      attack with a Carbine.
+                    </p>
+                  </div>
+                </div>
+
+                {specializations.length > 0 && (
+                  <SpecView
+                    specializations={specializations}
+                    isEditing={isEditing}
+                    removeSpec={removeSpecialization}
+                  />
+                )}
+
+                {isEditing && availableXP >= SPEC_EXP_COST && (
+                  <div className="mt-4">
+                    <button
+                      onClick={() => setShowSpecModal(true)}
+                      className="bg-orange-600 hover:bg-orange-700 px-4 py-1 rounded"
+                    >
+                      + Add Specialization (−{SPEC_EXP_COST} XP)
+                    </button>
+                  </div>
+                )}
+
+                {showSpecModal && (
+                  <SpecModal
+                    editedSkills={editedSkills}
+                    specializations={specializations}
+                    xpRemaining={availableXP}
+                    setSpecializations={setSpecializations}
+                    setXpRemaining={() => {}} // specializations state alone drives the derived available XP
+                    setShowSpecModal={setShowSpecModal}
+                  />
+                )}
+              </div>
+
+              <Edice
+                isEditing={isEditing}
+                emergencyDice={emergencyDice}
+                charEmergencyDice={character.emergencyDice}
+                removeEmergencyDie={removeEmergencyDie}
+                addEmergencyDie={addEmergencyDie}
               />
-            )}
-          </div>
 
-          <Edice
-            isEditing={isEditing}
-            emergencyDice={emergencyDice}
-            charEmergencyDice={character.emergencyDice}
-            removeEmergencyDie={removeEmergencyDie}
-            addEmergencyDie={addEmergencyDie}
-          />
+              <div className="">
+                {/* expcalctesting */}
+                <Collapsible
+                  title={"EXP Spent"}
+                  color={"orange-400"}
+                  autoOpen={true}
+                  headerSize={"xl"}
+                  bottomMargin={false}
+                >
+                  <ExpAddedCalc
+                    character={character}
+                    userId={user}
+                    refreshCharacter={onUpdate}
+                  />
+                </Collapsible>
+              </div>
 
-          <div className="mt-4">
-            {/* expcalctesting */}
-            <Collapsible
-              title={"EXP Spent"}
-              color={"orange-400"}
-              autoOpen={true}
-              headerSize={"xl"}
-              bottomMargin={false}
+              {/* Calculator */}
+              <Collapsible
+                title={"Roll Calculator"}
+                color={"orange-400"}
+                headerSize={"xl"}
+              >
+                <RollCalculator
+                  characterData={character}
+                  fleshWounds={fleshWounds}
+                  deepWounds={deepWounds}
+                  onIncreaseFlesh={handleIncreaseFleshWounds}
+                  onDecreaseFlesh={handleDecreaseFleshWounds}
+                  onIncreaseDeep={handleIncreaseDeepWounds}
+                  onDecreaseDeep={handleDecreaseDeepWounds}
+                />
+              </Collapsible>
+            </div>
+
+            {/* Right column: Equipment */}
+            <div
+              className={`order-2 ${
+                columnView ? "md:border-l md:border-neutral-500/40 md:pl-6" : ""
+              }`}
             >
-              <ExpAddedCalc
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <div className="relative inline-block group">
+                  <h2 className="text-2xl font-bold text-orange-400 mt-4">
+                    Equipment{" "}
+                    <span className="text-xs font-light text-neutral-400">
+                      [?]
+                    </span>
+                  </h2>
+
+                  {/* Tooltip modal */}
+                  <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-1">
+                    <p>
+                      Your equipment determines the gear that you bring into a
+                      mission. You can choose a{" "}
+                      <span className="text-orange-500 font-bold">primary</span>
+                      , a{" "}
+                      <span className="text-orange-500 font-bold">
+                        secondary
+                      </span>
+                      , 2 types of{" "}
+                      <span className="text-orange-500 font-bold">
+                        grenades
+                      </span>
+                      , and then your{" "}
+                      <span className="text-orange-500 font-bold">armor</span>{" "}
+                      and{" "}
+                      <span className="text-orange-500 font-bold">gadget</span>.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() =>
+                      isEditingEquipment
+                        ? equipmentRef.current?.save()
+                        : setIsEditingEquipment(true)
+                    }
+                    className={`px-2 py-1 rounded text-xs cursor-pointer ${
+                      isEditingEquipment
+                        ? "bg-green-600 hover:bg-green-700"
+                        : "bg-orange-600 hover:bg-orange-700"
+                    }`}
+                  >
+                    {isEditingEquipment ? "Save Equipment" : "Edit Equipment"}
+                  </button>
+
+                  <button
+                    onClick={() => setCharActive((prev) => !prev)}
+                    className={`px-2 py-1 rounded text-xs cursor-pointer ${
+                      charActive
+                        ? "bg-red-700 hover:bg-red-800"
+                        : "bg-orange-600 hover:bg-orange-800"
+                    }`}
+                  >
+                    {charActive ? "Set Inactive" : "Set Active"}
+                  </button>
+                </div>
+              </div>
+
+              <EquipmentSelection
+                key={characterKey}
+                ref={equipmentRef}
                 character={character}
+                isEditing={isEditingEquipment}
                 userId={user}
                 refreshCharacter={onUpdate}
+                setIsEditing={setIsEditingEquipment}
+                charActive={charActive}
+                wideLayout={!columnView}
               />
-            </Collapsible>
-          </div>
-        </div>
-
-        {/* Right column: Equipment */}
-        <div
-          className={`order-2 ${
-            columnView ? "md:border-l md:border-neutral-500/40 md:pl-6" : ""
-          }`}
-        >
-          <div className="flex items-center justify-between flex-wrap gap-2">
-            <div className="relative inline-block group">
-              <h2 className="text-2xl font-bold text-orange-400 mt-4">
-                Equipment{" "}
-                <span className="text-xs font-light text-neutral-400">[?]</span>
-              </h2>
-
-              {/* Tooltip modal */}
-              <div className="absolute z-10 hidden group-hover:block w-2xl p-2 bg-neutral-800 text-white text-sm rounded shadow-lg top-full left-0 mt-1">
-                <p>
-                  Your equipment determines the gear that you bring into a
-                  mission. You can choose a{" "}
-                  <span className="text-orange-500 font-bold">primary</span>, a{" "}
-                  <span className="text-orange-500 font-bold">secondary</span>,
-                  2 types of{" "}
-                  <span className="text-orange-500 font-bold">grenades</span>,
-                  and then your{" "}
-                  <span className="text-orange-500 font-bold">armor</span> and{" "}
-                  <span className="text-orange-500 font-bold">gadget</span>.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={() =>
-                  isEditingEquipment
-                    ? equipmentRef.current?.save()
-                    : setIsEditingEquipment(true)
-                }
-                className={`px-2 py-1 rounded text-xs cursor-pointer ${
-                  isEditingEquipment
-                    ? "bg-green-600 hover:bg-green-700"
-                    : "bg-orange-600 hover:bg-orange-700"
-                }`}
-              >
-                {isEditingEquipment ? "Save Equipment" : "Edit Equipment"}
-              </button>
-
-              <button
-                onClick={() => setCharActive((prev) => !prev)}
-                className={`px-2 py-1 rounded text-xs cursor-pointer ${
-                  charActive
-                    ? "bg-red-700 hover:bg-red-800"
-                    : "bg-orange-600 hover:bg-orange-800"
-                }`}
-              >
-                {charActive ? "Set Inactive" : "Set Active"}
-              </button>
             </div>
           </div>
 
-          <EquipmentSelection
-            key={characterKey}
-            ref={equipmentRef}
-            character={character}
-            isEditing={isEditingEquipment}
-            userId={user}
-            refreshCharacter={onUpdate}
-            setIsEditing={setIsEditingEquipment}
-            charActive={charActive}
-            wideLayout={!columnView}
-          />
-        </div>
-      </div>
-
-      {/* Calculator */}
-      <Collapsible
-        title={"Roll Calculator"}
-        color={"orange-400"}
-        headerSize={"2xl"}
-      >
-        <RollCalculator
-          characterData={character}
-          fleshWounds={fleshWounds}
-          deepWounds={deepWounds}
-          onIncreaseFlesh={handleIncreaseFleshWounds}
-          onDecreaseFlesh={handleDecreaseFleshWounds}
-          onIncreaseDeep={handleIncreaseDeepWounds}
-          onDecreaseDeep={handleDecreaseDeepWounds}
-        />
-      </Collapsible>
-
-      {/* Biography */}
-      <Collapsible title={"Biography"} color={"orange-400"} headerSize={"2xl"}>
-        <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-6 rounded shadow col-span-2">
-          {isEditingBio ? (
-            typeof Biography === "object" ? (
-              <div className="grid sm:grid-cols-2 gap-3">
-                {biographyFields.map(([field, label]) => (
-                  <label
-                    key={field}
-                    className={
-                      field === "bio" || field === "notes"
-                        ? "sm:col-span-2"
-                        : ""
-                    }
-                  >
-                    <span className="block text-xs text-orange-400 mb-1">
-                      {label}
-                    </span>
-                    <textarea
-                      className="w-full bg-neutral-900 text-white p-2 rounded resize-y min-h-[60px]"
-                      value={Biography[field] || ""}
-                      onInput={(event) =>
-                        setBio({ ...Biography, [field]: event.target.value })
-                      }
-                    />
-                  </label>
-                ))}
-              </div>
-            ) : (
-              <textarea
-                className="w-full bg-neutral-900 text-white p-2 rounded resize-y min-h-[100px]"
-                placeholder="UNCC LC-514-A 'Formal Background'"
-                value={Biography}
-                onInput={(event) => setBio(event.target.value)}
-              />
-            )
-          ) : typeof Biography === "object" ? (
-            <div className="grid sm:grid-cols-2 gap-3 text-xs">
-              {biographyFields.map(([field, label]) => (
-                <div
-                  key={field}
-                  className={
-                    field === "bio" || field === "notes" ? "sm:col-span-2" : ""
-                  }
-                >
-                  <span className="block text-orange-400">{label}</span>
-                  <p className="whitespace-pre-wrap">
-                    {Biography[field] || "..."}
-                  </p>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="whitespace-pre-wrap text-xs mt-1">
-              {Biography || "..."}
-            </p>
-          )}
-        </div>
-        <div className="mt-2">
-          {isEditingBio ? (
-            <button
-              onClick={() => patchBio(Biography)}
-              className="bg-orange-600 hover:bg-orange-700 px-4 py-1 rounded"
-            >
-              Close
-            </button>
-          ) : (
-            <button
-              onClick={() => setIsEditingBio(true)}
-              className="bg-orange-600 hover:bg-orange-700 px-4 py-1 rounded"
-            >
-              Edit
-            </button>
-          )}
-        </div>
-      </Collapsible>
-
-      {/* Campaign Assignment */}
-      <Collapsible
-        title={"Assign To Campaign"}
-        color={"orange-400"}
-        headerSize={"2xl"}
-        className="mt-6"
-      >
-        <div className="flex space-x-2">
-          <input
-            type="text"
-            placeholder="Enter campaign ID (e.g., campaign0)"
-            className="bg-neutral-800 border border-gray-500 rounded px-3 py-1 text-white w-full"
-            value={campaignInput}
-            onChange={(e) => setCampaignInput(e.target.value)}
-          />
-          <button
-            className="bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded"
-            onClick={() => {
-              onUpdate({ campaignId: campaignInput });
-              alert("Campaign assigned.");
-            }}
+          {/* Biography */}
+          <Collapsible
+            title={"Biography"}
+            color={"orange-400"}
+            headerSize={"2xl"}
           >
-            Assign
-          </button>
-        </div>
-      </Collapsible>
+            <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-8 border-orange-500 p-6 rounded shadow col-span-2">
+              {isEditingBio ? (
+                typeof Biography === "object" ? (
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    {biographyFields.map(([field, label]) => (
+                      <label
+                        key={field}
+                        className={
+                          field === "bio" || field === "notes"
+                            ? "sm:col-span-2"
+                            : ""
+                        }
+                      >
+                        <span className="block text-xs text-orange-400 mb-1">
+                          {label}
+                        </span>
+                        <textarea
+                          className="w-full bg-neutral-900 text-white p-2 rounded resize-y min-h-[60px]"
+                          value={Biography[field] || ""}
+                          onInput={(event) =>
+                            setBio({
+                              ...Biography,
+                              [field]: event.target.value,
+                            })
+                          }
+                        />
+                      </label>
+                    ))}
+                  </div>
+                ) : (
+                  <textarea
+                    className="w-full bg-neutral-900 text-white p-2 rounded resize-y min-h-[100px]"
+                    placeholder="UNCC LC-514-A 'Formal Background'"
+                    value={Biography}
+                    onInput={(event) => setBio(event.target.value)}
+                  />
+                )
+              ) : typeof Biography === "object" ? (
+                <div className="grid sm:grid-cols-2 gap-3 text-xs">
+                  {biographyFields.map(([field, label]) => (
+                    <div
+                      key={field}
+                      className={
+                        field === "bio" || field === "notes"
+                          ? "sm:col-span-2"
+                          : ""
+                      }
+                    >
+                      <span className="block text-orange-400">{label}</span>
+                      <p className="whitespace-pre-wrap">
+                        {Biography[field] || "..."}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="whitespace-pre-wrap text-xs mt-1">
+                  {Biography || "..."}
+                </p>
+              )}
+            </div>
+            <div className="mt-2">
+              {isEditingBio ? (
+                <button
+                  onClick={() => patchBio(Biography)}
+                  className="bg-orange-600 hover:bg-orange-700 px-4 py-1 rounded"
+                >
+                  Close
+                </button>
+              ) : (
+                <button
+                  onClick={() => setIsEditingBio(true)}
+                  className="bg-orange-600 hover:bg-orange-700 px-4 py-1 rounded"
+                >
+                  Edit
+                </button>
+              )}
+            </div>
+          </Collapsible>
+
+          {/* Campaign Assignment */}
+          <Collapsible
+            title={"Assign To Campaign"}
+            color={"orange-400"}
+            headerSize={"2xl"}
+            className="mt-6"
+          >
+            <div className="flex space-x-2">
+              <input
+                type="text"
+                placeholder="Enter campaign ID (e.g., campaign0)"
+                className="bg-neutral-800 border border-gray-500 rounded px-3 py-1 text-white w-full"
+                value={campaignInput}
+                onChange={(e) => setCampaignInput(e.target.value)}
+              />
+              <button
+                className="bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded"
+                onClick={() => {
+                  onUpdate({ campaignId: campaignInput });
+                  alert("Campaign assigned.");
+                }}
+              >
+                Assign
+              </button>
+            </div>
+          </Collapsible>
         </>
       )}
     </div>
