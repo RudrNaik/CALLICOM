@@ -141,12 +141,20 @@ function CharacterDetail({ character, onUpdate, user }) {
   // Skills/attributes/specializations/multiclass/emergency dice can also
   // change out from under this same character — most notably a mission-log
   // removal reverting a receipt's spend (see logsEngine.applyMissionLogRemove)
-  // — not just via this component's own Save. The reseed above only fires on
-  // an actual character *switch*, so without this, the Skills tab (and the
-  // derived available-XP total, which reads these drafts rather than
-  // `character` directly) would keep showing the pre-revert values until the
-  // roster was reselected. Skipped while actively editing so it can't clobber
-  // an in-progress, unsaved draft.
+  // or a sync conflict resolved with "Use Server Version" — not just via this
+  // component's own Save. The reseed above only fires on an actual character
+  // *switch*, so without this, the Skills tab (and the derived available-XP
+  // total, which reads these drafts rather than `character` directly) would
+  // keep showing the stale values until the roster was reselected. Skipped
+  // while actively editing so it can't clobber an in-progress, unsaved draft.
+  //
+  // Keyed on the `character` object reference itself, not e.g.
+  // `character?.updatedAt` — that field isn't reliably set (a character only
+  // just created, or only ever touched by a field-specific backend patch
+  // like the uniqueId migration, can have it `undefined` on both the old and
+  // new object), so it can't be trusted to actually change whenever the
+  // character does. The reference only changes when the roster actually
+  // replaces this character's entry, which is exactly the signal needed.
   useEffect(() => {
     if (isEditing) return;
     setEditedSkills({ ...character?.skills });
@@ -157,7 +165,7 @@ function CharacterDetail({ character, onUpdate, user }) {
     setOriginalEmergencyDice(character?.emergencyDice || 0);
     setEmergencyDiceXPSpent(character?.emergencyDiceXPSpent || 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [character?.updatedAt, isEditing]);
+  }, [character, isEditing]);
 
   // 700ms debounce because rapidly spamming the deep and flesh wounds causes
   // desync with the backend as master so it reverts. Shared by DerivedStats
