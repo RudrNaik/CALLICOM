@@ -347,10 +347,12 @@ function purchaseFreeSubmunitions(logs, gadgetId, equipmentData) {
 
 /**
  * Spends money on a purchase, updating equipment and recording it onto the
- * latest mission's receipt. Blocked if the character can't afford it.
- * `gearSetsData` is needed both to price a "gearSlot" purchase and to
- * compute the character's current money total (see getMoneyTotal); omit it
- * only if the character owns no gear-slot purchases.
+ * latest mission's receipt. Blocked if the character can't afford it —
+ * purchases can never put a character into debt (unlike mission-log payouts,
+ * which can go negative on a failure). `gearSetsData` is needed both to
+ * price a "gearSlot" purchase and to compute the character's current money
+ * total (see getMoneyTotal); omit it only if the character owns no
+ * gear-slot purchases.
  * @returns {{equipment: object, logs: array}|null} null if blocked
  */
 export function applyPurchase(character, logs, purchase, equipmentData, gearSetsData) {

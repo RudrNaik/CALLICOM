@@ -25,6 +25,40 @@ import { useCharacterRosterSync } from "../../hooks/useBackgroundCharacterSync";
 const CACHE_KEY_EQUIP = `roster_equipment`;
 
 /**
+ * Warning banner shown while the background sync is waiting on a
+ * cold/sleeping backend (e.g. a Render free-tier instance spooling up).
+ * Lets the user know saves and updates may be delayed rather than assuming
+ * something is broken.
+ */
+function ColdStartBanner() {
+  return (
+    <div className="flex items-center gap-3 px-4 py-2 bg-neutral-900 border-l-4 border-yellow-500 text-sm text-yellow-300 flicker">
+      <svg
+        className="animate-spin h-3 w-3 text-yellow-400 shrink-0"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          className="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          strokeWidth="4"
+        />
+        <path
+          className="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+        />
+      </svg>
+      <span>⚠ Backend is waking up — saves may be delayed. Please wait.</span>
+    </div>
+  );
+}
+
+/**
  * Takes an input of the character's key, and then returns the parsed JSON value of the key value.
  * @param {*} key a Character's key
  * @returns JSON formatted data for the character.
@@ -52,6 +86,7 @@ function CharacterRoster({ userId }) {
   const {
     conflicts,
     deletionConflicts,
+    backendSleeping,
     resolveContentConflict,
     resolveDeletionConflict,
   } = useCharacterRosterSync(userId, characters, setCharacters);
@@ -99,6 +134,21 @@ function CharacterRoster({ userId }) {
     setEquipment(Array.isArray(cachedEquip) ? cachedEquip : []);
     setIsLoading(false);
   }, [userId]);
+
+  // Keeps the detail view in step with the roster. Background sync (conflict
+  // resolution, remote pulls) updates `characters` directly rather than going
+  // through `updateCharacter`, so without this the open detail view would
+  // keep showing the stale object until the card was clicked again.
+  useEffect(() => {
+    setSelectedCharacter((current) => {
+      if (!current) return current;
+      const currentKey = current._id || current.uniqueId || current.callsign;
+      const match = characters.find(
+        (char) => (char._id || char.uniqueId || char.callsign) === currentKey,
+      );
+      return match || current;
+    });
+  }, [characters]);
 
   // Flush the selected character's queued update the moment it's switched
   // away from (or the roster unmounts), so a debounce window doesn't strand
@@ -170,6 +220,12 @@ function CharacterRoster({ userId }) {
       <h1 className="text-2xl font-bold text-orange-400 px-2">
         Your Characters
       </h1>
+
+      {backendSleeping && (
+        <div className="px-2">
+          <ColdStartBanner />
+        </div>
+      )}
 
       {/* Loading and status */}
       <div className="flicker">

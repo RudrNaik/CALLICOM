@@ -482,7 +482,11 @@ function LogsSection({ char }) {
   return (
     <div className="mt-4 space-y-4">
       <div className="flex flex-wrap gap-4">
-        <StatTile label="Current Cash" value={`$${money}`} color="text-green-400" />
+        <StatTile
+          label="Current Cash"
+          value={money < 0 ? `-$${Math.abs(money)}` : `$${money}`}
+          color={money < 0 ? "text-red-500" : "text-green-400"}
+        />
         <StatTile
           label="Total Mission XP"
           value={totals.totalMissionXP}

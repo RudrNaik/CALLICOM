@@ -145,7 +145,9 @@ function LogisticsView({ character, refreshCharacter }) {
       <div className="flex flex-wrap items-center gap-4">
         <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-4 border-orange-500 px-4 py-2 rounded-xs inline-block">
           <span className="block text-xs text-neutral-400">Current Cash</span>
-          <span className="text-lg font-bold text-green-400">${money}</span>
+          <span className={`text-lg font-bold ${money < 0 ? "text-red-500" : "text-green-400"}`}>
+            {money < 0 ? `-$${Math.abs(money)}` : `$${money}`}
+          </span>
         </div>
       </div>
 

@@ -26,12 +26,16 @@ import {
  * that were deleted here but still exist on the backend, are surfaced for
  * the user to decide.
  */
+const COLD_START_THRESHOLD_MS = 3000;
+
 export function useCharacterRosterSync(userId, characters, setCharacters) {
   const [conflicts, setConflicts] = useState([]);
   const [deletionConflicts, setDeletionConflicts] = useState([]);
+  const [backendSleeping, setBackendSleeping] = useState(false);
   const charactersRef = useRef(characters);
   charactersRef.current = characters;
   const syncingRef = useRef(false);
+  const sleepTimerRef = useRef(null);
 
   const applyLocalUpdate = useCallback(
     (updater) => {
@@ -50,6 +54,9 @@ export function useCharacterRosterSync(userId, characters, setCharacters) {
     if (!userId || !token) return;
 
     syncingRef.current = true;
+    sleepTimerRef.current = setTimeout(() => {
+      setBackendSleeping(true);
+    }, COLD_START_THRESHOLD_MS);
     try {
       const remoteCharacters = await fetchRemoteCharacters(userId, token);
       if (!Array.isArray(remoteCharacters)) return;
@@ -100,6 +107,8 @@ export function useCharacterRosterSync(userId, characters, setCharacters) {
       // Backend unreachable or errored; stay silent, the next mount will retry.
       console.error("Character roster reconciliation failed:", err);
     } finally {
+      clearTimeout(sleepTimerRef.current);
+      setBackendSleeping(false);
       syncingRef.current = false;
     }
   }, [userId, applyLocalUpdate]);
@@ -108,6 +117,8 @@ export function useCharacterRosterSync(userId, characters, setCharacters) {
     if (!userId) return;
     reconcile();
   }, [userId, reconcile]);
+
+  useEffect(() => () => clearTimeout(sleepTimerRef.current), []);
 
   const resolveContentConflict = useCallback(
     async (key, choice) => {
@@ -163,5 +174,5 @@ export function useCharacterRosterSync(userId, characters, setCharacters) {
     [deletionConflicts, userId, applyLocalUpdate],
   );
 
-  return { conflicts, deletionConflicts, resolveContentConflict, resolveDeletionConflict };
+  return { conflicts, deletionConflicts, backendSleeping, resolveContentConflict, resolveDeletionConflict };
 }

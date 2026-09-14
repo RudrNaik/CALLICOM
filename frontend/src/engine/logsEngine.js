@@ -361,8 +361,9 @@ export function applyMissionLogAdd(character, logs, entry) {
  * removing the mission also removes whatever purchases were recorded on its
  * receipt, refunding them for free. Blocked if `index` isn't the last entry
  * (an older receipt can't be safely unwound once later missions/spending
- * have layered on top of it), or if doing so would leave the character's
- * money negative.
+ * have layered on top of it). Money is allowed to land negative — a mission
+ * or task failure can cost more than was on hand, and removing/editing logs
+ * shouldn't be blocked by that.
  * @returns {{logs, skills, attributes, specializations, multiClass, emergencyDice, emergencyDiceXPSpent, equipment}|null} null if blocked
  */
 export function applyMissionLogRemove(character, logs, index, equipmentData, gearSetsData) {
@@ -372,9 +373,6 @@ export function applyMissionLogRemove(character, logs, index, equipmentData, gea
 
   const receipt = entry.receipt ?? {};
   const nextLogs = logs.slice(0, -1);
-
-  const nextMoney = getMoneyTotal({ ...character, logs: nextLogs }, equipmentData, gearSetsData);
-  if (nextMoney < 0) return null;
 
   const skills = { ...(character.skills ?? {}) };
   Object.entries(receipt.skills ?? {}).forEach(([skill, delta]) => {
@@ -419,8 +417,10 @@ export function applyMissionLogRemove(character, logs, index, equipmentData, gea
  * Only the last entry is editable, matching the removal restriction — its
  * receipt-based spending assumes its XP/money contribution to the totals,
  * so an older entry could invalidate spending already layered on top of it.
- * Blocked if the new missionXP/payout would take the character's derived
- * available XP or money negative.
+ * Blocked if the new missionXP would take the character's derived available
+ * XP negative. Payout is allowed to go negative and take the character's
+ * money total negative with it — a mission failure can cost money, not just
+ * earn it.
  * @returns {{logs: array}|null} null if blocked
  */
 export function applyMissionLogEdit(character, logs, index, updates, equipmentData, gearSetsData) {
@@ -439,9 +439,6 @@ export function applyMissionLogEdit(character, logs, index, updates, equipmentDa
 
   const nextLogs = [...logs];
   nextLogs[index] = nextEntry;
-
-  const nextMoney = getMoneyTotal({ ...character, logs: nextLogs }, equipmentData, gearSetsData);
-  if (nextMoney < 0) return null;
 
   const xpDelta = getMissionEarnings(nextEntry).xp - getMissionEarnings(entry).xp;
   const nextMissionXPTotal = getLogTotals(logs).totalMissionXP + xpDelta;
@@ -468,8 +465,10 @@ export function applyAchievementAdd(character, logs, missionIndex, achievement) 
 
 /**
  * Removes an achievement from a mission, refunding its cash/XP contribution.
- * Blocked if doing so would take the character's money or derived available
- * XP negative (i.e. it's already been spent).
+ * Blocked if doing so would take the character's derived available XP
+ * negative (i.e. it's already been spent). Money is allowed to go negative —
+ * removing a cash achievement can leave a character in debt, same as a
+ * mission failure would.
  * @returns {{logs: array}|null} null if blocked
  */
 export function applyAchievementRemove(character, logs, missionIndex, achievementIndex, equipmentData, gearSetsData) {
@@ -477,9 +476,6 @@ export function applyAchievementRemove(character, logs, missionIndex, achievemen
   const achievements = getAchievements(entry);
   const achievement = achievements[achievementIndex];
   if (!achievement) return null;
-
-  const nextMoney = getMoneyTotal(character, equipmentData, gearSetsData) - achievement.cashPayout;
-  if (nextMoney < 0) return null;
 
   const nextMissionXPTotal = getLogTotals(logs).totalMissionXP - achievement.xpPayout;
   if (getAvailableXP(character, nextMissionXPTotal) < 0) return null;

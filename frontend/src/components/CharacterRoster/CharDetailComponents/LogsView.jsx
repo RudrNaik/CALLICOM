@@ -201,7 +201,7 @@ function LogsView({ character, refreshCharacter }) {
   const handleRemoveMission = (index) => {
     const result = applyMissionLogRemove(character, logs, index, equipmentData, gearSetsData);
     if (!result) {
-      alert("Can't remove this mission — its payout has already been spent.");
+      alert("Can't remove this mission.");
       return;
     }
     refreshCharacter(result);
@@ -236,7 +236,7 @@ function LogsView({ character, refreshCharacter }) {
     );
     if (!result) {
       alert(
-        "Cant save due to money or xp being negative.",
+        "Cant save due to the log causing XP earned to be negative.",
       );
       return;
     }
@@ -263,7 +263,7 @@ function LogsView({ character, refreshCharacter }) {
     );
     if (!result) {
       alert(
-        "Can't remove that achievement — its XP or money has already been spent.",
+        "Can't remove achievement as it would cause negative XP.",
       );
       return;
     }
@@ -289,7 +289,9 @@ function LogsView({ character, refreshCharacter }) {
         </div>
         <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-4 border-orange-500 px-4 py-2 rounded-xs">
           <span className="block text-xs text-neutral-400">Current Cash</span>
-          <span className="text-lg font-bold text-green-400">${money}</span>
+          <span className={`text-lg font-bold ${money < 0 ? "text-red-500" : "text-green-400"}`}>
+            {money < 0 ? `-$${Math.abs(money)}` : `$${money}`}
+          </span>
         </div>
       </div>
 
