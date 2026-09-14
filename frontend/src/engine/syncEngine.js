@@ -183,12 +183,24 @@ export const deleteRemoteCharacter = async (userId, callsign, token) => {
 };
 
 /**
- * The backend identifies a character by (userId, callsign) — that's what
- * its GET/PATCH/DELETE single-character routes key off of — so sync uses
- * the same pair to match a local character against a remote one.
+ * Identifies a character for reconciliation purposes. Every character
+ * carries a client-generated `uniqueId` (see CharacterCreator.jsx's
+ * createCharacterId) that's stable and never shared between two
+ * characters, unlike `callsign` — two characters can legitimately end up
+ * with the same callsign (nothing currently stops it), and keying off
+ * callsign alone would silently collapse them into one entry wherever this
+ * is used to build a Map (see diffCharacterRosters below), hiding one of
+ * them from reconciliation entirely. Falls back to callsign only for
+ * legacy characters predating `uniqueId`.
+ *
+ * Note this is a *local* matching key only — the backend's single-character
+ * GET/PATCH/DELETE routes still address a character by (userId, callsign),
+ * so two backend records that genuinely share a callsign can still have a
+ * PATCH/DELETE land on the wrong one. Fixing that would need those routes
+ * (and the calls into them) to switch to `uniqueId` too.
  */
 export const characterKey = (userId, character) =>
-  `${userId}::${character?.callsign ?? ""}`;
+  `${userId}::${character?.uniqueId || character?.callsign || ""}`;
 
 // Bookkeeping fields that legitimately differ between a local record and
 // its backend counterpart without representing a real conflict: Mongo's
