@@ -548,7 +548,7 @@
                         "id": "stimJunkie_stimJunkiesPatch",
                         "name": "Stim Junkies Patch",
                         "slot": "Patch",
-                        "tier": null,
+                        "tier": 0,
                         "flavor": "A complimentary patch courtesy of Syntek for your continued service in pushing the medical field forward towards a brighter tomorrow.",
                         "effect": " Upgrades the effect of the adrenal spinal shot to now also provide an extra movement action. All damage while the suit is above a fifth of its health that would cause wounds now abide by wound overflow."
                     }
