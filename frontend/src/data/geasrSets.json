@@ -541,7 +541,7 @@
                         "name": "Adrenal Spinal Shot",
                         "slot": "Headgear",
                         "tier": 1,
-                        "flavor": "An experimental helmet attachment that allows for an embedded needle to inject an adrenal shot into the top of the user's spine.",
+                        "flavor": "An experimental helmet attachment that allows for an embedded needle to inject an nanite adrenal shot into the top of the user's spine.",
                         "effect": "When the juggernaut suit reaches less than a third of its HP, for the turn after, gain an extra standard action."
                     },
                     {
