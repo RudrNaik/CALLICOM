@@ -469,7 +469,7 @@
                         "id": "directlyIndirect_improvedParabolicCalculator",
                         "name": "Improved Parabolic Calculator",
                         "slot": "Equipment",
-                        "tier": null,
+                        "tier": 4,
                         "flavor": "Integrating new parabolic calculators that take into account weather conditions as well as the aerodynamics of the specific shell, you can now calculate and visually see where your rounds will land with greater accuracy when separated from the mortar system itself.",
                         "effect": "Allows the mortar to have a range of five world hexes and fire into EELR when unmanned. When out of the hex the character is in, the mortar will function like artillery with a one turn delay on munitions."
                     },
@@ -477,7 +477,7 @@
                         "id": "directlyIndirect_weightSavingMeasures",
                         "name": "Weight Saving Measures",
                         "slot": "Vest",
-                        "tier": null,
+                        "tier": 2,
                         "flavor": "We've been able to provide improved propellant charges, along with using a new compound for the explosive mortar shells themselves. It should make it easier to carry more of them into a fight, as well as store more propellant charges in the rapid fire system itself.",
                         "effect": "Your first use of a mortar shell is now free."
                     },
@@ -485,7 +485,7 @@
                         "id": "directlyIndirect_improvedOrdnanceGloves",
                         "name": "Improved Ordnance Gloves",
                         "slot": "Gloves",
-                        "tier": null,
+                        "tier": 3,
                         "flavor": "Ordnance is heavy, and dangerous. As such we've improved gloves so that they now are slightly more magnetized to your hand to make sure they don't fall out.",
                         "effect": "You cannot fumble with Frag Grenades or your X-89 AMS when operating it manually. Upon a fumble, it will automatically resolve to a 3."
                     },
@@ -493,7 +493,7 @@
                         "id": "directlyIndirect_geospatialDatalinkNetworking",
                         "name": "Geospatial Datalink Networking",
                         "slot": "Headgear",
-                        "tier": null,
+                        "tier": 1,
                         "flavor": "Using networked data streamed from both GPS and optical sensors, we can construct a crudely accurate recreation of an area that a target is in. As well as place it more accurately in the digital battlespace relative to the launcher.",
                         "effect": "Riflemen can now use their SOFLAM to call on your mortar like artillery. Abides by CAS and Artillery rules."
                     },
@@ -501,9 +501,9 @@
                         "id": "directlyIndirect_recursiveRepetition",
                         "name": "Recursive Repetition",
                         "slot": "Patch",
-                        "tier": null,
-                        "flavor": "A patch of a mortar shell with",
-                        "effect": ""
+                        "tier": 0,
+                        "flavor": "A patch of a barrage of mortar shells both from the mortar and landing in a circle around the globe, like an ouroborous. Includes a new loading mechanism for your mortar, which allows them to now rapidly fire off shells in a pinch.",
+                        "effect": "You can now [Spray] your mortar shells."
                     }
                 ]
             },
@@ -516,33 +516,33 @@
                         "id": "stimJunkie_integratedDefibrillator",
                         "name": "Integrated Defibrillator",
                         "slot": "Vest",
-                        "tier": null,
+                        "tier": 4,
                         "flavor": "A low profile integrated defibrillator integrated into the back of the front plate bag that sends an electrical shockwave through the users chest the moment the operators systems indicate their heart has stopped.",
-                        "effect": "Defibrillator administers a one time revive the moment the operator enters a DBNO state. Defibrillators have the same effect as a Shock Nanite Kit and revive the character with just one flesh wound, with said flesh wound being removed the turn after."
+                        "effect": "The first time you would enter DBNO, ignore it and reset your wounds to just one flesh wound."
                     },
                     {
                         "id": "stimJunkie_advancedBiomonitorTraumaAdministerer",
                         "name": "Advanced biomonitor trauma administerer",
                         "slot": "Gloves",
-                        "tier": null,
+                        "tier": 2,
                         "flavor": "A company standard biomonitor watch modified to take a single use regenerative nanite stim on its underside in the event it detects a sharp spike in heart rate associated with grave injury.",
-                        "effect": "The first time the character receives a deep wound or greater, the biomonitor administers a regen nanite stimulant that lasts for 1d6 turns/2 + medical skill level turns."
+                        "effect": "The first time the character receives a deep wound or greater, you start to heal one flesh wound per turn for three turns."
                     },
                     {
                         "id": "stimJunkie_traumadolInjector",
                         "name": "Traumadol Injector",
                         "slot": "Equipment",
-                        "tier": null,
+                        "tier": 3,
                         "flavor": "A quick access Traumadol injector to be used in the most dire of circumstances.",
-                        "effect": "A 1x use Traumadol stimulant that temporarily removes all wounds. Lasts for (1d6 + medical skill level) turns divided by 2."
+                        "effect": "Once per mission, you can activate the injector and ignore all wounds for 2 turns. You can still enter system shock however, and all wounds are inflicted using wound overflow."
                     },
                     {
                         "id": "stimJunkie_adrenalSpinalShot",
                         "name": "Adrenal Spinal Shot",
                         "slot": "Headgear",
-                        "tier": null,
+                        "tier": 1,
                         "flavor": "An experimental helmet attachment that allows for an embedded needle to inject an adrenal shot into the top of the user's spine.",
-                        "effect": "A x1 use Adrenal Shot that adds another Standard Action that lasts the turn upon the Juggernaut suit dropping below 50 HP."
+                        "effect": "When the juggernaut suit reaches less than a third of its HP, for the turn after, gain an extra standard action."
                     },
                     {
                         "id": "stimJunkie_stimJunkiesPatch",
@@ -550,7 +550,7 @@
                         "slot": "Patch",
                         "tier": null,
                         "flavor": "A complimentary patch courtesy of Syntek for your continued service in pushing the medical field forward towards a brighter tomorrow.",
-                        "effect": "Upgrades the Adrenal Spinal Shot into a Nootropic Spinal Shot which also prevents wound overflow onto the user at the point/action of juggernaut suit's destruction."
+                        "effect": " Upgrades the effect of the adrenal spinal shot to now also provide an extra movement action. All damage while the suit is above a fifth of its health that would cause wounds now abide by wound overflow."
                     }
                 ]
             }
@@ -714,15 +714,15 @@
                         "id": "floatAndSting_bumblebeeBuddiIntegration",
                         "name": "Bumblebee-BUDDI Integration",
                         "slot": "Headgear",
-                        "tier": null,
+                        "tier": 1,
                         "flavor": "With the additional target marking data from the Bumblebee, BUDDI is now able to provide pinpoint ballistic solutions all the way down to recoil and breath-shift compensation.",
-                        "effect": "You gain +1 bonus on enemies [Marked] by your Bumblebee at Close and Medium Ranges, and +2 bonus at Long and Extreme Long Ranges. This stacks with BUDDI's own bonus where applicable."
+                        "effect": "Your BUDDI HUD Integration gains a +1 bonus to targets at LR and further that are [Marked]."
                     },
                     {
                         "id": "floatAndSting_fieldReplaceableEcholocationEmitterBattery",
                         "name": "Field-Replacable Echolocation Emitter Battery",
                         "slot": "Vest",
-                        "tier": null,
+                        "tier": 2,
                         "flavor": "Carry a replacement battery to provide the Bumblebee with additional power for the echolocator. These batteries are not small nor highly mass-produced, so use them wisely.",
                         "effect": "Gain a battery that can be used to reset the Bumblebee's echolocation charge count to its maximum; you cannot [Resupply] this battery during a mission. To recharge the Bumblebee, spend a standard action to recall it and change the battery, then a [Deploy] to re-launch the drone."
                     },
@@ -730,7 +730,7 @@
                         "id": "floatAndSting_stingerGloves",
                         "name": "Stinger Gloves",
                         "slot": "Gloves",
-                        "tier": null,
+                        "tier": 3,
                         "flavor": "Give your enemy a very personal punch on behalf of your Bumblebee.",
                         "effect": "You may [Deploy] a Bumblebee's echolocation charge as an automatically-successful offensive CQC action; the defender makes a Spirit test against a threshold of 5. On defender success, they are [Winded], otherwise they are [Concussed]."
                     },
@@ -738,17 +738,17 @@
                         "id": "floatAndSting_antiVisualStealthRefit",
                         "name": "Anti-Visual-Stealth Refit",
                         "slot": "Equipment",
-                        "tier": null,
+                        "tier": 4,
                         "flavor": "A tuning of echolocation frequency harmonics and an additional echolocation-activated laser dazzler turret enable even the most sneakily cloaked enemies to be flushed out into the visible.",
-                        "effect": "Enemies with active visual stealth systems like OctoCamo and STALKER Digital Presence Reducer get said systems [Disabled] whenever you [Deploy] a Bumblebee's echolocation charge within Medium Range of them."
+                        "effect": " Enemies with active stealth systems like OctoCamo and STALKER Digital Presence Reducer get said systems [Disabled] whenever you [Deploy] a Bumblebee’s echolocation charge within Medium Range of them."
                     },
                     {
                         "id": "floatAndSting_queenMeshDisseminationNetwork",
                         "name": "Queen Mesh Dissemination Network",
                         "slot": "Patch",
-                        "tier": null,
+                        "tier": 0,
                         "flavor": "A hexagonal patch depicting a queen bee at the center of a mesh wireless network, delivered alongside the latest, cutting edge codebase for the Bumblebee that unlocks drone coordination functionality patterned after pheromonic control mechanisms in nature.",
-                        "effect": "Whenever you [Deploy] a Bumblebee's echolocation charge, all friendly combat drones in [Datalink] (except Magic Missiles, they don't stay up for very long anyways) individually gain an additional standard action on their next turn."
+                        "effect": "Whenever you [Deploy] a Bumblebee’s echolocation charge, all friendly combat drones, excluding loitering munitions, in [Datalink] individually gain an additional standard action on their next turn."
                     }
                 ]
             }
