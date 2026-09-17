@@ -36,6 +36,7 @@ function makeBlankMap(name, cols, rows) {
     hexes: {},
     friendlies: [],
     enemies: [],
+    lines: [],
     updatedAt: Date.now(),
   };
 }
@@ -204,7 +205,33 @@ export default function useVTTMap() {
         ...m,
         friendlies: (m.friendlies || []).filter((t) => t.id !== tokenId),
         enemies: (m.enemies || []).filter((t) => t.id !== tokenId),
+        lines: (m.lines || []).filter((l) => l.fromId !== tokenId && l.toId !== tokenId),
       }));
+    },
+    [activeMapId, commit]
+  );
+
+  // A sightline/suppression line between two tokens, drawn in the source
+  // token's color. Referenced by token id (not fixed coords) so it tracks
+  // both tokens as they move; removeToken already prunes dangling lines.
+  const addLine = useCallback(
+    (fromId, toId) => {
+      if (!activeMapId || fromId === toId) return;
+      commit(activeMapId, (m) => {
+        const exists = (m.lines || []).some(
+          (l) => (l.fromId === fromId && l.toId === toId) || (l.fromId === toId && l.toId === fromId)
+        );
+        if (exists) return m;
+        return { ...m, lines: [...(m.lines || []), { id: uid("line"), fromId, toId }] };
+      });
+    },
+    [activeMapId, commit]
+  );
+
+  const removeLine = useCallback(
+    (lineId) => {
+      if (!activeMapId) return;
+      commit(activeMapId, (m) => ({ ...m, lines: (m.lines || []).filter((l) => l.id !== lineId) }));
     },
     [activeMapId, commit]
   );
@@ -238,6 +265,7 @@ export default function useVTTMap() {
       hexes: imported.hexes || {},
       friendlies: imported.friendlies || [],
       enemies: imported.enemies || [],
+      lines: imported.lines || [],
       updatedAt: Date.now(),
     };
     setMaps((prev) => {
@@ -272,6 +300,8 @@ export default function useVTTMap() {
     updateToken,
     moveToken,
     removeToken,
+    addLine,
+    removeLine,
     exportMap,
     importMap,
   };

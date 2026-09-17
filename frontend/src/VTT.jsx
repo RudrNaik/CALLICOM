@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import useVTTMap from "./hooks/useVTTMap";
 import VTTCanvas from "./components/VTT/VTTCanvas";
 import VTTToolbar from "./components/VTT/VTTToolbar";
@@ -25,6 +25,8 @@ export default function VTTPage() {
     updateToken,
     moveToken,
     removeToken,
+    addLine,
+    removeLine,
     exportMap,
     importMap,
   } = useVTTMap();
@@ -40,6 +42,8 @@ export default function VTTPage() {
   const [addScale, setAddScale] = useState(DEFAULT_FRIENDLY_SCALE);
   const [selectedTokenId, setSelectedTokenId] = useState(null);
   const [showRangeOverlay, setShowRangeOverlay] = useState(true);
+
+  const tokensById = useMemo(() => new Map(allTokens.map((t) => [t.id, t])), [allTokens]);
 
   const handleHexClick = (q, r, erase) => {
     if (mode === "paint") {
@@ -71,6 +75,19 @@ export default function VTTPage() {
   };
 
   const handleTokenClick = (tokenId) => {
+    if (mode === "line") {
+      if (tokenId === null) return;
+      if (!selectedTokenId) {
+        setSelectedTokenId(tokenId);
+        return;
+      }
+      if (tokenId === selectedTokenId) {
+        setSelectedTokenId(null);
+        return;
+      }
+      addLine(selectedTokenId, tokenId);
+      return;
+    }
     if (mode === "select" || tokenId === null) {
       setSelectedTokenId(tokenId);
     }
@@ -92,6 +109,7 @@ export default function VTTPage() {
           <VTTCanvas
             map={activeMap}
             tokens={allTokens}
+            lines={activeMap.lines || []}
             mode={mode}
             selectedTokenId={selectedTokenId}
             showRangeOverlay={showRangeOverlay}
@@ -145,6 +163,9 @@ export default function VTTPage() {
           setShowRangeOverlay={setShowRangeOverlay}
           selectedTokenId={selectedTokenId}
           onDeselect={() => setSelectedTokenId(null)}
+          lines={activeMap?.lines || []}
+          tokensById={tokensById}
+          onRemoveLine={removeLine}
         />
       </div>
 

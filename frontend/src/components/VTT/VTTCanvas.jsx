@@ -173,6 +173,7 @@ function fillHexHatch(ctx, cx, cy, size, zoom, color, { alpha = 0.7, lineWidthRa
 export default function VTTCanvas({
   map,
   tokens,
+  lines,
   mode,
   selectedTokenId,
   showRangeOverlay,
@@ -371,6 +372,31 @@ export default function VTTCanvas({
     strokeHexBorderBatch(ctx, tallCoverPath, camera.zoom, TALL_COVER_BORDER_COLOR, false);
     strokeHexBorderBatch(ctx, softWallPath, camera.zoom, WALL_FILL_COLOR, false);
 
+    // Sightline/suppression lines between token pairs — colored by the
+    // source token, drawn under the token badges so the badges still read
+    // clearly at each end.
+    const tokenAnchor = (token) => {
+      const [wx, wz] = axialToWorld(token.q, token.r);
+      const [cx, cyBase] = project(wx, wz, camera);
+      return [cx, cyBase - STAND_HEIGHT * camera.zoom];
+    };
+    for (const line of lines || []) {
+      const from = tokens.find((t) => t.id === line.fromId);
+      const to = tokens.find((t) => t.id === line.toId);
+      if (!from || !to) continue;
+      const [fx, fy] = tokenAnchor(from);
+      const [tx, ty] = tokenAnchor(to);
+      ctx.save();
+      ctx.strokeStyle = resolveTokenColor(from);
+      ctx.lineWidth = Math.max(2, camera.zoom * 0.045);
+      ctx.setLineDash([camera.zoom * 0.25, camera.zoom * 0.18]);
+      ctx.beginPath();
+      ctx.moveTo(fx, fy);
+      ctx.lineTo(tx, ty);
+      ctx.stroke();
+      ctx.restore();
+    }
+
     // Tokens, sorted so ones "further back" on screen draw first — in the
     // isometric projection, screen depth order follows (x + z), not raw z.
     const sorted = [...tokens].sort((a, b) => {
@@ -406,7 +432,7 @@ export default function VTTCanvas({
       ctx.textAlign = "center";
       ctx.fillText(token.name, cx, cy - badgeSize / 2 - 4);
     }
-  }, [map, tokens, camera, size, mode, selectedTokenId, showRangeOverlay, hoveredHex, badgeVersion]);
+  }, [map, tokens, lines, camera, size, mode, selectedTokenId, showRangeOverlay, hoveredHex, badgeVersion]);
 
   const getHexUnderPointer = (e) => {
     const rect = canvasRef.current.getBoundingClientRect();
@@ -508,14 +534,15 @@ export default function VTTCanvas({
     if (drag.moved) return;
     if (e.button !== 0) return;
 
-    if (mode === "select") {
+    if (mode === "select" || mode === "line") {
       const token = getTokenUnderPointer(e);
       if (token) {
-        onTokenClick?.(token.id === selectedTokenId ? null : token.id);
+        onTokenClick?.(mode === "select" && token.id === selectedTokenId ? null : token.id);
         return;
       }
-      // No token under the pointer: fall through to onHexClick, which
-      // moves the currently-selected token (if any) to this hex.
+      // No token under the pointer, in select mode: fall through to
+      // onHexClick, which moves the currently-selected token (if any) to
+      // this hex.
     }
 
     const hex = getHexUnderPointer(e);

@@ -6,18 +6,18 @@ function TokenRow({ token, selected, onSelect, onRemove }) {
   return (
     <div
       onClick={() => onSelect(token.id)}
-      className={`flex items-center gap-2 px-2 py-1.5 rounded-md border cursor-pointer text-xs ${
+      className={`flex items-center gap-2 px-2 py-1.5 rounded-xs border cursor-pointer text-xs ${
         selected ? "border-orange-400 bg-orange-400/10" : "border-white/10 hover:border-white/30"
       }`}
     >
       <span
-        className={`w-3 h-3 shrink-0 ${token.type === "enemy" ? "rotate-45" : ""}`}
+        className={`w-2 h-2 shrink-0 ${token.type === "enemy" ? "rotate-45" : ""}`}
         style={{ background: color }}
       />
       <span className="truncate flex-1">{token.name}</span>
       {token.aoeRadius > 0 && (
         <span className="text-[10px] text-neutral-400" title="AOE radius">
-          AOE {token.aoeRadius}
+          AOO {token.aoeRadius}
         </span>
       )}
       <span className="text-neutral-400">{token.classKey.replaceAll("_", " ")}</span>
@@ -26,7 +26,7 @@ function TokenRow({ token, selected, onSelect, onRemove }) {
           e.stopPropagation();
           onRemove(token.id);
         }}
-        className="text-red-400 hover:text-red-300 px-1"
+        className="text-red-400 hover:text-red-300 px-1 border border-red-400"
         title="Remove"
       >
         ×
@@ -39,19 +39,19 @@ export default function TokenListPanel({ friendlies, enemies, selectedTokenId, o
   const selected = [...friendlies, ...enemies].find((t) => t.id === selectedTokenId);
 
   return (
-    <div className="flex flex-col gap-4 p-4 bg-neutral-900/80 border border-white/10 rounded-lg text-white text-sm font-mono">
+    <div className="flex flex-col gap-4 p-4 bg-neutral-900/80 border border-white/10 rounded-xs text-white text-sm font-mono">
       <div>
         {selectedTokenId && (
           <button
             onClick={onDeselect}
-            className="px-2 py-1.5 rounded-md border border-white/15 hover:border-orange-400/60 text-xs mb-2 text-left"
+            className="px-2 py-1.5 rounded-xs border w-full border-white/15 hover:border-orange-400/60 text-xs text-center mb-2"
           >
-            Deselect token
+            Deselect Token
           </button>
         )}
         <p className="text-xs uppercase tracking-widest text-sky-400 mb-2">Friendlies</p>
         <div className="flex flex-col gap-1">
-          {friendlies.length === 0 && <p className="text-[11px] text-neutral-500">None placed.</p>}
+          {friendlies.length === 0 && <p className="text-xs text-neutral-500">None placed.</p>}
           {friendlies.map((t) => (
             <TokenRow
               key={t.id}
@@ -65,9 +65,9 @@ export default function TokenListPanel({ friendlies, enemies, selectedTokenId, o
       </div>
 
       <div>
-        <p className="text-xs uppercase tracking-widest text-red-400 mb-2">Enemies</p>
+        <p className="text-xs uppercase tracking-widest text-red-400 mb-2">Contacts</p>
         <div className="flex flex-col gap-1">
-          {enemies.length === 0 && <p className="text-[11px] text-neutral-500">None placed.</p>}
+          {enemies.length === 0 && <p className="text-xs text-neutral-500">None placed.</p>}
           {enemies.map((t) => (
             <TokenRow
               key={t.id}
@@ -83,6 +83,16 @@ export default function TokenListPanel({ friendlies, enemies, selectedTokenId, o
       {selected && (
         <div className="flex flex-col gap-3 pt-2 border-t border-white/10">
           <p className="text-xs uppercase tracking-widest text-orange-400">Editing {selected.name}</p>
+
+          <div className="flex items-center gap-2">
+            <label className="text-xs text-neutral-400 w-16 shrink-0">Name</label>
+            <input
+              type="text"
+              value={selected.name}
+              onChange={(e) => onUpdate(selected.id, { name: e.target.value })}
+              className="flex-1 bg-neutral-800 border border-white/15 rounded-xs px-2 py-1 text-xs"
+            />
+          </div>
 
           {selected.type === "friendly" && (
             <div>
@@ -104,18 +114,18 @@ export default function TokenListPanel({ friendlies, enemies, selectedTokenId, o
           )}
 
           <div className="flex items-center gap-2">
-            <label className="text-[11px] text-neutral-400 w-16 shrink-0">AOE radius</label>
+            <label className="text-xs text-neutral-400 w-16 shrink-0">AOO</label>
             <input
               type="number"
               min={0}
               max={10}
               value={selected.aoeRadius || 0}
               onChange={(e) => onUpdate(selected.id, { aoeRadius: Math.max(0, Number(e.target.value)) })}
-              className="w-16 bg-neutral-800 border border-white/15 rounded-md px-2 py-1 text-xs"
+              className="w-16 bg-neutral-800 border border-white/15 rounded-xs px-2 py-1 text-xs"
             />
           </div>
           <div className="flex items-center gap-2">
-            <label className="text-[11px] text-neutral-400 w-16 shrink-0">Size</label>
+            <label className="text-xs text-neutral-400 w-16 shrink-0">Size</label>
             <input
               type="number"
               min={0.5}
@@ -123,12 +133,12 @@ export default function TokenListPanel({ friendlies, enemies, selectedTokenId, o
               step={0.5}
               value={selected.scale || 1}
               onChange={(e) => onUpdate(selected.id, { scale: Math.max(0.5, Number(e.target.value)) })}
-              className="w-16 bg-neutral-800 border border-white/15 rounded-md px-2 py-1 text-xs"
+              className="w-16 bg-neutral-800 border border-white/15 rounded-xs px-2 py-1 text-xs"
             />
           </div>
 
           <div>
-            <p className="text-[11px] text-neutral-400 mb-1">Ranges</p>
+            <p className="text-xs text-neutral-400 mb-1">Nearby</p>
             <div className="flex flex-col gap-1 max-h-32 overflow-y-auto">
               {[...friendlies, ...enemies]
                 .filter((t) => t.id !== selected.id)
@@ -136,7 +146,7 @@ export default function TokenListPanel({ friendlies, enemies, selectedTokenId, o
                   const dist = hexDistance(selected, t);
                   const band = rangeBand(dist);
                   return (
-                    <div key={t.id} className="flex justify-between text-[11px] text-neutral-300">
+                    <div key={t.id} className="flex justify-between text-xs text-neutral-300">
                       <span>{t.name}</span>
                       <span>
                         {dist} hex — {rangeBandLabel(band)}

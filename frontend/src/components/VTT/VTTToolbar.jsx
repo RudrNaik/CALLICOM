@@ -1,11 +1,12 @@
 import { ELEVATION, ELEVATION_ORDER, OBSTACLE, OBSTACLE_ORDER } from "./terrain";
-import { CLASS_KEYS, FRIENDLY_COLOR_PRESETS } from "./tokenBadges";
+import { CLASS_KEYS, FRIENDLY_COLOR_PRESETS, resolveTokenColor } from "./tokenBadges";
 
 const MODES = [
   { id: "select", label: "Select / Move" },
   { id: "paint", label: "Paint Terrain" },
   { id: "addFriendly", label: "Place Friendly" },
   { id: "addEnemy", label: "Place Enemy" },
+  { id: "line", label: "Draw LOS Line" },
 ];
 
 const PAINT_LAYERS = [
@@ -36,6 +37,9 @@ export default function VTTToolbar({
   setShowRangeOverlay,
   selectedTokenId,
   onDeselect,
+  lines,
+  tokensById,
+  onRemoveLine,
 }) {
   return (
     <div className="flex flex-col gap-4 p-4 bg-neutral-900/80 border border-white/10 rounded-lg text-white text-sm font-mono">
@@ -179,6 +183,46 @@ export default function VTTToolbar({
           </div>
 
           <p className="text-[11px] text-neutral-400">Click a hex to place the token.</p>
+        </div>
+      )}
+
+      {mode === "line" && (
+        <div className="flex flex-col gap-2">
+          <p className="text-xs uppercase tracking-widest text-orange-400">LOS / Suppression Line</p>
+          <p className="text-[11px] text-neutral-400">
+            {selectedTokenId
+              ? "Click another token to draw a line from the selected token, in its color. Click the selected token again to cancel."
+              : "Click a token to start a line from it."}
+          </p>
+          {lines && lines.length > 0 && (
+            <div className="flex flex-col gap-1">
+              {lines.map((l) => {
+                const from = tokensById?.get(l.fromId);
+                const to = tokensById?.get(l.toId);
+                return (
+                  <div
+                    key={l.id}
+                    className="flex items-center gap-2 px-2 py-1.5 rounded-xs border border-white/10 text-xs"
+                  >
+                    <span
+                      className="w-2 h-2 shrink-0 rounded-full"
+                      style={{ background: from ? resolveTokenColor(from) : "#888" }}
+                    />
+                    <span className="truncate flex-1">
+                      {from?.name || "?"} → {to?.name || "?"}
+                    </span>
+                    <button
+                      onClick={() => onRemoveLine?.(l.id)}
+                      className="text-red-400 hover:text-red-300 px-1 border border-red-400"
+                      title="Remove line"
+                    >
+                      ×
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       )}
 
