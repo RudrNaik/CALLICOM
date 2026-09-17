@@ -18,6 +18,10 @@ import {
   TALL_COVER_BORDER_COLOR,
   BORDER_THICKNESS_RATIO,
   BORDER_OVERLAP_RATIO,
+  HIGH_GROUND_COLOR,
+  HIGH_GROUND_FILL_ALPHA,
+  LOW_GROUND_COLOR,
+  LOW_GROUND_FILL_ALPHA,
 } from "./terrain";
 import { getTokenBadge, badgeCache, resolveTokenColor, tokenBadgeKey } from "./tokenBadges";
 
@@ -52,6 +56,9 @@ const ZOOM_WHEEL_SENSITIVITY = 0.18;
 const BAND_TINTS = [null, "59,130,246", "34,197,94", "234,179,8", null];
 const BAND_TINT_ALPHA = 0.10;
 const BG_COLOR = "#15171a";
+// Wider line spacing than fillHexHatch's default (stepRatio 0.22), used for
+// soft wall and the high/low ground step hexes' hatched interiors.
+const STEP_HATCH_STEP_RATIO = 0.30;
 
 const UNIT_CORNERS = hexCorners(HEX_SIZE);
 
@@ -320,9 +327,31 @@ export default function VTTCanvas({
         tallCoverPath ??= new Path2D();
         addHexToPath2D(tallCoverPath, cx, cy, borderSize, camera.zoom);
       } else if (terrain === "softWall") {
-        fillHexHatch(ctx, cx, cy, HEX_SIZE, camera.zoom, WALL_FILL_COLOR);
+        fillHexHatch(ctx, cx, cy, HEX_SIZE, camera.zoom, WALL_FILL_COLOR, { stepRatio: STEP_HATCH_STEP_RATIO });
         softWallPath ??= new Path2D();
         addHexToPath2D(softWallPath, cx, cy, borderSize, camera.zoom);
+      } else if (terrain === "highGround") {
+        hexPath(ctx, cx, cy, HEX_SIZE, camera.zoom);
+        ctx.fillStyle = HIGH_GROUND_COLOR;
+        ctx.globalAlpha = HIGH_GROUND_FILL_ALPHA;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      } else if (terrain === "highGroundStep") {
+        fillHexHatch(ctx, cx, cy, HEX_SIZE, camera.zoom, HIGH_GROUND_COLOR, {
+          alpha: HIGH_GROUND_FILL_ALPHA,
+          stepRatio: STEP_HATCH_STEP_RATIO,
+        });
+      } else if (terrain === "lowGround") {
+        hexPath(ctx, cx, cy, HEX_SIZE, camera.zoom);
+        ctx.fillStyle = LOW_GROUND_COLOR;
+        ctx.globalAlpha = LOW_GROUND_FILL_ALPHA;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      } else if (terrain === "lowGroundStep") {
+        fillHexHatch(ctx, cx, cy, HEX_SIZE, camera.zoom, LOW_GROUND_COLOR, {
+          alpha: LOW_GROUND_FILL_ALPHA,
+          stepRatio: STEP_HATCH_STEP_RATIO,
+        });
       }
     }
 
