@@ -1,4 +1,4 @@
-import { TERRAIN, TERRAIN_ORDER } from "./terrain";
+import { ELEVATION, ELEVATION_ORDER, OBSTACLE, OBSTACLE_ORDER } from "./terrain";
 import { CLASS_KEYS, FRIENDLY_COLOR_PRESETS } from "./tokenBadges";
 
 const MODES = [
@@ -8,11 +8,20 @@ const MODES = [
   { id: "addEnemy", label: "Place Enemy" },
 ];
 
+const PAINT_LAYERS = [
+  { id: "elevation", label: "Elevation", dict: ELEVATION, order: ELEVATION_ORDER },
+  { id: "obstacle", label: "Obstacle", dict: OBSTACLE, order: OBSTACLE_ORDER },
+];
+
 export default function VTTToolbar({
   mode,
   setMode,
-  brush,
-  setBrush,
+  paintLayer,
+  setPaintLayer,
+  elevationBrush,
+  setElevationBrush,
+  obstacleBrush,
+  setObstacleBrush,
   addClassKey,
   setAddClassKey,
   addName,
@@ -51,31 +60,55 @@ export default function VTTToolbar({
 
       {mode === "paint" && (
         <div>
-          <p className="text-xs uppercase tracking-widest text-orange-400 mb-2">Terrain Brush</p>
-          <div className="flex flex-col gap-1">
-            {TERRAIN_ORDER.map((key) => {
-              const t = TERRAIN[key];
-              return (
-                <button
-                  key={key}
-                  onClick={() => setBrush(key)}
-                  className={`flex items-center gap-2 px-2 py-1.5 rounded-md border transition ${
-                    brush === key
-                      ? "border-orange-400 bg-orange-400/10"
-                      : "border-white/10 hover:border-white/30"
-                  }`}
-                >
-                  <span
-                    className="w-4 h-4 rounded-sm border border-white/30 shrink-0"
-                    style={{ background: t.swatch }}
-                  />
-                  <span className="text-xs">{t.label}</span>
-                  <span className="ml-auto text-[10px] text-neutral-400">[{t.hotkey}]</span>
-                </button>
-              );
-            })}
+          <p className="text-xs uppercase tracking-widest text-orange-400 mb-2">Terrain Layer</p>
+          <div className="grid grid-cols-2 gap-2 mb-3">
+            {PAINT_LAYERS.map((l) => (
+              <button
+                key={l.id}
+                onClick={() => setPaintLayer(l.id)}
+                className={`px-2 py-2 rounded-md border transition text-xs ${
+                  paintLayer === l.id
+                    ? "bg-orange-400 text-black border-orange-400"
+                    : "border-white/15 hover:border-orange-400/60"
+                }`}
+              >
+                {l.label}
+              </button>
+            ))}
           </div>
-          <p className="text-[11px] text-neutral-400 mt-2">Click a hex to paint it. Right/middle-drag (or shift-drag) to pan, wheel to zoom.</p>
+
+          {PAINT_LAYERS.filter((l) => l.id === paintLayer).map((l) => {
+            const brush = l.id === "elevation" ? elevationBrush : obstacleBrush;
+            const setBrush = l.id === "elevation" ? setElevationBrush : setObstacleBrush;
+            return (
+              <div key={l.id} className="flex flex-col gap-1">
+                {l.order.map((key) => {
+                  const t = l.dict[key];
+                  return (
+                    <button
+                      key={key}
+                      onClick={() => setBrush(key)}
+                      className={`flex items-center gap-2 px-2 py-1.5 rounded-md border transition ${
+                        brush === key
+                          ? "border-orange-400 bg-orange-400/10"
+                          : "border-white/10 hover:border-white/30"
+                      }`}
+                    >
+                      <span
+                        className="w-4 h-4 rounded-sm border border-white/30 shrink-0"
+                        style={{ background: t.swatch }}
+                      />
+                      <span className="text-xs">{t.label}</span>
+                      <span className="ml-auto text-[10px] text-neutral-400">[{t.hotkey}]</span>
+                    </button>
+                  );
+                })}
+              </div>
+            );
+          })}
+          <p className="text-[11px] text-neutral-400 mt-2">
+            Click paints the active layer only — e.g. an obstacle painted onto high ground keeps that elevation. Right-click (or right-drag) clears the active layer on a hex. Middle-drag (or shift-drag) to pan, wheel to zoom.
+          </p>
         </div>
       )}
 

@@ -22,6 +22,7 @@ import {
   HIGH_GROUND_FILL_ALPHA,
   LOW_GROUND_COLOR,
   LOW_GROUND_FILL_ALPHA,
+  normalizeHexState,
 } from "./terrain";
 import { getTokenBadge, badgeCache, resolveTokenColor, tokenBadgeKey } from "./tokenBadges";
 
@@ -273,11 +274,14 @@ export default function VTTCanvas({
       const [cx, cy] = project(wx, wz, camera);
       if (cx < -margin || cx > size.width + margin || cy < -margin || cy > size.height + margin) continue;
 
-      const terrain = map.hexes[hexKey(q, r)] || "normal";
+      const { elevation, obstacle } = normalizeHexState(map.hexes[hexKey(q, r)]);
+      // A full wall or inaccessible obstacle fully covers the hex, so it
+      // wins over whatever elevation tint would otherwise show through.
+      const obstacleFillsHex = obstacle === "wall" || obstacle === "inaccessible";
       const baseColor =
-        terrain === "wall"
+        obstacle === "wall"
           ? WALL_FILL_COLOR
-          : terrain === "inaccessible"
+          : obstacle === "inaccessible"
           ? INACCESSIBLE_FILL_COLOR
           : GROUND_COLOR;
 
@@ -320,38 +324,46 @@ export default function VTTCanvas({
       hexPath(ctx, cx, cy, HEX_SIZE * 0.998, camera.zoom);
       ctx.stroke();
 
-      if (terrain === "cover") {
+      // Elevation tint/hatch draws first (skipped under a wall/inaccessible
+      // obstacle, since that fully covers the hex anyway), then the
+      // obstacle's own border/hatch draws on top — so e.g. a soft wall on
+      // high ground shows the cyan tint with the wall's hatch over it.
+      if (!obstacleFillsHex) {
+        if (elevation === "highGround") {
+          hexPath(ctx, cx, cy, HEX_SIZE, camera.zoom);
+          ctx.fillStyle = HIGH_GROUND_COLOR;
+          ctx.globalAlpha = HIGH_GROUND_FILL_ALPHA;
+          ctx.fill();
+          ctx.globalAlpha = 1;
+        } else if (elevation === "highGroundStep") {
+          fillHexHatch(ctx, cx, cy, HEX_SIZE, camera.zoom, HIGH_GROUND_COLOR, {
+            alpha: HIGH_GROUND_FILL_ALPHA,
+            stepRatio: STEP_HATCH_STEP_RATIO,
+          });
+        } else if (elevation === "lowGround") {
+          hexPath(ctx, cx, cy, HEX_SIZE, camera.zoom);
+          ctx.fillStyle = LOW_GROUND_COLOR;
+          ctx.globalAlpha = LOW_GROUND_FILL_ALPHA;
+          ctx.fill();
+          ctx.globalAlpha = 1;
+        } else if (elevation === "lowGroundStep") {
+          fillHexHatch(ctx, cx, cy, HEX_SIZE, camera.zoom, LOW_GROUND_COLOR, {
+            alpha: LOW_GROUND_FILL_ALPHA,
+            stepRatio: STEP_HATCH_STEP_RATIO,
+          });
+        }
+      }
+
+      if (obstacle === "cover") {
         coverPath ??= new Path2D();
         addHexToPath2D(coverPath, cx, cy, borderSize, camera.zoom);
-      } else if (terrain === "tallCover") {
+      } else if (obstacle === "tallCover") {
         tallCoverPath ??= new Path2D();
         addHexToPath2D(tallCoverPath, cx, cy, borderSize, camera.zoom);
-      } else if (terrain === "softWall") {
+      } else if (obstacle === "softWall") {
         fillHexHatch(ctx, cx, cy, HEX_SIZE, camera.zoom, WALL_FILL_COLOR, { stepRatio: STEP_HATCH_STEP_RATIO });
         softWallPath ??= new Path2D();
         addHexToPath2D(softWallPath, cx, cy, borderSize, camera.zoom);
-      } else if (terrain === "highGround") {
-        hexPath(ctx, cx, cy, HEX_SIZE, camera.zoom);
-        ctx.fillStyle = HIGH_GROUND_COLOR;
-        ctx.globalAlpha = HIGH_GROUND_FILL_ALPHA;
-        ctx.fill();
-        ctx.globalAlpha = 1;
-      } else if (terrain === "highGroundStep") {
-        fillHexHatch(ctx, cx, cy, HEX_SIZE, camera.zoom, HIGH_GROUND_COLOR, {
-          alpha: HIGH_GROUND_FILL_ALPHA,
-          stepRatio: STEP_HATCH_STEP_RATIO,
-        });
-      } else if (terrain === "lowGround") {
-        hexPath(ctx, cx, cy, HEX_SIZE, camera.zoom);
-        ctx.fillStyle = LOW_GROUND_COLOR;
-        ctx.globalAlpha = LOW_GROUND_FILL_ALPHA;
-        ctx.fill();
-        ctx.globalAlpha = 1;
-      } else if (terrain === "lowGroundStep") {
-        fillHexHatch(ctx, cx, cy, HEX_SIZE, camera.zoom, LOW_GROUND_COLOR, {
-          alpha: LOW_GROUND_FILL_ALPHA,
-          stepRatio: STEP_HATCH_STEP_RATIO,
-        });
       }
     }
 
@@ -424,7 +436,7 @@ export default function VTTCanvas({
     return closest;
   };
 
-  // Paints (or erases, with the normal-ground brush) the hex under the
+  // Paints (or erases, clearing just the active layer) the hex under the
   // pointer, deduping against the last hex painted this drag so a slow
   // drag across one hex doesn't spam setTerrain calls.
   const paintAtPointer = (e, erase) => {
@@ -435,7 +447,7 @@ export default function VTTCanvas({
       if (drag.lastPaintedKey === key) return;
       drag.lastPaintedKey = key;
     }
-    onHexClick?.(hex.q, hex.r, erase ? "normal" : undefined);
+    onHexClick?.(hex.q, hex.r, erase);
   };
 
   const handlePointerDown = (e) => {

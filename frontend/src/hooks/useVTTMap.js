@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { hexKey } from "../utils/hexGrid";
+import { normalizeHexState } from "../components/VTT/terrain";
 
 const MAPS_KEY = "calamari_vtt_maps_v1";
 const ACTIVE_KEY = "calamari_vtt_active_map_v1";
@@ -147,15 +148,20 @@ export default function useVTTMap() {
     [activeMapId, commit]
   );
 
+  // `layer` is "elevation" or "obstacle" — each hex tracks both
+  // independently (e.g. a soft wall obstacle sitting on a high-ground
+  // elevation), so painting one leaves the other untouched.
   const setTerrain = useCallback(
-    (q, r, terrainId) => {
+    (q, r, layer, valueId) => {
       if (!activeMapId) return;
       commit(activeMapId, (m) => {
         const hexes = { ...m.hexes };
-        if (terrainId === "normal") {
-          delete hexes[hexKey(q, r)];
+        const key = hexKey(q, r);
+        const next = { ...normalizeHexState(hexes[key]), [layer]: valueId };
+        if (next.elevation === "normal" && next.obstacle === "none") {
+          delete hexes[key];
         } else {
-          hexes[hexKey(q, r)] = terrainId;
+          hexes[key] = next;
         }
         return { ...m, hexes };
       });

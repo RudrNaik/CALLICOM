@@ -30,7 +30,9 @@ export default function VTTPage() {
   } = useVTTMap();
 
   const [mode, setMode] = useState("select");
-  const [brush, setBrush] = useState("normal");
+  const [paintLayer, setPaintLayer] = useState("obstacle");
+  const [elevationBrush, setElevationBrush] = useState("normal");
+  const [obstacleBrush, setObstacleBrush] = useState("none");
   const [addClassKey, setAddClassKey] = useState(CLASS_KEYS[0]);
   const [addName, setAddName] = useState("");
   const [addColor, setAddColor] = useState(DEFAULT_FRIENDLY_COLOR);
@@ -39,9 +41,11 @@ export default function VTTPage() {
   const [selectedTokenId, setSelectedTokenId] = useState(null);
   const [showRangeOverlay, setShowRangeOverlay] = useState(true);
 
-  const handleHexClick = (q, r, terrainOverride) => {
+  const handleHexClick = (q, r, erase) => {
     if (mode === "paint") {
-      setTerrain(q, r, terrainOverride || brush);
+      const defaultValue = paintLayer === "elevation" ? "normal" : "none";
+      const brushValue = paintLayer === "elevation" ? elevationBrush : obstacleBrush;
+      setTerrain(q, r, paintLayer, erase ? defaultValue : brushValue);
       return;
     }
     if (mode === "addFriendly" || mode === "addEnemy") {
@@ -121,8 +125,12 @@ export default function VTTPage() {
         <VTTToolbar
           mode={mode}
           setMode={handleModeChange}
-          brush={brush}
-          setBrush={setBrush}
+          paintLayer={paintLayer}
+          setPaintLayer={setPaintLayer}
+          elevationBrush={elevationBrush}
+          setElevationBrush={setElevationBrush}
+          obstacleBrush={obstacleBrush}
+          setObstacleBrush={setObstacleBrush}
           addClassKey={addClassKey}
           setAddClassKey={setAddClassKey}
           addName={addName}
