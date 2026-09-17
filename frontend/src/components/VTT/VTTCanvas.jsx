@@ -6,6 +6,7 @@ import {
   hexCorners,
   hexKey,
   hexDistance,
+  hexesInRadius,
   rangeBand,
   generateRectGrid,
 } from "../../utils/hexGrid";
@@ -18,7 +19,7 @@ import {
   BORDER_THICKNESS_RATIO,
   BORDER_OVERLAP_RATIO,
 } from "./terrain";
-import { getTokenBadge, badgeCache } from "./tokenBadges";
+import { getTokenBadge, badgeCache, resolveTokenColor, tokenBadgeKey } from "./tokenBadges";
 
 // Plain Canvas2D renderer — no WebGL/scene-graph, just imperative draw
 // calls. Drawing the whole board is O(hexes + tokens) per frame and only
@@ -214,7 +215,7 @@ export default function VTTCanvas({
   // Preload every badge this map's tokens need, then trigger a redraw.
   useEffect(() => {
     let cancelled = false;
-    Promise.all(tokens.map((t) => getTokenBadge(t.classKey, t.type))).then(() => {
+    Promise.all(tokens.map((t) => getTokenBadge(t.classKey, t.type, t.color))).then(() => {
       if (!cancelled) setBadgeVersion((v) => v + 1);
     });
     return () => {
@@ -246,6 +247,20 @@ export default function VTTCanvas({
     let tallCoverPath = null;
     let softWallPath = null;
 
+    // AOE rings: precompute hex -> [colors] once per token (O(tokens *
+    // radius^2)) rather than testing every hex against every token.
+    const aoeColors = new Map();
+    for (const token of tokens) {
+      if (!token.aoeRadius) continue;
+      const color = resolveTokenColor(token);
+      for (const h of hexesInRadius(token.q, token.r, token.aoeRadius)) {
+        const key = hexKey(h.q, h.r);
+        const list = aoeColors.get(key);
+        if (list) list.push(color);
+        else aoeColors.set(key, [color]);
+      }
+    }
+
     for (const { q, r } of hexes) {
       const [wx, wz] = axialToWorld(q, r);
       const [cx, cy] = project(wx, wz, camera);
@@ -262,6 +277,17 @@ export default function VTTCanvas({
       hexPath(ctx, cx, cy, HEX_SIZE, camera.zoom);
       ctx.fillStyle = baseColor;
       ctx.fill();
+
+      const aoeHere = aoeColors.get(hexKey(q, r));
+      if (aoeHere) {
+        ctx.globalAlpha = 0.28;
+        for (const color of aoeHere) {
+          hexPath(ctx, cx, cy, HEX_SIZE, camera.zoom);
+          ctx.fillStyle = color;
+          ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+      }
 
       if (showRangeOverlay && selectedToken) {
         const band = rangeBand(hexDistance(selectedToken, { q, r }));
@@ -316,9 +342,9 @@ export default function VTTCanvas({
       const [wx, wz] = axialToWorld(token.q, token.r);
       const [cx, cyBase] = project(wx, wz, camera);
       const cy = cyBase - STAND_HEIGHT * camera.zoom;
-      const badgeSize = HEX_SIZE * 0.9 * camera.zoom;
+      const badgeSize = HEX_SIZE * 0.95 * (token.scale || 1) * camera.zoom;
 
-      const img = badgeCache.get(`${token.classKey}-${token.type}`);
+      const img = badgeCache.get(tokenBadgeKey(token));
       if (img) {
         ctx.drawImage(img, cx - badgeSize / 2, cy - badgeSize / 2, badgeSize, badgeSize);
       }
@@ -353,13 +379,13 @@ export default function VTTCanvas({
     const rect = canvasRef.current.getBoundingClientRect();
     const px = e.clientX - rect.left;
     const py = e.clientY - rect.top;
-    const hitRadius = HEX_SIZE * 0.5 * camera.zoom;
     let closest = null;
     let closestDist = Infinity;
     for (const token of tokens) {
       const [wx, wz] = axialToWorld(token.q, token.r);
       const [cx, cyBase] = project(wx, wz, camera);
       const cy = cyBase - STAND_HEIGHT * camera.zoom;
+      const hitRadius = HEX_SIZE * 0.5 * (token.scale || 1) * camera.zoom;
       const dist = Math.hypot(px - cx, py - cy);
       if (dist < hitRadius && dist < closestDist) {
         closest = token;

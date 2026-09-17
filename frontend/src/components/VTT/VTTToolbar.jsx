@@ -1,5 +1,5 @@
 import { TERRAIN, TERRAIN_ORDER } from "./terrain";
-import { CLASS_KEYS } from "./tokenBadges";
+import { CLASS_KEYS, FRIENDLY_COLOR_PRESETS } from "./tokenBadges";
 
 const MODES = [
   { id: "select", label: "Select / Move" },
@@ -17,6 +17,12 @@ export default function VTTToolbar({
   setAddClassKey,
   addName,
   setAddName,
+  addColor,
+  setAddColor,
+  addAoeRadius,
+  setAddAoeRadius,
+  addScale,
+  setAddScale,
   showRangeOverlay,
   setShowRangeOverlay,
   selectedTokenId,
@@ -95,6 +101,50 @@ export default function VTTToolbar({
               </option>
             ))}
           </select>
+
+          {mode === "addFriendly" && (
+            <div>
+              <p className="text-[11px] text-neutral-400 mb-1">Color (kept distinct from enemy red)</p>
+              <div className="flex flex-wrap gap-1.5">
+                {FRIENDLY_COLOR_PRESETS.map((c) => (
+                  <button
+                    key={c}
+                    onClick={() => setAddColor(c)}
+                    className={`w-6 h-6 rounded-full border-2 ${
+                      addColor === c ? "border-orange-400" : "border-white/20"
+                    }`}
+                    style={{ background: c }}
+                    title={c}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="flex items-center gap-2">
+            <label className="text-[11px] text-neutral-400 w-16 shrink-0">AOE radius</label>
+            <input
+              type="number"
+              min={0}
+              max={10}
+              value={addAoeRadius}
+              onChange={(e) => setAddAoeRadius(Math.max(0, Number(e.target.value)))}
+              className="w-16 bg-neutral-800 border border-white/15 rounded-md px-2 py-1 text-xs"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <label className="text-[11px] text-neutral-400 w-16 shrink-0">Size</label>
+            <input
+              type="number"
+              min={0.5}
+              max={4}
+              step={0.5}
+              value={addScale}
+              onChange={(e) => setAddScale(Math.max(0.5, Number(e.target.value)))}
+              className="w-16 bg-neutral-800 border border-white/15 rounded-md px-2 py-1 text-xs"
+            />
+          </div>
+
           <p className="text-[11px] text-neutral-400">Click a hex to place the token.</p>
         </div>
       )}

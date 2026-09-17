@@ -96,6 +96,20 @@ export function rangeBandLabel(band) {
   return names[band - 1] || `Band ${band}`;
 }
 
+// All axial hexes within `radius` hex-steps of (q, r), inclusive — used for
+// AOE rings. O(radius^2) rather than scanning the whole map.
+export function hexesInRadius(q, r, radius) {
+  const results = [];
+  for (let dx = -radius; dx <= radius; dx++) {
+    const dzMin = Math.max(-radius, -dx - radius);
+    const dzMax = Math.min(radius, -dx + radius);
+    for (let dz = dzMin; dz <= dzMax; dz++) {
+      results.push({ q: q + dx, r: r + dz });
+    }
+  }
+  return results;
+}
+
 // Generate a rectangular hex grid of `cols` x `rows` hexes (odd-q offset),
 // returning axial coordinates for each hex.
 export function generateRectGrid(cols, rows) {

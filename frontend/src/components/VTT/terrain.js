@@ -35,7 +35,7 @@ export const TERRAIN = {
     id: "wall",
     label: "Full Wall",
     hotkey: "5",
-    swatch: "#f5f5f5",
+    swatch: "#f4f4f5",
   },
   inaccessible: {
     id: "inaccessible",

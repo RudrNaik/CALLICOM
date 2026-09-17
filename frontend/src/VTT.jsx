@@ -4,7 +4,10 @@ import VTTCanvas from "./components/VTT/VTTCanvas";
 import VTTToolbar from "./components/VTT/VTTToolbar";
 import MapManagerPanel from "./components/VTT/MapManagerPanel";
 import TokenListPanel from "./components/VTT/TokenListPanel";
-import { CLASS_KEYS } from "./components/VTT/tokenBadges";
+import { CLASS_KEYS, DEFAULT_FRIENDLY_COLOR } from "./components/VTT/tokenBadges";
+
+const DEFAULT_FRIENDLY_SCALE = 1.5;
+const DEFAULT_ENEMY_SCALE = 2;
 
 export default function VTTPage() {
   const {
@@ -19,6 +22,7 @@ export default function VTTPage() {
     resizeGrid,
     setTerrain,
     addToken,
+    updateToken,
     moveToken,
     removeToken,
     exportMap,
@@ -29,6 +33,9 @@ export default function VTTPage() {
   const [brush, setBrush] = useState("normal");
   const [addClassKey, setAddClassKey] = useState(CLASS_KEYS[0]);
   const [addName, setAddName] = useState("");
+  const [addColor, setAddColor] = useState(DEFAULT_FRIENDLY_COLOR);
+  const [addAoeRadius, setAddAoeRadius] = useState(0);
+  const [addScale, setAddScale] = useState(DEFAULT_FRIENDLY_SCALE);
   const [selectedTokenId, setSelectedTokenId] = useState(null);
   const [showRangeOverlay, setShowRangeOverlay] = useState(true);
 
@@ -44,6 +51,9 @@ export default function VTTPage() {
         name: addName.trim() || `${type === "friendly" ? "Friendly" : "Enemy"} ${count}`,
         type,
         classKey: addClassKey,
+        color: type === "friendly" ? addColor : undefined,
+        aoeRadius: addAoeRadius,
+        scale: addScale,
         q,
         r,
       });
@@ -60,6 +70,15 @@ export default function VTTPage() {
     if (mode === "select" || tokenId === null) {
       setSelectedTokenId(tokenId);
     }
+  };
+
+  const handleModeChange = (nextMode) => {
+    // Enemies default a bit bigger than friendlies; only nudge the scale
+    // field when it's still at one of the two defaults, so a deliberately
+    // customized size survives switching modes and back.
+    if (nextMode === "addEnemy" && addScale === DEFAULT_FRIENDLY_SCALE) setAddScale(DEFAULT_ENEMY_SCALE);
+    else if (nextMode === "addFriendly" && addScale === DEFAULT_ENEMY_SCALE) setAddScale(DEFAULT_FRIENDLY_SCALE);
+    setMode(nextMode);
   };
 
   return (
@@ -101,13 +120,19 @@ export default function VTTPage() {
         />
         <VTTToolbar
           mode={mode}
-          setMode={setMode}
+          setMode={handleModeChange}
           brush={brush}
           setBrush={setBrush}
           addClassKey={addClassKey}
           setAddClassKey={setAddClassKey}
           addName={addName}
           setAddName={setAddName}
+          addColor={addColor}
+          setAddColor={setAddColor}
+          addAoeRadius={addAoeRadius}
+          setAddAoeRadius={setAddAoeRadius}
+          addScale={addScale}
+          setAddScale={setAddScale}
           showRangeOverlay={showRangeOverlay}
           setShowRangeOverlay={setShowRangeOverlay}
           selectedTokenId={selectedTokenId}
@@ -121,6 +146,7 @@ export default function VTTPage() {
           enemies={activeMap?.enemies || []}
           selectedTokenId={selectedTokenId}
           onSelect={setSelectedTokenId}
+          onUpdate={updateToken}
           onRemove={(id) => {
             removeToken(id);
             if (id === selectedTokenId) setSelectedTokenId(null);
