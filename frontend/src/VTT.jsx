@@ -120,53 +120,49 @@ export default function VTTPage() {
       </div>
 
       <div className="absolute top-24 left-4 z-10 w-72 max-h-[calc(100%-7rem)] overflow-y-auto flex flex-col gap-4 pointer-events-none [&>*]:pointer-events-auto">
-        <div className="px-1">
-          <h1 className="text-sm font-bold tracking-widest text-orange-400">
-            CALLI/COM — TACTICAL MAP
-          </h1>
-          <p className="text-[11px] text-neutral-400">
-            Right/middle-click or shift-drag to pan, scroll to zoom.
-          </p>
+        <div className="flex flex-col gap-4 p-4 bg-neutral-900/80 border border-white/10 rounded-xs text-white text-sm font-mono">
+          <MapManagerPanel
+            maps={maps}
+            activeMap={activeMap}
+            onNew={newMap}
+            onLoad={loadMap}
+            onRename={renameMap}
+            onDuplicate={duplicateMap}
+            onDelete={deleteMap}
+            onResize={resizeGrid}
+            onExport={exportMap}
+            onImport={importMap}
+          />
+          <div className="border-t border-white/10 pt-4">
+            <VTTToolbar
+              mode={mode}
+              setMode={handleModeChange}
+              paintLayer={paintLayer}
+              setPaintLayer={setPaintLayer}
+              elevationBrush={elevationBrush}
+              setElevationBrush={setElevationBrush}
+              obstacleBrush={obstacleBrush}
+              setObstacleBrush={setObstacleBrush}
+              addClassKey={addClassKey}
+              setAddClassKey={setAddClassKey}
+              addName={addName}
+              setAddName={setAddName}
+              addColor={addColor}
+              setAddColor={setAddColor}
+              addAoeRadius={addAoeRadius}
+              setAddAoeRadius={setAddAoeRadius}
+              addScale={addScale}
+              setAddScale={setAddScale}
+              showRangeOverlay={showRangeOverlay}
+              setShowRangeOverlay={setShowRangeOverlay}
+              selectedTokenId={selectedTokenId}
+              onDeselect={() => setSelectedTokenId(null)}
+              lines={activeMap?.lines || []}
+              tokensById={tokensById}
+              onRemoveLine={removeLine}
+            />
+          </div>
         </div>
-        <MapManagerPanel
-          maps={maps}
-          activeMap={activeMap}
-          onNew={newMap}
-          onLoad={loadMap}
-          onRename={renameMap}
-          onDuplicate={duplicateMap}
-          onDelete={deleteMap}
-          onResize={resizeGrid}
-          onExport={exportMap}
-          onImport={importMap}
-        />
-        <VTTToolbar
-          mode={mode}
-          setMode={handleModeChange}
-          paintLayer={paintLayer}
-          setPaintLayer={setPaintLayer}
-          elevationBrush={elevationBrush}
-          setElevationBrush={setElevationBrush}
-          obstacleBrush={obstacleBrush}
-          setObstacleBrush={setObstacleBrush}
-          addClassKey={addClassKey}
-          setAddClassKey={setAddClassKey}
-          addName={addName}
-          setAddName={setAddName}
-          addColor={addColor}
-          setAddColor={setAddColor}
-          addAoeRadius={addAoeRadius}
-          setAddAoeRadius={setAddAoeRadius}
-          addScale={addScale}
-          setAddScale={setAddScale}
-          showRangeOverlay={showRangeOverlay}
-          setShowRangeOverlay={setShowRangeOverlay}
-          selectedTokenId={selectedTokenId}
-          onDeselect={() => setSelectedTokenId(null)}
-          lines={activeMap?.lines || []}
-          tokensById={tokensById}
-          onRemoveLine={removeLine}
-        />
       </div>
 
       <div className="absolute top-24 right-4 z-10 w-72 max-h-[calc(100%-7rem)] overflow-y-auto pointer-events-none [&>*]:pointer-events-auto">

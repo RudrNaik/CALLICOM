@@ -33,9 +33,18 @@ export default function MapManagerPanel({
   };
 
   return (
-    <div className="flex flex-col gap-4 p-4 bg-neutral-900/80 border border-white/10 rounded-lg text-white text-sm font-mono">
+    <div className="flex flex-col gap-4">
       <div>
-        <p className="text-xs uppercase tracking-widest text-orange-400 mb-2">Maps</p>
+        <h1 className="text-sm font-bold tracking-widest text-orange-400">
+          TACMAP/MAP BUILDER
+        </h1>
+        <p className="text-[11px] text-neutral-400">
+          Right/middle-click or shift-drag to pan, scroll to zoom.
+        </p>
+        <br></br>
+        <p className="text-xs uppercase tracking-widest text-orange-400 mb-2">
+          Maps
+        </p>
         <div className="flex flex-col gap-1 max-h-40 overflow-y-auto">
           {maps.map((m) => (
             <button
@@ -61,7 +70,9 @@ export default function MapManagerPanel({
 
       {activeMap && (
         <div className="flex flex-col gap-2">
-          <p className="text-xs uppercase tracking-widest text-orange-400">Active Map</p>
+          <p className="text-xs uppercase tracking-widest text-orange-400">
+            Active Map
+          </p>
           <input
             value={activeMap.name}
             onChange={(e) => onRename(activeMap.id, e.target.value)}

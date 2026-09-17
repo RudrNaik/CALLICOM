@@ -6,7 +6,7 @@ const MODES = [
   { id: "paint", label: "Paint Terrain" },
   { id: "addFriendly", label: "Place Friendly" },
   { id: "addEnemy", label: "Place Enemy" },
-  { id: "line", label: "Draw LOS Line" },
+  { id: "line", label: "Draw Line" },
 ];
 
 const PAINT_LAYERS = [
@@ -42,7 +42,7 @@ export default function VTTToolbar({
   onRemoveLine,
 }) {
   return (
-    <div className="flex flex-col gap-4 p-4 bg-neutral-900/80 border border-white/10 rounded-lg text-white text-sm font-mono">
+    <div className="flex flex-col gap-4">
       <div>
         <p className="text-xs uppercase tracking-widest text-orange-400 mb-2">Mode</p>
         <div className="grid grid-cols-2 gap-2">
@@ -141,7 +141,7 @@ export default function VTTToolbar({
 
           {mode === "addFriendly" && (
             <div>
-              <p className="text-[11px] text-neutral-400 mb-1">Color (kept distinct from enemy red)</p>
+              <p className="text-[11px] text-neutral-400 mb-1">Color</p>
               <div className="flex flex-wrap gap-1.5">
                 {FRIENDLY_COLOR_PRESETS.map((c) => (
                   <button
@@ -159,7 +159,7 @@ export default function VTTToolbar({
           )}
 
           <div className="flex items-center gap-2">
-            <label className="text-[11px] text-neutral-400 w-16 shrink-0">AOE radius</label>
+            <label className="text-[11px] text-neutral-400 w-16 shrink-0">AOO radius</label>
             <input
               type="number"
               min={0}
