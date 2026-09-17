@@ -130,6 +130,12 @@ const Navbar = ({}) => {
                   >
                     Characters
                   </Link>
+                  <Link
+                    to="/CALLICOM/VTT"
+                    className="block px-4 py-2 hover:bg-orange-400"
+                  >
+                    Tactical Map
+                  </Link>
                   <Link to="/Login">
                     <button
                       onClick={() => logout()}
@@ -194,6 +200,15 @@ const Navbar = ({}) => {
               onClick={() => setHamburgerOpen(false)}
             >
               [↳] CALLI/COM
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/CALLICOM/VTT"
+              className="block px-3 py-2 rounded-md hover:bg-orange-400/90"
+              onClick={() => setHamburgerOpen(false)}
+            >
+              [↳] Tactical Map
             </Link>
           </li>
           {isAdmin && (

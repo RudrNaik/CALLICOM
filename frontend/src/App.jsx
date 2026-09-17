@@ -20,6 +20,7 @@ import { useLocation } from "react-router-dom";
 import MissingPage from "./MissingPage";
 import Footer from "./components/Footer";
 import Lore from "./Lore";
+import VTTPage from "./VTT";
 
 // Scroll to top on route change
 function ScrollToTop() {
@@ -67,6 +68,7 @@ export default function App() {
             />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/CALLICOM/lore" element={<Lore/>}/>
+            <Route path="/CALLICOM/VTT" element={<VTTPage />} />
             <Route path="*" element={<MissingPage />}></Route>
           </Routes>
           <Footer />
