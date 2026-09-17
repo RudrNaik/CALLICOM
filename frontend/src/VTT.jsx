@@ -63,71 +63,69 @@ export default function VTTPage() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-neutral-950 text-white font-mono">
-      <div className="py-10" />
-      <div className="sticky top-18 z-20 backdrop-blur bg-black/40 border-b border-white/10 px-6 py-3">
-        <h1 className="text-xl font-bold tracking-widest text-orange-400">
-          CALLI/COM — TACTICAL MAP
-        </h1>
-        <p className="text-xs text-neutral-400">
-          GM hex map builder. Left-click to interact per the active mode. Right-click / middle-click / shift-drag to pan, scroll to zoom.
-        </p>
+    <div className="relative w-full h-screen bg-neutral-950 text-white font-mono overflow-hidden">
+      <div className="absolute inset-0">
+        {activeMap && (
+          <VTTCanvas
+            map={activeMap}
+            tokens={allTokens}
+            mode={mode}
+            selectedTokenId={selectedTokenId}
+            showRangeOverlay={showRangeOverlay}
+            onHexClick={handleHexClick}
+            onTokenClick={handleTokenClick}
+          />
+        )}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr_280px] gap-4 p-4">
-        <div className="flex flex-col gap-4 order-2 lg:order-1">
-          <MapManagerPanel
-            maps={maps}
-            activeMap={activeMap}
-            onNew={newMap}
-            onLoad={loadMap}
-            onRename={renameMap}
-            onDuplicate={duplicateMap}
-            onDelete={deleteMap}
-            onResize={resizeGrid}
-            onExport={exportMap}
-            onImport={importMap}
-          />
-          <VTTToolbar
-            mode={mode}
-            setMode={setMode}
-            brush={brush}
-            setBrush={setBrush}
-            addClassKey={addClassKey}
-            setAddClassKey={setAddClassKey}
-            addName={addName}
-            setAddName={setAddName}
-            showRangeOverlay={showRangeOverlay}
-            setShowRangeOverlay={setShowRangeOverlay}
-          />
+      <div className="absolute top-24 left-4 z-10 w-72 max-h-[calc(100%-7rem)] overflow-y-auto flex flex-col gap-4 pointer-events-none [&>*]:pointer-events-auto">
+        <div className="px-1">
+          <h1 className="text-sm font-bold tracking-widest text-orange-400">
+            CALLI/COM — TACTICAL MAP
+          </h1>
+          <p className="text-[11px] text-neutral-400">
+            Right/middle-click or shift-drag to pan, scroll to zoom.
+          </p>
         </div>
+        <MapManagerPanel
+          maps={maps}
+          activeMap={activeMap}
+          onNew={newMap}
+          onLoad={loadMap}
+          onRename={renameMap}
+          onDuplicate={duplicateMap}
+          onDelete={deleteMap}
+          onResize={resizeGrid}
+          onExport={exportMap}
+          onImport={importMap}
+        />
+        <VTTToolbar
+          mode={mode}
+          setMode={setMode}
+          brush={brush}
+          setBrush={setBrush}
+          addClassKey={addClassKey}
+          setAddClassKey={setAddClassKey}
+          addName={addName}
+          setAddName={setAddName}
+          showRangeOverlay={showRangeOverlay}
+          setShowRangeOverlay={setShowRangeOverlay}
+          selectedTokenId={selectedTokenId}
+          onDeselect={() => setSelectedTokenId(null)}
+        />
+      </div>
 
-        <div className="order-1 lg:order-2 h-[70vh] rounded-lg overflow-hidden border border-white/10">
-          {activeMap && (
-            <VTTCanvas
-              map={activeMap}
-              tokens={allTokens}
-              mode={mode}
-              selectedTokenId={selectedTokenId}
-              showRangeOverlay={showRangeOverlay}
-              onHexClick={handleHexClick}
-              onTokenClick={handleTokenClick}
-            />
-          )}
-        </div>
-
-        <div className="order-3">
-          <TokenListPanel
-            friendlies={activeMap?.friendlies || []}
-            enemies={activeMap?.enemies || []}
-            selectedTokenId={selectedTokenId}
-            onSelect={setSelectedTokenId}
-            onRemove={(id) => {
-              removeToken(id);
-              if (id === selectedTokenId) setSelectedTokenId(null);
-            }}
-          />
-        </div>
+      <div className="absolute top-24 right-4 z-10 w-72 max-h-[calc(100%-7rem)] overflow-y-auto pointer-events-none [&>*]:pointer-events-auto">
+        <TokenListPanel
+          friendlies={activeMap?.friendlies || []}
+          enemies={activeMap?.enemies || []}
+          selectedTokenId={selectedTokenId}
+          onSelect={setSelectedTokenId}
+          onRemove={(id) => {
+            removeToken(id);
+            if (id === selectedTokenId) setSelectedTokenId(null);
+          }}
+        />
       </div>
     </div>
   );

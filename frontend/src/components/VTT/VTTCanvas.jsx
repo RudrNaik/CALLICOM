@@ -12,10 +12,11 @@ import {
 import {
   GROUND_COLOR,
   WALL_FILL_COLOR,
+  INACCESSIBLE_FILL_COLOR,
   COVER_BORDER_COLOR,
   TALL_COVER_BORDER_COLOR,
-  SOFT_WALL_BORDER_COLOR,
   BORDER_THICKNESS_RATIO,
+  BORDER_OVERLAP_RATIO,
 } from "./terrain";
 import { getTokenBadge, badgeCache } from "./tokenBadges";
 
@@ -24,31 +25,61 @@ import { getTokenBadge, badgeCache } from "./tokenBadges";
 // happens on an actual state/camera change, which is far cheaper than a
 // react-three-fiber scene with a component (and several materials) per hex.
 //
-// The board is projected isometrically (rotate 30° + squash), so hex rows
-// run diagonally like a physical hex mat viewed from above. Tokens are
-// drawn as plain axis-aligned images — only their anchor point moves
-// through the iso transform, so they always stay flat and face the screen.
+// The board is projected isometrically (rotate + squash), so hex rows run
+// diagonally like a physical hex mat viewed from above, with hex tips
+// pointing due north. Tokens are drawn as plain axis-aligned images — only
+// their anchor point moves through the projection, so they always stay
+// flat and face the screen.
 const ISO_COS = Math.cos(Math.PI / 6); // 0.866
 const ISO_SIN = Math.sin(Math.PI / 6); // 0.5
+// Rotates the whole board (both hex centers and hex corners, rigidly) so a
+// hex vertex — rather than an edge — points due north on screen. See the
+// derivation note: a flat-top hex corner at local angle 180° lands exactly
+// on screen-north once rotated 45° and passed through the iso projection.
+const WORLD_ROTATION = Math.PI / 4;
+// Shears the projected board so higher points lean right relative to lower
+// ones — like grabbing a hex's tip and dragging it right in a free
+// transform. Applied inside isoProject, so it's baked into both hex
+// centers and corners consistently and the grid still tiles seamlessly.
+const SHEAR_X_PER_Y = 0.35;
 const STAND_HEIGHT = 0.45; // world units a token badge floats above its hex, purely visual
-const MIN_ZOOM = 14;
+const MIN_ZOOM = 5;
 const MAX_ZOOM = 140;
-const BAND_TINTS = [null, "59,130,246", "168,85,247", "236,72,153", "249,115,22"];
-const BAND_TINT_ALPHA = 0.16;
+// Close = blue, medium = green, long = yellow. Anything past long range
+// (band 4+) gets no tint at all.
+const BAND_TINTS = [null, "59,130,246", "34,197,94", "234,179,8", null];
+const BAND_TINT_ALPHA = 0.10;
 const BG_COLOR = "#15171a";
 
 const UNIT_CORNERS = hexCorners(HEX_SIZE);
 
+function rotate(x, z, angle) {
+  const c = Math.cos(angle);
+  const s = Math.sin(angle);
+  return [x * c - z * s, x * s + z * c];
+}
+
 // Rotate+squash a world-space (x, z) offset into isometric screen space,
-// before pan/zoom are applied.
+// before pan/zoom are applied. The x-component is negated so the board
+// skews toward the right rather than the left — this mirrors the lean
+// without disturbing the north/south tips (they sit at x=0, which a sign
+// flip leaves untouched). A shear is then applied on top so higher points
+// lean further right, like the whole hex was dragged over from its tip.
 function isoProject(x, z) {
-  return [(x - z) * ISO_COS, (x + z) * ISO_SIN];
+  const [rx, rz] = rotate(x, z, WORLD_ROTATION);
+  const ix0 = -(rx - rz) * ISO_COS;
+  const iy0 = (rx + rz) * ISO_SIN;
+  return [ix0 - SHEAR_X_PER_Y * iy0, iy0];
 }
 
 function isoUnproject(isoX, isoY) {
-  const a = isoX / ISO_COS; // x - z
-  const b = isoY / ISO_SIN; // x + z
-  return [(a + b) / 2, (b - a) / 2];
+  const iy0 = isoY;
+  const ix0 = isoX + SHEAR_X_PER_Y * iy0;
+  const a = -ix0 / ISO_COS; // rx - rz
+  const b = iy0 / ISO_SIN; // rx + rz
+  const rx = (a + b) / 2;
+  const rz = (b - a) / 2;
+  return rotate(rx, rz, -WORLD_ROTATION);
 }
 
 function project(x, z, camera) {
@@ -62,26 +93,69 @@ function unproject(px, py, camera) {
   return isoUnproject(ix, iy);
 }
 
+// Precomputed once: the six hex corners (unit size) already rotated and
+// iso-projected, so drawing a hex per-frame is just a scale + add.
+const PROJECTED_UNIT_CORNERS = UNIT_CORNERS.map(([ux, uz]) => isoProject(ux, uz));
+
 function hexPath(ctx, cx, cy, size, zoom) {
   ctx.beginPath();
-  UNIT_CORNERS.forEach(([ux, uz], i) => {
-    const [ix, iy] = isoProject(ux * size, uz * size);
-    const px = cx + ix * zoom;
-    const py = cy + iy * zoom;
+  PROJECTED_UNIT_CORNERS.forEach(([ix, iy], i) => {
+    const px = cx + ix * size * zoom;
+    const py = cy + iy * size * zoom;
     if (i === 0) ctx.moveTo(px, py);
     else ctx.lineTo(px, py);
   });
   ctx.closePath();
 }
 
-function strokeHexBorder(ctx, cx, cy, zoom, color, dashed) {
-  const midSize = HEX_SIZE * (1 - BORDER_THICKNESS_RATIO / 2);
+function addHexToPath2D(path, cx, cy, size, zoom) {
+  PROJECTED_UNIT_CORNERS.forEach(([ix, iy], i) => {
+    const px = cx + ix * size * zoom;
+    const py = cy + iy * size * zoom;
+    if (i === 0) path.moveTo(px, py);
+    else path.lineTo(px, py);
+  });
+  path.closePath();
+}
+
+// Strokes every accumulated hex border ring in one call. Independently
+// stroking each hex (the old approach) makes shared edges between two
+// same-type neighbors look thicker than unshared ones: each stroke is
+// anti-aliased and composited onto the canvas separately, so two opaque
+// AA'd strokes overlapping at a seam blend into something visibly more
+// solid than either stroke alone. Merging them into one Path2D and
+// stroking once means the overlap is resolved during rasterization of a
+// single draw call, so it stays uniform — which also makes it safe to
+// extend the ring slightly past the true hex edge (closing the
+// anti-aliasing gap that otherwise shows between two touching hexes).
+function strokeHexBorderBatch(ctx, path, zoom, color, dashed) {
+  if (!path) return;
   const lineWidth = HEX_SIZE * BORDER_THICKNESS_RATIO * zoom;
   ctx.save();
   ctx.strokeStyle = color;
   ctx.lineWidth = lineWidth;
+  ctx.lineJoin = "miter"; // sharp, unrounded corners
   ctx.setLineDash(dashed ? [lineWidth * 0.9, lineWidth * 0.9] : []);
-  hexPath(ctx, cx, cy, midSize, zoom);
+  ctx.stroke(path);
+  ctx.restore();
+}
+
+// Diagonal hatch fill, clipped to the hex — used for the soft wall's
+// interior, inside its solid border.
+function fillHexHatch(ctx, cx, cy, size, zoom, color) {
+  const radius = size * zoom;
+  ctx.save();
+  hexPath(ctx, cx, cy, size, zoom);
+  ctx.clip();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = Math.max(1, radius * 0.09);
+  ctx.globalAlpha = 0.7;
+  const step = Math.max(3, radius * 0.22);
+  ctx.beginPath();
+  for (let d = -radius * 2; d <= radius * 2; d += step) {
+    ctx.moveTo(cx - radius + d, cy - radius);
+    ctx.lineTo(cx + radius + d, cy + radius);
+  }
   ctx.stroke();
   ctx.restore();
 }
@@ -165,6 +239,11 @@ export default function VTTCanvas({
     const hexes = generateRectGrid(map.cols, map.rows);
     const selectedToken = tokens.find((t) => t.id === selectedTokenId) || null;
     const margin = HEX_SIZE * camera.zoom * 1.5;
+    const borderSize = HEX_SIZE * (1 - BORDER_THICKNESS_RATIO / 2 + BORDER_OVERLAP_RATIO);
+
+    let coverPath = null;
+    let tallCoverPath = null;
+    let softWallPath = null;
 
     for (const { q, r } of hexes) {
       const [wx, wz] = axialToWorld(q, r);
@@ -172,7 +251,12 @@ export default function VTTCanvas({
       if (cx < -margin || cx > size.width + margin || cy < -margin || cy > size.height + margin) continue;
 
       const terrain = map.hexes[hexKey(q, r)] || "normal";
-      const baseColor = terrain === "wall" ? WALL_FILL_COLOR : GROUND_COLOR;
+      const baseColor =
+        terrain === "wall"
+          ? WALL_FILL_COLOR
+          : terrain === "inaccessible"
+          ? INACCESSIBLE_FILL_COLOR
+          : GROUND_COLOR;
 
       hexPath(ctx, cx, cy, HEX_SIZE, camera.zoom);
       ctx.fillStyle = baseColor;
@@ -199,10 +283,22 @@ export default function VTTCanvas({
       hexPath(ctx, cx, cy, HEX_SIZE * 0.998, camera.zoom);
       ctx.stroke();
 
-      if (terrain === "cover") strokeHexBorder(ctx, cx, cy, camera.zoom, COVER_BORDER_COLOR, false);
-      else if (terrain === "tallCover") strokeHexBorder(ctx, cx, cy, camera.zoom, TALL_COVER_BORDER_COLOR, false);
-      else if (terrain === "softWall") strokeHexBorder(ctx, cx, cy, camera.zoom, SOFT_WALL_BORDER_COLOR, true);
+      if (terrain === "cover") {
+        coverPath ??= new Path2D();
+        addHexToPath2D(coverPath, cx, cy, borderSize, camera.zoom);
+      } else if (terrain === "tallCover") {
+        tallCoverPath ??= new Path2D();
+        addHexToPath2D(tallCoverPath, cx, cy, borderSize, camera.zoom);
+      } else if (terrain === "softWall") {
+        fillHexHatch(ctx, cx, cy, HEX_SIZE, camera.zoom, WALL_FILL_COLOR);
+        softWallPath ??= new Path2D();
+        addHexToPath2D(softWallPath, cx, cy, borderSize, camera.zoom);
+      }
     }
+
+    strokeHexBorderBatch(ctx, coverPath, camera.zoom, COVER_BORDER_COLOR, false);
+    strokeHexBorderBatch(ctx, tallCoverPath, camera.zoom, TALL_COVER_BORDER_COLOR, false);
+    strokeHexBorderBatch(ctx, softWallPath, camera.zoom, WALL_FILL_COLOR, false);
 
     // Tokens, sorted so ones "further back" on screen draw first — in the
     // isometric projection, screen depth order follows (x + z), not raw z.
@@ -360,6 +456,7 @@ export default function VTTCanvas({
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
+        onPointerLeave={() => setHoveredHex(null)}
         onContextMenu={(e) => e.preventDefault()}
       />
     </div>

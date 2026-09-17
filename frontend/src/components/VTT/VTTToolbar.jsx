@@ -19,6 +19,8 @@ export default function VTTToolbar({
   setAddName,
   showRangeOverlay,
   setShowRangeOverlay,
+  selectedTokenId,
+  onDeselect,
 }) {
   return (
     <div className="flex flex-col gap-4 p-4 bg-neutral-900/80 border border-white/10 rounded-lg text-white text-sm font-mono">
@@ -97,7 +99,7 @@ export default function VTTToolbar({
         </div>
       )}
 
-      {mode === "select" && (
+      <div className="flex flex-col gap-2 pt-1 border-t border-white/10">
         <label className="flex items-center gap-2 text-xs">
           <input
             type="checkbox"
@@ -106,7 +108,15 @@ export default function VTTToolbar({
           />
           Show range bands from selected token
         </label>
-      )}
+        {selectedTokenId && (
+          <button
+            onClick={onDeselect}
+            className="px-2 py-1.5 rounded-md border border-white/15 hover:border-orange-400/60 text-xs text-left"
+          >
+            Deselect token
+          </button>
+        )}
+      </div>
     </div>
   );
 }
