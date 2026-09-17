@@ -35,12 +35,20 @@ function TokenRow({ token, selected, onSelect, onRemove }) {
   );
 }
 
-export default function TokenListPanel({ friendlies, enemies, selectedTokenId, onSelect, onUpdate, onRemove }) {
+export default function TokenListPanel({ friendlies, enemies, selectedTokenId, onSelect, onUpdate, onRemove, onDeselect }) {
   const selected = [...friendlies, ...enemies].find((t) => t.id === selectedTokenId);
 
   return (
     <div className="flex flex-col gap-4 p-4 bg-neutral-900/80 border border-white/10 rounded-lg text-white text-sm font-mono">
       <div>
+        {selectedTokenId && (
+          <button
+            onClick={onDeselect}
+            className="px-2 py-1.5 rounded-md border border-white/15 hover:border-orange-400/60 text-xs mb-2 text-left"
+          >
+            Deselect token
+          </button>
+        )}
         <p className="text-xs uppercase tracking-widest text-sky-400 mb-2">Friendlies</p>
         <div className="flex flex-col gap-1">
           {friendlies.length === 0 && <p className="text-[11px] text-neutral-500">None placed.</p>}

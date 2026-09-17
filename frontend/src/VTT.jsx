@@ -151,6 +151,7 @@ export default function VTTPage() {
             removeToken(id);
             if (id === selectedTokenId) setSelectedTokenId(null);
           }}
+          onDeselect={() => setSelectedTokenId(null)}
         />
       </div>
     </div>

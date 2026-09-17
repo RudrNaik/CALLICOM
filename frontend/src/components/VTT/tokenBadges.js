@@ -27,6 +27,7 @@ export const ENEMY_COLOR = "#ef4444";
 export const DEFAULT_FRIENDLY_COLOR = "#38bdf8";
 export const FRIENDLY_COLOR_PRESETS = [
   "#38bdf8", // sky
+  "#003FFF",  // navy
   "#22c55e", // green
   "#eab308", // yellow
   "#a855f7", // purple
@@ -95,13 +96,13 @@ export async function getTokenBadge(classKey, type, color) {
   // A fixed dark backing (not the team color itself) so the white icon
   // stays legible no matter which color a friendly is assigned — a
   // bright yellow/white badge would otherwise wash the icon out.
-  ctx.fillStyle = "rgba(10, 10, 16, 0.82)";
+  ctx.fillStyle = "rgba(10, 10, 16, 0.42)";
   ctx.fill();
   ctx.globalAlpha = 0.3;
   ctx.fillStyle = resolvedColor;
   ctx.fill();
   ctx.globalAlpha = 1;
-  ctx.lineWidth = size * 0.06;
+  ctx.lineWidth = size * 0.02;
   ctx.strokeStyle = resolvedColor;
   ctx.stroke();
   ctx.restore();
