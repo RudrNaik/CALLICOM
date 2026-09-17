@@ -45,6 +45,7 @@ const SHEAR_X_PER_Y = 0.35;
 const STAND_HEIGHT = 0.45; // world units a token badge floats above its hex, purely visual
 const MIN_ZOOM = 5;
 const MAX_ZOOM = 140;
+const ZOOM_WHEEL_SENSITIVITY = 0.18;
 // Close = blue, medium = green, long = yellow. Anything past long range
 // (band 4+) gets no tint at all.
 const BAND_TINTS = [null, "59,130,246", "34,197,94", "234,179,8", null];
@@ -141,16 +142,16 @@ function strokeHexBorderBatch(ctx, path, zoom, color, dashed) {
 }
 
 // Diagonal hatch fill, clipped to the hex — used for the soft wall's
-// interior, inside its solid border.
-function fillHexHatch(ctx, cx, cy, size, zoom, color) {
+// interior, and for the range-band overlay.
+function fillHexHatch(ctx, cx, cy, size, zoom, color, { alpha = 0.7, lineWidthRatio = 0.09, stepRatio = 0.22 } = {}) {
   const radius = size * zoom;
   ctx.save();
   hexPath(ctx, cx, cy, size, zoom);
   ctx.clip();
   ctx.strokeStyle = color;
-  ctx.lineWidth = Math.max(1, radius * 0.09);
-  ctx.globalAlpha = 0.7;
-  const step = Math.max(3, radius * 0.22);
+  ctx.lineWidth = Math.max(1, radius * lineWidthRatio);
+  ctx.globalAlpha = alpha;
+  const step = Math.max(3, radius * stepRatio);
   ctx.beginPath();
   for (let d = -radius * 2; d <= radius * 2; d += step) {
     ctx.moveTo(cx - radius + d, cy - radius);
@@ -266,6 +267,9 @@ export default function VTTCanvas({
         const band = rangeBand(hexDistance(selectedToken, { q, r }));
         const tint = BAND_TINTS[Math.min(band, BAND_TINTS.length - 1)];
         if (tint) {
+          // Plain solid fill, not a hatch — the hatch's per-hex clip+stroke
+          // loop is expensive across a whole visible grid and was
+          // measurably hurting frame time.
           hexPath(ctx, cx, cy, HEX_SIZE, camera.zoom);
           ctx.fillStyle = `rgba(${tint}, ${BAND_TINT_ALPHA})`;
           ctx.fill();
@@ -365,17 +369,41 @@ export default function VTTCanvas({
     return closest;
   };
 
+  // Paints (or erases, with the normal-ground brush) the hex under the
+  // pointer, deduping against the last hex painted this drag so a slow
+  // drag across one hex doesn't spam setTerrain calls.
+  const paintAtPointer = (e, erase) => {
+    const hex = getHexUnderPointer(e);
+    const key = hexKey(hex.q, hex.r);
+    const drag = dragState.current;
+    if (drag) {
+      if (drag.lastPaintedKey === key) return;
+      drag.lastPaintedKey = key;
+    }
+    onHexClick?.(hex.q, hex.r, erase ? "normal" : undefined);
+  };
+
   const handlePointerDown = (e) => {
-    const isPanButton = e.button === 2 || e.button === 1 || e.shiftKey;
+    // Right-click erases (paints normal ground) while in paint mode
+    // instead of panning; middle-click and shift-click still pan.
+    const isEraseButton = mode === "paint" && e.button === 2;
+    const isPanButton = !isEraseButton && (e.button === 2 || e.button === 1 || e.shiftKey);
+    const isPaintButton = mode === "paint" && !isPanButton && (e.button === 0 || isEraseButton);
+
     dragState.current = {
       panning: isPanButton,
+      painting: isPaintButton,
+      erasing: isEraseButton,
       startX: e.clientX,
       startY: e.clientY,
       lastX: e.clientX,
       lastY: e.clientY,
       moved: false,
+      lastPaintedKey: null,
     };
     canvasRef.current.setPointerCapture(e.pointerId);
+
+    if (isPaintButton) paintAtPointer(e, isEraseButton);
   };
 
   const handlePointerMove = (e) => {
@@ -389,6 +417,9 @@ export default function VTTCanvas({
       if (drag.panning) {
         setCamera((cam) => ({ ...cam, x: cam.x + dx, y: cam.y + dy }));
         return;
+      }
+      if (drag.painting) {
+        paintAtPointer(e, drag.erasing);
       }
     }
     if (mode === "paint") {
@@ -405,7 +436,9 @@ export default function VTTCanvas({
     } catch {
       /* noop */
     }
-    if (!drag || drag.panning || drag.moved) return;
+    // Painting (and erasing) already happened live on pointerdown/move.
+    if (!drag || drag.panning || drag.painting) return;
+    if (drag.moved) return;
     if (e.button !== 0) return;
 
     if (mode === "select") {
@@ -435,7 +468,7 @@ export default function VTTCanvas({
       setCamera((cam) => {
         const [wx, wz] = unproject(px, py, cam);
         const [ix, iy] = isoProject(wx, wz);
-        const nextZoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, cam.zoom - e.deltaY * 0.08));
+        const nextZoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, cam.zoom - e.deltaY * ZOOM_WHEEL_SENSITIVITY));
         return {
           zoom: nextZoom,
           x: px - ix * nextZoom,

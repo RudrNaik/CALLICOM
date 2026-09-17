@@ -41,7 +41,7 @@ export const TERRAIN = {
     id: "inaccessible",
     label: "Inaccessible",
     hotkey: "6",
-    swatch: "#000000",
+    swatch: "#15171a",
   },
 };
 

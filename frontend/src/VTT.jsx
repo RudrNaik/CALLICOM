@@ -32,9 +32,9 @@ export default function VTTPage() {
   const [selectedTokenId, setSelectedTokenId] = useState(null);
   const [showRangeOverlay, setShowRangeOverlay] = useState(true);
 
-  const handleHexClick = (q, r) => {
+  const handleHexClick = (q, r, terrainOverride) => {
     if (mode === "paint") {
-      setTerrain(q, r, brush);
+      setTerrain(q, r, terrainOverride || brush);
       return;
     }
     if (mode === "addFriendly" || mode === "addEnemy") {
