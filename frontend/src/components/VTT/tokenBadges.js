@@ -156,7 +156,7 @@ export async function getTokenBadge(classKey, type, color) {
   ctx.fillStyle = resolvedColor;
   ctx.fill();
   ctx.globalAlpha = 1;
-  ctx.lineWidth = size * 0.02;
+  ctx.lineWidth = size * 0.04;
   ctx.strokeStyle = resolvedColor;
   ctx.stroke();
   ctx.restore();

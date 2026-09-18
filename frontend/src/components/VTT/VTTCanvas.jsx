@@ -470,7 +470,7 @@ export default function VTTCanvas({
       }
 
       ctx.fillStyle = "#e5e5e5";
-      ctx.font = `${Math.max(10, camera.zoom * 0.16)}px monospace`;
+      ctx.font = `${Math.max(10, camera.zoom * 0.15)}px monospace`;
       ctx.textAlign = "center";
       ctx.fillText(token.name, cx, cy - badgeSize / 2 - 4);
     }
