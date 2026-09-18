@@ -46,6 +46,8 @@ export default function VTTPage() {
   const [addScale, setAddScale] = useState(DEFAULT_FRIENDLY_SCALE);
   const [selectedTokenId, setSelectedTokenId] = useState(null);
   const [showRangeOverlay, setShowRangeOverlay] = useState(true);
+  const [zoom, setZoom] = useState(55);
+  const [zoomRequest, setZoomRequest] = useState(null);
   const [leftOpen, setLeftOpen] = useState(true);
   const [rightOpen, setRightOpen] = useState(true);
 
@@ -128,6 +130,8 @@ export default function VTTPage() {
             doorType={doorType}
             doorState={doorState}
             onTokenClick={handleTokenClick}
+            zoomRequest={zoomRequest}
+            onZoomChange={setZoom}
           />
         )}
       </div>
@@ -161,6 +165,11 @@ export default function VTTPage() {
             onResize={resizeGrid}
             onExport={exportMap}
             onImport={importMap}
+            zoom={zoom}
+            onZoomChange={(z) => {
+              setZoom(z);
+              setZoomRequest({ zoom: z });
+            }}
           />
           <div className="border-t border-white/10 pt-4">
             <VTTToolbar

@@ -61,9 +61,13 @@ const WORLD_ROTATION = Math.PI / 4;
 // centers and corners consistently and the grid still tiles seamlessly.
 const SHEAR_X_PER_Y = 0.35;
 const STAND_HEIGHT = 0.45; // world units a token badge floats above its hex, purely visual
-const MIN_ZOOM = 5;
-const MAX_ZOOM = 140;
-const ZOOM_WHEEL_SENSITIVITY = 0.18;
+export const MIN_ZOOM = 5;
+export const MAX_ZOOM = 140;
+// Wheel zoom is multiplicative (zoom *= exp(-delta * k)) so each notch is the
+// same percentage change at any zoom level; deltaY is clamped so a fast
+// scroll or a big trackpad flick can't jump too far in one event.
+const ZOOM_WHEEL_SENSITIVITY = 0.0006;
+const ZOOM_WHEEL_MAX_DELTA = 120;
 // Close = blue, medium = green, long = yellow. Anything past long range
 // (band 4+) gets no tint at all.
 const BAND_TINTS = [null, "59,130,246", "34,197,94", "234,179,8", null];
@@ -224,6 +228,8 @@ export default function VTTCanvas({
   doorType,
   doorState,
   onTokenClick,
+  zoomRequest,
+  onZoomChange,
 }) {
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
@@ -728,6 +734,28 @@ export default function VTTCanvas({
     return () => window.removeEventListener("keydown", onKey);
   }, [mode]);
 
+  // Report the camera zoom to the parent (display only), and apply explicit
+  // slider requests by zooming about the viewport center. Requests are a
+  // one-way channel: echoing the reported zoom back into the camera would
+  // race with rapid wheel events and snap the zoom back and forth.
+  useEffect(() => {
+    onZoomChange?.(camera.zoom);
+  }, [camera.zoom]);
+
+  useEffect(() => {
+    if (!zoomRequest || size.width === 0) return;
+    const next = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, zoomRequest.zoom));
+    setCamera((cam) => {
+      if (Math.abs(cam.zoom - next) < 1e-6) return cam;
+      const px = size.width / 2;
+      const py = size.height / 2;
+      const [wx, wz] = unproject(px, py, cam);
+      const [ix, iy] = isoProject(wx, wz);
+      return { zoom: next, x: px - ix * next, y: py - iy * next };
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [zoomRequest]);
+
   // React's synthetic onWheel listener is passive by default, so
   // preventDefault() inside it throws — attach a native listener instead.
   useEffect(() => {
@@ -741,7 +769,8 @@ export default function VTTCanvas({
       setCamera((cam) => {
         const [wx, wz] = unproject(px, py, cam);
         const [ix, iy] = isoProject(wx, wz);
-        const nextZoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, cam.zoom - e.deltaY * ZOOM_WHEEL_SENSITIVITY));
+        const delta = Math.max(-ZOOM_WHEEL_MAX_DELTA, Math.min(ZOOM_WHEEL_MAX_DELTA, e.deltaY));
+        const nextZoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, cam.zoom * Math.exp(-delta * ZOOM_WHEEL_SENSITIVITY)));
         return {
           zoom: nextZoom,
           x: px - ix * nextZoom,

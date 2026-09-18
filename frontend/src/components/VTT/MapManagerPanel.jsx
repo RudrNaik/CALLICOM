@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { MIN_ZOOM, MAX_ZOOM } from "./VTTCanvas";
 
 export default function MapManagerPanel({
   maps,
@@ -11,6 +12,8 @@ export default function MapManagerPanel({
   onResize,
   onExport,
   onImport,
+  zoom,
+  onZoomChange,
 }) {
   const fileInputRef = useRef(null);
   const [cols, setCols] = useState(activeMap?.cols ?? 12);
@@ -90,6 +93,19 @@ export default function MapManagerPanel({
             onChange={(e) => onRename(activeMap.id, e.target.value)}
             className="bg-neutral-800 border border-white/15 rounded-xs px-2 py-1.5 text-xs outline-none focus:border-orange-400"
           />
+
+          <div className="flex items-center gap-2">
+            <label className="text-xs text-neutral-400 w-10">Zoom</label>
+            <input
+              type="range"
+              min={Math.log(MIN_ZOOM)}
+              max={Math.log(MAX_ZOOM)}
+              step={0.005}
+              value={Math.log(zoom ?? 55)}
+              onChange={(e) => onZoomChange?.(Math.exp(Number(e.target.value)))}
+              className="flex-1 accent-orange-400"
+            />
+          </div>
 
           <div className="flex items-center gap-2">
             <label className="text-xs text-neutral-400 w-10">Cols</label>
