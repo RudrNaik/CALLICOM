@@ -110,6 +110,37 @@ export function hexesInRadius(q, r, radius) {
   return results;
 }
 
+// The hex corner (vertex) nearest a world-space point. The nearest vertex
+// of a hex tiling is always a corner of the hex containing the point, so
+// only that hex's six corners need checking. Coordinates are rounded so the
+// same physical vertex always yields identical values whichever adjacent
+// hex it was found from.
+export function nearestVertex(wx, wz, size = HEX_SIZE) {
+  const { q, r } = worldToAxial(wx, wz, size);
+  const [cx, cz] = axialToWorld(q, r, size);
+  let best = null;
+  let bestDist = Infinity;
+  for (const [ux, uz] of hexCorners(size)) {
+    const vx = cx + ux;
+    const vz = cz + uz;
+    const dist = Math.hypot(wx - vx, wz - vz);
+    if (dist < bestDist) {
+      bestDist = dist;
+      best = [vx, vz];
+    }
+  }
+  return [Math.round(best[0] * 1000) / 1000, Math.round(best[1] * 1000) / 1000];
+}
+
+// Distance from point p to the segment a-b, all in world space.
+export function distanceToSegment(p, a, b) {
+  const dx = b[0] - a[0];
+  const dz = b[1] - a[1];
+  const lenSq = dx * dx + dz * dz;
+  const t = lenSq === 0 ? 0 : Math.max(0, Math.min(1, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dz) / lenSq));
+  return Math.hypot(p[0] - (a[0] + t * dx), p[1] - (a[1] + t * dz));
+}
+
 // Generate a rectangular hex grid of `cols` x `rows` hexes (odd-q offset),
 // returning axial coordinates for each hex.
 export function generateRectGrid(cols, rows) {

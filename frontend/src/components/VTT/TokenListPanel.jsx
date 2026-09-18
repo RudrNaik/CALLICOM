@@ -39,7 +39,7 @@ export default function TokenListPanel({ friendlies, enemies, selectedTokenId, o
   const selected = [...friendlies, ...enemies].find((t) => t.id === selectedTokenId);
 
   return (
-    <div className="flex flex-col gap-4 p-4 bg-neutral-900/80 border border-white/10 rounded-xs text-white text-sm font-mono">
+    <div className="flex flex-col gap-4 p-4 bg-gradient-to-t from-neutral-800 to-neutral-900 border border-r-4 border-r-orange-500 border-white/10 rounded-xs text-white text-sm font-mono">
       <div>
         {selectedTokenId && (
           <button

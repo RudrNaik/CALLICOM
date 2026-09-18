@@ -125,16 +125,38 @@ export function normalizeHexState(raw) {
   };
 }
 
-export const GROUND_COLOR = "#484848";
+// Doors are straight lines between two hex vertices (corners) - they ignore
+// the hex edges entirely and can run across hexes at any angle. Stored as
+// map.doors, an array of { id, a: [x, z], b: [x, z], type, state } with
+// world-space endpoints. Type sets how many parallel lines the door is drawn
+// with; state sets its color.
+export const DOOR_TYPES = {
+  standard: { id: "standard", label: "Standard Door", lines: 1 },
+  heavy: { id: "heavy", label: "Heavy Door", lines: 2 },
+  reinforced: { id: "reinforced", label: "Reinforced Door", lines: 3 },
+};
+export const DOOR_TYPE_ORDER = ["standard", "heavy", "reinforced"];
+
+export const DOOR_STATES = {
+  open: { id: "open", label: "Open", color: "#22c55e" },
+  closed: { id: "closed", label: "Closed", color: "#eab308" },
+  locked: { id: "locked", label: "Locked", color: "#ef4444" },
+};
+export const DOOR_STATE_ORDER = ["open", "closed", "locked"];
+
+export function normalizeDoor(raw) {
+  return {
+    type: raw?.type && raw.type in DOOR_TYPES ? raw.type : "standard",
+    state: raw?.state && raw.state in DOOR_STATES ? raw.state : "closed",
+  };
+}
+
+export const GROUND_COLOR ="#484848";
 export const GROUND_LINE_COLOR = "#00000055";
 export const WALL_FILL_COLOR = "#f5f5f5";
-// Matches the board background exactly — an inaccessible hex should read
-// as "not part of the map" rather than as a distinct dark terrain color.
 export const INACCESSIBLE_FILL_COLOR = "#15171a";
 export const COVER_BORDER_COLOR = "#22c55e";
 export const TALL_COVER_BORDER_COLOR = "#f5f5f5";
-// Soft wall's hashed interior is the same white as a full wall's fill, by
-// definition, so the two always read as the same "wall" color.
 export const SOFT_WALL_BORDER_COLOR = WALL_FILL_COLOR;
 
 // High ground: fully filled cyan tint. Low ground shares cover's green, by

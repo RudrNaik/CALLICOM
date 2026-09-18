@@ -1,11 +1,21 @@
-import { ELEVATION, ELEVATION_ORDER, OBSTACLE, OBSTACLE_ORDER } from "./terrain";
+import {
+  ELEVATION,
+  ELEVATION_ORDER,
+  OBSTACLE,
+  OBSTACLE_ORDER,
+  DOOR_TYPES,
+  DOOR_TYPE_ORDER,
+  DOOR_STATES,
+  DOOR_STATE_ORDER,
+} from "./terrain";
 import { CLASS_KEYS, FRIENDLY_COLOR_PRESETS, resolveTokenColor } from "./tokenBadges";
 
 const MODES = [
-  { id: "select", label: "Select / Move" },
+  { id: "select", label: "Select/ Move" },
   { id: "paint", label: "Paint Terrain" },
+  { id: "door", label: "Place Doors" },
   { id: "addFriendly", label: "Place Friendly" },
-  { id: "addEnemy", label: "Place Enemy" },
+  { id: "addEnemy", label: "Place Contact" },
   { id: "line", label: "Draw Line" },
 ];
 
@@ -23,6 +33,10 @@ export default function VTTToolbar({
   setElevationBrush,
   obstacleBrush,
   setObstacleBrush,
+  doorType,
+  setDoorType,
+  doorState,
+  setDoorState,
   addClassKey,
   setAddClassKey,
   addName,
@@ -45,12 +59,12 @@ export default function VTTToolbar({
     <div className="flex flex-col gap-4">
       <div>
         <p className="text-xs uppercase tracking-widest text-orange-400 mb-2">Mode</p>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-3 gap-2">
           {MODES.map((m) => (
             <button
               key={m.id}
               onClick={() => setMode(m.id)}
-              className={`px-2 py-2 rounded-md border transition text-xs ${
+              className={`px-2 py-2 rounded-xs border transition text-xs ${
                 mode === m.id
                   ? "bg-orange-400 text-black border-orange-400"
                   : "border-white/15 hover:border-orange-400/60"
@@ -111,7 +125,67 @@ export default function VTTToolbar({
             );
           })}
           <p className="text-[11px] text-neutral-400 mt-2">
-            Click paints the active layer only — e.g. an obstacle painted onto high ground keeps that elevation. Right-click (or right-drag) clears the active layer on a hex. Middle-drag (or shift-drag) to pan, wheel to zoom.
+            Click paints the active layer only. An obstacle painted onto high ground keeps that elevation. Right-click (or right-drag) clears the active layer on a hex.
+          </p>
+        </div>
+      )}
+
+      {mode === "door" && (
+        <div className="flex flex-col gap-3">
+          <div>
+            <p className="text-xs uppercase tracking-widest text-orange-400 mb-2">Door Type</p>
+            <div className="flex flex-col gap-1">
+              {DOOR_TYPE_ORDER.map((key) => {
+                const t = DOOR_TYPES[key];
+                return (
+                  <button
+                    key={key}
+                    onClick={() => setDoorType(key)}
+                    className={`flex items-center gap-2 px-2 py-1.5 rounded-md border transition ${
+                      doorType === key
+                        ? "border-orange-400 bg-orange-400/10"
+                        : "border-white/10 hover:border-white/30"
+                    }`}
+                  >
+                    <span className="flex flex-col gap-[2px] w-6 shrink-0">
+                      {Array.from({ length: t.lines }).map((_, i) => (
+                        <span
+                          key={i}
+                          className="h-[2px] w-full"
+                          style={{ background: DOOR_STATES[doorState].color }}
+                        />
+                      ))}
+                    </span>
+                    <span className="text-xs">{t.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+          <div>
+            <p className="text-xs uppercase tracking-widest text-orange-400 mb-2">Door State</p>
+            <div className="grid grid-cols-3 gap-2">
+              {DOOR_STATE_ORDER.map((key) => {
+                const s = DOOR_STATES[key];
+                return (
+                  <button
+                    key={key}
+                    onClick={() => setDoorState(key)}
+                    className={`flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md border transition text-xs ${
+                      doorState === key
+                        ? "border-orange-400 bg-orange-400/10"
+                        : "border-white/10 hover:border-white/30"
+                    }`}
+                  >
+                    <span className="w-2 h-2 rounded-full shrink-0" style={{ background: s.color }} />
+                    {s.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+          <p className="text-[11px] text-neutral-400">
+            Click a hex corner to start a door, then click another corner to finish it. Click the same corner again or press Escape to cancel. Right-click near a door to remove it.
           </p>
         </div>
       )}
@@ -225,25 +299,6 @@ export default function VTTToolbar({
           )}
         </div>
       )}
-
-      <div className="flex flex-col gap-2 pt-1 border-t border-white/10">
-        <label className="flex items-center gap-2 text-xs">
-          <input
-            type="checkbox"
-            checked={showRangeOverlay}
-            onChange={(e) => setShowRangeOverlay(e.target.checked)}
-          />
-          Show range bands from selected token
-        </label>
-        {selectedTokenId && (
-          <button
-            onClick={onDeselect}
-            className="px-2 py-1.5 rounded-md border border-white/15 hover:border-orange-400/60 text-xs text-left"
-          >
-            Deselect token
-          </button>
-        )}
-      </div>
     </div>
   );
 }

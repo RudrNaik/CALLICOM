@@ -34,6 +34,7 @@ function makeBlankMap(name, cols, rows) {
     cols,
     rows,
     hexes: {},
+    doors: [],
     friendlies: [],
     enemies: [],
     lines: [],
@@ -170,6 +171,28 @@ export default function useVTTMap() {
     [activeMapId, commit]
   );
 
+  const addDoor = useCallback(
+    (a, b, type, state) => {
+      if (!activeMapId) return;
+      commit(activeMapId, (m) => {
+        const doors = Array.isArray(m.doors) ? m.doors : [];
+        return { ...m, doors: [...doors, { id: uid("door"), a, b, type, state }] };
+      });
+    },
+    [activeMapId, commit]
+  );
+
+  const removeDoor = useCallback(
+    (doorId) => {
+      if (!activeMapId) return;
+      commit(activeMapId, (m) => ({
+        ...m,
+        doors: (Array.isArray(m.doors) ? m.doors : []).filter((d) => d.id !== doorId),
+      }));
+    },
+    [activeMapId, commit]
+  );
+
   const addToken = useCallback(
     (token) => {
       if (!activeMapId) return;
@@ -263,6 +286,7 @@ export default function useVTTMap() {
       cols: imported.cols || 12,
       rows: imported.rows || 10,
       hexes: imported.hexes || {},
+      doors: Array.isArray(imported.doors) ? imported.doors : [],
       friendlies: imported.friendlies || [],
       enemies: imported.enemies || [],
       lines: imported.lines || [],
@@ -296,6 +320,8 @@ export default function useVTTMap() {
     deleteMap,
     resizeGrid,
     setTerrain,
+    addDoor,
+    removeDoor,
     addToken,
     updateToken,
     moveToken,

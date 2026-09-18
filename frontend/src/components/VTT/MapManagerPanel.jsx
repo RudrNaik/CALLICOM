@@ -50,7 +50,7 @@ export default function MapManagerPanel({
             <button
               key={m.id}
               onClick={() => onLoad(m.id)}
-              className={`text-left px-2 py-1.5 rounded-md border text-xs truncate ${
+              className={`text-left px-2 py-1.5 rounded-xs border text-xs truncate ${
                 activeMap?.id === m.id
                   ? "border-orange-400 bg-orange-400/10"
                   : "border-white/10 hover:border-white/30"
@@ -62,7 +62,7 @@ export default function MapManagerPanel({
         </div>
         <button
           onClick={() => onNew("New Map", 12, 10)}
-          className="mt-2 w-full px-2 py-1.5 rounded-md border border-white/15 hover:border-orange-400/60 text-xs"
+          className="mt-2 w-full px-2 py-1.5 rounded-xs border border-white/15 hover:border-orange-400/60 text-xs"
         >
           + New Map
         </button>
@@ -76,32 +76,32 @@ export default function MapManagerPanel({
           <input
             value={activeMap.name}
             onChange={(e) => onRename(activeMap.id, e.target.value)}
-            className="bg-neutral-800 border border-white/15 rounded-md px-2 py-1.5 text-xs outline-none focus:border-orange-400"
+            className="bg-neutral-800 border border-white/15 rounded-xs px-2 py-1.5 text-xs outline-none focus:border-orange-400"
           />
 
           <div className="flex items-center gap-2">
-            <label className="text-[11px] text-neutral-400 w-10">Cols</label>
+            <label className="text-xs text-neutral-400 w-10">Cols</label>
             <input
               type="number"
               min={1}
               max={60}
               value={cols}
               onChange={(e) => setCols(Number(e.target.value))}
-              className="w-16 bg-neutral-800 border border-white/15 rounded-md px-2 py-1 text-xs"
+              className="w-16 bg-neutral-800 border border-white/15 rounded-xs px-2 py-1 text-xs"
             />
-            <label className="text-[11px] text-neutral-400 w-10">Rows</label>
+            <label className="text-xs text-neutral-400 w-10">Rows</label>
             <input
               type="number"
               min={1}
               max={60}
               value={rows}
               onChange={(e) => setRows(Number(e.target.value))}
-              className="w-16 bg-neutral-800 border border-white/15 rounded-md px-2 py-1 text-xs"
+              className="w-16 bg-neutral-800 border border-white/15 rounded-xs px-2 py-1 text-xs"
             />
           </div>
           <button
             onClick={() => onResize(cols, rows)}
-            className="px-2 py-1.5 rounded-md border border-white/15 hover:border-orange-400/60 text-xs"
+            className="px-2 py-1.5 rounded-xs border border-white/15 hover:border-orange-400/60 text-xs"
           >
             Resize Grid
           </button>
@@ -109,25 +109,25 @@ export default function MapManagerPanel({
           <div className="grid grid-cols-2 gap-2 mt-1">
             <button
               onClick={() => onDuplicate(activeMap.id)}
-              className="px-2 py-1.5 rounded-md border border-white/15 hover:border-orange-400/60 text-xs"
+              className="px-2 py-1.5 rounded-xs border border-white/15 hover:border-orange-400/60 text-xs"
             >
               Duplicate
             </button>
             <button
               onClick={() => onDelete(activeMap.id)}
-              className="px-2 py-1.5 rounded-md border border-red-500/40 text-red-400 hover:bg-red-500/10 text-xs"
+              className="px-2 py-1.5 rounded-xs border border-red-500/40 text-red-400 hover:bg-red-500/10 text-xs"
             >
               Delete
             </button>
             <button
               onClick={onExport}
-              className="px-2 py-1.5 rounded-md border border-white/15 hover:border-orange-400/60 text-xs"
+              className="px-2 py-1.5 rounded-xs border border-white/15 hover:border-orange-400/60 text-xs"
             >
               Export JSON
             </button>
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="px-2 py-1.5 rounded-md border border-white/15 hover:border-orange-400/60 text-xs"
+              className="px-2 py-1.5 rounded-xs border border-white/15 hover:border-orange-400/60 text-xs"
             >
               Import JSON
             </button>

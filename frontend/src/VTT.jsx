@@ -21,6 +21,8 @@ export default function VTTPage() {
     deleteMap,
     resizeGrid,
     setTerrain,
+    addDoor,
+    removeDoor,
     addToken,
     updateToken,
     moveToken,
@@ -35,6 +37,8 @@ export default function VTTPage() {
   const [paintLayer, setPaintLayer] = useState("obstacle");
   const [elevationBrush, setElevationBrush] = useState("normal");
   const [obstacleBrush, setObstacleBrush] = useState("none");
+  const [doorType, setDoorType] = useState("standard");
+  const [doorState, setDoorState] = useState("closed");
   const [addClassKey, setAddClassKey] = useState(CLASS_KEYS[0]);
   const [addName, setAddName] = useState("");
   const [addColor, setAddColor] = useState(DEFAULT_FRIENDLY_COLOR);
@@ -73,6 +77,8 @@ export default function VTTPage() {
       moveToken(selectedTokenId, q, r);
     }
   };
+
+  const handleDoorAdd = (a, b) => addDoor(a, b, doorType, doorState);
 
   const handleTokenClick = (tokenId) => {
     if (mode === "line") {
@@ -113,14 +119,19 @@ export default function VTTPage() {
             mode={mode}
             selectedTokenId={selectedTokenId}
             showRangeOverlay={showRangeOverlay}
+            doors={Array.isArray(activeMap.doors) ? activeMap.doors : []}
             onHexClick={handleHexClick}
+            onDoorAdd={handleDoorAdd}
+            onDoorRemove={removeDoor}
+            doorType={doorType}
+            doorState={doorState}
             onTokenClick={handleTokenClick}
           />
         )}
       </div>
 
       <div className="absolute top-24 left-4 z-10 w-72 max-h-[calc(100%-7rem)] overflow-y-auto flex flex-col gap-4 pointer-events-none [&>*]:pointer-events-auto">
-        <div className="flex flex-col gap-4 p-4 bg-neutral-900/80 border border-white/10 rounded-xs text-white text-sm font-mono">
+        <div className="flex flex-col gap-4 p-4 bg-gradient-to-t from-neutral-800 to-neutral-900 border border-l-4 border-l-orange-500 border-white/10 rounded-xs text-white text-sm font-mono">
           <MapManagerPanel
             maps={maps}
             activeMap={activeMap}
@@ -143,6 +154,10 @@ export default function VTTPage() {
               setElevationBrush={setElevationBrush}
               obstacleBrush={obstacleBrush}
               setObstacleBrush={setObstacleBrush}
+              doorType={doorType}
+              setDoorType={setDoorType}
+              doorState={doorState}
+              setDoorState={setDoorState}
               addClassKey={addClassKey}
               setAddClassKey={setAddClassKey}
               addName={addName}

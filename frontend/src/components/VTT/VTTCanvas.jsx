@@ -9,6 +9,8 @@ import {
   hexesInRadius,
   rangeBand,
   generateRectGrid,
+  nearestVertex,
+  distanceToSegment,
 } from "../../utils/hexGrid";
 import {
   GROUND_COLOR,
@@ -23,6 +25,9 @@ import {
   LOW_GROUND_COLOR,
   LOW_GROUND_FILL_ALPHA,
   normalizeHexState,
+  DOOR_TYPES,
+  DOOR_STATES,
+  normalizeDoor,
 } from "./terrain";
 import {
   getTokenBadge,
@@ -177,6 +182,34 @@ function fillHexHatch(ctx, cx, cy, size, zoom, color, { alpha = 0.7, lineWidthRa
   ctx.restore();
 }
 
+// Draws one door: a straight line between two world-space points (hex
+// vertices), as 1-3 parallel lines. Extra lines are offset sideways
+// (perpendicular to the door, in world space) so the set stays centered on
+// the door's own line, and each runs the door's full length.
+const DOOR_LINE_SPACING = 0.13; // world units between parallel lines
+function drawDoor(ctx, camera, a, b, lineCount, color, alpha = 1) {
+  const dx = b[0] - a[0];
+  const dz = b[1] - a[1];
+  const len = Math.hypot(dx, dz) || 1;
+  const nx = -dz / len;
+  const nz = dx / len;
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = Math.max(2, camera.zoom * 0.05);
+  ctx.lineCap = "butt";
+  for (let i = 0; i < lineCount; i++) {
+    const off = (i - (lineCount - 1) / 2) * DOOR_LINE_SPACING;
+    const [x1, y1] = project(a[0] + nx * off, a[1] + nz * off, camera);
+    const [x2, y2] = project(b[0] + nx * off, b[1] + nz * off, camera);
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
 export default function VTTCanvas({
   map,
   tokens,
@@ -184,7 +217,12 @@ export default function VTTCanvas({
   mode,
   selectedTokenId,
   showRangeOverlay,
+  doors,
   onHexClick,
+  onDoorAdd,
+  onDoorRemove,
+  doorType,
+  doorState,
   onTokenClick,
 }) {
   const canvasRef = useRef(null);
@@ -192,6 +230,10 @@ export default function VTTCanvas({
   const [camera, setCamera] = useState({ x: 0, y: 0, zoom: 55 });
   const [size, setSize] = useState({ width: 0, height: 0 });
   const [hoveredHex, setHoveredHex] = useState(null);
+  // Door tool: the first vertex clicked (world coords), waiting for the
+  // second, and the vertex currently under the pointer for the preview.
+  const [doorStart, setDoorStart] = useState(null);
+  const [hoveredVertex, setHoveredVertex] = useState(null);
   const [badgeVersion, setBadgeVersion] = useState(0);
   const dragState = useRef(null);
 
@@ -383,6 +425,33 @@ export default function VTTCanvas({
     strokeHexBorderBatch(ctx, tallCoverPath, camera.zoom, TALL_COVER_BORDER_COLOR, false);
     strokeHexBorderBatch(ctx, softWallPath, camera.zoom, WALL_FILL_COLOR, false);
 
+    for (const door of doors || []) {
+      const { type, state } = normalizeDoor(door);
+      drawDoor(ctx, camera, door.a, door.b, DOOR_TYPES[type].lines, DOOR_STATES[state].color);
+    }
+    if (mode === "door" && hoveredVertex) {
+      if (doorStart) {
+        drawDoor(
+          ctx, camera, doorStart, hoveredVertex,
+          DOOR_TYPES[normalizeDoor({ type: doorType }).type].lines,
+          DOOR_STATES[normalizeDoor({ state: doorState }).state].color,
+          0.6
+        );
+      }
+      const [vx, vy] = project(hoveredVertex[0], hoveredVertex[1], camera);
+      ctx.fillStyle = "#ffffff";
+      ctx.beginPath();
+      ctx.arc(vx, vy, Math.max(3, camera.zoom * 0.07), 0, Math.PI * 2);
+      ctx.fill();
+    }
+    if (mode === "door" && doorStart) {
+      const [sx, sy] = project(doorStart[0], doorStart[1], camera);
+      ctx.fillStyle = "#facc15";
+      ctx.beginPath();
+      ctx.arc(sx, sy, Math.max(4, camera.zoom * 0.09), 0, Math.PI * 2);
+      ctx.fill();
+    }
+
     // Sightline/suppression lines between token pairs — colored by the
     // source token, drawn under the token badges so the badges still read
     // clearly at each end.
@@ -474,7 +543,7 @@ export default function VTTCanvas({
       ctx.textAlign = "center";
       ctx.fillText(token.name, cx, cy - badgeSize / 2 - 4);
     }
-  }, [map, tokens, lines, camera, size, mode, selectedTokenId, showRangeOverlay, hoveredHex, badgeVersion]);
+  }, [map, tokens, lines, camera, size, mode, selectedTokenId, showRangeOverlay, hoveredHex, hoveredVertex, doorStart, doorType, doorState, doors, badgeVersion]);
 
   const getHexUnderPointer = (e) => {
     const rect = canvasRef.current.getBoundingClientRect();
@@ -482,6 +551,33 @@ export default function VTTCanvas({
     const py = e.clientY - rect.top;
     const [wx, wz] = unproject(px, py, camera);
     return worldToAxial(wx, wz, HEX_SIZE);
+  };
+
+  const getWorldUnderPointer = (e) => {
+    const rect = canvasRef.current.getBoundingClientRect();
+    return unproject(e.clientX - rect.left, e.clientY - rect.top, camera);
+  };
+
+  const getVertexUnderPointer = (e) => {
+    const [wx, wz] = getWorldUnderPointer(e);
+    return nearestVertex(wx, wz);
+  };
+
+  // Removes the door whose line is nearest the pointer, if one is close
+  // enough (in world units) to count as a click on it.
+  const DOOR_ERASE_RADIUS = 0.35;
+  const eraseDoorAtPointer = (e) => {
+    const p = getWorldUnderPointer(e);
+    let nearest = null;
+    let nearestDist = DOOR_ERASE_RADIUS;
+    for (const door of doors || []) {
+      const dist = distanceToSegment(p, door.a, door.b);
+      if (dist < nearestDist) {
+        nearest = door;
+        nearestDist = dist;
+      }
+    }
+    if (nearest) onDoorRemove?.(nearest.id);
   };
 
   const getTokenUnderPointer = (e) => {
@@ -508,6 +604,13 @@ export default function VTTCanvas({
   // pointer, deduping against the last hex painted this drag so a slow
   // drag across one hex doesn't spam setTerrain calls.
   const paintAtPointer = (e, erase) => {
+    if (mode === "door") {
+      // Only right-click reaches here; a right-click also cancels a
+      // half-placed door.
+      setDoorStart(null);
+      eraseDoorAtPointer(e);
+      return;
+    }
     const hex = getHexUnderPointer(e);
     const key = hexKey(hex.q, hex.r);
     const drag = dragState.current;
@@ -521,9 +624,13 @@ export default function VTTCanvas({
   const handlePointerDown = (e) => {
     // Right-click erases (paints normal ground) while in paint mode
     // instead of panning; middle-click and shift-click still pan.
-    const isEraseButton = mode === "paint" && e.button === 2;
+    const isBrushMode = mode === "paint" || mode === "door";
+    const isEraseButton = isBrushMode && e.button === 2;
     const isPanButton = !isEraseButton && (e.button === 2 || e.button === 1 || e.shiftKey);
-    const isPaintButton = mode === "paint" && !isPanButton && (e.button === 0 || isEraseButton);
+    // Door mode places doors with two clicks (see handlePointerUp), so
+    // only its right-click erase goes through the paint path.
+    const isPaintButton =
+      !isPanButton && (mode === "paint" ? e.button === 0 || isEraseButton : mode === "door" && isEraseButton);
 
     dragState.current = {
       panning: isPanButton,
@@ -560,6 +667,9 @@ export default function VTTCanvas({
     if (mode === "paint") {
       const hex = getHexUnderPointer(e);
       setHoveredHex((prev) => (prev && prev.q === hex.q && prev.r === hex.r ? prev : hex));
+    } else if (mode === "door") {
+      const v = getVertexUnderPointer(e);
+      setHoveredVertex((prev) => (prev && prev[0] === v[0] && prev[1] === v[1] ? prev : v));
     }
   };
 
@@ -587,9 +697,36 @@ export default function VTTCanvas({
       // this hex.
     }
 
+    if (mode === "door") {
+      const v = getVertexUnderPointer(e);
+      if (!doorStart) {
+        setDoorStart(v);
+      } else if (doorStart[0] === v[0] && doorStart[1] === v[1]) {
+        setDoorStart(null);
+      } else {
+        onDoorAdd?.(doorStart, v);
+        setDoorStart(null);
+      }
+      return;
+    }
+
     const hex = getHexUnderPointer(e);
     onHexClick?.(hex.q, hex.r);
   };
+
+  // Leaving door mode, or pressing Escape, drops a half-placed door.
+  useEffect(() => {
+    if (mode !== "door") {
+      setDoorStart(null);
+      setHoveredVertex(null);
+      return;
+    }
+    const onKey = (e) => {
+      if (e.key === "Escape") setDoorStart(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [mode]);
 
   // React's synthetic onWheel listener is passive by default, so
   // preventDefault() inside it throws — attach a native listener instead.
@@ -621,11 +758,14 @@ export default function VTTCanvas({
       <canvas
         ref={canvasRef}
         className="w-full h-full touch-none"
-        style={{ cursor: mode === "paint" ? "crosshair" : "default" }}
+        style={{ cursor: mode === "paint" || mode === "door" ? "crosshair" : "default" }}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
-        onPointerLeave={() => setHoveredHex(null)}
+        onPointerLeave={() => {
+          setHoveredHex(null);
+          setHoveredVertex(null);
+        }}
         onContextMenu={(e) => e.preventDefault()}
       />
     </div>
