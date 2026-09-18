@@ -213,7 +213,7 @@ const TerminalPage = () => {
               subtitle="TACMAP"
               icon="♖"
               onHover={handleHover}
-              link={"/CALLICOM/ActionEcon"}
+              link={"/CALLICOM/VTT"}
             />
           </motion.div>
         </div>
