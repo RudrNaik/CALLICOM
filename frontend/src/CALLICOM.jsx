@@ -201,6 +201,21 @@ const TerminalPage = () => {
               />
             )}
           </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3, delay: 0.8 }}
+            className="flicker hidden h-full md:block"
+          >
+            <TerminalPanel
+              title="Virtual Tabletop"
+              subtitle="TACMAP"
+              icon="♖"
+              onHover={handleHover}
+              link={"/CALLICOM/ActionEcon"}
+            />
+          </motion.div>
         </div>
 
         <div className="hidden h-full md:block">
