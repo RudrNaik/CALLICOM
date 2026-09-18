@@ -46,6 +46,8 @@ export default function VTTPage() {
   const [addScale, setAddScale] = useState(DEFAULT_FRIENDLY_SCALE);
   const [selectedTokenId, setSelectedTokenId] = useState(null);
   const [showRangeOverlay, setShowRangeOverlay] = useState(true);
+  const [leftOpen, setLeftOpen] = useState(true);
+  const [rightOpen, setRightOpen] = useState(true);
 
   const tokensById = useMemo(() => new Map(allTokens.map((t) => [t.id, t])), [allTokens]);
 
@@ -130,13 +132,29 @@ export default function VTTPage() {
         )}
       </div>
 
-      <div className="absolute top-24 left-4 z-10 w-72 max-h-[calc(100%-7rem)] overflow-y-auto flex flex-col gap-4 pointer-events-none [&>*]:pointer-events-auto">
+      <div
+        className={`absolute top-24 left-4 z-10 w-72 transition-transform duration-300 ${
+          leftOpen ? "translate-x-0" : "-translate-x-[calc(100%+1rem)]"
+        }`}
+      >
+        <button
+          onClick={() => setLeftOpen((o) => !o)}
+          title={leftOpen ? "Collapse panel" : "Expand panel"}
+          className="absolute top-0 left-full z-20 px-1.5 py-3 rounded-r-xs border border-l-0 border-white/15 bg-neutral-900 hover:border-orange-400/60 text-xs text-orange-400"
+        >
+          {leftOpen ? "◀" : "▶"}
+        </button>
+        <div className="max-h-[calc(100vh-7rem)] overflow-y-auto flex flex-col gap-4">
         <div className="flex flex-col gap-4 p-4 bg-gradient-to-t from-neutral-800 to-neutral-900 border border-l-4 border-l-orange-500 border-white/10 rounded-xs text-white text-sm font-mono">
           <MapManagerPanel
             maps={maps}
             activeMap={activeMap}
             onNew={newMap}
-            onLoad={loadMap}
+            onLoad={(id) => {
+              loadMap(id);
+              setLeftOpen(false);
+              setRightOpen(false);
+            }}
             onRename={renameMap}
             onDuplicate={duplicateMap}
             onDelete={deleteMap}
@@ -178,9 +196,22 @@ export default function VTTPage() {
             />
           </div>
         </div>
+        </div>
       </div>
 
-      <div className="absolute top-24 right-4 z-10 w-72 max-h-[calc(100%-7rem)] overflow-y-auto pointer-events-none [&>*]:pointer-events-auto">
+      <div
+        className={`absolute top-24 right-4 z-10 w-72 transition-transform duration-300 ${
+          rightOpen ? "translate-x-0" : "translate-x-[calc(100%+1rem)]"
+        }`}
+      >
+        <button
+          onClick={() => setRightOpen((o) => !o)}
+          title={rightOpen ? "Collapse panel" : "Expand panel"}
+          className="absolute top-0 right-full z-20 px-1.5 py-3 rounded-l-xs border border-r-0 border-white/15 bg-neutral-900 hover:border-orange-400/60 text-xs text-orange-400"
+        >
+          {rightOpen ? "▶" : "◀"}
+        </button>
+        <div className="max-h-[calc(100vh-7rem)] overflow-y-auto">
         <TokenListPanel
           friendlies={activeMap?.friendlies || []}
           enemies={activeMap?.enemies || []}
@@ -193,6 +224,7 @@ export default function VTTPage() {
           }}
           onDeselect={() => setSelectedTokenId(null)}
         />
+        </div>
       </div>
     </div>
   );

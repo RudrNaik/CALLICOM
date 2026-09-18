@@ -15,6 +15,7 @@ export default function MapManagerPanel({
   const fileInputRef = useRef(null);
   const [cols, setCols] = useState(activeMap?.cols ?? 12);
   const [rows, setRows] = useState(activeMap?.rows ?? 10);
+  const [mapsOpen, setMapsOpen] = useState(!activeMap);
 
   useEffect(() => {
     if (activeMap) {
@@ -42,14 +43,22 @@ export default function MapManagerPanel({
           Right/middle-click or shift-drag to pan, scroll to zoom.
         </p>
         <br></br>
-        <p className="text-xs uppercase tracking-widest text-orange-400 mb-2">
-          Maps
-        </p>
+        <button
+          onClick={() => setMapsOpen((o) => !o)}
+          className="flex w-full items-center justify-between text-xs uppercase tracking-widest text-orange-400 mb-2"
+        >
+          <span>Maps{!mapsOpen && activeMap ? `: ${activeMap.name}` : ""}</span>
+          <span>{mapsOpen ? "▾" : "▸"}</span>
+        </button>
+        {mapsOpen && (
         <div className="flex flex-col gap-1 max-h-40 overflow-y-auto">
           {maps.map((m) => (
             <button
               key={m.id}
-              onClick={() => onLoad(m.id)}
+              onClick={() => {
+                onLoad(m.id);
+                setMapsOpen(false);
+              }}
               className={`text-left px-2 py-1.5 rounded-xs border text-xs truncate ${
                 activeMap?.id === m.id
                   ? "border-orange-400 bg-orange-400/10"
@@ -60,12 +69,15 @@ export default function MapManagerPanel({
             </button>
           ))}
         </div>
+        )}
+        {mapsOpen && (
         <button
           onClick={() => onNew("New Map", 12, 10)}
           className="mt-2 w-full px-2 py-1.5 rounded-xs border border-white/15 hover:border-orange-400/60 text-xs"
         >
           + New Map
         </button>
+        )}
       </div>
 
       {activeMap && (
