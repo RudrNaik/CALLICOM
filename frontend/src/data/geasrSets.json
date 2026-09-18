@@ -425,7 +425,7 @@
                         "id": "burrowingBeaver_burrowingMunitionsCarrier",
                         "name": "Burrowing Munitions Carrier",
                         "slot": "Vest",
-                        "tier": null,
+                        "tier": 4,
                         "flavor": "Replaces Rocket Launchers conventional High Explosive munitions with slow firing, burrowing munitions that tunnel through armour and cover before shooting out steel ball bearings in a 4 hex diagonal blast radius. Effective at clearing out dug in enemies and killing unprotected vehicle crews without excessive damage to the vehicle's structure.",
                         "effect": "Replaces HE rockets for Unguided Rocket with burrowing munitions (8 damage, x4 hex of diagonal damage) that can burrow into walls and enemy vehicles to kill infantry on the other side. Has a maximum of medium range, defender countermeasures get +1 dice when defending against it."
                     },
@@ -433,7 +433,7 @@
                         "id": "burrowingBeaver_enhancedTrajectoryTrackerOptic",
                         "name": "Enhanced Trajectory Tracker Optic",
                         "slot": "Headgear",
-                        "tier": null,
+                        "tier": 3,
                         "flavor": "State of the art helmet mounted optical device that utilises predictive trajectory patterns to allow the user to more accurately hit targets at further distances and or target weak points with greater ease.",
                         "effect": "Adds a +1 effect to long range and for extreme long range shots on unguided rocket launchers, or -1 to enemy alertness checks when using wire guided or guided launchers."
                     },
@@ -441,7 +441,7 @@
                         "id": "burrowingBeaver_beaverGripGloves",
                         "name": "Beaver Grip Gloves",
                         "slot": "Gloves",
-                        "tier": null,
+                        "tier": 2,
                         "flavor": "Made with a synthetic gel layer cushioning, and a durable rubberised leather outer coating, Beaver Grip Gloves give its users a firm grip that makes every shot count.",
                         "effect": "When aiming a heavy weapon, the first round of aiming is free."
                     },
@@ -449,9 +449,56 @@
                         "id": "burrowingBeaver_shockAbsorbingGel",
                         "name": "Shock Absorbing Gel",
                         "slot": "Equipment",
-                        "tier": null,
+                        "tier": 1,
                         "flavor": "A high tech shock absorbing gel applied to the back of armour plates designed to minimise shock from ballistics and blunt force trauma.",
                         "effect": "Allows the user to Brace when prone and outside of cover."
+                    }
+                ]
+            },
+            {
+                "id": "puntingPanther",
+                "name": "Punting Panther",
+                "manufacturer": "GC_AUS",
+                "pieces": [
+                    {
+                        "id": "puntingPanther_fulirLwHelmet",
+                        "name": "F/ULIR LW Helmet",
+                        "slot": "Headgear",
+                        "tier": 1,
+                        "flavor": "Modified lightweight combat helmet with miniature Forward/Upward-Looking Infra-Red sensors and a raised front lip for greater above-horizon awareness and aircraft detection.",
+                        "effect": "Gain a +1 bonus to defensive tests against aircraft or airborne drones."
+                    },
+                    {
+                        "id": "puntingPanther_lifterGloves",
+                        "name": "Lifter Gloves",
+                        "slot": "Gloves",
+                        "tier": 3,
+                        "flavor": "Just think of your Anti-Material Rifle or Railgun as another barbell. Weightlifting gloves made to military toughness and lifespan requirements.",
+                        "effect": "When aiming against aircraft subsystems, take a (3-[Body]) malus (minimum -1) instead of removing a die."
+                    },
+                    {
+                        "id": "puntingPanther_ultraLargeDumpPouch",
+                        "name": "Ultra-Large Dump Pouch",
+                        "slot": "Vest",
+                        "tier": 2,
+                        "flavor": "Carry more ultra-heavy rounds in an ultra-large dump pouch.",
+                        "effect": "The first two uses of your HVAM or AMR are free."
+                    },
+                    {
+                        "id": "puntingPanther_extremeLightPullDualStageTrigger",
+                        "name": "Extreme Light-pull Dual Stage Trigger",
+                        "slot": "Equipment",
+                        "tier": 4,
+                        "flavor": "Retrofit a dual-stage trigger with low take-up and minimal break weight, allowing you to - only in a pinch! - fire your Anti-Material Rifle as fast as you need.",
+                        "effect": "If you use Shoot with your Anti-Material Rifle or HVAM Railgun as your standard action, you may consume either of the following to Shoot your Anti-Material Rifle or HVAM Railgun again: Your Movement phase for the same turn, or your bonus action for the same turn and the next turn. Ammo is consumed as per normal rules. Suppression effects from HVAM Railgun stack."
+                    },
+                    {
+                        "id": "puntingPanther_exactoHeapSdp",
+                        "name": "EXACTO-HEAP-SDP",
+                        "slot": "Patch",
+                        "tier": 0,
+                        "flavor": "A patch doubling as a round holder for a single, custom-worked round, with a saboted core bullet that itself is made up of dual tandem-stacked penetrators (tungsten carbide front, tungsten alloy rear), spaced by a small spark-triggered HE charge, and microelectronic spin-guidance controls. Your almost literal magic bullet!",
+                        "effect": "Gain an additional Anti-Material Rifle/HVAM Railgun ammo; this specific ammo gains AP and SMRT effects as per Sharpshooter's Special Ammo rules, and requires a [Deploy] to load. This additional ammo cannot be [Resupplied] in-mission."
                     }
                 ]
             }
@@ -760,21 +807,21 @@
             {
                 "id": "iceColdCoder",
                 "name": "Ice Cold Coder",
-                "manufacturer": null,
+                "manufacturer": "MSMK",
                 "pieces": [
                     {
                         "id": "iceColdCoder_improvedTracebackScrambler",
                         "name": "Improved Traceback Scrambler",
                         "slot": "Headgear",
-                        "tier": null,
+                        "tier": 2,
                         "flavor": "",
-                        "effect": "You may make a Tech check when initiating Cooldown; on a 6+ roll, reduce your HEAT by 2 instead of 1. On a Fumble, raise your HEAT by 1 instead."
+                        "effect": "You may make a Tech test when initiating Cooldown; on a 5+ roll, reduce your HEAT by 2 instead of 1. If less than 3, you don't lose HEAT but gain 1 HEAT instead."
                     },
                     {
                         "id": "iceColdCoder_macroButtonGauntlets",
                         "name": "Macro-Button Gauntlets",
                         "slot": "Gloves",
-                        "tier": null,
+                        "tier": 3,
                         "flavor": "",
                         "effect": "You may [Deploy] 2 Hacks per turn, even if either or both would normally end your turn. When doing both hacks, you also consume your standard action to do so, and you take an additional -1 trace malus to both Hacks."
                     },
@@ -782,25 +829,119 @@
                         "id": "iceColdCoder_meshAggregatorAntennas",
                         "name": "Mesh Aggregator Antennas",
                         "slot": "Vest",
-                        "tier": null,
+                        "tier": 1,
                         "flavor": "",
-                        "effect": "Your Counterspell Infiltration Device now benefits all friendlies within three hexes of your position."
+                        "effect": "Your Counterspell Infiltration Device now benefits all friendlies within four hexes of your position."
                     },
                     {
                         "id": "iceColdCoder_emergencyClockBoostManagement",
                         "name": "Emergency Clock Boost Management",
                         "slot": "Equipment",
-                        "tier": null,
+                        "tier": 4,
                         "flavor": "",
-                        "effect": "If inflicted with Burnout, your Thinkpad takes 2 turns to become unusable from the overclock frying its internals. In these 2 turns, gain +1 bonus to cyberwarfare-related Tech rolls, but gain +1 HEAT from each roll."
+                        "effect": "If inflicted with Burnout, your Thinkpad takes 3 turns to become unusable from the overclock frying its internals. In these 3 turns, gain +1 bonus to cyberwarfare-related Tech rolls, but gain +1 HEAT from each roll."
                     },
                     {
                         "id": "iceColdCoder_blackwallCredentials",
                         "name": "Blackwall Credentials",
                         "slot": "Patch",
-                        "tier": null,
+                        "tier": 0,
                         "flavor": "",
                         "effect": "You no longer take the minimum +1 HEAT gain from non-Cooldown Hacks. Winning opposed cyberwarfare tests as the defender now also reduces your HEAT by 1 each time."
+                    }
+                ]
+            },
+            {
+                "id": "setCaptureRecover",
+                "name": "Set, Capture, Recover",
+                "manufacturer": "GC_AUS",
+                "pieces": [
+                    {
+                        "id": "setCaptureRecover_silentWhispererGlasses",
+                        "name": "Silent Whisperer Glasses",
+                        "slot": "Headgear",
+                        "tier": 2,
+                        "flavor": "",
+                        "effect": "Your set Traps will Ping any caught enemies to you upon their activation."
+                    },
+                    {
+                        "id": "setCaptureRecover_iffHypnosisGloves",
+                        "name": "IFF Hypnosis Gloves",
+                        "slot": "Gloves",
+                        "tier": 3,
+                        "flavor": "",
+                        "effect": "As a bonus action, you may attempt to “requisition” an un-triggered enemy Trap on an adjacent hex by making a Tinker test against a threshold of 4. On success, the Trap now acts as if you planted it, and you (or any friendlies) may pick it up as a free action if you (or they) carry the same type of Trap; on a failure, the Trap triggers on you point-blank."
+                    },
+                    {
+                        "id": "setCaptureRecover_supercapacitorLinkedStaticWickSet",
+                        "name": "Supercapacitor-linked Static Wick Set",
+                        "slot": "Vest",
+                        "tier": 1,
+                        "flavor": "",
+                        "effect": "You no longer gain a flesh wound upon being tased by Shock Sticks; all other effects still apply. If DSCS Launcher Gauntlet is also equipped, any set Gadget at the point of tasing gains [Electric]."
+                    },
+                    {
+                        "id": "setCaptureRecover_dscsLauncher",
+                        "name": "DSCS Launcher",
+                        "slot": "Equipment",
+                        "tier": 4,
+                        "flavor": "",
+                        "effect": "As a [Deploy], you may set a Trap Gadget in the launcher; then, you may subsequently [Shoot] the Trap at an enemy or a valid point using an [M-wep] test against a threshold of 3. You can only fire the trap to hexes within line of sight and within medium range. On a failure with the [Shoot] roll, the Gadget will be dropped on the ground; if the Gadget is [Explosive], it will explode."
+                    },
+                    {
+                        "id": "setCaptureRecover_stormsBayonet",
+                        "name": "Storm’s Bayonet",
+                        "slot": "Patch",
+                        "tier": 0,
+                        "flavor": "",
+                        "effect": "You may utilize a set Gadget in the DSCS Launcher in a [Melee] attack; if the attack goes through, the set Gadget is triggered upon the defender. If the Gadget is [Explosive], this does mean a point-blank explosion."
+                    }
+                ]
+            },
+            {
+                "id": "loveOfTheBoom",
+                "name": "Love of the Boom",
+                "manufacturer": "GC_STL",
+                "pieces": [
+                    {
+                        "id": "loveOfTheBoom_blastProofGoggleGlasses",
+                        "name": "Blast-Proof Goggle-Glasses",
+                        "slot": "Headgear",
+                        "tier": 1,
+                        "flavor": "",
+                        "effect": "Gain a +1 to [Notice] rolls against enemy [Explosive] Traps."
+                    },
+                    {
+                        "id": "loveOfTheBoom_strongarmSleeves",
+                        "name": "Strongarm Sleeves",
+                        "slot": "Gloves",
+                        "tier": 3,
+                        "flavor": "",
+                        "effect": "If a Grenade or [Explosive] Trap lands directly on or on an adjacent hex to you, you may choose to roll Athletics instead of Acrobatics as your defensive stat; if successful, you catch and [Throw] back the Grenade or [Explosive] Trap at the would-be attacker as a free action. You can be harmed by suppression when doing this."
+                    },
+                    {
+                        "id": "loveOfTheBoom_oversizedReplacementPouches",
+                        "name": "Oversized Replacement Pouches",
+                        "slot": "Vest",
+                        "tier": 3,
+                        "flavor": "",
+                        "effect": "For every standard grenade not equipped, you may choose to gain a free use of your selected trap."
+                    },
+                    {
+                        "id": "loveOfTheBoom_reverseTripwireProtocol",
+                        "name": "Reverse Tripwire Protocol",
+                        "slot": "Equipment",
+                        "tier": 4,
+                        "flavor": "",
+                        "effect": "Whenever your Counterspell Infiltration Device prevents an enemy trap from being triggered, make an opposed Tech roll against them; if successful, the attempted hostile attacker is Pinged."
+                    },
+                    {
+                        "id": "loveOfTheBoom_fourExplosionClover",
+                        "name": "Four-Explosion Clover",
+                        "slot": "Patch",
+                        "tier": 0,
+                        "flavor": "",
+                        "effect": "Once per mission, if an [Explosive] would cause you to go into [System Shock] or [Instant Death], you instead just take one Flesh Wound."
                     }
                 ]
             }
@@ -818,7 +959,7 @@
                         "id": "soheisDojo_increasedLethalityGloves",
                         "name": "Increased Lethality Gloves",
                         "slot": "Gloves",
-                        "tier": null,
+                        "tier": 4,
                         "flavor": "Competition grade pistol shooting gloves that give the user added dexterity and support when manipulating off handed items.",
                         "effect": "Allows you to do a melee attack with your shove action. Upon success of both, you push the target off and can use your secondary weapon to shoot them."
                     },
@@ -826,7 +967,7 @@
                         "id": "soheisDojo_highAlertHeadset",
                         "name": "High Alert Headset",
                         "slot": "Headgear",
-                        "tier": null,
+                        "tier": 2,
                         "flavor": "Standard military grade comms headset with aftermarket speakers with heightened surround sound audio detection, giving the user a greatly heightened sense of awareness.",
                         "effect": "When an enemy shoots at you from Close/Medium range, roll an acrobatics check to try and dodge their shot. If the MOS is +2 or higher you successfully dodge the attack. If you fail, roll armour as normal."
                     },
@@ -834,25 +975,25 @@
                         "id": "soheisDojo_lightweightPlates",
                         "name": "Lightweight Plates",
                         "slot": "Vest",
-                        "tier": null,
+                        "tier": 1,
                         "flavor": "State of the art composite ballistic plates that retain level IV protection for a fraction of the weight.",
-                        "effect": "Removes malice for sprinting and shooting."
+                        "effect": "Removes malus for sprinting and shooting."
                     },
                     {
-                        "id": "soheisDojo_fierySpeedloader",
-                        "name": "Fiery Speed loader",
+                        "id": "soheisDojo_windPunchSpeedloader",
+                        "name": "Wind Punch Speed loader",
                         "slot": "Equipment",
-                        "tier": null,
-                        "flavor": "A 3 Gun competition shotgun belt with a specially modified shell holder for x4 'dragons breath' incendiary shells.",
-                        "effect": "If using a shotgun, burn a bonus action to reload an incendiary shell into the chamber. Incendiary shell reduces damage to 4 but adds ignite upon a successful hit on a target."
+                        "tier": 3,
+                        "flavor": "A 3 Gun competition shotgun belt with a specially modified shell holder for x4 'Wind Punch' shells.",
+                        "effect": "If using a shotgun, burn a bonus action to reload a Wind Punch shell into the chamber. Wind Punch shells cause the effects of a 'shove' action in close range if the roll is successful. If used on a target when in an adjacent hex you enforce the effects of a 'trip' action and knock them down upon a successful roll."
                     },
                     {
                         "id": "soheisDojo_koiCoin",
                         "name": "Koi Coin",
                         "slot": "Patch",
-                        "tier": null,
+                        "tier": 0,
                         "flavor": "A complimentary coin from the Koi Precision Plant in Osaka as a token of appreciation for your continued brand loyalty.",
-                        "effect": "When firing the last shot from a magazine, roll acrobatics: 1-3 Fail, no effect. 4-5 Free reload. 6 Reload and gain another shooting action with a -1 malice."
+                        "effect": "When firing the last shot from a magazine, roll acrobatics: \n1-3 Fail, no effect. \n4-5 Free reload. \n6 Reload and gain another shooting action with a -1 malus."
                     }
                 ]
             }

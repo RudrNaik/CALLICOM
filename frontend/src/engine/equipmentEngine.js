@@ -392,7 +392,7 @@ export const GEAR_TIER_PRICES = {
  * @returns {number}
  */
 export const getGearPieceCost = (piece) =>
-  piece?.tier == null ? 0 : (GEAR_TIER_PRICES[piece.tier] ?? 0);
+  piece?.tier == null ? 9999999999999 : (GEAR_TIER_PRICES[piece.tier] ?? 0);
 
 /**
  * Looks up a gear piece by id across every class's gearsets (not just one
