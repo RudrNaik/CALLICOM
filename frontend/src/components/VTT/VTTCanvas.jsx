@@ -24,7 +24,14 @@ import {
   LOW_GROUND_FILL_ALPHA,
   normalizeHexState,
 } from "./terrain";
-import { getTokenBadge, badgeCache, resolveTokenColor, tokenBadgeKey } from "./tokenBadges";
+import {
+  getTokenBadge,
+  badgeCache,
+  resolveTokenColor,
+  tokenBadgeKey,
+  preloadModifierIcons,
+  getModifierImage,
+} from "./tokenBadges";
 
 // Plain Canvas2D renderer — no WebGL/scene-graph, just imperative draw
 // calls. Drawing the whole board is O(hexes + tokens) per frame and only
@@ -221,10 +228,14 @@ export default function VTTCanvas({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map?.id, map?.cols, map?.rows, size.width, size.height]);
 
-  // Preload every badge this map's tokens need, then trigger a redraw.
+  // Preload every badge (and the modifier icons) this map's tokens need,
+  // then trigger a redraw.
   useEffect(() => {
     let cancelled = false;
-    Promise.all(tokens.map((t) => getTokenBadge(t.classKey, t.type, t.color))).then(() => {
+    Promise.all([
+      preloadModifierIcons(),
+      ...tokens.map((t) => getTokenBadge(t.classKey, t.type, t.color)),
+    ]).then(() => {
       if (!cancelled) setBadgeVersion((v) => v + 1);
     });
     return () => {
@@ -411,9 +422,40 @@ export default function VTTCanvas({
       const cy = cyBase - STAND_HEIGHT * camera.zoom;
       const badgeSize = HEX_SIZE * 0.95 * (token.scale || 1) * camera.zoom;
 
+      const opacity = token.opacity ?? 1;
       const img = badgeCache.get(tokenBadgeKey(token));
       if (img) {
+        ctx.save();
+        ctx.globalAlpha = opacity;
         ctx.drawImage(img, cx - badgeSize / 2, cy - badgeSize / 2, badgeSize, badgeSize);
+        ctx.restore();
+      }
+
+      // Modifier icons sit at the token's top-right, packed tightly and
+      // extending rightward from the corner so several can be active at once.
+      const modifiers = token.modifiers || [];
+      if (modifiers.length) {
+        // The badge canvas has ~8% padding around the drawn shape, so the
+        // token's visible edges are at 0.42 * badgeSize from center. Icons
+        // are trimmed to their opaque pixels and drawn at a fixed height
+        // (width follows each icon's own aspect), with their tops aligned
+        // to the token's top edge so they never rise above it.
+        const visibleHalf = badgeSize * 0.42;
+        const modHeight = badgeSize * 0.3;
+        const gap = modHeight * 0.20;
+        const top = cy - visibleHalf;
+        const leftPadding = modHeight * 0.05; // space between the token's right edge and the first icon
+        let mx = cx + visibleHalf + leftPadding;
+        ctx.save();
+        ctx.globalAlpha = opacity;
+        modifiers.forEach((key) => {
+          const m = getModifierImage(key);
+          if (!m) return;
+          const w = modHeight * (m.sw / m.sh);
+          ctx.drawImage(m.img, m.sx, m.sy, m.sw, m.sh, mx, top, w, modHeight);
+          mx += w + gap;
+        });
+        ctx.restore();
       }
 
       if (token.id === selectedTokenId) {

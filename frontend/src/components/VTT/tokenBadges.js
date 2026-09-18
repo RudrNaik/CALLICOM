@@ -6,6 +6,10 @@ import Sharpshooter from "../../assets/classIcons/Sharpshooter.png";
 import Support from "../../assets/classIcons/Support.png";
 import TechnicalEngineer from "../../assets/classIcons/Technical_Engineer.png";
 import Trapper from "../../assets/classIcons/Trapper.png";
+import EliteIcon from "../../assets/classIcons/modifiers/Elite_Icon.png";
+import ArmorIcon from "../../assets/classIcons/modifiers/Armor_Icon.png";
+import FastIcon from "../../assets/classIcons/modifiers/Fast_Icon.png";
+import RezIcon from "../../assets/classIcons/modifiers/Rez_Icon.png";
 
 export const CLASS_ICONS = {
   Combat_Engineer: CombatEngineer,
@@ -19,6 +23,56 @@ export const CLASS_ICONS = {
 };
 
 export const CLASS_KEYS = Object.keys(CLASS_ICONS);
+
+export const MODIFIER_ICONS = {
+  Elite: EliteIcon,
+  Armor: ArmorIcon,
+  Fast: FastIcon,
+  Rez: RezIcon,
+};
+
+export const MODIFIER_KEYS = Object.keys(MODIFIER_ICONS);
+
+// Each entry is { img, sx, sy, sw, sh } where the rect is the icon's opaque
+// pixel bounds — the source PNGs share one canvas size but have different
+// amounts of transparent padding, so drawing them untrimmed makes some look
+// thinner (and spaced further apart) than others.
+const modifierImages = new Map();
+function opaqueBounds(img) {
+  const w = img.naturalWidth;
+  const h = img.naturalHeight;
+  const c = document.createElement("canvas");
+  c.width = w;
+  c.height = h;
+  const cctx = c.getContext("2d", { willReadFrequently: true });
+  cctx.drawImage(img, 0, 0);
+  const data = cctx.getImageData(0, 0, w, h).data;
+  let minX = w, minY = h, maxX = -1, maxY = -1;
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      if (data[(y * w + x) * 4 + 3] > 8) {
+        if (x < minX) minX = x;
+        if (x > maxX) maxX = x;
+        if (y < minY) minY = y;
+        if (y > maxY) maxY = y;
+      }
+    }
+  }
+  if (maxX < 0) return { img, sx: 0, sy: 0, sw: w, sh: h };
+  return { img, sx: minX, sy: minY, sw: maxX - minX + 1, sh: maxY - minY + 1 };
+}
+export function preloadModifierIcons() {
+  return Promise.all(
+    MODIFIER_KEYS.map((key) =>
+      loadImage(MODIFIER_ICONS[key]).then((img) => {
+        if (!modifierImages.has(key)) modifierImages.set(key, opaqueBounds(img));
+      })
+    )
+  );
+}
+export function getModifierImage(key) {
+  return modifierImages.get(key);
+}
 
 // Enemies always render this red, so friendly colors are chosen from a
 // palette that deliberately excludes red — friend/foe should always be

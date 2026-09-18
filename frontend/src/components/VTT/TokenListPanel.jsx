@@ -1,5 +1,5 @@
 import { hexDistance, rangeBand, rangeBandLabel } from "../../utils/hexGrid";
-import { FRIENDLY_COLOR_PRESETS, resolveTokenColor } from "./tokenBadges";
+import { FRIENDLY_COLOR_PRESETS, MODIFIER_ICONS, MODIFIER_KEYS, resolveTokenColor } from "./tokenBadges";
 
 function TokenRow({ token, selected, onSelect, onRemove }) {
   const color = resolveTokenColor(token);
@@ -135,6 +135,49 @@ export default function TokenListPanel({ friendlies, enemies, selectedTokenId, o
               onChange={(e) => onUpdate(selected.id, { scale: Math.max(0.5, Number(e.target.value)) })}
               className="w-16 bg-neutral-800 border border-white/15 rounded-xs px-2 py-1 text-xs"
             />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <label className="text-xs text-neutral-400 w-16 shrink-0">Opacity</label>
+            <input
+              type="range"
+              min={0.1}
+              max={1}
+              step={0.05}
+              value={selected.opacity ?? 1}
+              onChange={(e) => onUpdate(selected.id, { opacity: Number(e.target.value) })}
+              className="flex-1"
+            />
+            <span className="text-[10px] text-neutral-400 w-8 text-right">
+              {Math.round((selected.opacity ?? 1) * 100)}%
+            </span>
+          </div>
+
+          <div>
+            <p className="text-[11px] text-neutral-400 mb-1">Modifiers</p>
+            <div className="flex flex-wrap gap-1.5">
+              {MODIFIER_KEYS.map((key) => {
+                const active = (selected.modifiers || []).includes(key);
+                return (
+                  <button
+                    key={key}
+                    onClick={() => {
+                      const current = selected.modifiers || [];
+                      onUpdate(selected.id, {
+                        modifiers: active ? current.filter((m) => m !== key) : [...current, key],
+                      });
+                    }}
+                    className={`flex items-center gap-1 px-1.5 py-1 rounded-xs border text-[11px] ${
+                      active ? "border-orange-400 bg-orange-400/10" : "border-white/15 hover:border-white/40"
+                    }`}
+                    title={key}
+                  >
+                    <img src={MODIFIER_ICONS[key]} alt="" className="w-4 h-4" />
+                    {key}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           <div>
