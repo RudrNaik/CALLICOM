@@ -27,7 +27,7 @@ export const CLASS_KEYS = Object.keys(CLASS_ICONS);
 export const MODIFIER_ICONS = {
   Elite: EliteIcon,
   Armor: ArmorIcon,
-  Fast: FastIcon,
+  Light: FastIcon,
   Rez: RezIcon,
 };
 
