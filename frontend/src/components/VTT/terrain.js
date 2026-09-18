@@ -92,7 +92,7 @@ export const OBSTACLE = {
   },
   wall: {
     id: "wall",
-    label: "Full Wall",
+    label: "Hard Wall",
     hotkey: "5",
     swatch: "#f4f4f5",
   },

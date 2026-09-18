@@ -84,7 +84,7 @@ export default function VTTToolbar({
               <button
                 key={l.id}
                 onClick={() => setPaintLayer(l.id)}
-                className={`px-2 py-2 rounded-md border transition text-xs ${
+                className={`px-2 py-2 rounded-xs border transition text-xs ${
                   paintLayer === l.id
                     ? "bg-orange-400 text-black border-orange-400"
                     : "border-white/15 hover:border-orange-400/60"
@@ -106,7 +106,7 @@ export default function VTTToolbar({
                     <button
                       key={key}
                       onClick={() => setBrush(key)}
-                      className={`flex items-center gap-2 px-2 py-1.5 rounded-md border transition ${
+                      className={`flex items-center gap-2 px-2 py-1.5 rounded-xs border transition ${
                         brush === key
                           ? "border-orange-400 bg-orange-400/10"
                           : "border-white/10 hover:border-white/30"
@@ -117,7 +117,6 @@ export default function VTTToolbar({
                         style={{ background: t.swatch }}
                       />
                       <span className="text-xs">{t.label}</span>
-                      <span className="ml-auto text-[10px] text-neutral-400">[{t.hotkey}]</span>
                     </button>
                   );
                 })}
@@ -141,7 +140,7 @@ export default function VTTToolbar({
                   <button
                     key={key}
                     onClick={() => setDoorType(key)}
-                    className={`flex items-center gap-2 px-2 py-1.5 rounded-md border transition ${
+                    className={`flex items-center gap-2 px-2 py-1.5 rounded-xs border transition ${
                       doorType === key
                         ? "border-orange-400 bg-orange-400/10"
                         : "border-white/10 hover:border-white/30"
@@ -171,7 +170,7 @@ export default function VTTToolbar({
                   <button
                     key={key}
                     onClick={() => setDoorState(key)}
-                    className={`flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md border transition text-xs ${
+                    className={`flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-xs border transition text-xs ${
                       doorState === key
                         ? "border-orange-400 bg-orange-400/10"
                         : "border-white/10 hover:border-white/30"
@@ -199,12 +198,12 @@ export default function VTTToolbar({
             value={addName}
             onChange={(e) => setAddName(e.target.value)}
             placeholder="Name"
-            className="bg-neutral-800 border border-white/15 rounded-md px-2 py-1.5 text-xs outline-none focus:border-orange-400"
+            className="bg-neutral-800 border border-white/15 rounded-xs px-2 py-1.5 text-xs outline-none focus:border-orange-400"
           />
           <select
             value={addClassKey}
             onChange={(e) => setAddClassKey(e.target.value)}
-            className="bg-neutral-800 border border-white/15 rounded-md px-2 py-1.5 text-xs outline-none focus:border-orange-400"
+            className="bg-neutral-800 border border-white/15 rounded-xs px-2 py-1.5 text-xs outline-none focus:border-orange-400"
           >
             {CLASS_KEYS.map((c) => (
               <option key={c} value={c}>
@@ -215,13 +214,13 @@ export default function VTTToolbar({
 
           {mode === "addFriendly" && (
             <div>
-              <p className="text-[11px] text-neutral-400 mb-1">Color</p>
+              <p className="text-xs text-neutral-400 mb-1">Color</p>
               <div className="flex flex-wrap gap-1.5">
                 {FRIENDLY_COLOR_PRESETS.map((c) => (
                   <button
                     key={c}
                     onClick={() => setAddColor(c)}
-                    className={`w-6 h-6 rounded-full border-2 ${
+                    className={`w-6 h-6 rounded-md border-2 ${
                       addColor === c ? "border-orange-400" : "border-white/20"
                     }`}
                     style={{ background: c }}
@@ -233,18 +232,18 @@ export default function VTTToolbar({
           )}
 
           <div className="flex items-center gap-2">
-            <label className="text-[11px] text-neutral-400 w-16 shrink-0">AOO radius</label>
+            <label className="text-xs text-neutral-400 w-16 shrink-0">AOO radius</label>
             <input
               type="number"
               min={0}
               max={10}
               value={addAoeRadius}
               onChange={(e) => setAddAoeRadius(Math.max(0, Number(e.target.value)))}
-              className="w-16 bg-neutral-800 border border-white/15 rounded-md px-2 py-1 text-xs"
+              className="w-16 bg-neutral-800 border border-white/15 rounded-xs px-2 py-1 text-xs"
             />
           </div>
           <div className="flex items-center gap-2">
-            <label className="text-[11px] text-neutral-400 w-16 shrink-0">Size</label>
+            <label className="text-xs text-neutral-400 w-16 shrink-0">Size</label>
             <input
               type="number"
               min={0.5}
@@ -252,7 +251,7 @@ export default function VTTToolbar({
               step={0.5}
               value={addScale}
               onChange={(e) => setAddScale(Math.max(0.5, Number(e.target.value)))}
-              className="w-16 bg-neutral-800 border border-white/15 rounded-md px-2 py-1 text-xs"
+              className="w-16 bg-neutral-800 border border-white/15 rounded-xs px-2 py-1 text-xs"
             />
           </div>
 
