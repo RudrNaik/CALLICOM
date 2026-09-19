@@ -168,10 +168,10 @@ export const LOW_GROUND_FILL_ALPHA = 0.2;
 
 // Border thickness as a fraction of the hex radius, measured inward from
 // the edge.
-export const BORDER_THICKNESS_RATIO = 0.15;
+export const BORDER_THICKNESS_RATIO = 0.20;
 
 // How far the cover/tall-cover/soft-wall border ring extends past the true
 // hex edge (as a fraction of hex radius) — lets two adjacent same-type
 // borders overlap slightly instead of just touching, so no seam/gap shows
 // between them (anti-aliasing otherwise leaves a hairline gap).
-export const BORDER_OVERLAP_RATIO = 0.07;
+export const BORDER_OVERLAP_RATIO = 0.10;

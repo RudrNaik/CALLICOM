@@ -59,7 +59,7 @@ const WORLD_ROTATION = Math.PI / 4;
 // ones — like grabbing a hex's tip and dragging it right in a free
 // transform. Applied inside isoProject, so it's baked into both hex
 // centers and corners consistently and the grid still tiles seamlessly.
-const SHEAR_X_PER_Y = 0.35;
+const SHEAR_X_PER_Y = 0.20;
 const STAND_HEIGHT = 0.45; // world units a token badge floats above its hex, purely visual
 export const MIN_ZOOM = 5;
 export const MAX_ZOOM = 140;
