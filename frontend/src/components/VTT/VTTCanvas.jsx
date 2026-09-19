@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   HEX_SIZE,
   axialToWorld,
   worldToAxial,
   hexCorners,
   hexKey,
+  oddqToAxial,
   hexDistance,
   hexesInRadius,
   rangeBand,
@@ -36,6 +37,7 @@ import {
   tokenBadgeKey,
   preloadModifierIcons,
   getModifierImage,
+  MODIFIER_KEYS,
 } from "./tokenBadges";
 
 // Plain Canvas2D renderer — no WebGL/scene-graph, just imperative draw
@@ -73,11 +75,41 @@ const ZOOM_WHEEL_MAX_DELTA = 120;
 const BAND_TINTS = [null, "59,130,246", "34,197,94", "234,179,8", null];
 const BAND_TINT_ALPHA = 0.10;
 const BG_COLOR = "#15171a";
-// Wider line spacing than fillHexHatch's default (stepRatio 0.22), used for
-// soft wall and the high/low ground step hexes' hatched interiors.
+// Line spacing (as a fraction of hex radius) for the soft wall and the
+// high/low ground step hexes' hatched interiors.
 const STEP_HATCH_STEP_RATIO = 0.30;
+const HATCH_LINE_WIDTH_RATIO = 0.09;
+// Cap the backing-store pixel ratio; past 2x the fill cost grows with little
+// visible gain.
+const MAX_DPR = 2;
+// Extra terrain rendered past each viewport edge (CSS px), so panning can
+// reuse the cached terrain until the pan exceeds it.
+const TERRAIN_CACHE_PAD = 256;
+// Larger padding used while a zoom is in progress (still capped by the pixel
+// budget below).
+const TERRAIN_CACHE_ZOOM_PAD = 768;
+// If the whole map fits in this many device pixels, cache all of it (so panning
+// never re-renders); beyond that, cache just the viewport plus padding.
+const TERRAIN_CACHE_MAX_PIXELS = 16_000_000;
+// How long after the last zoom change before the terrain cache is re-rendered
+// crisply at the new zoom.
+const ZOOM_SETTLE_MS = 150;
+// When the terrain cache is rebuilt after zooming settles or a pan outruns the
+// padding, it is drawn in strips of this many columns, for at most this many ms
+// per frame, so input stays responsive on big maps.
+const TERRAIN_STRIP_COLS = 6;
+const TERRAIN_SLICE_MS = 8;
+
+// Cheap integer key for a hex, for per-frame lookups (no string building).
+// Valid for |q|, |r| < 4096, far beyond any map or AOE ring.
+function numericHexKey(q, r) {
+  return (q + 4096) * 8192 + (r + 4096);
+}
 
 const UNIT_CORNERS = hexCorners(HEX_SIZE);
+
+const ROT_COS = Math.cos(WORLD_ROTATION);
+const ROT_SIN = Math.sin(WORLD_ROTATION);
 
 function rotate(x, z, angle) {
   const c = Math.cos(angle);
@@ -92,7 +124,8 @@ function rotate(x, z, angle) {
 // flip leaves untouched). A shear is then applied on top so higher points
 // lean further right, like the whole hex was dragged over from its tip.
 function isoProject(x, z) {
-  const [rx, rz] = rotate(x, z, WORLD_ROTATION);
+  const rx = x * ROT_COS - z * ROT_SIN;
+  const rz = x * ROT_SIN + z * ROT_COS;
   const ix0 = -(rx - rz) * ISO_COS;
   const iy0 = (rx + rz) * ISO_SIN;
   return [ix0 - SHEAR_X_PER_Y * iy0, iy0];
@@ -123,24 +156,15 @@ function unproject(px, py, camera) {
 // iso-projected, so drawing a hex per-frame is just a scale + add.
 const PROJECTED_UNIT_CORNERS = UNIT_CORNERS.map(([ux, uz]) => isoProject(ux, uz));
 
-function hexPath(ctx, cx, cy, size, zoom) {
-  ctx.beginPath();
-  PROJECTED_UNIT_CORNERS.forEach(([ix, iy], i) => {
-    const px = cx + ix * size * zoom;
-    const py = cy + iy * size * zoom;
-    if (i === 0) ctx.moveTo(px, py);
-    else ctx.lineTo(px, py);
-  });
-  ctx.closePath();
-}
-
 function addHexToPath2D(path, cx, cy, size, zoom) {
-  PROJECTED_UNIT_CORNERS.forEach(([ix, iy], i) => {
-    const px = cx + ix * size * zoom;
-    const py = cy + iy * size * zoom;
+  const scale = size * zoom;
+  for (let i = 0; i < 6; i++) {
+    const [ix, iy] = PROJECTED_UNIT_CORNERS[i];
+    const px = cx + ix * scale;
+    const py = cy + iy * scale;
     if (i === 0) path.moveTo(px, py);
     else path.lineTo(px, py);
-  });
+  }
   path.closePath();
 }
 
@@ -166,21 +190,38 @@ function strokeHexBorderBatch(ctx, path, zoom, color, dashed) {
   ctx.restore();
 }
 
-// Diagonal hatch fill, clipped to the hex — used for the soft wall's
-// interior, and for the range-band overlay.
-function fillHexHatch(ctx, cx, cy, size, zoom, color, { alpha = 0.7, lineWidthRatio = 0.09, stepRatio = 0.22 } = {}) {
-  const radius = size * zoom;
+// Hatched hexes are collected into one bucket (a union of hex outlines), then
+// hatched with a single clip + a single stroke of screen-aligned diagonal
+// lines, instead of a clip and stroke per hex. The line phase is therefore
+// global, so the hatching runs continuously across neighboring hexes.
+function makeBucket() {
+  return { path: new Path2D(), used: false };
+}
+
+function addToBucket(bucket, cx, cy, zoom) {
+  addHexToPath2D(bucket.path, cx, cy, HEX_SIZE, zoom);
+  bucket.used = true;
+}
+
+function fillHatchedBucket(ctx, bucket, viewport, zoom, color, alpha) {
+  if (!bucket.used) return;
+  const radius = HEX_SIZE * zoom;
+  const step = Math.max(3, radius * STEP_HATCH_STEP_RATIO);
+  const minY = -viewport.margin;
+  const maxY = viewport.height + viewport.margin;
+  // Each line satisfies x - y = c; sweep c across everything the viewport
+  // (plus margin) can see.
+  const cMin = -viewport.margin - maxY;
+  const cMax = viewport.width + viewport.margin - minY;
   ctx.save();
-  hexPath(ctx, cx, cy, size, zoom);
-  ctx.clip();
+  ctx.clip(bucket.path);
   ctx.strokeStyle = color;
-  ctx.lineWidth = Math.max(1, radius * lineWidthRatio);
+  ctx.lineWidth = Math.max(1, radius * HATCH_LINE_WIDTH_RATIO);
   ctx.globalAlpha = alpha;
-  const step = Math.max(3, radius * stepRatio);
   ctx.beginPath();
-  for (let d = -radius * 2; d <= radius * 2; d += step) {
-    ctx.moveTo(cx - radius + d, cy - radius);
-    ctx.lineTo(cx + radius + d, cy + radius);
+  for (let c = Math.ceil(cMin / step) * step; c <= cMax; c += step) {
+    ctx.moveTo(c + minY, minY);
+    ctx.lineTo(c + maxY, maxY);
   }
   ctx.stroke();
   ctx.restore();
@@ -233,7 +274,19 @@ export default function VTTCanvas({
 }) {
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
-  const [camera, setCamera] = useState({ x: 0, y: 0, zoom: 55 });
+  // The camera lives in a ref, not state: pan/zoom events mutate it and ask
+  // for a redraw (coalesced to one per animation frame) without re-rendering
+  // React at all.
+  const cameraRef = useRef({ x: 0, y: 0, zoom: 55 });
+  const rafRef = useRef(0);
+  const drawRef = useRef(null);
+  const lastReportedZoom = useRef(null);
+  const terrainCacheRef = useRef(null);
+  const lastSeenZoom = useRef(null);
+  const zoomChangedAt = useRef(0);
+  const settleTimer = useRef(0);
+  const terrainJobRef = useRef(null);
+  const spareCanvasRef = useRef(null);
   const [size, setSize] = useState({ width: 0, height: 0 });
   const [hoveredHex, setHoveredHex] = useState(null);
   // Door tool: the first vertex clicked (world coords), waiting for the
@@ -242,6 +295,74 @@ export default function VTTCanvas({
   const [hoveredVertex, setHoveredVertex] = useState(null);
   const [badgeVersion, setBadgeVersion] = useState(0);
   const dragState = useRef(null);
+
+  const scheduleDraw = useCallback(() => {
+    if (rafRef.current) return;
+    rafRef.current = requestAnimationFrame(() => {
+      rafRef.current = 0;
+      drawRef.current?.();
+    });
+  }, []);
+
+  // Reset the handle too: under StrictMode this cleanup runs between the
+  // dev double-mount, and a stale non-zero handle would block every later
+  // scheduleDraw.
+  useEffect(
+    () => () => {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = 0;
+      clearTimeout(settleTimer.current);
+    },
+    []
+  );
+
+  const updateCamera = useCallback(
+    (fn) => {
+      const next = fn(cameraRef.current);
+      if (next === cameraRef.current) return;
+      cameraRef.current = next;
+      scheduleDraw();
+    },
+    [scheduleDraw]
+  );
+
+  // Terrain state per grid cell (index col * rows + row), normalized once per
+  // map change instead of once per hex per frame.
+  const terrainStates = useMemo(() => {
+    if (!map) return null;
+    const states = new Array(map.cols * map.rows);
+    for (let col = 0; col < map.cols; col++) {
+      for (let row = 0; row < map.rows; row++) {
+        const { q, r } = oddqToAxial(col, row);
+        states[col * map.rows + row] = normalizeHexState(map.hexes[hexKey(q, r)]);
+      }
+    }
+    return states;
+  }, [map]);
+
+  const tokensById = useMemo(() => new Map(tokens.map((t) => [t.id, t])), [tokens]);
+
+  // Everything token-derived that the terrain cache bakes in (AOE rings and
+  // the range overlay's origin), as a string so an unrelated tokens-array
+  // change doesn't invalidate the cache.
+  const terrainSig = useMemo(() => {
+    const aoe = tokens
+      .filter((t) => t.aoeRadius)
+      .map((t) => `${t.q},${t.r},${t.aoeRadius},${resolveTokenColor(t)}`)
+      .join(";");
+    const selected = showRangeOverlay && selectedTokenId != null ? tokensById.get(selectedTokenId) : null;
+    return `${aoe}|${selected ? `${selected.q},${selected.r}` : ""}`;
+  }, [tokens, tokensById, showRangeOverlay, selectedTokenId]);
+
+  // Tokens sorted so ones "further back" on screen draw first — in the
+  // isometric projection, screen depth order follows (x + z), not raw z.
+  const sortedTokens = useMemo(() => {
+    const depth = (t) => {
+      const [x, z] = axialToWorld(t.q, t.r);
+      return x + z;
+    };
+    return [...tokens].sort((a, b) => depth(a) - depth(b));
+  }, [tokens]);
 
   // Size the canvas to its container (with DPR for crispness).
   useEffect(() => {
@@ -254,6 +375,20 @@ export default function VTTCanvas({
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
+
+  // Resize the backing store only when the container changes size. Assigning
+  // canvas.width/height reallocates and clears it, so it must not happen per
+  // draw.
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas || size.width === 0) return;
+    const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR);
+    canvas.width = Math.round(size.width * dpr);
+    canvas.height = Math.round(size.height * dpr);
+    canvas.style.width = `${size.width}px`;
+    canvas.style.height = `${size.height}px`;
+    scheduleDraw();
+  }, [size, scheduleDraw]);
 
   // Center the camera on the grid once per map (or when its size changes).
   useEffect(() => {
@@ -268,7 +403,7 @@ export default function VTTCanvas({
     const cx = (minX + maxX) / 2;
     const cz = (minZ + maxZ) / 2;
     const [icx, icy] = isoProject(cx, cz);
-    setCamera((cam) => ({
+    updateCamera((cam) => ({
       ...cam,
       x: size.width / 2 - icx * cam.zoom,
       y: size.height / 2 - icy * cam.zoom,
@@ -277,8 +412,11 @@ export default function VTTCanvas({
   }, [map?.id, map?.cols, map?.rows, size.width, size.height]);
 
   // Preload every badge (and the modifier icons) this map's tokens need,
-  // then trigger a redraw.
+  // then trigger a redraw. Skipped when everything is already cached, so a
+  // plain token move doesn't cost an extra redraw.
   useEffect(() => {
+    const modifiersLoaded = MODIFIER_KEYS.every((key) => getModifierImage(key));
+    if (modifiersLoaded && tokens.every((t) => badgeCache.has(tokenBadgeKey(t)))) return;
     let cancelled = false;
     Promise.all([
       preloadModifierIcons(),
@@ -291,29 +429,35 @@ export default function VTTCanvas({
     };
   }, [tokens]);
 
-  // Draw.
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas || !map || size.width === 0) return;
-    const dpr = window.devicePixelRatio || 1;
-    canvas.width = size.width * dpr;
-    canvas.height = size.height * dpr;
-    canvas.style.width = `${size.width}px`;
-    canvas.style.height = `${size.height}px`;
-    const ctx = canvas.getContext("2d");
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-    ctx.fillStyle = BG_COLOR;
-    ctx.fillRect(0, 0, size.width, size.height);
-
-    const hexes = generateRectGrid(map.cols, map.rows);
-    const selectedToken = tokens.find((t) => t.id === selectedTokenId) || null;
-    const margin = HEX_SIZE * camera.zoom * 1.5;
+  // Terrain, in three steps: collectTerrain() gathers the visible hexes (of a
+  // column range) into Path2Ds, drawTerrainPhase() paints one layer group of
+  // that, and renderTerrain() does both for the whole map. The cache holds: hex fills, AOE and range tints, grid
+  // lines, elevation, and obstacle hatches/borders — i.e. everything that only
+  // changes with the map, zoom, or AOE/range state, not with panning or hover.
+  // `camera` here is the cache's own camera (offset by the cache padding) and
+  // width/height the cache canvas's size in CSS pixels.
+  const collectTerrain = (camera, width, height, colFrom = 0, colTo = Infinity) => {
+    const zoom = camera.zoom;
+    const selectedToken = (selectedTokenId != null && tokensById.get(selectedTokenId)) || null;
+    const margin = HEX_SIZE * zoom * 1.5;
     const borderSize = HEX_SIZE * (1 - BORDER_THICKNESS_RATIO / 2 + BORDER_OVERLAP_RATIO);
 
-    let coverPath = null;
-    let tallCoverPath = null;
-    let softWallPath = null;
+    // Visible axial range: unproject the (margin-expanded) viewport corners
+    // and take their q/r bounding box, so off-screen hexes are never even
+    // visited.
+    let qMin = Infinity, qMax = -Infinity, rMin = Infinity, rMax = -Infinity;
+    for (const [px, py] of [
+      [-margin, -margin],
+      [width + margin, -margin],
+      [width + margin, height + margin],
+      [-margin, height + margin],
+    ]) {
+      const [wx, wz] = unproject(px, py, camera);
+      const q = (2 / 3) * (wx / HEX_SIZE);
+      const r = (-1 / 3) * (wx / HEX_SIZE) + (Math.sqrt(3) / 3) * (wz / HEX_SIZE);
+      qMin = Math.min(qMin, q); qMax = Math.max(qMax, q);
+      rMin = Math.min(rMin, r); rMax = Math.max(rMax, r);
+    }
 
     // AOE rings: precompute hex -> [colors] once per token (O(tokens *
     // radius^2)) rather than testing every hex against every token.
@@ -322,114 +466,441 @@ export default function VTTCanvas({
       if (!token.aoeRadius) continue;
       const color = resolveTokenColor(token);
       for (const h of hexesInRadius(token.q, token.r, token.aoeRadius)) {
-        const key = hexKey(h.q, h.r);
+        const key = numericHexKey(h.q, h.r);
         const list = aoeColors.get(key);
         if (list) list.push(color);
         else aoeColors.set(key, [color]);
       }
     }
+    const hasAoe = aoeColors.size > 0;
 
-    for (const { q, r } of hexes) {
-      const [wx, wz] = axialToWorld(q, r);
-      const [cx, cy] = project(wx, wz, camera);
-      if (cx < -margin || cx > size.width + margin || cy < -margin || cy > size.height + margin) continue;
+    // Every visible hex is appended to a shared Path2D for its color/kind,
+    // and each path is then filled or stroked once. That's a handful of draw
+    // calls per frame rather than several per hex.
+    const groundPath = new Path2D();
+    const wallPath = new Path2D();
+    const inaccessiblePath = new Path2D();
+    const gridPath = new Path2D();
+    const highGroundPath = new Path2D();
+    const lowGroundPath = new Path2D();
+    const highStepHatch = makeBucket();
+    const lowStepHatch = makeBucket();
+    const softWallHatch = makeBucket();
+    const aoeLayers = []; // layer i: Map(color -> Path2D), so overlapping rings still stack
+    const rangePaths = new Map(); // tint -> Path2D
+    let coverPath = null;
+    let tallCoverPath = null;
+    let softWallPath = null;
 
-      const { elevation, obstacle } = normalizeHexState(map.hexes[hexKey(q, r)]);
-      // A full wall or inaccessible obstacle fully covers the hex, so it
-      // wins over whatever elevation tint would otherwise show through.
-      const obstacleFillsHex = obstacle === "wall" || obstacle === "inaccessible";
-      const baseColor =
-        obstacle === "wall"
-          ? WALL_FILL_COLOR
-          : obstacle === "inaccessible"
-          ? INACCESSIBLE_FILL_COLOR
-          : GROUND_COLOR;
+    const colStart = Math.max(0, colFrom, Math.floor(qMin) - 1);
+    const colEnd = Math.min(map.cols - 1, colTo, Math.ceil(qMax) + 1);
+    for (let col = colStart; col <= colEnd; col++) {
+      const rowOffset = (col - (col & 1)) / 2;
+      const rowStart = Math.max(0, Math.floor(rMin) - 1 + rowOffset);
+      const rowEnd = Math.min(map.rows - 1, Math.ceil(rMax) + 1 + rowOffset);
+      const q = col;
+      for (let row = rowStart; row <= rowEnd; row++) {
+        const r = row - rowOffset;
+        const [wx, wz] = axialToWorld(q, r);
+        const [cx, cy] = project(wx, wz, camera);
+        if (cx < -margin || cx > width + margin || cy < -margin || cy > height + margin) continue;
 
-      hexPath(ctx, cx, cy, HEX_SIZE, camera.zoom);
-      ctx.fillStyle = baseColor;
-      ctx.fill();
+        const { elevation, obstacle } = terrainStates[col * map.rows + row];
+        // A full wall or inaccessible obstacle fully covers the hex, so it
+        // wins over whatever elevation tint would otherwise show through.
+        const obstacleFillsHex = obstacle === "wall" || obstacle === "inaccessible";
+        addHexToPath2D(
+          obstacle === "wall" ? wallPath : obstacle === "inaccessible" ? inaccessiblePath : groundPath,
+          cx, cy, HEX_SIZE, zoom
+        );
 
-      const aoeHere = aoeColors.get(hexKey(q, r));
-      if (aoeHere) {
-        ctx.globalAlpha = 0.28;
-        for (const color of aoeHere) {
-          hexPath(ctx, cx, cy, HEX_SIZE, camera.zoom);
-          ctx.fillStyle = color;
-          ctx.fill();
+        if (hasAoe) {
+          const aoeHere = aoeColors.get(numericHexKey(q, r));
+          if (aoeHere) {
+            aoeHere.forEach((color, i) => {
+              const layer = (aoeLayers[i] ??= new Map());
+              let path = layer.get(color);
+              if (!path) layer.set(color, (path = new Path2D()));
+              addHexToPath2D(path, cx, cy, HEX_SIZE, zoom);
+            });
+          }
         }
-        ctx.globalAlpha = 1;
-      }
 
-      if (showRangeOverlay && selectedToken) {
-        const band = rangeBand(hexDistance(selectedToken, { q, r }));
-        const tint = BAND_TINTS[Math.min(band, BAND_TINTS.length - 1)];
-        if (tint) {
-          // Plain solid fill, not a hatch — the hatch's per-hex clip+stroke
-          // loop is expensive across a whole visible grid and was
-          // measurably hurting frame time.
-          hexPath(ctx, cx, cy, HEX_SIZE, camera.zoom);
-          ctx.fillStyle = `rgba(${tint}, ${BAND_TINT_ALPHA})`;
-          ctx.fill();
+        if (showRangeOverlay && selectedToken) {
+          const band = rangeBand(hexDistance(selectedToken, { q, r }));
+          const tint = BAND_TINTS[Math.min(band, BAND_TINTS.length - 1)];
+          if (tint) {
+            let path = rangePaths.get(tint);
+            if (!path) rangePaths.set(tint, (path = new Path2D()));
+            addHexToPath2D(path, cx, cy, HEX_SIZE, zoom);
+          }
         }
-      }
 
-      if (hoveredHex && hoveredHex.q === q && hoveredHex.r === r && mode === "paint") {
-        hexPath(ctx, cx, cy, HEX_SIZE, camera.zoom);
-        ctx.fillStyle = "rgba(255, 183, 3, 0.3)";
-        ctx.fill();
-      }
+        addHexToPath2D(gridPath, cx, cy, HEX_SIZE * 0.998, zoom);
 
-      ctx.lineWidth = 1;
-      ctx.strokeStyle = "rgba(0,0,0,0.35)";
-      hexPath(ctx, cx, cy, HEX_SIZE * 0.998, camera.zoom);
-      ctx.stroke();
-
-      // Elevation tint/hatch draws first (skipped under a wall/inaccessible
-      // obstacle, since that fully covers the hex anyway), then the
-      // obstacle's own border/hatch draws on top — so e.g. a soft wall on
-      // high ground shows the cyan tint with the wall's hatch over it.
-      if (!obstacleFillsHex) {
-        if (elevation === "highGround") {
-          hexPath(ctx, cx, cy, HEX_SIZE, camera.zoom);
-          ctx.fillStyle = HIGH_GROUND_COLOR;
-          ctx.globalAlpha = HIGH_GROUND_FILL_ALPHA;
-          ctx.fill();
-          ctx.globalAlpha = 1;
-        } else if (elevation === "highGroundStep") {
-          fillHexHatch(ctx, cx, cy, HEX_SIZE, camera.zoom, HIGH_GROUND_COLOR, {
-            alpha: HIGH_GROUND_FILL_ALPHA,
-            stepRatio: STEP_HATCH_STEP_RATIO,
-          });
-        } else if (elevation === "lowGround") {
-          hexPath(ctx, cx, cy, HEX_SIZE, camera.zoom);
-          ctx.fillStyle = LOW_GROUND_COLOR;
-          ctx.globalAlpha = LOW_GROUND_FILL_ALPHA;
-          ctx.fill();
-          ctx.globalAlpha = 1;
-        } else if (elevation === "lowGroundStep") {
-          fillHexHatch(ctx, cx, cy, HEX_SIZE, camera.zoom, LOW_GROUND_COLOR, {
-            alpha: LOW_GROUND_FILL_ALPHA,
-            stepRatio: STEP_HATCH_STEP_RATIO,
-          });
+        if (!obstacleFillsHex) {
+          if (elevation === "highGround") addHexToPath2D(highGroundPath, cx, cy, HEX_SIZE, zoom);
+          else if (elevation === "highGroundStep") addToBucket(highStepHatch, cx, cy, zoom);
+          else if (elevation === "lowGround") addHexToPath2D(lowGroundPath, cx, cy, HEX_SIZE, zoom);
+          else if (elevation === "lowGroundStep") addToBucket(lowStepHatch, cx, cy, zoom);
         }
-      }
 
-      if (obstacle === "cover") {
-        coverPath ??= new Path2D();
-        addHexToPath2D(coverPath, cx, cy, borderSize, camera.zoom);
-      } else if (obstacle === "tallCover") {
-        tallCoverPath ??= new Path2D();
-        addHexToPath2D(tallCoverPath, cx, cy, borderSize, camera.zoom);
-      } else if (obstacle === "softWall") {
-        fillHexHatch(ctx, cx, cy, HEX_SIZE, camera.zoom, WALL_FILL_COLOR, { stepRatio: STEP_HATCH_STEP_RATIO });
-        softWallPath ??= new Path2D();
-        addHexToPath2D(softWallPath, cx, cy, borderSize, camera.zoom);
+        if (obstacle === "cover") {
+          coverPath ??= new Path2D();
+          addHexToPath2D(coverPath, cx, cy, borderSize, zoom);
+        } else if (obstacle === "tallCover") {
+          tallCoverPath ??= new Path2D();
+          addHexToPath2D(tallCoverPath, cx, cy, borderSize, zoom);
+        } else if (obstacle === "softWall") {
+          addToBucket(softWallHatch, cx, cy, zoom);
+          softWallPath ??= new Path2D();
+          addHexToPath2D(softWallPath, cx, cy, borderSize, zoom);
+        }
       }
     }
 
-    strokeHexBorderBatch(ctx, coverPath, camera.zoom, COVER_BORDER_COLOR, false);
-    strokeHexBorderBatch(ctx, tallCoverPath, camera.zoom, TALL_COVER_BORDER_COLOR, false);
-    strokeHexBorderBatch(ctx, softWallPath, camera.zoom, WALL_FILL_COLOR, false);
+    return {
+      zoom, margin, width, height,
+      groundPath, wallPath, inaccessiblePath, gridPath, highGroundPath, lowGroundPath,
+      highStepHatch, lowStepHatch, softWallHatch, aoeLayers, rangePaths,
+      coverPath, tallCoverPath, softWallPath,
+    };
+  };
+
+  // Phases must run in order across the WHOLE map, never strip by strip:
+  // later fills would otherwise paint over the grid lines and obstacle
+  // borders of an earlier strip's hexes along the seam (borders extend past
+  // the hex edge), which shows up as clipped hex edges.
+  //   1: base fills, AOE and range tints
+  //   2: grid lines, elevation tints and hatches
+  //   3: obstacle borders
+  const drawTerrainPhase = (ctx, b, phase) => {
+    const { zoom, groundPath, wallPath, inaccessiblePath, gridPath, highGroundPath, lowGroundPath,
+      highStepHatch, lowStepHatch, softWallHatch, aoeLayers, rangePaths,
+      coverPath, tallCoverPath, softWallPath } = b;
+    if (phase === 1) {
+    ctx.fillStyle = GROUND_COLOR;
+    ctx.fill(groundPath);
+    ctx.fillStyle = WALL_FILL_COLOR;
+    ctx.fill(wallPath);
+    ctx.fillStyle = INACCESSIBLE_FILL_COLOR;
+    ctx.fill(inaccessiblePath);
+
+    ctx.globalAlpha = 0.28;
+    for (const layer of aoeLayers) {
+      if (!layer) continue;
+      for (const [color, path] of layer) {
+        ctx.fillStyle = color;
+        ctx.fill(path);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Plain solid fill, not a hatch — hatching is far more expensive.
+    for (const [tint, path] of rangePaths) {
+      ctx.fillStyle = `rgba(${tint}, ${BAND_TINT_ALPHA})`;
+      ctx.fill(path);
+    }
+    } else if (phase === 2) {
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = "rgba(0,0,0,0.35)";
+    ctx.stroke(gridPath);
+
+    // Elevation tint/hatch draws first, then the obstacle's own hatch/border
+    // on top — so e.g. a soft wall on high ground shows the cyan tint with
+    // the wall's hatch over it.
+    ctx.globalAlpha = HIGH_GROUND_FILL_ALPHA;
+    ctx.fillStyle = HIGH_GROUND_COLOR;
+    ctx.fill(highGroundPath);
+    ctx.globalAlpha = LOW_GROUND_FILL_ALPHA;
+    ctx.fillStyle = LOW_GROUND_COLOR;
+    ctx.fill(lowGroundPath);
+    ctx.globalAlpha = 1;
+
+    const viewport = { width: b.width, height: b.height, margin: b.margin };
+    fillHatchedBucket(ctx, highStepHatch, viewport, zoom, HIGH_GROUND_COLOR, HIGH_GROUND_FILL_ALPHA);
+    fillHatchedBucket(ctx, lowStepHatch, viewport, zoom, LOW_GROUND_COLOR, LOW_GROUND_FILL_ALPHA);
+    fillHatchedBucket(ctx, softWallHatch, viewport, zoom, WALL_FILL_COLOR, 0.7);
+    } else {
+    strokeHexBorderBatch(ctx, coverPath, zoom, COVER_BORDER_COLOR, false);
+    strokeHexBorderBatch(ctx, tallCoverPath, zoom, TALL_COVER_BORDER_COLOR, false);
+    strokeHexBorderBatch(ctx, softWallPath, zoom, WALL_FILL_COLOR, false);
+    }
+  };
+
+  const renderTerrain = (ctx, camera, width, height) => {
+    const bundle = collectTerrain(camera, width, height);
+    for (let phase = 1; phase <= 3; phase++) drawTerrainPhase(ctx, bundle, phase);
+  };
+
+  const draw = () => {
+    const canvas = canvasRef.current;
+    if (!canvas || !map || !terrainStates || size.width === 0 || canvas.width === 0) return;
+    const camera = cameraRef.current;
+    const zoom = camera.zoom;
+    const dpr = canvas.width / size.width;
+    const ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    if (lastReportedZoom.current !== zoom) {
+      lastReportedZoom.current = zoom;
+      onZoomChange?.(zoom);
+    }
+
+    ctx.fillStyle = BG_COLOR;
+    ctx.fillRect(0, 0, size.width, size.height);
+
+    // Terrain comes from an offscreen cache a bit larger than the viewport.
+    // Panning just blits it at an offset; it's only re-rendered when the map,
+    // zoom, AOE/range state or viewport size changes, or the pan outruns the
+    // padding. While zoom is actively changing, the stale cache is blitted
+    // scaled (slightly soft) and the real re-render waits until it settles.
+    const now = performance.now();
+    if (lastSeenZoom.current !== zoom) {
+      lastSeenZoom.current = zoom;
+      zoomChangedAt.current = now;
+    }
+    let cache = terrainCacheRef.current;
+    const zooming = now - zoomChangedAt.current < ZOOM_SETTLE_MS;
+
+    // Chooses the rectangle (in current-camera screen coords) to cache. If
+    // the whole map fits in a sane pixel budget, cache all of it: panning
+    // never needs a re-render then. Otherwise cache the viewport plus
+    // padding (more of it while a zoom is in progress, so the scaled cache
+    // keeps covering the viewport for longer).
+    const makePlan = () => {
+      let pad = zooming ? TERRAIN_CACHE_ZOOM_PAD : TERRAIN_CACHE_PAD;
+      while (
+        pad > TERRAIN_CACHE_PAD &&
+        (size.width + pad * 2) * (size.height + pad * 2) * dpr * dpr > TERRAIN_CACHE_MAX_PIXELS
+      ) {
+        pad -= 64;
+      }
+      pad = Math.max(pad, TERRAIN_CACHE_PAD);
+      const plan = {
+        originX: -pad,
+        originY: -pad,
+        cssWidth: size.width + pad * 2,
+        cssHeight: size.height + pad * 2,
+        coversMap: false,
+      };
+      let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+      for (const [col, row] of [[0, 0], [map.cols - 1, 0], [0, map.rows - 1], [map.cols - 1, map.rows - 1]]) {
+        const { q, r } = oddqToAxial(col, row);
+        const [wx, wz] = axialToWorld(q, r);
+        const [px, py] = project(wx, wz, camera);
+        minX = Math.min(minX, px); maxX = Math.max(maxX, px);
+        minY = Math.min(minY, py); maxY = Math.max(maxY, py);
+      }
+      const hexPad = HEX_SIZE * zoom * 2;
+      const mapWidth = maxX - minX + hexPad * 2;
+      const mapHeight = maxY - minY + hexPad * 2;
+      if (mapWidth * mapHeight * dpr * dpr <= TERRAIN_CACHE_MAX_PIXELS) {
+        plan.originX = Math.floor(minX - hexPad);
+        plan.originY = Math.floor(minY - hexPad);
+        plan.cssWidth = Math.ceil(mapWidth);
+        plan.cssHeight = Math.ceil(mapHeight);
+        plan.coversMap = true;
+      }
+      return plan;
+    };
+
+    // Gets a cleared canvas big enough for the plan, reusing `candidate`
+    // unless it is too small or wastefully large (reallocating is costly).
+    const prepareCanvas = (plan, candidate) => {
+      const pixelW = Math.round(plan.cssWidth * dpr);
+      const pixelH = Math.round(plan.cssHeight * dpr);
+      let offscreen = candidate;
+      if (
+        !offscreen ||
+        offscreen.width < pixelW ||
+        offscreen.height < pixelH ||
+        offscreen.width * offscreen.height > pixelW * pixelH * 4
+      ) {
+        offscreen = document.createElement("canvas");
+        offscreen.width = pixelW;
+        offscreen.height = pixelH;
+      }
+      const cctx = offscreen.getContext("2d", { alpha: false });
+      // Clear the entire canvas, not just the used region: a reused canvas
+      // can be larger than this render, and the blit's smoothing samples a
+      // pixel or two past the source rect — stale content there shows up as
+      // a line along the cache's edge.
+      cctx.setTransform(1, 0, 0, 1, 0, 0);
+      cctx.fillStyle = BG_COLOR;
+      cctx.fillRect(0, 0, offscreen.width, offscreen.height);
+      cctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      return { canvas: offscreen, cctx, pixelW, pixelH };
+    };
+
+    const toCache = (job) => ({
+      canvas: job.canvas,
+      originX: job.plan.originX,
+      originY: job.plan.originY,
+      cssWidth: job.plan.cssWidth,
+      cssHeight: job.plan.cssHeight,
+      pixelW: job.pixelW,
+      pixelH: job.pixelH,
+      coversMap: job.plan.coversMap,
+      camX: job.camX,
+      camY: job.camY,
+      zoom: job.zoom,
+      sig: terrainSig,
+      terrainStates,
+      width: size.width,
+      height: size.height,
+      dpr,
+    });
+
+    const jobCamera = (job) => ({
+      x: job.camX - job.plan.originX,
+      y: job.camY - job.plan.originY,
+      zoom: job.zoom,
+    });
+
+    const startJob = (candidate) => {
+      const plan = makePlan();
+      return {
+        plan,
+        ...prepareCanvas(plan, candidate),
+        camX: camera.x,
+        camY: camera.y,
+        zoom,
+        nextCol: 0,
+        phase: 1,
+        index: 0,
+        bundles: [],
+      };
+    };
+
+    // Renders the whole terrain in one go (used when the map itself changed,
+    // so the stale cache must not be shown for even a few frames).
+    const renderNow = () => {
+      terrainJobRef.current = null;
+      const job = startJob(cache?.canvas);
+      renderTerrain(job.cctx, jobCamera(job), job.plan.cssWidth, job.plan.cssHeight);
+      return toCache(job);
+    };
+
+    const matches =
+      cache &&
+      cache.terrainStates === terrainStates &&
+      cache.sig === terrainSig &&
+      cache.width === size.width &&
+      cache.height === size.height &&
+      cache.dpr === dpr;
+    let scale = 1;
+    if (!matches) {
+      cache = terrainCacheRef.current = renderNow();
+    } else {
+      let reuse;
+      scale = zoom / cache.zoom;
+      if (scale === 1) {
+        // A cache covering the whole map is valid for any pan; otherwise the
+        // (panned) viewport must still lie inside the cached rectangle.
+        const sx = camera.x - cache.camX;
+        const sy = camera.y - cache.camY;
+        reuse =
+          cache.coversMap ||
+          (cache.originX <= -sx &&
+            cache.originY <= -sy &&
+            cache.originX + cache.cssWidth >= size.width - sx &&
+            cache.originY + cache.cssHeight >= size.height - sy);
+      } else {
+        reuse = zooming && scale >= 0.5 && scale <= 2;
+        if (reuse && !cache.coversMap) {
+          // A viewport-sized cache only holds part of the map, so scaling it
+          // (especially down) can leave the viewport's edges uncovered —
+          // parts of the map would vanish. Only reuse it while it still
+          // covers the whole viewport.
+          const left = camera.x + (cache.originX - cache.camX) * scale;
+          const top = camera.y + (cache.originY - cache.camY) * scale;
+          reuse =
+            left <= 0 &&
+            top <= 0 &&
+            left + cache.cssWidth * scale >= size.width &&
+            top + cache.cssHeight * scale >= size.height;
+        }
+        if (zooming) {
+          clearTimeout(settleTimer.current);
+          settleTimer.current = setTimeout(scheduleDraw, ZOOM_SETTLE_MS + 20);
+        }
+      }
+      if (reuse) {
+        terrainJobRef.current = null;
+      } else if (zooming && scale !== 1) {
+        // Mid-zoom and the stale cache cannot cover the screen: re-render now.
+        cache = terrainCacheRef.current = renderNow();
+        scale = 1;
+      } else {
+        // The zoom has settled (or a pan outran the padding): rebuild the
+        // cache in time-boxed slices over the next few frames, so the app
+        // stays responsive. Meanwhile the stale cache keeps being blitted
+        // (scaled to the current zoom, and following pans).
+        let job = terrainJobRef.current;
+        if (!job || job.zoom !== zoom) {
+          job = terrainJobRef.current = startJob(spareCanvasRef.current);
+        }
+        const sliceStart = performance.now();
+        // Phase 1 collects each strip and paints its base fills; phases 2 and 3
+        // then walk the stored strips, so layers still stack in the right
+        // order across strip seams.
+        do {
+          if (job.phase === 1) {
+            const last = Math.min(job.nextCol + TERRAIN_STRIP_COLS - 1, map.cols - 1);
+            const bundle = collectTerrain(jobCamera(job), job.plan.cssWidth, job.plan.cssHeight, job.nextCol, last);
+            drawTerrainPhase(job.cctx, bundle, 1);
+            job.bundles.push(bundle);
+            job.nextCol = last + 1;
+            if (job.nextCol >= map.cols) {
+              job.phase = 2;
+              job.index = 0;
+            }
+          } else {
+            drawTerrainPhase(job.cctx, job.bundles[job.index++], job.phase);
+            if (job.index >= job.bundles.length) {
+              job.phase += 1;
+              job.index = 0;
+            }
+          }
+        } while (job.phase <= 3 && performance.now() - sliceStart < TERRAIN_SLICE_MS);
+        if (job.phase > 3) {
+          spareCanvasRef.current = cache.canvas;
+          cache = terrainCacheRef.current = toCache(job);
+          terrainJobRef.current = null;
+          scale = 1;
+        } else {
+          scheduleDraw();
+        }
+      }
+    }
+    // Cache pixel (u, v) is screen point (originX + u, originY + v) under the
+    // cache's camera; map it through the current camera (scaled about the
+    // origin when the cache is from a different zoom).
+    // At 1:1 the offset is snapped to whole device pixels so the blit is an
+    // exact copy rather than a resample.
+    let tx = dpr * (camera.x + (cache.originX - cache.camX) * scale);
+    let ty = dpr * (camera.y + (cache.originY - cache.camY) * scale);
+    if (scale === 1) {
+      tx = Math.round(tx);
+      ty = Math.round(ty);
+    }
+    // Blit in device pixels, using the canvas's real pixel size. (Sizing the
+    // destination from cssWidth * dpr instead is off by a fraction of a pixel
+    // whenever that isn't a whole number, which resamples the image and makes
+    // some grid lines look darker or thicker than others.)
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.drawImage(cache.canvas, 0, 0, cache.pixelW, cache.pixelH, tx, ty, cache.pixelW * scale, cache.pixelH * scale);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    if (mode === "paint" && hoveredHex) {
+      const [hx, hz] = axialToWorld(hoveredHex.q, hoveredHex.r);
+      const [hcx, hcy] = project(hx, hz, camera);
+      const hover = new Path2D();
+      addHexToPath2D(hover, hcx, hcy, HEX_SIZE, zoom);
+      ctx.fillStyle = "rgba(255, 183, 3, 0.3)";
+      ctx.fill(hover);
+    }
 
     for (const door of doors || []) {
       const { type, state } = normalizeDoor(door);
@@ -447,14 +918,14 @@ export default function VTTCanvas({
       const [vx, vy] = project(hoveredVertex[0], hoveredVertex[1], camera);
       ctx.fillStyle = "#ffffff";
       ctx.beginPath();
-      ctx.arc(vx, vy, Math.max(3, camera.zoom * 0.07), 0, Math.PI * 2);
+      ctx.arc(vx, vy, Math.max(3, zoom * 0.07), 0, Math.PI * 2);
       ctx.fill();
     }
     if (mode === "door" && doorStart) {
       const [sx, sy] = project(doorStart[0], doorStart[1], camera);
       ctx.fillStyle = "#facc15";
       ctx.beginPath();
-      ctx.arc(sx, sy, Math.max(4, camera.zoom * 0.09), 0, Math.PI * 2);
+      ctx.arc(sx, sy, Math.max(4, zoom * 0.09), 0, Math.PI * 2);
       ctx.fill();
     }
 
@@ -464,18 +935,18 @@ export default function VTTCanvas({
     const tokenAnchor = (token) => {
       const [wx, wz] = axialToWorld(token.q, token.r);
       const [cx, cyBase] = project(wx, wz, camera);
-      return [cx, cyBase - STAND_HEIGHT * camera.zoom];
+      return [cx, cyBase - STAND_HEIGHT * zoom];
     };
     for (const line of lines || []) {
-      const from = tokens.find((t) => t.id === line.fromId);
-      const to = tokens.find((t) => t.id === line.toId);
+      const from = tokensById.get(line.fromId);
+      const to = tokensById.get(line.toId);
       if (!from || !to) continue;
       const [fx, fy] = tokenAnchor(from);
       const [tx, ty] = tokenAnchor(to);
       ctx.save();
       ctx.strokeStyle = resolveTokenColor(from);
-      ctx.lineWidth = Math.max(2, camera.zoom * 0.045);
-      ctx.setLineDash([camera.zoom * 0.25, camera.zoom * 0.18]);
+      ctx.lineWidth = Math.max(2, zoom * 0.045);
+      ctx.setLineDash([zoom * 0.25, zoom * 0.18]);
       ctx.beginPath();
       ctx.moveTo(fx, fy);
       ctx.lineTo(tx, ty);
@@ -483,19 +954,11 @@ export default function VTTCanvas({
       ctx.restore();
     }
 
-    // Tokens, sorted so ones "further back" on screen draw first — in the
-    // isometric projection, screen depth order follows (x + z), not raw z.
-    const sorted = [...tokens].sort((a, b) => {
-      const [ax, az] = axialToWorld(a.q, a.r);
-      const [bx, bz] = axialToWorld(b.q, b.r);
-      return (ax + az) - (bx + bz);
-    });
-
-    for (const token of sorted) {
+    for (const token of sortedTokens) {
       const [wx, wz] = axialToWorld(token.q, token.r);
       const [cx, cyBase] = project(wx, wz, camera);
-      const cy = cyBase - STAND_HEIGHT * camera.zoom;
-      const badgeSize = HEX_SIZE * 0.95 * (token.scale || 1) * camera.zoom;
+      const cy = cyBase - STAND_HEIGHT * zoom;
+      const badgeSize = HEX_SIZE * 0.95 * (token.scale || 1) * zoom;
 
       const opacity = token.opacity ?? 1;
       const img = badgeCache.get(tokenBadgeKey(token));
@@ -536,7 +999,7 @@ export default function VTTCanvas({
       if (token.id === selectedTokenId) {
         ctx.save();
         ctx.strokeStyle = "#facc15";
-        ctx.lineWidth = Math.max(2, camera.zoom * 0.04);
+        ctx.lineWidth = Math.max(2, zoom * 0.04);
         ctx.beginPath();
         ctx.moveTo(cx - badgeSize * 0.55, cy + badgeSize / 2 + 4);
         ctx.lineTo(cx + badgeSize * 0.55, cy + badgeSize / 2 + 4);
@@ -545,23 +1008,31 @@ export default function VTTCanvas({
       }
 
       ctx.fillStyle = "#e5e5e5";
-      ctx.font = `${Math.max(10, camera.zoom * 0.15)}px monospace`;
+      ctx.font = `${Math.max(10, zoom * 0.15)}px monospace`;
       ctx.textAlign = "center";
       ctx.fillText(token.name, cx, cy - badgeSize / 2 - 4);
     }
-  }, [map, tokens, lines, camera, size, mode, selectedTokenId, showRangeOverlay, hoveredHex, hoveredVertex, doorStart, doorType, doorState, doors, badgeVersion]);
+  };
+  drawRef.current = draw;
+
+  // Redraw (at most once per frame) whenever anything but the camera
+  // changes; camera changes call scheduleDraw directly.
+  useEffect(() => {
+    scheduleDraw();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [map, terrainStates, tokens, tokensById, sortedTokens, lines, size, mode, selectedTokenId, showRangeOverlay, hoveredHex, hoveredVertex, doorStart, doorType, doorState, doors, badgeVersion]);
 
   const getHexUnderPointer = (e) => {
     const rect = canvasRef.current.getBoundingClientRect();
     const px = e.clientX - rect.left;
     const py = e.clientY - rect.top;
-    const [wx, wz] = unproject(px, py, camera);
+    const [wx, wz] = unproject(px, py, cameraRef.current);
     return worldToAxial(wx, wz, HEX_SIZE);
   };
 
   const getWorldUnderPointer = (e) => {
     const rect = canvasRef.current.getBoundingClientRect();
-    return unproject(e.clientX - rect.left, e.clientY - rect.top, camera);
+    return unproject(e.clientX - rect.left, e.clientY - rect.top, cameraRef.current);
   };
 
   const getVertexUnderPointer = (e) => {
@@ -592,6 +1063,7 @@ export default function VTTCanvas({
     const py = e.clientY - rect.top;
     let closest = null;
     let closestDist = Infinity;
+    const camera = cameraRef.current;
     for (const token of tokens) {
       const [wx, wz] = axialToWorld(token.q, token.r);
       const [cx, cyBase] = project(wx, wz, camera);
@@ -663,7 +1135,7 @@ export default function VTTCanvas({
       drag.lastX = e.clientX;
       drag.lastY = e.clientY;
       if (drag.panning) {
-        setCamera((cam) => ({ ...cam, x: cam.x + dx, y: cam.y + dy }));
+        updateCamera((cam) => ({ ...cam, x: cam.x + dx, y: cam.y + dy }));
         return;
       }
       if (drag.painting) {
@@ -734,18 +1206,15 @@ export default function VTTCanvas({
     return () => window.removeEventListener("keydown", onKey);
   }, [mode]);
 
-  // Report the camera zoom to the parent (display only), and apply explicit
-  // slider requests by zooming about the viewport center. Requests are a
-  // one-way channel: echoing the reported zoom back into the camera would
-  // race with rapid wheel events and snap the zoom back and forth.
-  useEffect(() => {
-    onZoomChange?.(camera.zoom);
-  }, [camera.zoom]);
-
+  // Apply explicit slider requests by zooming about the viewport center.
+  // (The camera zoom is reported to the parent from draw(), at most once per
+  // frame.) Requests are a one-way channel: echoing the reported zoom back
+  // into the camera would race with rapid wheel events and snap the zoom
+  // back and forth.
   useEffect(() => {
     if (!zoomRequest || size.width === 0) return;
     const next = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, zoomRequest.zoom));
-    setCamera((cam) => {
+    updateCamera((cam) => {
       if (Math.abs(cam.zoom - next) < 1e-6) return cam;
       const px = size.width / 2;
       const py = size.height / 2;
@@ -766,7 +1235,7 @@ export default function VTTCanvas({
       const rect = canvas.getBoundingClientRect();
       const px = e.clientX - rect.left;
       const py = e.clientY - rect.top;
-      setCamera((cam) => {
+      updateCamera((cam) => {
         const [wx, wz] = unproject(px, py, cam);
         const [ix, iy] = isoProject(wx, wz);
         const delta = Math.max(-ZOOM_WHEEL_MAX_DELTA, Math.min(ZOOM_WHEEL_MAX_DELTA, e.deltaY));
@@ -780,7 +1249,7 @@ export default function VTTCanvas({
     };
     canvas.addEventListener("wheel", onWheel, { passive: false });
     return () => canvas.removeEventListener("wheel", onWheel);
-  }, []);
+  }, [updateCamera]);
 
   return (
     <div ref={containerRef} className="w-full h-full">
