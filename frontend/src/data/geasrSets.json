@@ -878,7 +878,7 @@
                         "slot": "Vest",
                         "tier": 1,
                         "flavor": "",
-                        "effect": "You no longer gain a flesh wound upon being tased by Shock Sticks; all other effects still apply. If DSCS Launcher Gauntlet is also equipped, any set Gadget at the point of tasing gains [Electric]."
+                        "effect": "You no longer gain a flesh wound upon being tased by Shock Sticks; all other effects still apply. If DSCS Launcher is also equipped, any set Gadget at the point of tasing gains [Electric]."
                     },
                     {
                         "id": "setCaptureRecover_dscsLauncher",
