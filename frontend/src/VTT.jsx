@@ -53,6 +53,15 @@ export default function VTTPage() {
 
   const tokensById = useMemo(() => new Map(allTokens.map((t) => [t.id, t])), [allTokens]);
 
+  // Lines touching a hidden token would give it away, so drop them from the board.
+  const boardLines = useMemo(
+    () =>
+      (activeMap?.lines || []).filter(
+        (l) => !tokensById.get(l.fromId)?.hidden && !tokensById.get(l.toId)?.hidden
+      ),
+    [activeMap, tokensById]
+  );
+
   const handleHexClick = (q, r, erase) => {
     if (mode === "paint") {
       const defaultValue = paintLayer === "elevation" ? "normal" : "none";
@@ -119,7 +128,7 @@ export default function VTTPage() {
           <VTTCanvas
             map={activeMap}
             tokens={allTokens}
-            lines={activeMap.lines || []}
+            lines={boardLines}
             mode={mode}
             selectedTokenId={selectedTokenId}
             showRangeOverlay={showRangeOverlay}
@@ -231,7 +240,6 @@ export default function VTTPage() {
             removeToken(id);
             if (id === selectedTokenId) setSelectedTokenId(null);
           }}
-          onDeselect={() => setSelectedTokenId(null)}
         />
         </div>
       </div>

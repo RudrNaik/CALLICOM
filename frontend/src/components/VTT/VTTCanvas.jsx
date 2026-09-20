@@ -381,7 +381,7 @@ export default function VTTCanvas({
   // change doesn't invalidate the cache.
   const terrainSig = useMemo(() => {
     const aoe = tokens
-      .filter((t) => t.aoeRadius)
+      .filter((t) => t.aoeRadius && !t.hidden)
       .map((t) => `${t.q},${t.r},${t.aoeRadius},${resolveTokenColor(t)}`)
       .join(";");
     const selected = showRangeOverlay && selectedTokenId != null ? tokensById.get(selectedTokenId) : null;
@@ -497,7 +497,7 @@ export default function VTTCanvas({
     // radius^2)) rather than testing every hex against every token.
     const aoeColors = new Map();
     for (const token of tokens) {
-      if (!token.aoeRadius) continue;
+      if (!token.aoeRadius || token.hidden) continue;
       const color = resolveTokenColor(token);
       for (const h of hexesInRadius(token.q, token.r, token.aoeRadius)) {
         const key = numericHexKey(h.q, h.r);
@@ -1002,7 +1002,7 @@ export default function VTTCanvas({
       const badgeSize = HEX_SIZE * 0.95 * (token.scale || 1) * zoom;
 
       const opacity = token.opacity ?? 1;
-      const img = badgeCache.get(tokenBadgeKey(token));
+      const img = token.hidden ? null : badgeCache.get(tokenBadgeKey(token));
       if (img) {
         ctx.save();
         ctx.globalAlpha = opacity;
@@ -1012,7 +1012,7 @@ export default function VTTCanvas({
 
       // Modifier icons sit at the token's top-right, packed tightly and
       // extending rightward from the corner so several can be active at once.
-      const modifiers = token.modifiers || [];
+      const modifiers = token.hidden ? [] : token.modifiers || [];
       if (modifiers.length) {
         // The badge canvas has ~8% padding around the drawn shape, so the
         // token's visible edges are at 0.42 * badgeSize from center. Icons
@@ -1048,6 +1048,7 @@ export default function VTTCanvas({
         ctx.restore();
       }
 
+      if (token.hidden) continue;
       ctx.fillStyle = "#e5e5e5";
       ctx.font = `${Math.max(10, zoom * 0.15)}px monospace`;
       ctx.textAlign = "center";
@@ -1106,6 +1107,7 @@ export default function VTTCanvas({
     let closestDist = Infinity;
     const camera = cameraRef.current;
     for (const token of tokens) {
+      if (token.hidden) continue;
       const [wx, wz] = axialToWorld(token.q, token.r);
       const [cx, cyBase] = project(wx, wz, camera);
       const cy = cyBase - STAND_HEIGHT * camera.zoom;

@@ -1,11 +1,11 @@
 import { hexDistance, rangeBand, rangeBandLabel } from "../../utils/hexGrid";
-import { FRIENDLY_COLOR_PRESETS, MODIFIER_ICONS, MODIFIER_KEYS, resolveTokenColor } from "./tokenBadges";
+import { CLASS_KEYS, FRIENDLY_COLOR_PRESETS, MODIFIER_ICONS, MODIFIER_KEYS, resolveTokenColor } from "./tokenBadges";
 
-function TokenRow({ token, selected, onSelect, onRemove }) {
+function TokenRow({ token, selected, onSelect, onRemove, onUpdate }) {
   const color = resolveTokenColor(token);
   return (
     <div
-      onClick={() => onSelect(token.id)}
+      onClick={() => onSelect(selected ? null : token.id)}
       className={`flex items-center gap-2 px-2 py-1.5 rounded-xs border cursor-pointer text-xs ${
         selected ? "border-orange-400 bg-orange-400/10" : "border-white/10 hover:border-white/30"
       }`}
@@ -14,7 +14,19 @@ function TokenRow({ token, selected, onSelect, onRemove }) {
         className={`w-2 h-2 shrink-0 ${token.type === "enemy" ? "rotate-45" : ""}`}
         style={{ background: color }}
       />
-      <span className="truncate flex-1">{token.name}</span>
+      <span className={`truncate flex-1 ${token.hidden ? "opacity-50 italic" : ""}`}>{token.name}</span>
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onUpdate(token.id, { hidden: !token.hidden });
+        }}
+        className={`px-1 border text-[10px] ${
+          token.hidden ? "border-orange-400 text-orange-400" : "border-white/20 text-neutral-400 hover:text-white"
+        }`}
+        title={token.hidden ? "Hidden from the map — click to show" : "Visible — click to hide from the map"}
+      >
+        {token.hidden ? "HIDDEN" : "SHOWN"}
+      </button>
       {token.aoeRadius > 0 && (
         <span className="text-[10px] text-neutral-400" title="AOE radius">
           AOO {token.aoeRadius}
@@ -35,20 +47,12 @@ function TokenRow({ token, selected, onSelect, onRemove }) {
   );
 }
 
-export default function TokenListPanel({ friendlies, enemies, selectedTokenId, onSelect, onUpdate, onRemove, onDeselect }) {
+export default function TokenListPanel({ friendlies, enemies, selectedTokenId, onSelect, onUpdate, onRemove }) {
   const selected = [...friendlies, ...enemies].find((t) => t.id === selectedTokenId);
 
   return (
     <div className="flex flex-col gap-4 p-4 bg-gradient-to-t from-neutral-800 to-neutral-900 border border-r-4 border-r-orange-500 border-white/10 rounded-xs text-white text-sm font-mono">
       <div>
-        {selectedTokenId && (
-          <button
-            onClick={onDeselect}
-            className="px-2 py-1.5 rounded-xs border w-full border-white/15 hover:border-orange-400/60 text-xs text-center mb-2"
-          >
-            Deselect Token
-          </button>
-        )}
         <p className="text-xs uppercase tracking-widest text-sky-400 mb-2">Friendlies</p>
         <div className="flex flex-col gap-1">
           {friendlies.length === 0 && <p className="text-xs text-neutral-500">None placed.</p>}
@@ -59,6 +63,7 @@ export default function TokenListPanel({ friendlies, enemies, selectedTokenId, o
               selected={t.id === selectedTokenId}
               onSelect={onSelect}
               onRemove={onRemove}
+              onUpdate={onUpdate}
             />
           ))}
         </div>
@@ -75,6 +80,7 @@ export default function TokenListPanel({ friendlies, enemies, selectedTokenId, o
               selected={t.id === selectedTokenId}
               onSelect={onSelect}
               onRemove={onRemove}
+              onUpdate={onUpdate}
             />
           ))}
         </div>
@@ -92,6 +98,21 @@ export default function TokenListPanel({ friendlies, enemies, selectedTokenId, o
               onChange={(e) => onUpdate(selected.id, { name: e.target.value })}
               className="flex-1 bg-neutral-800 border border-white/15 rounded-xs px-2 py-1 text-xs"
             />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <label className="text-xs text-neutral-400 w-16 shrink-0">Class</label>
+            <select
+              value={selected.classKey}
+              onChange={(e) => onUpdate(selected.id, { classKey: e.target.value })}
+              className="flex-1 bg-neutral-800 border border-white/15 rounded-xs px-2 py-1 text-xs"
+            >
+              {CLASS_KEYS.map((c) => (
+                <option key={c} value={c}>
+                  {c.replaceAll("_", " ")}
+                </option>
+              ))}
+            </select>
           </div>
 
           {selected.type === "friendly" && (
