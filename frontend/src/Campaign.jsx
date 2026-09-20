@@ -16,19 +16,19 @@ function Campaigns() {
   const [campaigns, setCampaigns] = useState([]);
   const [missions, setMissions] = useState([]);
   const [filteredMissions, setFilteredMissions] = useState([]);
-  const [currentCampaignId, setCurrentCampaignId] = useState("LTW2022");
+  const [currentCampaignId, setCurrentCampaignId] = useState("");
   const [currentMissionId, setCurrentMissionId] = useState(null);
   const [characters, setCharacters] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [hasLoadedData, setHasLoadedData] = useState(false);
   const [isCreatingMission, setIsCreatingMission] = useState(false);
   const [isSubmittingEdits, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
   const { isAdmin } = useContext(AuthContext);
 
-  //console.log(isAdmin);
-
-  const loadingCampaignData = campaigns.length === 0 || missions.length === 0;
-  const isInitialLoading = loadingCampaignData || isLoading;
+  // A user may legitimately have no campaigns (or no missions) yet, so loading
+  // is tracked explicitly rather than inferred from empty arrays.
+  const isInitialLoading = !hasLoadedData || isLoading;
 
   /**
    * UseEffect for login, JWT check, and fetching missions.
@@ -41,33 +41,39 @@ function Campaigns() {
       return;
     }
 
-    const fetchCampaigns = fetch(
-      "https://callicom.onrender.com/api/campaigns",
-      {
+    const getJson = (path) =>
+      fetch(`https://callicom.onrender.com/api/${path}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-      }
-    ).then((res) => res.json());
+      }).then((res) => {
+        if (!res.ok) throw new Error(`GET /api/${path} failed: ${res.status}`);
+        return res.json();
+      });
 
-    const fetchMissions = fetch("https://callicom.onrender.com/api/missions", {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    }).then((res) => res.json());
-
-    Promise.all([fetchCampaigns, fetchMissions])
+    Promise.all([getJson("campaigns"), getJson("missions")])
       .then(([campaignsData, missionsData]) => {
         setCampaigns(campaignsData);
         setMissions(missionsData);
+        setHasLoadedData(true);
       })
       .catch((err) => {
         console.error("Error fetching campaign/mission data:", err);
         navigate("/login");
       });
   }, []);
+
+  /**
+   * Keeps the selection on a campaign this user can actually see, defaulting
+   * to the first one when nothing (or something no longer visible) is selected.
+   */
+  useEffect(() => {
+    if (!hasLoadedData) return;
+    if (!campaigns.some((c) => c.id === currentCampaignId)) {
+      setCurrentCampaignId(campaigns[0]?.id || "");
+    }
+  }, [campaigns, hasLoadedData]);
 
   /**
    * UseEffect for the campaign missions and setting them in the UI
@@ -100,15 +106,23 @@ function Campaigns() {
       return;
     }
 
+    if (!currentCampaignId) {
+      setCharacters([]);
+      return;
+    }
+
     setIsLoading(true);
 
-    fetch("https://callicom.onrender.com/api/characters", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    })
+    fetch(
+      `https://callicom.onrender.com/api/campaigns/${encodeURIComponent(currentCampaignId)}/characters`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
       .then(async (res) => {
         if (res.status === 403) {
           console.warn("Access denied, redirecting to login.");
@@ -121,28 +135,20 @@ function Campaigns() {
           throw new Error("Invalid data format");
         }
 
-        // let str = "Chile2018, Siberia2022";
-        // console.log(str.replace(/\s/g, "").split(","));
-
-        const filtered = data.filter((char) => {
-          if (!char?.campaignId) return false; // safely skip
-          return char.campaignId
-            ?.replace(/\s/g, "")
-            ?.split(",")
-            ?.includes(currentCampaignId);
-        });
-
-        setCharacters(filtered);
+        setCharacters(data);
         setIsLoading(false);
       })
       .catch((err) => {
         console.error("Error fetching characters:", err);
+        setCharacters([]);
         setIsLoading(false);
       });
   }, [currentCampaignId]);
 
   const currentCampaign = campaigns.find((c) => c.id === currentCampaignId);
   const currentMission = missions.find((m) => m.id === currentMissionId);
+  // GMs manage their own campaigns; the site admin manages all of them.
+  const canManage = isAdmin || !!currentCampaign?.isOwner;
 
   /**
    * Refreshes the campaigns when triggered.
@@ -155,7 +161,10 @@ function Campaigns() {
         Authorization: `Bearer ${token}`,
       },
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error(`Failed to refresh campaigns: ${res.status}`);
+        return res.json();
+      })
       .then(setCampaigns)
       .catch((err) => console.error("Error refreshing campaigns:", err));
   };
@@ -172,7 +181,10 @@ function Campaigns() {
         Authorization: `Bearer ${token}`,
       },
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error(`Failed to refresh missions: ${res.status}`);
+        return res.json();
+      })
       .then(setMissions)
       .catch((err) => console.error("Failed to refresh missions:", err));
   };
@@ -186,12 +198,17 @@ function Campaigns() {
     setIsCreatingMission(true);
 
     const token = localStorage.getItem("token");
+    // The campaign is embedded in the mission, which every player can read, so
+    // keep the join code and ownership flags out of it.
+    const { joinCode, isOwner, ownerId, ...campaignRef } = currentCampaign;
     const newMission = {
-      id: `mission${missions.length + 5}`,
+      // Missions from every campaign share one collection keyed by `id`, so a
+      // count-based id could collide across GMs.
+      id: `mission${Date.now()}`,
       location: "",
       lat: "",
       lon: "",
-      campaignId: currentCampaign,
+      campaignId: campaignRef,
       Name: "New Mission",
       Type: "Side Mission",
       status: "ACTIVE",
@@ -350,7 +367,8 @@ function Campaigns() {
               campaigns={campaigns}
               filteredMissions={filteredMissions}
               refreshCampaigns={refreshCampaigns}
-              isAdmin={isAdmin}
+              refreshMissions={refreshMissions}
+              canManage={canManage}
               handleAddMission={handleAddMission}
               isCreatingMission={isCreatingMission}
             />
@@ -365,7 +383,7 @@ function Campaigns() {
           >
             <MissionView
               currentMission={currentMission}
-              isAdmin={isAdmin}
+              isAdmin={canManage}
               refreshMissions={refreshMissions}
               currentCampaignId={currentCampaign}
               handleDeleteMission={handleDeleteMission}

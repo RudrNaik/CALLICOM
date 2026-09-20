@@ -9,12 +9,16 @@ function CampaignView({
   filteredMissions,
   campaigns,
   refreshCampaigns,
-  isAdmin,
+  refreshMissions,
+  canManage,
   handleAddMission,
   isCreatingMission,
 }) {
   const [showAddForm, setShowAddForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
+  const [showJoinForm, setShowJoinForm] = useState(false);
+  const [joinCode, setJoinCode] = useState("");
+  const [joinError, setJoinError] = useState("");
 
   // ADD: isolated state
   const [newCampaign, setNewCampaign] = useState({
@@ -37,8 +41,72 @@ function CampaignView({
   useEffect(() => {
     setShowAddForm(false);
     setShowEditForm(false);
+    setShowJoinForm(false);
     setEditCampaign(null);
   }, [currentCampaignId]);
+
+  const openJoin = () => {
+    setJoinCode("");
+    setJoinError("");
+    setShowAddForm(false);
+    setShowEditForm(false);
+    setShowJoinForm(true);
+  };
+
+  const handleJoin = async () => {
+    if (!joinCode.trim()) return;
+
+    setIsSubmitting(true);
+    setJoinError("");
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch("https://callicom.onrender.com/api/campaigns/join", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ code: joinCode }),
+      });
+      if (res.status === 404) {
+        setJoinError("No campaign matches that code.");
+        return;
+      }
+      if (!res.ok) throw new Error("Failed to join campaign");
+      const { id } = await res.json();
+      await Promise.all([refreshCampaigns(), refreshMissions()]);
+      setShowJoinForm(false);
+      setCurrentCampaignId(id);
+    } catch (err) {
+      console.error("Error joining campaign:", err);
+      setJoinError("Failed to join campaign.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleRegenerateCode = async () => {
+    if (
+      !currentCampaign ||
+      !window.confirm(
+        "Generate a new access code? The old code will stop working for new players."
+      )
+    )
+      return;
+
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(
+        `https://callicom.onrender.com/api/campaigns/${currentCampaign.id}/regenerate-code`,
+        { method: "POST", headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (!res.ok) throw new Error("Failed to regenerate code");
+      await refreshCampaigns();
+    } catch (err) {
+      console.error("Error regenerating code:", err);
+      alert("Failed to regenerate access code.");
+    }
+  };
 
   const openAdd = () => {
     setNewCampaign({
@@ -52,6 +120,7 @@ function CampaignView({
       unit: "",
     });
     setShowEditForm(false);
+    setShowJoinForm(false);
     setShowAddForm(true);
   };
 
@@ -72,6 +141,7 @@ function CampaignView({
   const openEdit = () => {
     seedEditFromCurrent();
     setShowAddForm(false);
+    setShowJoinForm(false);
     setShowEditForm(true);
   };
 
@@ -102,6 +172,10 @@ function CampaignView({
         },
         body: JSON.stringify(newCampaign),
       });
+      if (res.status === 409) {
+        alert("A campaign with this ID already exists. Please choose a unique ID.");
+        return;
+      }
       if (!res.ok) throw new Error("Failed to create campaign");
       await res.json();
       await refreshCampaigns();
@@ -157,34 +231,42 @@ function CampaignView({
 
   return (
     <div>
-      {currentCampaign && (
+      <div>
         <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border border-orange-500 rounded-sm p-6 shadow-lg min-w-sm sm:max-w-full md:max-w-md min-h-[700px] max-h-[700px] overflow-y-auto whitespace-pre-line scrollbar-thin scrollbar-thumb-orange-400 scrollbar-track-neutral-700">
           {/* Campaign Selector */}
           <div className="relative">
             <div className="bg-orange-500 p-2 rounded text-neutral-900 font-bold">
               <select
-                value={currentCampaignId}
+                value={currentCampaign ? currentCampaignId : ""}
                 onChange={(e) => {
                   const v = e.target.value;
                   if (v === "__add") return openAdd();
+                  if (v === "__join") return openJoin();
                   if (v === "__edit") return openEdit();
                   setShowAddForm(false);
                   setShowEditForm(false);
+                  setShowJoinForm(false);
                   setCurrentCampaignId(v);
                 }}
                 className="bg-transparent text-neutral-100 font-bold text-xl uppercase w-full appearance-none"
               >
+                {!currentCampaign && (
+                  <option value="" disabled className="text-white bg-orange-500">
+                    No campaigns available
+                  </option>
+                )}
                 {campaigns.map((campaign) => (
                   <option key={campaign.id} value={campaign.id} className="text-white bg-orange-500">
                     {campaign.Name}
                   </option>
                 ))}
-                {isAdmin && (
-                  <option value="__add" className="text-white bg-orange-600">
-                    [ + ] Add New Campaign
-                  </option>
-                )}
-                {isAdmin && (
+                <option value="__add" className="text-white bg-orange-600">
+                  [ + ] Add New Campaign
+                </option>
+                <option value="__join" className="text-white bg-orange-600">
+                  [ # ] Enter Campaign Code
+                </option>
+                {canManage && currentCampaign && (
                   <option value="__edit" className="text-white bg-orange-600">
                     [ ^ ] Edit Current Campaign
                   </option>
@@ -193,8 +275,39 @@ function CampaignView({
             </div>
           </div>
 
+          {!currentCampaign && !showAddForm && !showJoinForm && (
+            <p className="mt-4 text-xs text-neutral-400">
+              You don't have access to any campaigns yet. Create your own, or
+              enter a campaign code from your GM to preview theirs. Campaigns
+              also appear here automatically once one of your characters is
+              assigned to it.
+            </p>
+          )}
+
+          {/* Enter Campaign Code Form */}
+          {showJoinForm && (
+            <div className="mt-4 text-sm space-y-2">
+              <input
+                placeholder="Campaign code"
+                className="w-full p-2 bg-neutral-900 border border-orange-500 rounded uppercase tracking-widest"
+                value={joinCode}
+                onChange={(e) => setJoinCode(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleJoin()}
+              />
+              {joinError && <p className="text-xs text-red-400">{joinError}</p>}
+              <div className="flex justify-between gap-2 mt-2">
+                <button onClick={() => setShowJoinForm(false)} className="flex-1 border border-orange-400 text-orange-400 font-semibold py-2 rounded hover:bg-orange-600/10">
+                  Cancel
+                </button>
+                <button onClick={handleJoin} disabled={isSubmitting || !joinCode.trim()} className="flex-1 bg-orange-500 text-black font-bold py-2 rounded hover:bg-orange-600 transition disabled:opacity-60">
+                  {isSubmitting ? "Checking..." : "Join"}
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* Add Campaign Form */}
-          {showAddForm && isAdmin && (
+          {showAddForm && (
             <div className="mt-4 text-sm space-y-2">
               <div className="grid grid-cols-1 gap-2">
                 <input name="Name" placeholder="Campaign Name" className="w-full p-2 bg-neutral-900 border border-orange-500 rounded" value={newCampaign.Name} onChange={handleAddInputChange} />
@@ -218,7 +331,7 @@ function CampaignView({
           )}
 
           {/* Edit Campaign Form */}
-          {showEditForm && isAdmin && editCampaign && (
+          {showEditForm && canManage && editCampaign && (
             <div className="mt-4 text-sm space-y-2">
               <div className="grid grid-cols-1 gap-2">
                 <input name="Name" className="w-full p-2 bg-neutral-900 border border-orange-500 rounded" value={editCampaign.Name} onChange={handleEditInputChange} />
@@ -241,10 +354,23 @@ function CampaignView({
             </div>
           )}
 
+          {currentCampaign && (<>
           {/* Campaign Details */}
           <h2 className="uppercase text-sm text-neutral-400 mb-4 mt-4">
             {currentCampaign.Location}
           </h2>
+
+          {canManage && currentCampaign.joinCode && (
+            <div className="mb-4 flex items-center justify-between gap-2 border border-dashed border-orange-500/60 rounded p-2 text-xs">
+              <div>
+                <p className="text-orange-300 font-bold">ACCESS CODE</p>
+                <p className="font-mono tracking-widest text-sm select-all">{currentCampaign.joinCode}</p>
+              </div>
+              <button onClick={handleRegenerateCode} className="border border-orange-400 text-orange-400 font-semibold px-2 py-1 rounded hover:bg-orange-600/10">
+                New code
+              </button>
+            </div>
+          )}
 
           <p className="text-orange-300 text-xs font-bold mb-1">SITREP</p>
           <p className="text-xs whitespace-pre-line">{currentCampaign.SITREP}</p>
@@ -288,7 +414,7 @@ function CampaignView({
             })}
           </div>
 
-          {isAdmin && (
+          {canManage && (
             <button
               onClick={handleAddMission}
               disabled={isCreatingMission}
@@ -305,8 +431,9 @@ function CampaignView({
               {isCreatingMission ? "Creating..." : "Add New Mission"}
             </button>
           )}
+          </>)}
         </div>
-      )}
+      </div>
     </div>
   );
 }
