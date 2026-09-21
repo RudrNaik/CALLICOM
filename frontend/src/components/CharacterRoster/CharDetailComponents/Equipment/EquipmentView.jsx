@@ -87,7 +87,7 @@ function deriveEquipmentState(character, weaponCatsLookup) {
         (w.category !== "SMGs" || w.family === "Machine Pistols"),
     ),
 
-    //Restrics Armor per SUPP getting AC3 as max (to use the juggernaut suit), everyone else has max of AC1
+    //Restricts Armor per class: Engineers/Medic/Fire Support max AC2, everyone else max AC1
     maxArmor: getArmorClassCap(character),
 
     //Gearsets available to this character's class, plus any universal ones.

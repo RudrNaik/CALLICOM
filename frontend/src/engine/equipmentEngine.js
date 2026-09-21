@@ -193,7 +193,7 @@ export const sanitizeEquipmentOwnership = (equipment, logs) => {
 
 /**
  * Returns the max armor class a character's class can equip.
- * Combat Engineer/Technical Engineer/Medic -> 2, Fire Support -> 3, else 1.
+ * Combat Engineer/Technical Engineer/Medic/Fire Support -> 2, else 1.
  * @param {object} character
  * @returns {number}
  */
@@ -201,12 +201,10 @@ export const getArmorClassCap = (character) => {
   if (
     character.class === "Combat Engineer" ||
     character.class === "Technical Engineer" ||
-    character.class === "Medic"
+    character.class === "Medic" ||
+    character.class === "Fire Support"
   ) {
     return 2;
-  }
-  if (character.class === "Fire Support") {
-    return 3;
   }
   return 1;
 };
