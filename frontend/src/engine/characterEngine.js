@@ -88,8 +88,8 @@ export function calculateDerivedStats(character) {
   const fleshThreshold = Math.ceil(stamina / 2) + (equip.armorClass ?? 0);
   const deepThreshold = stamina + (equip.armorClass ?? 0);
   const instantDeath = stamina * 2;
-  const unarmedDamage = Math.max(4, Math.ceil((3 + Body + CQC) / 1.5));
-  const armedDamage = Math.max(4, Math.ceil((3 + Body + Melee) / 1.5));
+  const unarmedDamage = Math.ceil((3 + Body + CQC) / 1.5);
+  const armedDamage = Math.ceil((3 + Body + Melee) / 1.5);
   const woundMod = getWoundPenalty(fleshWounds, deepWounds);
 
   return {
