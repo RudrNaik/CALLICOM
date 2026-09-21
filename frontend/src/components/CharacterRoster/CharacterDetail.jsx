@@ -167,6 +167,14 @@ function CharacterDetail({ character, onUpdate, user }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [character, isEditing]);
 
+  // The campaign code field has its own Assign button (not gated by
+  // isEditing), so it's keyed on the stored value alone: a sync conflict
+  // resolved with "Use Server Version" changes it, while unrelated updates
+  // to the same character (wound autosave etc.) leave a half-typed code alone.
+  useEffect(() => {
+    setCampaignInput(character?.campaignId || "");
+  }, [character?.campaignId]);
+
   // 700ms debounce because rapidly spamming the deep and flesh wounds causes
   // desync with the backend as master so it reverts. Shared by DerivedStats
   // and the Roll Calculator so both read/write the same wound counters.
