@@ -12,7 +12,7 @@ import { useContext } from "react";
 import { AuthContext } from "./AuthContext";
 import EnemyView from "./components/Briefings/EnemyRoster";
 
-const ApiBase = "http://localhost:8080"
+const ApiBase = "https://callicom.onrender.com"
 
 function Campaigns() {
   const [campaigns, setCampaigns] = useState([]);
