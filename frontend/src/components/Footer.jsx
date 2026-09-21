@@ -17,14 +17,14 @@ const Footer = () => {
 
         {/* Subtitle */}
         <p className="text-[0.95rem] text-orange-400 mb-6">
-          CALAMARI / 4.10.25 <br /> SECURE THE BAG
+          CALAMARI<br /> SECURE THE BAG
         </p>
 
         {/* Socials */}
         <div className="flex justify-center gap-6 mb-6">
           <a
             href="https://x.com/Spinypine2"
-            className="hover:bg-orange-400 text-sm"
+            className="hover:underline text-sm"
             style={{ color: "whitesmoke" }}
             target="_blank"
             rel="noopener noreferrer"
@@ -33,7 +33,7 @@ const Footer = () => {
           </a>
           <a
             href="https://cara.app/spinypine"
-            className="hover:bg-orange-400 text-sm"
+            className="hover:underline text-sm"
             style={{ color: "whitesmoke" }}
             target="_blank"
             rel="noopener noreferrer"
@@ -51,7 +51,7 @@ const Footer = () => {
 
         {/* Legal Text */}
         <p className="text-xs text-gray-300 px-4 leading-relaxed">
-          © 2025 SpinyNA Studios. All rights reserved. Dates and content subject to change. Game is not yet rated.
+          © 2026 SpinyNA Studios. All rights reserved. Dates and content subject to change. Game is not yet rated.
           <br />
           SpinyNA, the SpinyNA logo, Calamari, and the Calamari logo are among the trademarks of SpinyNA Studios (Not actually).
         </p>

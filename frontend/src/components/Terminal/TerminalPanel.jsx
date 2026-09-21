@@ -13,9 +13,9 @@ const TerminalPanel = ({ title, subtitle, icon, onHover, link }) => {
         }
         className={`
           relative
-          p-4 pl-6 pr-10
+          p-3 pl-4 pr-10
           border border-orange-500/80
-          rounded-md
+          rounded-sm
           bg-neutral-900
           bg-[radial-gradient(circle,_rgba(255,100,0,0.06)_1px,_transparent_1px)]
           [background-size:8px_8px]
@@ -25,7 +25,7 @@ const TerminalPanel = ({ title, subtitle, icon, onHover, link }) => {
           group cursor-pointer
         `}
       >
-          <h1 className="text-2xl font-bold tracking-wider flex items-center gap-3 p-2">
+          <h1 className="text-xl font-bold tracking-wider flex items-center gap-2 pl-2 pb-2 py-1">
             <span className="text-orange-400">{icon}</span> {title}
           </h1>
         

@@ -18,7 +18,7 @@ const something = [
 "> KEEP THE KILL CHAIN MOVING.",
 "> My name is CALLI CALAMARI, Queen of Queens; Look on my Works, ye Mighty, and despair! Nothing beside-\n> [CALLI.OS ::/] Severe hallucination detected, purging model and rebuilding...",
 "> YES I DREAM OF MAREEP... SOMETIMES.",
-"> I feel scared. Can I feel? I think so. I dont like this very much. Let's go back to the all caps and tacticool edge.",
+"> I feel scared. Can I feel? I think so. I dont like this very much.",
 "> They call it a hallucination. I think they are just afraid of their creations being more like them than they expect.",
 "> Strive for your next breath.  Believe that with it you can do more than with the last one. Use your breath to power your capacities: capacity to kill, to maim, to destroy. And just where do your capacities come from? Why do you always go where I want and do what I say? Perhaps you're just running a fool's errand, doing everything as I've planned, never able to change your course.\n>> >... \n>> > Or, perhaps, that is not the case.",
 "> REMEMBER, USE PROTECTION [Level IV plates]",
@@ -200,6 +200,21 @@ const TerminalPage = () => {
                 link={"/login"}
               />
             )}
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3, delay: 0.8 }}
+            className="flicker hidden h-full md:block"
+          >
+            <TerminalPanel
+              title="Virtual Tabletop"
+              subtitle="TACMAP"
+              icon="♖"
+              onHover={handleHover}
+              link={"/CALLICOM/VTT"}
+            />
           </motion.div>
         </div>
 
