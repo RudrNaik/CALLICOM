@@ -1,6 +1,6 @@
 // App.jsx
-import { useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useContext, useState } from "react";
+import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 import About from "./About";
 import TerminalPage from "./CALLICOM";
 import ActionEconomyPage from "./ActionEconomy";
@@ -13,7 +13,8 @@ import Home from "./Home";
 import Campaigns from "./Campaign";
 import SignUp from "./SignUp";
 import Navbar from "./components/Navbar";
-import { AuthProvider } from "./AuthContext";
+import { AuthProvider, AuthContext } from "./AuthContext";
+import { AUTH_EXPIRED_EVENT } from "./engine/syncEngine";
 import "./App.css";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
@@ -32,6 +33,27 @@ function ScrollToTop() {
   return null;
 }
 
+// Sends the user to the login page when the backend rejects their session
+// (see syncEngine's AUTH_EXPIRED_EVENT), clearing the stale login first.
+function AuthExpiredRedirect() {
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const { logout } = useContext(AuthContext);
+
+  useEffect(() => {
+    const onExpired = () => {
+      if (pathname === "/login") return;
+      localStorage.removeItem("token");
+      logout();
+      navigate("/login");
+    };
+    window.addEventListener(AUTH_EXPIRED_EVENT, onExpired);
+    return () => window.removeEventListener(AUTH_EXPIRED_EVENT, onExpired);
+  }, [pathname, logout, navigate]);
+
+  return null;
+}
+
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -41,6 +63,7 @@ export default function App() {
         <div className="min-h-screen bg-gray-100 text-gray-900">
           <Navbar isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
           <ScrollToTop />
+          <AuthExpiredRedirect />
           <Routes>
             <Route path="/" element={<Home />} />
             <Route

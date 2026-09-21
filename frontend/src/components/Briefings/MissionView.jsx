@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 
+const ApiBase = "https://callicom.onrender.com"
+
 function MissionView({
   currentMission,
   isAdmin,
@@ -87,7 +89,7 @@ function MissionView({
 
     try {
       await fetch(
-        `https://callicom.onrender.com/api/missions/${currentMission.id}`,
+        `${ApiBase}/api/missions/${currentMission.id}`,
         {
           method: "PUT",
           headers: {
@@ -107,12 +109,27 @@ function MissionView({
     }
   };
 
-  if (!missionData) return null;
+  // The panel stays on screen even with nothing selected, so the layout
+  // doesn't jump around as campaigns/missions change.
+  const shellClass =
+    "bg-gradient-to-t from-neutral-800 to-neutral-850 border border-orange-500 w-full min-w-0 rounded-sm p-6 shadow-lg min-h-[700px] max-h-[700px] overflow-y-auto whitespace-pre-line scrollbar-thin scrollbar-thumb-orange-400 scrollbar-track-neutral-700";
+
+  if (!missionData) {
+    return (
+      <div className={shellClass}>
+        <p className="text-orange-300 text-xs font-bold uppercase">Mission Briefing</p>
+        <p className="mt-2 text-xs text-neutral-400">
+          No mission selected. Pick an operation from the campaign list to view
+          its briefing.
+        </p>
+      </div>
+    );
+  }
 
   return (
-    <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border border-orange-500  min-w-sm sm:max-w-full md:min-w-full rounded-sm p-6 shadow-lg min-h-[700px] max-h-[700px] overflow-y-auto whitespace-pre-line scrollbar-thin scrollbar-thumb-orange-400 scrollbar-track-neutral-700">
+    <div className={shellClass}>
       {editing ? (
-        <div className="min-w-sm">
+        <div>
           <p className="text-orange-300 text-xs font-bold">Mission ID</p>
           <input
             disabled={submitting}
@@ -160,13 +177,13 @@ function MissionView({
           <p className="text-orange-300 text-xs font-bold mt-2">Lat/long</p>
           <input
             disabled={submitting}
-            className="w-md p-2 bg-neutral-900 border border-orange-400 rounded"
+            className="w-full p-2 bg-neutral-900 border border-orange-400 rounded"
             value={missionData.lat}
             onChange={(e) => handleChange("lat", e.target.value)}
           />
           <input
             disabled={submitting}
-            className="w-md p-2 bg-neutral-900 border border-orange-400 rounded"
+            className="w-full p-2 bg-neutral-900 border border-orange-400 rounded"
             value={missionData.lon}
             onChange={(e) => handleChange("lon", e.target.value)}
           />
