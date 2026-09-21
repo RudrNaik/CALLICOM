@@ -8,7 +8,21 @@
  * against the backend once per mount to catch drift from other devices.
  */
 
-const API_BASE = "https://callicom.onrender.com";
+export const API_BASE = "https://callicom.onrender.com";
+
+/**
+ * Fired when the backend rejects a request's token (401/403). Every character
+ * route requires a valid login, so this only happens once the session is gone
+ * (expired token, or a stale page left open after logging out). App.jsx
+ * listens for it and sends the user to the login page.
+ */
+export const AUTH_EXPIRED_EVENT = "callicom:auth-expired";
+
+const assertAuthorized = (res) => {
+  if (res.status === 401 || res.status === 403) {
+    window.dispatchEvent(new Event(AUTH_EXPIRED_EVENT));
+  }
+};
 
 const authHeaders = (token) => ({
   "Content-Type": "application/json",
@@ -20,6 +34,7 @@ export const fetchRemoteCharacters = async (userId, token) => {
     `${API_BASE}/api/characters/${encodeURIComponent(userId)}`,
     { headers: authHeaders(token) },
   );
+  assertAuthorized(res);
   if (!res.ok) throw new Error(`Failed to fetch characters (${res.status})`);
   return res.json();
 };
@@ -33,6 +48,7 @@ export const createRemoteCharacter = async (character, token) => {
       userId: character?.userId ?? character?.metadata?.userId ?? "",
     }),
   });
+  assertAuthorized(res);
   if (!res.ok) throw new Error(`Failed to create character (${res.status})`);
   return res.json();
 };
@@ -54,6 +70,7 @@ export const updateRemoteCharacter = async (userId, uniqueId, character, token) 
       keepalive: true,
     },
   );
+  assertAuthorized(res);
   if (!res.ok) throw new Error(`Failed to update character (${res.status})`);
   return res.json();
 };
@@ -178,6 +195,7 @@ export const deleteRemoteCharacter = async (userId, uniqueId, token) => {
       headers: authHeaders(token),
     },
   );
+  assertAuthorized(res);
   if (!res.ok) throw new Error(`Failed to delete character (${res.status})`);
   return res.json();
 };
