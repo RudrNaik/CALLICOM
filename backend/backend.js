@@ -6,7 +6,7 @@ var app = express();
 var fs = require("fs");
 var bcrypt = require("bcrypt");
 var bodyParser = require("body-parser");
-const { MongoClient } = require("mongodb");
+const { MongoClient, ObjectId } = require("mongodb");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 
@@ -184,9 +184,14 @@ app.use(authenticateJWT); // All routes after this require JWT authentication
 // A campaign is visible to a user when they:
 //   - own it (`ownerId` === their userName; campaigns created before
 //     ownership existed have no `ownerId` and belong to ADMIN_USER),
-//   - have a character whose `campaignId` list includes it, or
-//   - have redeemed its join code (stored on the user as `joinedCampaigns`).
+//   - have a character whose `campaignId` list includes its join code, or
+//   - have redeemed its join code (the campaign's Mongo `_id` is stored on the
+//     user as `joinedCampaigns`).
 // ADMIN_USER can see and manage everything.
+//
+// Join codes are generated once when a campaign is created and never change.
+// Missions point at their campaign through `campaignId`, the campaign's Mongo
+// `_id` as a string.
 const ADMIN_USER = "Spinypine";
 
 const isAdminUser = (user) => user?.userName === ADMIN_USER;
@@ -199,19 +204,40 @@ const generateJoinCode = () => crypto.randomBytes(4).toString("hex").toUpperCase
 const normalizeJoinCode = (code) =>
   String(code || "").replace(/\s/g, "").toUpperCase();
 
+const toObjectId = (value) =>
+  typeof value === "string" && ObjectId.isValid(value) && String(new ObjectId(value)) === value
+    ? new ObjectId(value)
+    : null;
+
+// A character's "Assign To Campaign" field holds a comma-separated list of
+// join codes, matched case-insensitively. Returns the `_id` strings of every
+// campaign the user can preview through a character or a redeemed code.
 async function getVisibleCampaignIds(db, userName) {
-  const [characters, user] = await Promise.all([
+  const [characters, user, campaigns] = await Promise.all([
     db.collection("characters").find({ userId: userName }, { projection: { campaignId: 1 } }).toArray(),
     db.collection("users").findOne({ userName }, { projection: { joinedCampaigns: 1 } }),
+    db.collection("campaigns").find({}, { projection: { joinCode: 1 } }).toArray(),
   ]);
 
-  const ids = new Set(user?.joinedCampaigns || []);
+  const codes = new Set();
   for (const char of characters) {
     if (typeof char.campaignId !== "string") continue;
-    char.campaignId.replace(/\s/g, "").split(",").filter(Boolean).forEach((id) => ids.add(id));
+    char.campaignId
+      .split(",")
+      .map(normalizeJoinCode)
+      .filter(Boolean)
+      .forEach((code) => codes.add(code));
+  }
+
+  const ids = new Set(user?.joinedCampaigns || []);
+  for (const c of campaigns) {
+    if (c.joinCode && codes.has(c.joinCode)) ids.add(String(c._id));
   }
   return ids;
 }
+
+const canSeeCampaign = (campaign, user, visibleIds) =>
+  ownsCampaign(campaign, user) || visibleIds.has(String(campaign._id));
 
 // Owners/admin get the join code (generated lazily for legacy campaigns);
 // everyone else never sees it.
@@ -235,6 +261,29 @@ async function canManageCampaignById(db, campaignId, user) {
   return !!campaign && ownsCampaign(campaign, user);
 }
 
+// A mission's `campaignId` is the campaign's `_id` string. Missions written
+// before that change embedded the whole campaign object instead; those are
+// resolved through the campaign's custom `id` (or embedded `_id`) until the
+// migration script has rewritten them.
+async function findMissionCampaign(db, campaignRef) {
+  if (typeof campaignRef === "string") {
+    const _id = toObjectId(campaignRef);
+    return _id ? db.collection("campaigns").findOne({ _id }) : null;
+  }
+  if (campaignRef && typeof campaignRef === "object") {
+    const _id = toObjectId(campaignRef._id);
+    if (_id) return db.collection("campaigns").findOne({ _id });
+    if (campaignRef.id) return db.collection("campaigns").findOne({ id: campaignRef.id });
+  }
+  return null;
+}
+
+async function canManageMissionCampaign(db, campaignRef, user) {
+  if (isAdminUser(user)) return true;
+  const campaign = await findMissionCampaign(db, campaignRef);
+  return !!campaign && ownsCampaign(campaign, user);
+}
+
 app.get("/api/campaigns", async (req, res) => {
   const client = new MongoClient(url);
   try {
@@ -244,12 +293,22 @@ app.get("/api/campaigns", async (req, res) => {
 
     const all = await collection.find().toArray();
     const visibleIds = await getVisibleCampaignIds(db, req.user.userName);
-    const visible = all.filter(
-      (c) => ownsCampaign(c, req.user) || visibleIds.has(c.id)
-    );
+    const visible = all.filter((c) => canSeeCampaign(c, req.user, visibleIds));
+
+    // `isGuest` marks campaigns on the list because the user redeemed a code,
+    // which are the ones they can leave.
+    const me = await db
+      .collection("users")
+      .findOne({ userName: req.user.userName }, { projection: { joinedCampaigns: 1 } });
+    const joined = new Set(me?.joinedCampaigns || []);
 
     res.status(200).json(
-      await Promise.all(visible.map((c) => serializeCampaign(collection, c, req.user)))
+      await Promise.all(
+        visible.map(async (c) => ({
+          ...(await serializeCampaign(collection, c, req.user)),
+          isGuest: joined.has(String(c._id)),
+        }))
+      )
     );
   } catch (err) {
     console.error("Error fetching campaigns:", err.message);
@@ -279,8 +338,8 @@ app.post("/api/campaigns", async (req, res) => {
     while (await collection.findOne({ joinCode: code })) code = generateJoinCode();
 
     const campaign = { ...fields, ownerId: req.user.userName, joinCode: code };
-    await collection.insertOne(campaign);
-    res.status(201).json({ id: campaign.id, joinCode: code });
+    const result = await collection.insertOne(campaign);
+    res.status(201).json({ _id: result.insertedId, id: campaign.id, joinCode: code });
   } catch (err) {
     console.error("Error adding campaign:", err.message);
     res.status(500).json({ error: "Failed to add campaign" });
@@ -302,12 +361,41 @@ app.post("/api/campaigns/join", async (req, res) => {
 
     await db
       .collection("users")
-      .updateOne({ userName: req.user.userName }, { $addToSet: { joinedCampaigns: campaign.id } });
+      .updateOne(
+        { userName: req.user.userName },
+        { $addToSet: { joinedCampaigns: String(campaign._id) } }
+      );
 
-    res.status(200).json({ id: campaign.id });
+    res.status(200).json({ _id: campaign._id, id: campaign.id });
   } catch (err) {
     console.error("Error joining campaign:", err.message);
     res.status(500).json({ error: "Failed to join campaign" });
+  } finally {
+    await client.close();
+  }
+});
+
+// Remove a campaign you previewed via its code from your list. This doesn't
+// affect campaigns you own or ones shown through a character's assigned code.
+app.delete("/api/campaigns/:id/join", async (req, res) => {
+  const client = new MongoClient(url);
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+
+    const campaign = await db.collection("campaigns").findOne({ id: req.params.id });
+    if (!campaign) return res.status(404).json({ error: "Campaign not found" });
+
+    await db
+      .collection("users")
+      .updateOne(
+        { userName: req.user.userName },
+        { $pull: { joinedCampaigns: String(campaign._id) } }
+      );
+    res.status(200).json({ message: "Left campaign" });
+  } catch (err) {
+    console.error("Error leaving campaign:", err.message);
+    res.status(500).json({ error: "Failed to leave campaign" });
   } finally {
     await client.close();
   }
@@ -342,26 +430,44 @@ app.put("/api/campaigns/:id", async (req, res) => {
   }
 });
 
-app.post("/api/campaigns/:id/regenerate-code", async (req, res) => {
+// Deleting a campaign also deletes its missions. Owner or admin only.
+app.delete("/api/campaigns/:id", async (req, res) => {
   const client = new MongoClient(url);
   try {
     await client.connect();
     const db = client.db(dbName);
-    const collection = db.collection("campaigns");
 
-    if (!(await canManageCampaignById(db, req.params.id, req.user))) {
+    const campaign = await db.collection("campaigns").findOne({ id: req.params.id });
+    if (!campaign) return res.status(404).json({ error: "Campaign not found" });
+    if (!ownsCampaign(campaign, req.user)) {
       return res.status(403).json({ error: "Not authorized" });
     }
 
-    let code = generateJoinCode();
-    while (await collection.findOne({ joinCode: code })) code = generateJoinCode();
+    const mongoId = String(campaign._id);
+    await db.collection("campaigns").deleteOne({ _id: campaign._id });
 
-    const result = await collection.updateOne({ id: req.params.id }, { $set: { joinCode: code } });
-    if (result.matchedCount === 0) return res.status(404).json({ error: "Campaign not found" });
-    res.status(200).json({ joinCode: code });
+    // Missions reference the campaign by `_id` string; legacy ones still embed
+    // the campaign object.
+    const missionResult = await db.collection("missions").deleteMany({
+      $or: [
+        { campaignId: mongoId },
+        { "campaignId._id": mongoId },
+        { "campaignId.id": campaign.id },
+      ],
+    });
+
+    // Drop the campaign from anyone who had redeemed its code.
+    await db
+      .collection("users")
+      .updateMany({ joinedCampaigns: mongoId }, { $pull: { joinedCampaigns: mongoId } });
+
+    res.status(200).json({
+      message: "Campaign deleted",
+      deletedMissions: missionResult.deletedCount,
+    });
   } catch (err) {
-    console.error("Error regenerating join code:", err.message);
-    res.status(500).json({ error: "Failed to regenerate code" });
+    console.error("Error deleting campaign:", err.message);
+    res.status(500).json({ error: "Failed to delete campaign" });
   } finally {
     await client.close();
   }
@@ -375,14 +481,24 @@ app.get("/api/missions", async (req, res) => {
 
     const campaigns = await db.collection("campaigns").find().toArray();
     const visibleIds = await getVisibleCampaignIds(db, req.user.userName);
-    const allowed = new Set(
-      campaigns
-        .filter((c) => ownsCampaign(c, req.user) || visibleIds.has(c.id))
-        .map((c) => c.id)
-    );
+    const allowed = campaigns.filter((c) => canSeeCampaign(c, req.user, visibleIds));
+    const allowedById = new Set(allowed.map((c) => String(c._id)));
+    // Legacy missions embed the campaign object; map them onto its `_id`.
+    const idByCustomId = new Map(campaigns.map((c) => [c.id, String(c._id)]));
 
     const missions = await db.collection("missions").find().toArray();
-    res.status(200).json(missions.filter((m) => allowed.has(m.campaignId?.id)));
+    const result = [];
+    for (const m of missions) {
+      const ref = m.campaignId;
+      const campaignId =
+        typeof ref === "string"
+          ? ref
+          : toObjectId(ref?._id)
+            ? ref._id
+            : idByCustomId.get(ref?.id);
+      if (campaignId && allowedById.has(campaignId)) result.push({ ...m, campaignId });
+    }
+    res.status(200).json(result);
   } catch (err) {
     console.error("Error fetching missions:", err.message);
     res.status(500).json({ error: "Failed to fetch missions" });
@@ -392,7 +508,7 @@ app.get("/api/missions", async (req, res) => {
 });
 
 // Characters assigned to one campaign. A character's `campaignId` is a
-// comma-separated list of campaign ids, so match the id as a whole list entry.
+// comma-separated list of join codes, so match the code as a whole list entry.
 app.get("/api/campaigns/:id/characters", async (req, res) => {
   const client = new MongoClient(url);
   try {
@@ -402,14 +518,14 @@ app.get("/api/campaigns/:id/characters", async (req, res) => {
     const campaign = await db.collection("campaigns").findOne({ id: req.params.id });
     const visibleIds = await getVisibleCampaignIds(db, req.user.userName);
     // Same 404 for "doesn't exist" and "not yours" so ids can't be probed.
-    if (!campaign || !(ownsCampaign(campaign, req.user) || visibleIds.has(campaign.id))) {
+    if (!campaign || !canSeeCampaign(campaign, req.user, visibleIds)) {
       return res.status(404).json({ error: "Campaign not found" });
     }
+    if (!campaign.joinCode) return res.status(200).json([]);
 
-    const escaped = campaign.id.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const characters = await db
       .collection("characters")
-      .find({ campaignId: { $regex: `(^|,)\\s*${escaped}\\s*(,|$)` } })
+      .find({ campaignId: { $regex: `(^|,)\\s*${campaign.joinCode}\\s*(,|$)`, $options: "i" } })
       .toArray();
     res.status(200).json(characters);
   } catch (err) {
@@ -428,7 +544,10 @@ app.post("/api/missions", async (req, res) => {
     const db = client.db(dbName);
     const collection = db.collection("missions");
 
-    if (!(await canManageCampaignById(db, req.body?.campaignId?.id, req.user))) {
+    if (typeof req.body?.campaignId !== "string" || !toObjectId(req.body.campaignId)) {
+      return res.status(400).json({ error: "campaignId must be a campaign _id" });
+    }
+    if (!(await canManageMissionCampaign(db, req.body.campaignId, req.user))) {
       return res.status(403).json({ error: "Not authorized" });
     }
     if (await collection.findOne({ id: req.body.id })) {
@@ -457,7 +576,7 @@ app.put("/api/missions/:id", async (req, res) => {
     // move a mission into a campaign the user doesn't manage.
     const existing = await collection.findOne({ id: req.params.id });
     if (!existing) return res.status(404).json({ error: "Mission not found" });
-    if (!(await canManageCampaignById(db, existing.campaignId?.id, req.user))) {
+    if (!(await canManageMissionCampaign(db, existing.campaignId, req.user))) {
       return res.status(403).json({ error: "Not authorized" });
     }
     const { _id, campaignId, ...body } = req.body;
@@ -490,7 +609,7 @@ app.delete("/api/missions/:id", async (req, res) => {
 
     const existing = await collection.findOne({ id: req.params.id });
     if (!existing) return res.status(404).json({ error: "Mission not found" });
-    if (!(await canManageCampaignById(db, existing.campaignId?.id, req.user))) {
+    if (!(await canManageMissionCampaign(db, existing.campaignId, req.user))) {
       return res.status(403).json({ error: "Not authorized" });
     }
 

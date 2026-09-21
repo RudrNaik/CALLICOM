@@ -12,6 +12,8 @@ import { useContext } from "react";
 import { AuthContext } from "./AuthContext";
 import EnemyView from "./components/Briefings/EnemyRoster";
 
+const ApiBase = "http://localhost:8080"
+
 function Campaigns() {
   const [campaigns, setCampaigns] = useState([]);
   const [missions, setMissions] = useState([]);
@@ -42,7 +44,7 @@ function Campaigns() {
     }
 
     const getJson = (path) =>
-      fetch(`https://callicom.onrender.com/api/${path}`, {
+      fetch(`${ApiBase}/api/${path}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -79,8 +81,9 @@ function Campaigns() {
    * UseEffect for the campaign missions and setting them in the UI
    */
   useEffect(() => {
+    const campaignMongoId = campaigns.find((c) => c.id === currentCampaignId)?._id;
     const campaignMissions = missions
-      .filter((m) => m.campaignId?.id === currentCampaignId)
+      .filter((m) => campaignMongoId && m.campaignId === campaignMongoId)
       .sort((a, b) => {
         const numA = parseInt(a.id.replace(/\D/g, ""));
         const numB = parseInt(b.id.replace(/\D/g, ""));
@@ -93,7 +96,7 @@ function Campaigns() {
     const fallback = campaignMissions[0];
 
     setCurrentMissionId(current?.id || fallback?.id || null);
-  }, [currentCampaignId, missions]);
+  }, [currentCampaignId, missions, campaigns]);
 
   /**
    * Same useEffect as above but specifically for getting the characters and fetching that data.
@@ -114,7 +117,7 @@ function Campaigns() {
     setIsLoading(true);
 
     fetch(
-      `https://callicom.onrender.com/api/campaigns/${encodeURIComponent(currentCampaignId)}/characters`,
+      `${ApiBase}/api/campaigns/${encodeURIComponent(currentCampaignId)}/characters`,
       {
         method: "GET",
         headers: {
@@ -155,7 +158,7 @@ function Campaigns() {
    */
   const refreshCampaigns = () => {
     const token = localStorage.getItem("token");
-    fetch("https://callicom.onrender.com/api/campaigns", {
+    return fetch(`${ApiBase}/api/campaigns`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -175,7 +178,7 @@ function Campaigns() {
   const refreshMissions = () => {
     const token = localStorage.getItem("token");
 
-    fetch("https://callicom.onrender.com/api/missions", {
+    return fetch(`${ApiBase}/api/missions`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -198,9 +201,6 @@ function Campaigns() {
     setIsCreatingMission(true);
 
     const token = localStorage.getItem("token");
-    // The campaign is embedded in the mission, which every player can read, so
-    // keep the join code and ownership flags out of it.
-    const { joinCode, isOwner, ownerId, ...campaignRef } = currentCampaign;
     const newMission = {
       // Missions from every campaign share one collection keyed by `id`, so a
       // count-based id could collide across GMs.
@@ -208,7 +208,7 @@ function Campaigns() {
       location: "",
       lat: "",
       lon: "",
-      campaignId: campaignRef,
+      campaignId: currentCampaign._id,
       Name: "New Mission",
       Type: "Side Mission",
       status: "ACTIVE",
@@ -230,7 +230,7 @@ function Campaigns() {
     };
 
     try {
-      const res = await fetch("https://callicom.onrender.com/api/missions", {
+      const res = await fetch(`${ApiBase}/api/missions`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -265,7 +265,7 @@ function Campaigns() {
 
     try {
       const res = await fetch(
-        `https://callicom.onrender.com/api/missions/${currentMissionId}`,
+        `${ApiBase}/api/missions/${currentMissionId}`,
         {
           method: "DELETE",
           headers: {
@@ -356,7 +356,7 @@ function Campaigns() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.2, delay: 0.1 }}
-            className="flicker sm:py-2"
+            className="flicker sm:py-2 md:w-md md:shrink-0"
           >
             <CampaignView
               currentCampaign={currentCampaign}
@@ -379,13 +379,13 @@ function Campaigns() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.2, delay: 0.15 }}
-            className="flicker sm:py-2"
+            className="flicker sm:py-2 md:flex-1 md:min-w-0"
           >
             <MissionView
               currentMission={currentMission}
               isAdmin={canManage}
               refreshMissions={refreshMissions}
-              currentCampaignId={currentCampaign}
+              currentCampaignId={currentCampaign?._id}
               handleDeleteMission={handleDeleteMission}
             />
           </motion.div>
@@ -395,7 +395,7 @@ function Campaigns() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="flicker sm:py-2"
+            className="flicker sm:py-2 md:w-md md:shrink-0"
           >
             <Roster characters={characters} isLoading={isLoading} />
           </motion.div>

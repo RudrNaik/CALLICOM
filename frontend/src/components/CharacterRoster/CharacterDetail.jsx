@@ -974,7 +974,7 @@ function CharacterDetail({ character, onUpdate, user }) {
             <div className="flex space-x-2">
               <input
                 type="text"
-                placeholder="Enter campaign ID (e.g., campaign0)"
+                placeholder="Enter campaign access code (comma-separate for assignment to several campaigns)"
                 className="bg-neutral-800 border border-gray-500 rounded px-3 py-1 text-white w-full"
                 value={campaignInput}
                 onChange={(e) => setCampaignInput(e.target.value)}

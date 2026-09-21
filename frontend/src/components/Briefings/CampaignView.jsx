@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 
+const ApiBase = "https://callicom.onrender.com"
+
 function CampaignView({
   currentCampaign,
   currentCampaignId,
@@ -60,7 +62,7 @@ function CampaignView({
     setJoinError("");
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("https://callicom.onrender.com/api/campaigns/join", {
+      const res = await fetch(`${ApiBase}/api/campaigns/join`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -68,12 +70,13 @@ function CampaignView({
         },
         body: JSON.stringify({ code: joinCode }),
       });
-      if (res.status === 404) {
+      const body = await res.json().catch(() => null);
+      if (res.status === 404 && body?.error === "Invalid campaign code") {
         setJoinError("No campaign matches that code.");
         return;
       }
-      if (!res.ok) throw new Error("Failed to join campaign");
-      const { id } = await res.json();
+      if (!res.ok || !body?.id) throw new Error(`Failed to join campaign (${res.status})`);
+      const { id } = body;
       await Promise.all([refreshCampaigns(), refreshMissions()]);
       setShowJoinForm(false);
       setCurrentCampaignId(id);
@@ -82,29 +85,6 @@ function CampaignView({
       setJoinError("Failed to join campaign.");
     } finally {
       setIsSubmitting(false);
-    }
-  };
-
-  const handleRegenerateCode = async () => {
-    if (
-      !currentCampaign ||
-      !window.confirm(
-        "Generate a new access code? The old code will stop working for new players."
-      )
-    )
-      return;
-
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(
-        `https://callicom.onrender.com/api/campaigns/${currentCampaign.id}/regenerate-code`,
-        { method: "POST", headers: { Authorization: `Bearer ${token}` } }
-      );
-      if (!res.ok) throw new Error("Failed to regenerate code");
-      await refreshCampaigns();
-    } catch (err) {
-      console.error("Error regenerating code:", err);
-      alert("Failed to regenerate access code.");
     }
   };
 
@@ -138,6 +118,53 @@ function CampaignView({
     });
   };
 
+  const handleDeleteCampaign = async () => {
+    if (!currentCampaign) return;
+    if (
+      !window.confirm(
+        `Delete "${currentCampaign.Name}" and all of its missions? This cannot be undone.`
+      )
+    )
+      return;
+
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(
+        `${ApiBase}/api/campaigns/${encodeURIComponent(currentCampaign.id)}`,
+        { method: "DELETE", headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (!res.ok) throw new Error(`Failed to delete campaign (${res.status})`);
+      // The parent re-selects a visible campaign once the list refreshes.
+      await Promise.all([refreshCampaigns(), refreshMissions()]);
+    } catch (err) {
+      console.error("Error deleting campaign:", err);
+      alert("Failed to delete campaign.");
+    }
+  };
+
+  const handleLeaveCampaign = async () => {
+    if (!currentCampaign) return;
+    if (
+      !window.confirm(
+        `Remove "${currentCampaign.Name}" from your list? You can add it back with its code.`
+      )
+    )
+      return;
+
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(
+        `${ApiBase}/api/campaigns/${encodeURIComponent(currentCampaign.id)}/join`,
+        { method: "DELETE", headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (!res.ok) throw new Error(`Failed to leave campaign (${res.status})`);
+      await Promise.all([refreshCampaigns(), refreshMissions()]);
+    } catch (err) {
+      console.error("Error leaving campaign:", err);
+      alert("Failed to remove campaign.");
+    }
+  };
+
   const openEdit = () => {
     seedEditFromCurrent();
     setShowAddForm(false);
@@ -164,7 +191,7 @@ function CampaignView({
     setIsSubmitting(true);
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("https://callicom.onrender.com/api/campaigns", {
+      const res = await fetch(`${ApiBase}/api/campaigns`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -207,7 +234,7 @@ function CampaignView({
     setIsSubmitting(true);
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`https://callicom.onrender.com/api/campaigns/${routeId}`, {
+      const res = await fetch(`${ApiBase}/api/campaigns/${routeId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -243,6 +270,8 @@ function CampaignView({
                   if (v === "__add") return openAdd();
                   if (v === "__join") return openJoin();
                   if (v === "__edit") return openEdit();
+                  if (v === "__delete") return handleDeleteCampaign();
+                  if (v === "__leave") return handleLeaveCampaign();
                   setShowAddForm(false);
                   setShowEditForm(false);
                   setShowJoinForm(false);
@@ -269,6 +298,16 @@ function CampaignView({
                 {canManage && currentCampaign && (
                   <option value="__edit" className="text-white bg-orange-600">
                     [ ^ ] Edit Current Campaign
+                  </option>
+                )}
+                {currentCampaign?.isGuest && !currentCampaign.isOwner && (
+                  <option value="__leave" className="text-white bg-orange-600">
+                    [ - ] Remove From My List
+                  </option>
+                )}
+                {canManage && currentCampaign && (
+                  <option value="__delete" className="text-white bg-red-700">
+                    [ x ] Delete Current Campaign
                   </option>
                 )}
               </select>
@@ -361,14 +400,9 @@ function CampaignView({
           </h2>
 
           {canManage && currentCampaign.joinCode && (
-            <div className="mb-4 flex items-center justify-between gap-2 border border-dashed border-orange-500/60 rounded p-2 text-xs">
-              <div>
-                <p className="text-orange-300 font-bold">ACCESS CODE</p>
-                <p className="font-mono tracking-widest text-sm select-all">{currentCampaign.joinCode}</p>
-              </div>
-              <button onClick={handleRegenerateCode} className="border border-orange-400 text-orange-400 font-semibold px-2 py-1 rounded hover:bg-orange-600/10">
-                New code
-              </button>
+            <div className="mb-4 border border-orange-500/60 rounded p-2 text-xs">
+              <p className="text-orange-300 font-bold">ACCESS CODE</p>
+              <p className="font-mono tracking-widest text-sm select-all">{currentCampaign.joinCode}</p>
             </div>
           )}
 
