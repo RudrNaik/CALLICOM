@@ -5,6 +5,7 @@ import {
   worldToAxial,
   hexCorners,
   hexKey,
+  parseHexKey,
   oddqToAxial,
   hexDistance,
   hexesInRadius,
@@ -33,7 +34,10 @@ import {
   DOOR_TYPES,
   DOOR_STATES,
   normalizeDoor,
+  ELEVATION,
+  OBSTACLE,
 } from "./terrain";
+import { placeClipboard } from "./hexClipboard";
 import {
   getTokenBadge,
   badgeCache,
@@ -337,6 +341,21 @@ function effectAnchor(effect, camera) {
   return project(wx, wz, camera);
 }
 
+// Copy/paste: how selected hexes are highlighted, and the color a hex shows
+// in the paste preview (its obstacle, else its elevation, else a faint
+// wash for plain ground, which the paste still overwrites).
+const SELECTION_FILL = "rgba(250, 204, 21, 0.28)";
+const SELECTION_STROKE = "rgba(250, 204, 21, 0.9)";
+const PASTE_PREVIEW_ALPHA = 0.6;
+const BOX_SELECT_FILL = "rgba(250, 204, 21, 0.08)";
+const BOX_DESELECT_FILL = "rgba(239, 68, 68, 0.08)";
+const BOX_DESELECT_STROKE = "rgba(239, 68, 68, 0.9)";
+function stampSwatch(state) {
+  if (state.obstacle !== "none") return OBSTACLE[state.obstacle].swatch;
+  if (state.elevation !== "normal") return ELEVATION[state.elevation].swatch;
+  return "rgba(255, 255, 255, 0.12)";
+}
+
 export default function VTTCanvas({
   map,
   tokens,
@@ -348,6 +367,9 @@ export default function VTTCanvas({
   doors,
   onHexClick,
   onHexPaint,
+  hexSelection,
+  pastePreview,
+  selectTool,
   onDoorAdd,
   onDoorRemove,
   doorType,
@@ -379,6 +401,10 @@ export default function VTTCanvas({
   const [hoveredVertex, setHoveredVertex] = useState(null);
   const [badgeVersion, setBadgeVersion] = useState(0);
   const dragState = useRef(null);
+  // Copy mode's box select: the rectangle being dragged, in canvas-local
+  // CSS px ({ x0, y0, x1, y1, erase }), or null. A ref (plus scheduleDraw)
+  // rather than state, so dragging it doesn't re-render React.
+  const boxRef = useRef(null);
 
   const scheduleDraw = useCallback(() => {
     if (rafRef.current) return;
@@ -438,6 +464,19 @@ export default function VTTCanvas({
 
   // Tokens sorted so ones "further back" on screen draw first — in the
   // isometric projection, screen depth order follows (x + z), not raw z.
+  // Copy/paste: the selection as parsed hexes (parsed once per change, not
+  // every frame), and where the clipboard would land under the cursor —
+  // recomputed only when the hovered hex moves, so panning over a large
+  // paste preview doesn't redo it every frame.
+  const selectionHexes = useMemo(() => (hexSelection ? [...hexSelection].map(parseHexKey) : []), [hexSelection]);
+  const pastePlacement = useMemo(
+    () =>
+      pastePreview && hoveredHex && cols
+        ? placeClipboard(pastePreview, hoveredHex.q, hoveredHex.r, { cols, rows })
+        : null,
+    [pastePreview, hoveredHex, cols, rows]
+  );
+
   const sortedTokens = useMemo(() => {
     const depth = (t) => {
       const [x, z] = axialToWorld(t.q, t.r);
@@ -1088,7 +1127,73 @@ export default function VTTCanvas({
 
     drawOverlays(ctx, camera, size.width, size.height);
 
-    if (mode === "paint" && hoveredHex) {
+    const copySelecting = mode === "copy" && !pastePreview;
+    const copyPasting = mode === "copy" && !!pastePreview;
+
+    // Copy mode: the current selection, as one fill plus a thin outline.
+    if (mode === "copy" && selectionHexes.length) {
+      const margin = HEX_SIZE * zoom * 1.5;
+      const sel = new Path2D();
+      for (const { q, r } of selectionHexes) {
+        const [sx, sz] = axialToWorld(q, r);
+        const [scx, scy] = project(sx, sz, camera);
+        if (scx < -margin || scx > size.width + margin || scy < -margin || scy > size.height + margin) continue;
+        addHexToPath2D(sel, scx, scy, HEX_SIZE, zoom);
+      }
+      ctx.fillStyle = SELECTION_FILL;
+      ctx.fill(sel);
+      ctx.strokeStyle = SELECTION_STROKE;
+      ctx.lineWidth = 1;
+      ctx.stroke(sel);
+    }
+
+    // Paste mode: a ghost of the clipboard anchored on the hovered hex,
+    // showing exactly what a click would stamp (off-map cells dropped).
+    // The box being dragged, dashed; red when right-dragging to deselect.
+    const box = boxRef.current;
+    if (mode === "copy" && box) {
+      const bx = Math.min(box.x0, box.x1);
+      const by = Math.min(box.y0, box.y1);
+      const bw = Math.abs(box.x1 - box.x0);
+      const bh = Math.abs(box.y1 - box.y0);
+      ctx.save();
+      ctx.fillStyle = box.erase ? BOX_DESELECT_FILL : BOX_SELECT_FILL;
+      ctx.fillRect(bx, by, bw, bh);
+      ctx.strokeStyle = box.erase ? BOX_DESELECT_STROKE : SELECTION_STROKE;
+      ctx.lineWidth = 1;
+      ctx.setLineDash([6, 4]);
+      ctx.strokeRect(bx + 0.5, by + 0.5, bw, bh);
+      ctx.restore();
+    }
+
+    if (copyPasting && pastePlacement) {
+      const stamp = pastePlacement;
+      const byColor = new Map();
+      const outline = new Path2D();
+      for (const c of stamp.cells) {
+        const [sx, sz] = axialToWorld(c.q, c.r);
+        const [scx, scy] = project(sx, sz, camera);
+        const color = stampSwatch(c.state);
+        let path = byColor.get(color);
+        if (!path) byColor.set(color, (path = new Path2D()));
+        addHexToPath2D(path, scx, scy, HEX_SIZE, zoom);
+        addHexToPath2D(outline, scx, scy, HEX_SIZE, zoom);
+      }
+      ctx.globalAlpha = PASTE_PREVIEW_ALPHA;
+      for (const [color, path] of byColor) {
+        ctx.fillStyle = color;
+        ctx.fill(path);
+      }
+      ctx.globalAlpha = 1;
+      ctx.strokeStyle = SELECTION_STROKE;
+      ctx.lineWidth = 1;
+      ctx.stroke(outline);
+      for (const d of stamp.doors) {
+        drawDoor(ctx, camera, d.a, d.b, DOOR_TYPES[d.type].lines, DOOR_STATES[d.state].color, 0.8);
+      }
+    }
+
+    if ((mode === "paint" || copySelecting) && hoveredHex) {
       const [hx, hz] = axialToWorld(hoveredHex.q, hoveredHex.r);
       const [hcx, hcy] = project(hx, hz, camera);
       const hover = new Path2D();
@@ -1235,7 +1340,40 @@ export default function VTTCanvas({
   useEffect(() => {
     scheduleDraw();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [map, terrainStates, tokens, tokensById, sortedTokens, lines, size, mode, selectedTokenId, showRangeOverlay, hoveredHex, hoveredVertex, doorStart, doorType, doorState, doors, badgeVersion, visibleEffects]);
+  }, [map, terrainStates, tokens, tokensById, sortedTokens, lines, size, mode, selectedTokenId, showRangeOverlay, hoveredHex, hoveredVertex, doorStart, doorType, doorState, doors, badgeVersion, visibleEffects, selectionHexes, pastePreview, pastePlacement]);
+
+  // On-map hexes whose centers fall inside a screen rectangle (canvas-local
+  // CSS px). Only the axial bounding box of the rectangle's unprojected
+  // corners is scanned — the same trick collectTerrain uses — so a small
+  // box on a huge map stays cheap.
+  const hexesInScreenRect = ({ x0, y0, x1, y1 }) => {
+    const camera = cameraRef.current;
+    const minX = Math.min(x0, x1), maxX = Math.max(x0, x1);
+    const minY = Math.min(y0, y1), maxY = Math.max(y0, y1);
+    let qMin = Infinity, qMax = -Infinity, rMin = Infinity, rMax = -Infinity;
+    for (const [px, py] of [[minX, minY], [maxX, minY], [maxX, maxY], [minX, maxY]]) {
+      const [wx, wz] = unproject(px, py, camera);
+      const q = (2 / 3) * (wx / HEX_SIZE);
+      const r = (-1 / 3) * (wx / HEX_SIZE) + (Math.sqrt(3) / 3) * (wz / HEX_SIZE);
+      qMin = Math.min(qMin, q); qMax = Math.max(qMax, q);
+      rMin = Math.min(rMin, r); rMax = Math.max(rMax, r);
+    }
+    const cells = [];
+    const colStart = Math.max(0, Math.floor(qMin) - 1);
+    const colEnd = Math.min(map.cols - 1, Math.ceil(qMax) + 1);
+    for (let col = colStart; col <= colEnd; col++) {
+      const rowOffset = (col - (col & 1)) / 2;
+      const rowStart = Math.max(0, Math.floor(rMin) - 1 + rowOffset);
+      const rowEnd = Math.min(map.rows - 1, Math.ceil(rMax) + 1 + rowOffset);
+      for (let row = rowStart; row <= rowEnd; row++) {
+        const r = row - rowOffset;
+        const [wx, wz] = axialToWorld(col, r);
+        const [cx, cy] = project(wx, wz, camera);
+        if (cx >= minX && cx <= maxX && cy >= minY && cy <= maxY) cells.push({ q: col, r });
+      }
+    }
+    return cells;
+  };
 
   const getHexUnderPointer = (e) => {
     const rect = canvasRef.current.getBoundingClientRect();
@@ -1335,13 +1473,19 @@ export default function VTTCanvas({
   const handlePointerDown = (e) => {
     // Right-click erases (paints normal ground) while in paint mode
     // instead of panning; middle-click and shift-click still pan.
-    const isBrushMode = mode === "paint" || mode === "door";
+    // Copy mode's selecting step brushes a selection the way paint mode
+    // paints (right-drag deselects); its pasting step is plain clicks.
+    // With the box tool it drags a rectangle instead, applied on release.
+    const boxSelecting = mode === "copy" && !pastePreview && selectTool === "box";
+    const brushesHexes = mode === "paint" || (mode === "copy" && !pastePreview && !boxSelecting);
+    const isBrushMode = brushesHexes || boxSelecting || mode === "door";
     const isEraseButton = isBrushMode && e.button === 2;
     const isPanButton = !isEraseButton && (e.button === 2 || e.button === 1 || e.shiftKey);
     // Door mode places doors with two clicks (see handlePointerUp), so
     // only its right-click erase goes through the paint path.
     const isPaintButton =
-      !isPanButton && (mode === "paint" ? e.button === 0 || isEraseButton : mode === "door" && isEraseButton);
+      !isPanButton && (brushesHexes ? e.button === 0 || isEraseButton : mode === "door" && isEraseButton);
+    const isBoxButton = boxSelecting && !isPanButton && (e.button === 0 || isEraseButton);
 
     dragState.current = {
       panning: isPanButton,
@@ -1353,8 +1497,17 @@ export default function VTTCanvas({
       lastY: e.clientY,
       moved: false,
       lastPaintedHex: null,
+      boxing: isBoxButton,
     };
     canvasRef.current.setPointerCapture(e.pointerId);
+
+    if (isBoxButton) {
+      const rect = canvasRef.current.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      boxRef.current = { x0: x, y0: y, x1: x, y1: y, erase: isEraseButton };
+      scheduleDraw();
+    }
 
     if (isPaintButton) paintAtPointer(e, isEraseButton);
   };
@@ -1374,8 +1527,13 @@ export default function VTTCanvas({
       if (drag.painting) {
         paintAtPointer(e, drag.erasing);
       }
+      if (drag.boxing && boxRef.current) {
+        const rect = canvasRef.current.getBoundingClientRect();
+        boxRef.current = { ...boxRef.current, x1: e.clientX - rect.left, y1: e.clientY - rect.top };
+        scheduleDraw();
+      }
     }
-    if (mode === "paint") {
+    if (mode === "paint" || mode === "copy") {
       const hex = getHexUnderPointer(e);
       setHoveredHex((prev) => (prev && prev.q === hex.q && prev.r === hex.r ? prev : hex));
     } else if (mode === "door") {
@@ -1391,6 +1549,24 @@ export default function VTTCanvas({
       canvasRef.current.releasePointerCapture(e.pointerId);
     } catch {
       /* noop */
+    }
+    // Box select applies on release: every hex whose center is inside the
+    // box, or just the hex under the pointer for a click without a drag.
+    if (drag?.boxing) {
+      const box = boxRef.current;
+      boxRef.current = null;
+      scheduleDraw();
+      if (!box) return;
+      let cells;
+      if (drag.moved) {
+        cells = hexesInScreenRect(box);
+      } else {
+        const hex = getHexUnderPointer(e);
+        const { col, row } = axialToOddq(hex.q, hex.r);
+        cells = col >= 0 && col < map.cols && row >= 0 && row < map.rows ? [hex] : [];
+      }
+      if (cells.length) onHexPaint?.(cells, box.erase);
+      return;
     }
     // Painting (and erasing) already happened live on pointerdown/move.
     if (!drag || drag.panning || drag.painting) return;
@@ -1489,7 +1665,7 @@ export default function VTTCanvas({
       <canvas
         ref={canvasRef}
         className="w-full h-full touch-none"
-        style={{ cursor: mode === "paint" || mode === "door" ? "crosshair" : "default" }}
+        style={{ cursor: mode === "paint" || mode === "door" || mode === "copy" ? "crosshair" : "default" }}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}

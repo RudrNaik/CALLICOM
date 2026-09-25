@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { hexKey } from "../utils/hexGrid";
 import { normalizeHexState } from "../components/VTT/terrain";
+import { isDoorReplacedByStamp } from "../components/VTT/hexClipboard";
 
 const MAPS_KEY = "calamari_vtt_maps_v1";
 const ACTIVE_KEY = "calamari_vtt_active_map_v1";
@@ -197,6 +198,26 @@ export default function useVTTMap() {
     [activeMapId, commit]
   );
 
+  // Applies a copy/paste stamp (from placeClipboard) as one commit: each
+  // cell's terrain is overwritten outright (plain ground included), and the
+  // stamped area's own doors are replaced by the stamp's.
+  const stampTerrain = useCallback(
+    ({ cells, doors, vertexKeys }) => {
+      if (!activeMapId || cells.length === 0) return;
+      commit(activeMapId, (m) => {
+        const hexes = { ...m.hexes };
+        for (const { q, r, state } of cells) {
+          const key = hexKey(q, r);
+          if (state.elevation === "normal" && state.obstacle === "none") delete hexes[key];
+          else hexes[key] = { elevation: state.elevation, obstacle: state.obstacle };
+        }
+        const kept = (Array.isArray(m.doors) ? m.doors : []).filter((d) => !isDoorReplacedByStamp(d, vertexKeys));
+        return { ...m, hexes, doors: [...kept, ...doors.map((d) => ({ id: uid("door"), ...d }))] };
+      });
+    },
+    [activeMapId, commit]
+  );
+
   const removeDoor = useCallback(
     (doorId) => {
       if (!activeMapId) return;
@@ -347,6 +368,7 @@ export default function useVTTMap() {
     setTerrain,
     addDoor,
     removeDoor,
+    stampTerrain,
     addToken,
     updateToken,
     moveToken,

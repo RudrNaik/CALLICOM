@@ -16,6 +16,7 @@ const MODES = [
   { id: "select", label: "Select/ Move" },
   { id: "paint", label: "Paint Terrain" },
   { id: "door", label: "Place Doors" },
+  { id: "copy", label: "Copy / Paste" },
   { id: "addToken", label: "Place Token" },
   { id: "addEffect", label: "Place Effect" },
   { id: "line", label: "Draw Line" },
@@ -53,6 +54,14 @@ export default function VTTToolbar({
   setAddScale,
   effectDraft,
   onEffectDraftChange,
+  hexSelectionCount,
+  clipboard,
+  pasting,
+  onCopy,
+  onClearSelection,
+  onSetPasting,
+  selectTool,
+  setSelectTool,
   showRangeOverlay,
   setShowRangeOverlay,
   selectedTokenId,
@@ -192,6 +201,87 @@ export default function VTTToolbar({
           <p className="text-[11px] text-neutral-400">
             Click a hex corner to start a door, then click another corner to finish it. Click the same corner again or press Escape to cancel. Right-click near a door to remove it.
           </p>
+        </div>
+      )}
+
+      {mode === "copy" && (
+        <div className="flex flex-col gap-2">
+          <p className="text-xs uppercase tracking-widest text-orange-400">
+            {pasting ? "Pasting" : "Select Hexes"}
+          </p>
+          {pasting ? (
+            <>
+              <p className="text-[11px] text-neutral-400">
+                Click a hex to stamp the copied area there, centered on the cursor. Stamp as many times as you
+                like. Esc goes back to selecting.
+              </p>
+              <button
+                onClick={() => onSetPasting(false)}
+                className="px-2 py-1.5 rounded-xs border border-white/15 hover:border-orange-400/60 text-xs"
+              >
+                Back to Selecting
+              </button>
+            </>
+          ) : (
+            <>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { id: "brush", label: "Brush" },
+                  { id: "box", label: "Box" },
+                ].map((t) => (
+                  <button
+                    key={t.id}
+                    onClick={() => setSelectTool(t.id)}
+                    className={`px-2 py-1.5 rounded-xs border transition text-xs ${
+                      selectTool === t.id
+                        ? "border-orange-400 bg-orange-400/10"
+                        : "border-white/10 hover:border-white/30"
+                    }`}
+                  >
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+              <p className="text-[11px] text-neutral-400">
+                {selectTool === "box"
+                  ? "Drag a box to add every hex inside it; right-drag a box to deselect."
+                  : "Drag to select hexes, right-drag to deselect."}{" "}
+                Both add to the same selection. Copy (Ctrl+C) takes their terrain and the doors between them.
+              </p>
+              <p className="text-xs">{hexSelectionCount} hex{hexSelectionCount === 1 ? "" : "es"} selected</p>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={onCopy}
+                  disabled={hexSelectionCount === 0}
+                  className="px-2 py-1.5 rounded-xs border transition text-xs border-orange-400 bg-orange-400/10 disabled:opacity-40 disabled:border-white/15 disabled:bg-transparent"
+                >
+                  Copy
+                </button>
+                <button
+                  onClick={onClearSelection}
+                  disabled={hexSelectionCount === 0}
+                  className="px-2 py-1.5 rounded-xs border border-white/15 hover:border-white/40 transition text-xs disabled:opacity-40"
+                >
+                  Clear
+                </button>
+              </div>
+              {clipboard && (
+                <button
+                  onClick={() => onSetPasting(true)}
+                  className="px-2 py-1.5 rounded-xs border border-white/15 hover:border-orange-400/60 text-xs"
+                >
+                  Paste Last Copy (Ctrl+V)
+                </button>
+              )}
+            </>
+          )}
+          {clipboard && (
+            <p className="text-[11px] text-neutral-500">
+              Clipboard: {clipboard.cells.length} hex{clipboard.cells.length === 1 ? "" : "es"}
+              {clipboard.doors.length > 0 &&
+                `, ${clipboard.doors.length} door${clipboard.doors.length === 1 ? "" : "s"}`}
+            </p>
+          )}
         </div>
       )}
 

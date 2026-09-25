@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import useVTTMap from "./hooks/useVTTMap";
 import VTTCanvas from "./components/VTT/VTTCanvas";
 import VTTToolbar from "./components/VTT/VTTToolbar";
@@ -6,6 +6,8 @@ import MapManagerPanel from "./components/VTT/MapManagerPanel";
 import TokenListPanel from "./components/VTT/TokenListPanel";
 import { CLASS_KEYS, DEFAULT_FRIENDLY_COLOR } from "./components/VTT/tokenBadges";
 import { DEFAULT_EFFECT } from "./components/VTT/effects";
+import { copyHexes, placeClipboard } from "./components/VTT/hexClipboard";
+import { hexKey } from "./utils/hexGrid";
 
 const DEFAULT_FRIENDLY_SCALE = 1.5;
 const DEFAULT_ENEMY_SCALE = 2;
@@ -25,6 +27,7 @@ export default function VTTPage() {
     setTerrain,
     addDoor,
     removeDoor,
+    stampTerrain,
     addToken,
     updateToken,
     moveToken,
@@ -55,6 +58,18 @@ export default function VTTPage() {
   const [zoomRequest, setZoomRequest] = useState(null);
   const [leftOpen, setLeftOpen] = useState(true);
   const [rightOpen, setRightOpen] = useState(true);
+  // Copy/paste mode: the brushed selection (hex keys), the last copied
+  // stamp, and whether clicks currently paste it. The clipboard survives
+  // switching maps, so an area can be copied from one map to another.
+  const [hexSelection, setHexSelection] = useState(() => new Set());
+  const [clipboard, setClipboard] = useState(null);
+  const [pasting, setPasting] = useState(false);
+  const [selectTool, setSelectTool] = useState("brush"); // "brush" | "box"
+
+  const activeMapId = activeMap?.id;
+  useEffect(() => {
+    setHexSelection(new Set());
+  }, [activeMapId]);
 
   const tokensById = useMemo(() => new Map(allTokens.map((t) => [t.id, t])), [allTokens]);
 
@@ -71,12 +86,67 @@ export default function VTTPage() {
   // last event (not just the one under the pointer), so fast strokes on
   // large maps don't leave gaps.
   const handleHexPaint = (cells, erase) => {
+    if (mode === "copy") {
+      setHexSelection((prev) => {
+        const next = new Set(prev);
+        for (const { q, r } of cells) {
+          if (erase) next.delete(hexKey(q, r));
+          else next.add(hexKey(q, r));
+        }
+        return next;
+      });
+      return;
+    }
     const defaultValue = paintLayer === "elevation" ? "normal" : "none";
     const brushValue = paintLayer === "elevation" ? elevationBrush : obstacleBrush;
     setTerrain(cells, paintLayer, erase ? defaultValue : brushValue);
   };
 
+  // Copying switches straight to pasting, since that's the next step.
+  const handleCopy = useCallback(() => {
+    if (!activeMap) return;
+    const copied = copyHexes(activeMap, hexSelection);
+    if (!copied) return;
+    setClipboard(copied);
+    setPasting(true);
+  }, [activeMap, hexSelection]);
+
+  const handleModeChange = (nextMode) => {
+    setPasting(false);
+    setMode(nextMode);
+  };
+
+  // Copy mode shortcuts: Ctrl/Cmd+C copies the selection, Ctrl/Cmd+V goes
+  // back to pasting the clipboard, Escape stops pasting (or, when not
+  // pasting, clears the selection). Ignored while typing in a field.
+  useEffect(() => {
+    if (mode !== "copy") return;
+    const onKey = (e) => {
+      const t = e.target;
+      if (t instanceof HTMLElement && (t.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(t.tagName))) return;
+      const mod = e.ctrlKey || e.metaKey;
+      const key = e.key.toLowerCase();
+      if (mod && key === "c") {
+        e.preventDefault();
+        handleCopy();
+      } else if (mod && key === "v") {
+        if (!clipboard) return;
+        e.preventDefault();
+        setPasting(true);
+      } else if (e.key === "Escape") {
+        if (pasting) setPasting(false);
+        else setHexSelection(new Set());
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [mode, clipboard, pasting, handleCopy]);
+
   const handleHexClick = (q, r) => {
+    if (mode === "copy") {
+      if (pasting && clipboard && activeMap) stampTerrain(placeClipboard(clipboard, q, r, activeMap));
+      return;
+    }
     if (mode === "addToken") {
       const type = addType;
       const count = allTokens.filter((t) => t.type === type).length + 1;
@@ -163,6 +233,9 @@ export default function VTTPage() {
             doors={Array.isArray(activeMap.doors) ? activeMap.doors : []}
             onHexClick={handleHexClick}
             onHexPaint={handleHexPaint}
+            hexSelection={hexSelection}
+            pastePreview={mode === "copy" && pasting ? clipboard : null}
+            selectTool={selectTool}
             onDoorAdd={handleDoorAdd}
             onDoorRemove={removeDoor}
             doorType={doorType}
@@ -212,7 +285,15 @@ export default function VTTPage() {
           <div className="border-t border-white/10 pt-4">
             <VTTToolbar
               mode={mode}
-              setMode={setMode}
+              setMode={handleModeChange}
+              hexSelectionCount={hexSelection.size}
+              clipboard={clipboard}
+              pasting={pasting}
+              onCopy={handleCopy}
+              onClearSelection={() => setHexSelection(new Set())}
+              onSetPasting={setPasting}
+              selectTool={selectTool}
+              setSelectTool={setSelectTool}
               paintLayer={paintLayer}
               setPaintLayer={setPaintLayer}
               elevationBrush={elevationBrush}
