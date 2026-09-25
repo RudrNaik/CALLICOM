@@ -22,6 +22,7 @@ import {
   BORDER_THICKNESS_RATIO,
   BORDER_OVERLAP_RATIO,
   EFFECT_BORDER_THICKNESS_RATIO,
+  EFFECT_BORDER_ALPHA,
   HIGH_GROUND_COLOR,
   HIGH_GROUND_FILL_ALPHA,
   LOW_GROUND_COLOR,
@@ -1046,12 +1047,15 @@ export default function VTTCanvas({
       const [ex, ey] = effectAnchor(effect, camera);
       const ring = new Path2D();
       addHexToPath2D(ring, ex, ey, EFFECT_CENTER_BORDER_SIZE, zoom);
+      const selected = effect.id === selectedTokenId;
+      ctx.globalAlpha = selected ? 1 : effect.opacity;
       strokeHexBorderBatch(
         ctx, ring, zoom,
-        effect.id === selectedTokenId ? "#facc15" : effect.color,
+        selected ? "#facc15" : effect.color,
         false,
         EFFECT_BORDER_THICKNESS_RATIO
       );
+      ctx.globalAlpha = 1;
     }
 
     // Sightline/suppression lines between token pairs — colored by the

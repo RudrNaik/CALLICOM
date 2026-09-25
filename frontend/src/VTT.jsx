@@ -128,6 +128,14 @@ export default function VTTPage() {
     }
   };
 
+  // Picking a token (or effect) in the token panel drops whatever tool is
+  // active and switches to select, so the next hex click moves it.
+  // Deselecting (null) leaves the mode alone.
+  const handlePanelSelect = (tokenId) => {
+    setSelectedTokenId(tokenId);
+    if (tokenId !== null) setMode("select");
+  };
+
   const handleAddTypeChange = (nextType) => {
     // Enemies default a bit bigger than friendlies; only nudge the scale
     // field when it's still at one of the two defaults, so a deliberately
@@ -256,7 +264,7 @@ export default function VTTPage() {
           enemies={activeMap?.enemies || []}
           effects={effects}
           selectedTokenId={selectedTokenId}
-          onSelect={setSelectedTokenId}
+          onSelect={handlePanelSelect}
           onUpdate={updateToken}
           onRemove={(id) => {
             removeToken(id);
