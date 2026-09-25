@@ -37,9 +37,19 @@ function makeBlankMap(name, cols, rows) {
     doors: [],
     friendlies: [],
     enemies: [],
+    effects: [],
     lines: [],
     updatedAt: Date.now(),
   };
+}
+
+// Area effects live in their own list (they have no badge and never take
+// part in lines or range bands), but share the token id space so the same
+// select/update/remove calls work on them.
+function tokenListKey(type) {
+  if (type === "enemy") return "enemies";
+  if (type === "effect") return "effects";
+  return "friendlies";
 }
 
 export default function useVTTMap() {
@@ -196,8 +206,8 @@ export default function useVTTMap() {
   const addToken = useCallback(
     (token) => {
       if (!activeMapId) return;
-      const listKey = token.type === "enemy" ? "enemies" : "friendlies";
-      const newToken = { id: uid("tok"), ...token };
+      const listKey = tokenListKey(token.type);
+      const newToken = { id: uid(token.type === "effect" ? "fx" : "tok"), ...token };
       commit(activeMapId, (m) => ({ ...m, [listKey]: [...(m[listKey] || []), newToken] }));
       return newToken.id;
     },
@@ -210,7 +220,12 @@ export default function useVTTMap() {
       commit(activeMapId, (m) => {
         const updateList = (list = []) =>
           list.map((t) => (t.id === tokenId ? { ...t, ...patch } : t));
-        return { ...m, friendlies: updateList(m.friendlies), enemies: updateList(m.enemies) };
+        return {
+          ...m,
+          friendlies: updateList(m.friendlies),
+          enemies: updateList(m.enemies),
+          effects: updateList(m.effects),
+        };
       });
     },
     [activeMapId, commit]
@@ -228,6 +243,7 @@ export default function useVTTMap() {
         ...m,
         friendlies: (m.friendlies || []).filter((t) => t.id !== tokenId),
         enemies: (m.enemies || []).filter((t) => t.id !== tokenId),
+        effects: (m.effects || []).filter((t) => t.id !== tokenId),
         lines: (m.lines || []).filter((l) => l.fromId !== tokenId && l.toId !== tokenId),
       }));
     },
@@ -264,6 +280,8 @@ export default function useVTTMap() {
     return [...(activeMap.friendlies || []), ...(activeMap.enemies || [])];
   }, [activeMap]);
 
+  const effects = useMemo(() => activeMap?.effects || [], [activeMap]);
+
   const exportMap = useCallback(() => {
     if (!activeMap) return;
     const blob = new Blob([JSON.stringify(activeMap, null, 2)], { type: "application/json" });
@@ -289,6 +307,7 @@ export default function useVTTMap() {
       doors: Array.isArray(imported.doors) ? imported.doors : [],
       friendlies: imported.friendlies || [],
       enemies: imported.enemies || [],
+      effects: imported.effects || [],
       lines: imported.lines || [],
       updatedAt: Date.now(),
     };
@@ -313,6 +332,7 @@ export default function useVTTMap() {
     activeMap,
     activeMapId,
     allTokens,
+    effects,
     newMap,
     loadMap,
     renameMap,

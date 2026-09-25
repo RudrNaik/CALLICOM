@@ -5,6 +5,7 @@ import VTTToolbar from "./components/VTT/VTTToolbar";
 import MapManagerPanel from "./components/VTT/MapManagerPanel";
 import TokenListPanel from "./components/VTT/TokenListPanel";
 import { CLASS_KEYS, DEFAULT_FRIENDLY_COLOR } from "./components/VTT/tokenBadges";
+import { DEFAULT_EFFECT } from "./components/VTT/effects";
 
 const DEFAULT_FRIENDLY_SCALE = 1.5;
 const DEFAULT_ENEMY_SCALE = 2;
@@ -14,6 +15,7 @@ export default function VTTPage() {
     maps,
     activeMap,
     allTokens,
+    effects,
     newMap,
     loadMap,
     renameMap,
@@ -43,7 +45,10 @@ export default function VTTPage() {
   const [addName, setAddName] = useState("");
   const [addColor, setAddColor] = useState(DEFAULT_FRIENDLY_COLOR);
   const [addAoeRadius, setAddAoeRadius] = useState(0);
+  const [addType, setAddType] = useState("friendly");
   const [addScale, setAddScale] = useState(DEFAULT_FRIENDLY_SCALE);
+  const [effectDraft, setEffectDraft] = useState(DEFAULT_EFFECT);
+  const updateEffectDraft = (patch) => setEffectDraft((d) => ({ ...d, ...patch }));
   const [selectedTokenId, setSelectedTokenId] = useState(null);
   const [showRangeOverlay, setShowRangeOverlay] = useState(true);
   const [zoom, setZoom] = useState(55);
@@ -69,8 +74,8 @@ export default function VTTPage() {
       setTerrain(q, r, paintLayer, erase ? defaultValue : brushValue);
       return;
     }
-    if (mode === "addFriendly" || mode === "addEnemy") {
-      const type = mode === "addFriendly" ? "friendly" : "enemy";
+    if (mode === "addToken") {
+      const type = addType;
       const count = allTokens.filter((t) => t.type === type).length + 1;
       const id = addToken({
         name: addName.trim() || `${type === "friendly" ? "Friendly" : "Enemy"} ${count}`,
@@ -84,6 +89,17 @@ export default function VTTPage() {
       });
       setSelectedTokenId(id);
       setAddName("");
+      return;
+    }
+    if (mode === "addEffect") {
+      const id = addToken({
+        ...effectDraft,
+        name: effectDraft.name.trim() || `Effect ${effects.length + 1}`,
+        type: "effect",
+        q,
+        r,
+      });
+      setSelectedTokenId(id);
       return;
     }
     if (mode === "select" && selectedTokenId) {
@@ -112,13 +128,13 @@ export default function VTTPage() {
     }
   };
 
-  const handleModeChange = (nextMode) => {
+  const handleAddTypeChange = (nextType) => {
     // Enemies default a bit bigger than friendlies; only nudge the scale
     // field when it's still at one of the two defaults, so a deliberately
-    // customized size survives switching modes and back.
-    if (nextMode === "addEnemy" && addScale === DEFAULT_FRIENDLY_SCALE) setAddScale(DEFAULT_ENEMY_SCALE);
-    else if (nextMode === "addFriendly" && addScale === DEFAULT_ENEMY_SCALE) setAddScale(DEFAULT_FRIENDLY_SCALE);
-    setMode(nextMode);
+    // customized size survives switching sides and back.
+    if (nextType === "enemy" && addScale === DEFAULT_FRIENDLY_SCALE) setAddScale(DEFAULT_ENEMY_SCALE);
+    else if (nextType === "friendly" && addScale === DEFAULT_ENEMY_SCALE) setAddScale(DEFAULT_FRIENDLY_SCALE);
+    setAddType(nextType);
   };
 
   return (
@@ -128,6 +144,7 @@ export default function VTTPage() {
           <VTTCanvas
             map={activeMap}
             tokens={allTokens}
+            effects={effects}
             lines={boardLines}
             mode={mode}
             selectedTokenId={selectedTokenId}
@@ -183,7 +200,7 @@ export default function VTTPage() {
           <div className="border-t border-white/10 pt-4">
             <VTTToolbar
               mode={mode}
-              setMode={handleModeChange}
+              setMode={setMode}
               paintLayer={paintLayer}
               setPaintLayer={setPaintLayer}
               elevationBrush={elevationBrush}
@@ -194,6 +211,8 @@ export default function VTTPage() {
               setDoorType={setDoorType}
               doorState={doorState}
               setDoorState={setDoorState}
+              addType={addType}
+              setAddType={handleAddTypeChange}
               addClassKey={addClassKey}
               setAddClassKey={setAddClassKey}
               addName={addName}
@@ -204,6 +223,8 @@ export default function VTTPage() {
               setAddAoeRadius={setAddAoeRadius}
               addScale={addScale}
               setAddScale={setAddScale}
+              effectDraft={effectDraft}
+              onEffectDraftChange={updateEffectDraft}
               showRangeOverlay={showRangeOverlay}
               setShowRangeOverlay={setShowRangeOverlay}
               selectedTokenId={selectedTokenId}
@@ -233,6 +254,7 @@ export default function VTTPage() {
         <TokenListPanel
           friendlies={activeMap?.friendlies || []}
           enemies={activeMap?.enemies || []}
+          effects={effects}
           selectedTokenId={selectedTokenId}
           onSelect={setSelectedTokenId}
           onUpdate={updateToken}

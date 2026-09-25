@@ -1,9 +1,12 @@
 import { hexDistance, rangeBand, rangeBandLabel } from "../../utils/hexGrid";
 import { FRIENDLY_COLOR_PRESETS, MODIFIER_ICONS, MODIFIER_KEYS, classLabel, resolveTokenColor } from "./tokenBadges";
 import ClassOptions from "./ClassOptions";
+import EffectControls from "./EffectControls";
 
 function TokenRow({ token, selected, onSelect, onRemove, onUpdate }) {
-  const color = resolveTokenColor(token);
+  const isEffect = token.type === "effect";
+  const color = isEffect ? token.color : resolveTokenColor(token);
+  const detail = isEffect ? `Radius ${token.radius ?? 0}` : classLabel(token.classKey);
   return (
     <div
       onClick={() => onSelect(selected ? null : token.id)}
@@ -33,8 +36,8 @@ function TokenRow({ token, selected, onSelect, onRemove, onUpdate }) {
           AOO {token.aoeRadius}
         </span>
       )}
-      <span className="text-neutral-400 truncate max-w-[40%]" title={classLabel(token.classKey)}>
-        {classLabel(token.classKey)}
+      <span className="text-neutral-400 truncate max-w-[40%]" title={detail}>
+        {detail}
       </span>
       <button
         onClick={(e) => {
@@ -50,8 +53,8 @@ function TokenRow({ token, selected, onSelect, onRemove, onUpdate }) {
   );
 }
 
-export default function TokenListPanel({ friendlies, enemies, selectedTokenId, onSelect, onUpdate, onRemove }) {
-  const selected = [...friendlies, ...enemies].find((t) => t.id === selectedTokenId);
+export default function TokenListPanel({ friendlies, enemies, effects, selectedTokenId, onSelect, onUpdate, onRemove }) {
+  const selected = [...friendlies, ...enemies, ...effects].find((t) => t.id === selectedTokenId);
 
   return (
     <div className="flex flex-col gap-4 p-4 bg-gradient-to-t from-neutral-800 to-neutral-900 border border-r-4 border-r-orange-500 border-white/10 rounded-xs text-white text-sm font-mono">
@@ -89,7 +92,40 @@ export default function TokenListPanel({ friendlies, enemies, selectedTokenId, o
         </div>
       </div>
 
-      {selected && (
+      <div>
+        <p className="text-xs uppercase tracking-widest text-orange-400 mb-2">Effects</p>
+        <div className="flex flex-col gap-1">
+          {effects.length === 0 && <p className="text-xs text-neutral-500">None placed.</p>}
+          {effects.map((t) => (
+            <TokenRow
+              key={t.id}
+              token={t}
+              selected={t.id === selectedTokenId}
+              onSelect={onSelect}
+              onRemove={onRemove}
+              onUpdate={onUpdate}
+            />
+          ))}
+        </div>
+      </div>
+
+      {selected && selected.type === "effect" && (
+        <div className="flex flex-col gap-3 pt-2 border-t border-white/10">
+          <p className="text-xs uppercase tracking-widest text-orange-400">Editing {selected.name}</p>
+          <div className="flex items-center gap-2">
+            <label className="text-xs text-neutral-400 w-16 shrink-0">Name</label>
+            <input
+              type="text"
+              value={selected.name}
+              onChange={(e) => onUpdate(selected.id, { name: e.target.value })}
+              className="flex-1 min-w-0 bg-neutral-800 border border-white/15 rounded-xs px-2 py-1 text-xs"
+            />
+          </div>
+          <EffectControls effect={selected} onChange={(patch) => onUpdate(selected.id, patch)} />
+        </div>
+      )}
+
+      {selected && selected.type !== "effect" && (
         <div className="flex flex-col gap-3 pt-2 border-t border-white/10">
           <p className="text-xs uppercase tracking-widest text-orange-400">Editing {selected.name}</p>
 

@@ -10,13 +10,14 @@ import {
 } from "./terrain";
 import { FRIENDLY_COLOR_PRESETS, resolveTokenColor } from "./tokenBadges";
 import ClassOptions from "./ClassOptions";
+import EffectControls from "./EffectControls";
 
 const MODES = [
   { id: "select", label: "Select/ Move" },
   { id: "paint", label: "Paint Terrain" },
   { id: "door", label: "Place Doors" },
-  { id: "addFriendly", label: "Place Friendly" },
-  { id: "addEnemy", label: "Place Contact" },
+  { id: "addToken", label: "Place Token" },
+  { id: "addEffect", label: "Place Effect" },
   { id: "line", label: "Draw Line" },
 ];
 
@@ -38,6 +39,8 @@ export default function VTTToolbar({
   setDoorType,
   doorState,
   setDoorState,
+  addType,
+  setAddType,
   addClassKey,
   setAddClassKey,
   addName,
@@ -48,6 +51,8 @@ export default function VTTToolbar({
   setAddAoeRadius,
   addScale,
   setAddScale,
+  effectDraft,
+  onEffectDraftChange,
   showRangeOverlay,
   setShowRangeOverlay,
   selectedTokenId,
@@ -190,11 +195,25 @@ export default function VTTToolbar({
         </div>
       )}
 
-      {(mode === "addFriendly" || mode === "addEnemy") && (
+      {mode === "addToken" && (
         <div className="flex flex-col gap-2">
-          <p className="text-xs uppercase tracking-widest text-orange-400">
-            {mode === "addFriendly" ? "New Friendly" : "New Enemy"}
-          </p>
+          <p className="text-xs uppercase tracking-widest text-orange-400">New Token</p>
+          <div className="grid grid-cols-2 gap-2">
+            {[
+              { id: "friendly", label: "Friendly", active: "border-sky-400 bg-sky-400/10 text-sky-300" },
+              { id: "enemy", label: "Contact", active: "border-red-400 bg-red-400/10 text-red-300" },
+            ].map((t) => (
+              <button
+                key={t.id}
+                onClick={() => setAddType(t.id)}
+                className={`px-2 py-1.5 rounded-xs border transition text-xs ${
+                  addType === t.id ? t.active : "border-white/10 hover:border-white/30"
+                }`}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
           <input
             value={addName}
             onChange={(e) => setAddName(e.target.value)}
@@ -209,7 +228,7 @@ export default function VTTToolbar({
             <ClassOptions />
           </select>
 
-          {mode === "addFriendly" && (
+          {addType === "friendly" && (
             <div>
               <p className="text-xs text-neutral-400 mb-1">Color</p>
               <div className="flex flex-wrap gap-1.5">
@@ -253,6 +272,22 @@ export default function VTTToolbar({
           </div>
 
           <p className="text-[11px] text-neutral-400">Click a hex to place the token.</p>
+        </div>
+      )}
+
+      {mode === "addEffect" && (
+        <div className="flex flex-col gap-2">
+          <p className="text-xs uppercase tracking-widest text-orange-400">New Effect</p>
+          <input
+            value={effectDraft.name}
+            onChange={(e) => onEffectDraftChange({ name: e.target.value })}
+            placeholder="Name (e.g. Fire, Smoke)"
+            className="bg-neutral-800 border border-white/15 rounded-xs px-2 py-1.5 text-xs outline-none focus:border-orange-400"
+          />
+          <EffectControls effect={effectDraft} onChange={onEffectDraftChange} showPresets />
+          <p className="text-[11px] text-neutral-400">
+            Click a hex to place the effect's center. Select it later by its dot to move or edit it.
+          </p>
         </div>
       )}
 

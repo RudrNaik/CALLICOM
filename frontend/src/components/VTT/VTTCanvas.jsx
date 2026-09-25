@@ -21,6 +21,7 @@ import {
   TALL_COVER_BORDER_COLOR,
   BORDER_THICKNESS_RATIO,
   BORDER_OVERLAP_RATIO,
+  EFFECT_BORDER_THICKNESS_RATIO,
   HIGH_GROUND_COLOR,
   HIGH_GROUND_FILL_ALPHA,
   LOW_GROUND_COLOR,
@@ -212,9 +213,9 @@ function addHexEdgesDeduped(path, seen, cx, cy, size, zoom, dpr, lineWidthCss) {
 // single draw call, so it stays uniform — which also makes it safe to
 // extend the ring slightly past the true hex edge (closing the
 // anti-aliasing gap that otherwise shows between two touching hexes).
-function strokeHexBorderBatch(ctx, path, zoom, color, dashed) {
+function strokeHexBorderBatch(ctx, path, zoom, color, dashed, thicknessRatio = BORDER_THICKNESS_RATIO) {
   if (!path) return;
-  const lineWidth = HEX_SIZE * BORDER_THICKNESS_RATIO * zoom;
+  const lineWidth = HEX_SIZE * thicknessRatio * zoom;
   ctx.save();
   ctx.strokeStyle = color;
   ctx.lineWidth = lineWidth;
@@ -237,16 +238,21 @@ function addToBucket(bucket, cx, cy, zoom) {
   bucket.used = true;
 }
 
-function fillHatchedBucket(ctx, bucket, viewport, zoom, color, alpha) {
+// `reverse` flips the slant (lines rising to the right instead of falling),
+// which area effects use so their hatching never blends into terrain's.
+function fillHatchedBucket(ctx, bucket, viewport, zoom, color, alpha, reverse = false) {
   if (!bucket.used) return;
   const radius = HEX_SIZE * zoom;
   const step = Math.max(3, radius * STEP_HATCH_STEP_RATIO);
+  const minX = -viewport.margin;
+  const maxX = viewport.width + viewport.margin;
   const minY = -viewport.margin;
   const maxY = viewport.height + viewport.margin;
-  // Each line satisfies x - y = c; sweep c across everything the viewport
-  // (plus margin) can see.
-  const cMin = -viewport.margin - maxY;
-  const cMax = viewport.width + viewport.margin - minY;
+  // Each line satisfies x - y = c (or x + y = c when reversed); sweep c
+  // across everything the viewport (plus margin) can see.
+  const cMin = reverse ? minX + minY : minX - maxY;
+  const cMax = reverse ? maxX + maxY : maxX - minY;
+  const dir = reverse ? -1 : 1;
   ctx.save();
   ctx.clip(bucket.path);
   ctx.strokeStyle = color;
@@ -254,8 +260,8 @@ function fillHatchedBucket(ctx, bucket, viewport, zoom, color, alpha) {
   ctx.globalAlpha = alpha;
   ctx.beginPath();
   for (let c = Math.ceil(cMin / step) * step; c <= cMax; c += step) {
-    ctx.moveTo(c + minY, minY);
-    ctx.lineTo(c + maxY, maxY);
+    ctx.moveTo(c + dir * minY, minY);
+    ctx.lineTo(c + dir * maxY, maxY);
   }
   ctx.stroke();
   ctx.restore();
@@ -289,9 +295,26 @@ function drawDoor(ctx, camera, a, b, lineCount, color, alpha = 1) {
   ctx.restore();
 }
 
+// Area effects: fill alpha when an effect has no stored opacity, and the
+// share of that alpha a hatched effect's background tint gets.
+const DEFAULT_EFFECT_OPACITY = 0.4;
+const EFFECT_HATCH_TINT = 0.25;
+// Ring centerline radius so the ring's outer edge lands on the hex edge. A
+// lone ring has no same-type neighbor to seam against, so it skips the
+// cover borders' overlap.
+const EFFECT_CENTER_BORDER_SIZE = HEX_SIZE * (1 - EFFECT_BORDER_THICKNESS_RATIO / 2);
+function effectOpacity(effect) {
+  return effect.opacity ?? DEFAULT_EFFECT_OPACITY;
+}
+function effectAnchor(effect, camera) {
+  const [wx, wz] = axialToWorld(effect.q, effect.r);
+  return project(wx, wz, camera);
+}
+
 export default function VTTCanvas({
   map,
   tokens,
+  effects,
   lines,
   mode,
   selectedTokenId,
@@ -376,17 +399,22 @@ export default function VTTCanvas({
 
   const tokensById = useMemo(() => new Map(tokens.map((t) => [t.id, t])), [tokens]);
 
-  // Everything token-derived that the terrain cache bakes in (AOE rings and
-  // the range overlay's origin), as a string so an unrelated tokens-array
-  // change doesn't invalidate the cache.
+  const visibleEffects = useMemo(() => (effects || []).filter((e) => !e.hidden), [effects]);
+
+  // Everything token-derived that the terrain cache bakes in (AOE rings,
+  // effect areas and the range overlay's origin), as a string so an
+  // unrelated tokens-array change doesn't invalidate the cache.
   const terrainSig = useMemo(() => {
     const aoe = tokens
       .filter((t) => t.aoeRadius && !t.hidden)
       .map((t) => `${t.q},${t.r},${t.aoeRadius},${resolveTokenColor(t)}`)
       .join(";");
+    const fx = visibleEffects
+      .map((e) => `${e.q},${e.r},${e.radius ?? 0},${e.color},${e.hatched ? 1 : 0},${effectOpacity(e)}`)
+      .join(";");
     const selected = showRangeOverlay && selectedTokenId != null ? tokensById.get(selectedTokenId) : null;
-    return `${aoe}|${selected ? `${selected.q},${selected.r}` : ""}`;
-  }, [tokens, tokensById, showRangeOverlay, selectedTokenId]);
+    return `${aoe}|${fx}|${selected ? `${selected.q},${selected.r}` : ""}`;
+  }, [tokens, visibleEffects, tokensById, showRangeOverlay, selectedTokenId]);
 
   // Tokens sorted so ones "further back" on screen draw first — in the
   // isometric projection, screen depth order follows (x + z), not raw z.
@@ -508,6 +536,20 @@ export default function VTTCanvas({
     }
     const hasAoe = aoeColors.size > 0;
 
+    // Effect areas, the same way: hex -> [effect indices]. Each effect gets
+    // its own path (a hatch bucket), drawn in list order so later-placed
+    // effects stack on top of earlier ones.
+    const effectHexes = new Map();
+    visibleEffects.forEach((effect, i) => {
+      for (const h of hexesInRadius(effect.q, effect.r, effect.radius ?? 0)) {
+        const key = numericHexKey(h.q, h.r);
+        const list = effectHexes.get(key);
+        if (list) list.push(i);
+        else effectHexes.set(key, [i]);
+      }
+    });
+    const effectBuckets = visibleEffects.map(() => makeBucket());
+
     // Every visible hex is appended to a shared Path2D for its color/kind,
     // and each path is then filled or stroked once. That's a handful of draw
     // calls per frame rather than several per hex.
@@ -561,6 +603,11 @@ export default function VTTCanvas({
           }
         }
 
+        const effectsHere = effectHexes.size ? effectHexes.get(numericHexKey(q, r)) : null;
+        if (effectsHere) {
+          for (const i of effectsHere) addToBucket(effectBuckets[i], cx, cy, zoom);
+        }
+
         if (showRangeOverlay && selectedToken) {
           const band = rangeBand(hexDistance(selectedToken, { q, r }));
           const tint = BAND_TINTS[Math.min(band, BAND_TINTS.length - 1)];
@@ -602,7 +649,7 @@ export default function VTTCanvas({
       zoom, margin, width, height,
       groundPath, wallPath, inaccessiblePath, gridPath, highGroundPath, lowGroundPath,
       highStepHatch, lowStepHatch, softWallHatch, aoeLayers, rangePaths,
-      coverPath, tallCoverPath, softWallPath,
+      coverPath, tallCoverPath, softWallPath, effectBuckets,
     };
   };
 
@@ -611,12 +658,12 @@ export default function VTTCanvas({
   // borders of an earlier strip's hexes along the seam (borders extend past
   // the hex edge), which shows up as clipped hex edges.
   //   1: base fills, AOE and range tints
-  //   2: grid lines, elevation tints and hatches
+  //   2: grid lines, elevation tints and hatches, then effect areas
   //   3: obstacle borders
   const drawTerrainPhase = (ctx, b, phase) => {
     const { zoom, groundPath, wallPath, inaccessiblePath, gridPath, highGroundPath, lowGroundPath,
       highStepHatch, lowStepHatch, softWallHatch, aoeLayers, rangePaths,
-      coverPath, tallCoverPath, softWallPath } = b;
+      coverPath, tallCoverPath, softWallPath, effectBuckets } = b;
     if (phase === 1) {
     ctx.fillStyle = GROUND_COLOR;
     ctx.fill(groundPath);
@@ -660,6 +707,27 @@ export default function VTTCanvas({
     fillHatchedBucket(ctx, highStepHatch, viewport, zoom, HIGH_GROUND_COLOR, HIGH_GROUND_FILL_ALPHA);
     fillHatchedBucket(ctx, lowStepHatch, viewport, zoom, LOW_GROUND_COLOR, LOW_GROUND_FILL_ALPHA);
     fillHatchedBucket(ctx, softWallHatch, viewport, zoom, WALL_FILL_COLOR, 0.7);
+
+    // Effect areas sit above the terrain tints so fire/smoke over high
+    // ground still reads, but under obstacle borders. Hatched effects get a
+    // faint tint under their lines so the area reads as one region.
+    effectBuckets.forEach((bucket, i) => {
+      if (!bucket.used) return;
+      const effect = visibleEffects[i];
+      const alpha = effectOpacity(effect);
+      if (effect.hatched) {
+        ctx.globalAlpha = alpha * EFFECT_HATCH_TINT;
+        ctx.fillStyle = effect.color;
+        ctx.fill(bucket.path);
+        ctx.globalAlpha = 1;
+        fillHatchedBucket(ctx, bucket, viewport, zoom, effect.color, alpha, true);
+      } else {
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = effect.color;
+        ctx.fill(bucket.path);
+        ctx.globalAlpha = 1;
+      }
+    });
     } else {
     strokeHexBorderBatch(ctx, coverPath, zoom, COVER_BORDER_COLOR, false);
     strokeHexBorderBatch(ctx, tallCoverPath, zoom, TALL_COVER_BORDER_COLOR, false);
@@ -970,6 +1038,22 @@ export default function VTTCanvas({
       ctx.fill();
     }
 
+    // Effect centers: the center hex gets a border ring in the effect's
+    // color, drawn like a cover border (yellow while selected). Drawn here
+    // rather than baked into the terrain cache so selecting an effect
+    // doesn't force a terrain re-render. Under the tokens, which float above.
+    for (const effect of visibleEffects) {
+      const [ex, ey] = effectAnchor(effect, camera);
+      const ring = new Path2D();
+      addHexToPath2D(ring, ex, ey, EFFECT_CENTER_BORDER_SIZE, zoom);
+      strokeHexBorderBatch(
+        ctx, ring, zoom,
+        effect.id === selectedTokenId ? "#facc15" : effect.color,
+        false,
+        EFFECT_BORDER_THICKNESS_RATIO
+      );
+    }
+
     // Sightline/suppression lines between token pairs — colored by the
     // source token, drawn under the token badges so the badges still read
     // clearly at each end.
@@ -1062,7 +1146,7 @@ export default function VTTCanvas({
   useEffect(() => {
     scheduleDraw();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [map, terrainStates, tokens, tokensById, sortedTokens, lines, size, mode, selectedTokenId, showRangeOverlay, hoveredHex, hoveredVertex, doorStart, doorType, doorState, doors, badgeVersion]);
+  }, [map, terrainStates, tokens, tokensById, sortedTokens, lines, size, mode, selectedTokenId, showRangeOverlay, hoveredHex, hoveredVertex, doorStart, doorType, doorState, doors, badgeVersion, visibleEffects]);
 
   const getHexUnderPointer = (e) => {
     const rect = canvasRef.current.getBoundingClientRect();
@@ -1118,7 +1202,18 @@ export default function VTTCanvas({
         closestDist = dist;
       }
     }
-    return closest;
+    // An effect is selected by clicking its center hex, never in line mode
+    // (lines connect tokens only), and tokens win when one sits there. While
+    // a token is selected, a click on an effect center moves the token onto
+    // it instead, so tokens can still be moved into fire/smoke.
+    if (closest || mode === "line") return closest;
+    if (selectedTokenId != null && tokensById.has(selectedTokenId)) return null;
+    const hex = worldToAxial(...unproject(px, py, camera), HEX_SIZE);
+    for (let i = visibleEffects.length - 1; i >= 0; i--) {
+      const effect = visibleEffects[i];
+      if (effect.q === hex.q && effect.r === hex.r) return effect;
+    }
+    return null;
   };
 
   // Paints (or erases, clearing just the active layer) the hex under the

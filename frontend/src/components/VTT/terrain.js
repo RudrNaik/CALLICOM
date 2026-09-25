@@ -175,3 +175,9 @@ export const BORDER_THICKNESS_RATIO = 0.20;
 // borders overlap slightly instead of just touching, so no seam/gap shows
 // between them (anti-aliasing otherwise leaves a hairline gap).
 export const BORDER_OVERLAP_RATIO = 0.10;
+
+// Thickness of the ring marking an area effect's center hex, as a fraction
+// of the hex radius (same units as BORDER_THICKNESS_RATIO). Kept thinner
+// than cover borders so an effect's center reads as a subtle marker, not
+// as cover. The ring sits just inside the hex edge.
+export const EFFECT_BORDER_THICKNESS_RATIO = 0.08;
