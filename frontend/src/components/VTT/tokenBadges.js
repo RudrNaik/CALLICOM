@@ -43,12 +43,12 @@ export const CLASS_KEYS = Object.keys(CLASS_ICONS);
 // icons, each vehicle PNG is the complete badge (border included), with a
 // separate friendly and enemy version.
 export const VEHICLE_ICONS = {
-  MBT: { label: "Main Battle Tank", friendly: MBTFriendly, enemy: MBTEnemy },
-  IFV: { label: "Infantry Fighting Vehicle", friendly: IFVFriendly, enemy: IFVEnemy },
-  ArmoredLight: { label: "Armored Light Vehicle", friendly: ArmoredLightFriendly, enemy: ArmoredLightEnemy },
-  Light: { label: "Light Vehicle", friendly: LightFriendly, enemy: LightEnemy },
-  GunAD: { label: "Gun Air Defense", friendly: GunADFriendly, enemy: GunADEnemy },
-  SAMAD: { label: "SAM Air Defense", friendly: SAMADFriendly, enemy: SAMADEnemy },
+  MBT: { label: "MBT", friendly: MBTFriendly, enemy: MBTEnemy },
+  IFV: { label: "IFV", friendly: IFVFriendly, enemy: IFVEnemy },
+  ArmoredLight: { label: "Armored Vehicle", friendly: ArmoredLightFriendly, enemy: ArmoredLightEnemy },
+  Light: { label: "Unarmored Vehicle", friendly: LightFriendly, enemy: LightEnemy },
+  GunAD: { label: "AA GUN", friendly: GunADFriendly, enemy: GunADEnemy },
+  SAMAD: { label: "SAM", friendly: SAMADFriendly, enemy: SAMADEnemy },
   RotorWing: { label: "Rotary Wing", friendly: RotorWingFriendly, enemy: RotorWingEnemy },
 };
 
@@ -215,16 +215,16 @@ export async function getTokenBadge(classKey, type, color) {
 // Extra line thickness (in badge-canvas pixels) added around every stroke
 // of a vehicle PNG. The source art is scaled down to fit the badge, which
 // thins its lines below the class badges' border width.
-const VEHICLE_LINE_BOOST = 1.5;
+const VEHICLE_LINE_BOOST = 0.5;
 
 // Vehicle PNGs already carry their border, so the badge is the PNG itself,
 // trimmed to its opaque pixels and fitted into the same 0.84-of-canvas box
 // the class badges' shapes occupy (keeping modifier icon placement and
 // on-map size consistent). Built in two layers:
 //  1. Outline: the PNG thickened by stamping it at small offsets in a ring
-//     (a cheap dilation). Friendly PNGs are single-color, so a "source-in"
-//     fill then recolors them to the token's color. Enemy PNGs keep their
-//     own red.
+//     (a cheap dilation). The PNGs are single-color, so a "source-in" fill
+//     then recolors them to the token's resolved color — the friendly's
+//     assigned color, or ENEMY_COLOR so enemy vehicles match enemy infantry.
 //  2. Fill: the same dark backing + color tint as the class badges, filled
 //     across each row between the outline's leftmost and rightmost pixel.
 //     Unlike a flood fill, this also fills the rotor-wing shapes, which
@@ -257,12 +257,10 @@ async function buildVehicleBadge(classKey, type, color) {
   }
   octx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
 
-  if (!isEnemy) {
-    octx.globalCompositeOperation = "source-in";
-    octx.fillStyle = color;
-    octx.fillRect(0, 0, size, size);
-    octx.globalCompositeOperation = "source-over";
-  }
+  octx.globalCompositeOperation = "source-in";
+  octx.fillStyle = color;
+  octx.fillRect(0, 0, size, size);
+  octx.globalCompositeOperation = "source-over";
 
   const canvas = document.createElement("canvas");
   canvas.width = size;

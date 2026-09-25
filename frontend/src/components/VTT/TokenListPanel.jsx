@@ -33,7 +33,9 @@ function TokenRow({ token, selected, onSelect, onRemove, onUpdate }) {
           AOO {token.aoeRadius}
         </span>
       )}
-      <span className="text-neutral-400">{classLabel(token.classKey)}</span>
+      <span className="text-neutral-400 truncate max-w-[40%]" title={classLabel(token.classKey)}>
+        {classLabel(token.classKey)}
+      </span>
       <button
         onClick={(e) => {
           e.stopPropagation();
@@ -106,7 +108,7 @@ export default function TokenListPanel({ friendlies, enemies, selectedTokenId, o
             <select
               value={selected.classKey}
               onChange={(e) => onUpdate(selected.id, { classKey: e.target.value })}
-              className="flex-1 bg-neutral-800 border border-white/15 rounded-xs px-2 py-1 text-xs"
+              className="flex-1 min-w-0 bg-neutral-800 border border-white/15 rounded-xs px-2 py-1 text-xs"
             >
               <ClassOptions />
             </select>
