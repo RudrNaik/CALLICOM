@@ -9,6 +9,7 @@ import {
   hexDistance,
   hexesInRadius,
   rangeBand,
+  RANGE_BAND_SIZE,
   generateRectGrid,
   nearestVertex,
   distanceToSegment,
@@ -100,12 +101,6 @@ const ZOOM_SETTLE_MS = 150;
 // per frame, so input stays responsive on big maps.
 const TERRAIN_STRIP_COLS = 6;
 const TERRAIN_SLICE_MS = 8;
-
-// Cheap integer key for a hex, for per-frame lookups (no string building).
-// Valid for |q|, |r| < 4096, far beyond any map or AOE ring.
-function numericHexKey(q, r) {
-  return (q + 4096) * 8192 + (r + 4096);
-}
 
 const UNIT_CORNERS = hexCorners(HEX_SIZE);
 
@@ -238,28 +233,31 @@ function addToBucket(bucket, cx, cy, zoom) {
   bucket.used = true;
 }
 
-// `reverse` flips the slant (lines rising to the right instead of falling),
-// which area effects use so their hatching never blends into terrain's.
-function fillHatchedBucket(ctx, bucket, viewport, zoom, color, alpha, reverse = false) {
+// `bounds` ({ minX, maxX, minY, maxY }, screen px) limits the sweep to the
+// area the bucket can cover. `reverse` flips the slant (lines rising to the
+// right instead of falling), which area effects use so their hatching never
+// blends into terrain's. `anchor` ({ x, y }, screen px) is a point the line
+// pattern is pinned to: hatching drawn fresh every frame passes the camera
+// offset, so the lines move with the map while panning instead of sliding
+// across it.
+function fillHatchedBucket(ctx, bucket, bounds, zoom, color, alpha, reverse = false, anchor = null) {
   if (!bucket.used) return;
   const radius = HEX_SIZE * zoom;
   const step = Math.max(3, radius * STEP_HATCH_STEP_RATIO);
-  const minX = -viewport.margin;
-  const maxX = viewport.width + viewport.margin;
-  const minY = -viewport.margin;
-  const maxY = viewport.height + viewport.margin;
+  const { minX, maxX, minY, maxY } = bounds;
   // Each line satisfies x - y = c (or x + y = c when reversed); sweep c
-  // across everything the viewport (plus margin) can see.
+  // across the bounds.
   const cMin = reverse ? minX + minY : minX - maxY;
   const cMax = reverse ? maxX + maxY : maxX - minY;
   const dir = reverse ? -1 : 1;
+  const phase = anchor ? (reverse ? anchor.x + anchor.y : anchor.x - anchor.y) : 0;
   ctx.save();
   ctx.clip(bucket.path);
   ctx.strokeStyle = color;
   ctx.lineWidth = Math.max(1, radius * HATCH_LINE_WIDTH_RATIO);
   ctx.globalAlpha = alpha;
   ctx.beginPath();
-  for (let c = Math.ceil(cMin / step) * step; c <= cMax; c += step) {
+  for (let c = Math.ceil((cMin - phase) / step) * step + phase; c <= cMax; c += step) {
     ctx.moveTo(c + dir * minY, minY);
     ctx.lineTo(c + dir * maxY, maxY);
   }
@@ -299,6 +297,11 @@ function drawDoor(ctx, camera, a, b, lineCount, color, alpha = 1) {
 // share of that alpha a hatched effect's background tint gets.
 const DEFAULT_EFFECT_OPACITY = 0.4;
 const EFFECT_HATCH_TINT = 0.25;
+// Fill alpha of a token's AOO area.
+const AOE_FILL_ALPHA = 0.28;
+// The farthest range band that gets a tint; hexes past it are left clear,
+// so the range overlay only ever visits hexes within this many bands.
+const LAST_TINTED_BAND = BAND_TINTS.findLastIndex(Boolean);
 // Ring centerline radius so the ring's outer edge lands on the hex edge. A
 // lone ring has no same-type neighbor to seam against, so it skips the
 // cover borders' overlap.
@@ -409,21 +412,6 @@ export default function VTTCanvas({
 
   const visibleEffects = useMemo(() => (effects || []).filter((e) => !e.hidden), [effects]);
 
-  // Everything token-derived that the terrain cache bakes in (AOE rings,
-  // effect areas and the range overlay's origin), as a string so an
-  // unrelated tokens-array change doesn't invalidate the cache.
-  const terrainSig = useMemo(() => {
-    const aoe = tokens
-      .filter((t) => t.aoeRadius && !t.hidden)
-      .map((t) => `${t.q},${t.r},${t.aoeRadius},${resolveTokenColor(t)}`)
-      .join(";");
-    const fx = visibleEffects
-      .map((e) => `${e.q},${e.r},${e.radius ?? 0},${e.color},${e.hatched ? 1 : 0},${effectOpacity(e)}`)
-      .join(";");
-    const selected = showRangeOverlay && selectedTokenId != null ? tokensById.get(selectedTokenId) : null;
-    return `${aoe}|${fx}|${selected ? `${selected.q},${selected.r}` : ""}`;
-  }, [tokens, visibleEffects, tokensById, showRangeOverlay, selectedTokenId]);
-
   // Tokens sorted so ones "further back" on screen draw first — in the
   // isometric projection, screen depth order follows (x + z), not raw z.
   const sortedTokens = useMemo(() => {
@@ -501,14 +489,16 @@ export default function VTTCanvas({
 
   // Terrain, in three steps: collectTerrain() gathers the visible hexes (of a
   // column range) into Path2Ds, drawTerrainPhase() paints one layer group of
-  // that, and renderTerrain() does both for the whole map. The cache holds: hex fills, AOE and range tints, grid
-  // lines, elevation, and obstacle hatches/borders — i.e. everything that only
-  // changes with the map, zoom, or AOE/range state, not with panning or hover.
+  // that, and renderTerrain() does both for the whole map. The cache holds
+  // only terrain: hex fills, grid lines, elevation, and obstacle
+  // hatches/borders — everything that changes only with the terrain or zoom.
+  // Token-driven overlays (AOO, range bands, effects) are drawn per frame on
+  // top of it by drawOverlays(), so moving/selecting tokens or editing
+  // effects never invalidates this cache.
   // `camera` here is the cache's own camera (offset by the cache padding) and
   // width/height the cache canvas's size in CSS pixels.
   const collectTerrain = (camera, width, height, colFrom = 0, colTo = Infinity, gridEdgesSeen = new Set()) => {
     const zoom = camera.zoom;
-    const selectedToken = (selectedTokenId != null && tokensById.get(selectedTokenId)) || null;
     const margin = HEX_SIZE * zoom * 1.5;
     const borderSize = HEX_SIZE * (1 - BORDER_THICKNESS_RATIO / 2 + BORDER_OVERLAP_RATIO);
 
@@ -529,35 +519,6 @@ export default function VTTCanvas({
       rMin = Math.min(rMin, r); rMax = Math.max(rMax, r);
     }
 
-    // AOE rings: precompute hex -> [colors] once per token (O(tokens *
-    // radius^2)) rather than testing every hex against every token.
-    const aoeColors = new Map();
-    for (const token of tokens) {
-      if (!token.aoeRadius || token.hidden) continue;
-      const color = resolveTokenColor(token);
-      for (const h of hexesInRadius(token.q, token.r, token.aoeRadius)) {
-        const key = numericHexKey(h.q, h.r);
-        const list = aoeColors.get(key);
-        if (list) list.push(color);
-        else aoeColors.set(key, [color]);
-      }
-    }
-    const hasAoe = aoeColors.size > 0;
-
-    // Effect areas, the same way: hex -> [effect indices]. Each effect gets
-    // its own path (a hatch bucket), drawn in list order so later-placed
-    // effects stack on top of earlier ones.
-    const effectHexes = new Map();
-    visibleEffects.forEach((effect, i) => {
-      for (const h of hexesInRadius(effect.q, effect.r, effect.radius ?? 0)) {
-        const key = numericHexKey(h.q, h.r);
-        const list = effectHexes.get(key);
-        if (list) list.push(i);
-        else effectHexes.set(key, [i]);
-      }
-    });
-    const effectBuckets = visibleEffects.map(() => makeBucket());
-
     // Every visible hex is appended to a shared Path2D for its color/kind,
     // and each path is then filled or stroked once. That's a handful of draw
     // calls per frame rather than several per hex.
@@ -571,8 +532,6 @@ export default function VTTCanvas({
     const highStepHatch = makeBucket();
     const lowStepHatch = makeBucket();
     const softWallHatch = makeBucket();
-    const aoeLayers = []; // layer i: Map(color -> Path2D), so overlapping rings still stack
-    const rangePaths = new Map(); // tint -> Path2D
     let coverPath = null;
     let tallCoverPath = null;
     let softWallPath = null;
@@ -598,33 +557,6 @@ export default function VTTCanvas({
           obstacle === "wall" ? wallPath : obstacle === "inaccessible" ? inaccessiblePath : groundPath,
           cx, cy, HEX_SIZE, zoom
         );
-
-        if (hasAoe) {
-          const aoeHere = aoeColors.get(numericHexKey(q, r));
-          if (aoeHere) {
-            aoeHere.forEach((color, i) => {
-              const layer = (aoeLayers[i] ??= new Map());
-              let path = layer.get(color);
-              if (!path) layer.set(color, (path = new Path2D()));
-              addHexToPath2D(path, cx, cy, HEX_SIZE, zoom);
-            });
-          }
-        }
-
-        const effectsHere = effectHexes.size ? effectHexes.get(numericHexKey(q, r)) : null;
-        if (effectsHere) {
-          for (const i of effectsHere) addToBucket(effectBuckets[i], cx, cy, zoom);
-        }
-
-        if (showRangeOverlay && selectedToken) {
-          const band = rangeBand(hexDistance(selectedToken, { q, r }));
-          const tint = BAND_TINTS[Math.min(band, BAND_TINTS.length - 1)];
-          if (tint) {
-            let path = rangePaths.get(tint);
-            if (!path) rangePaths.set(tint, (path = new Path2D()));
-            addHexToPath2D(path, cx, cy, HEX_SIZE, zoom);
-          }
-        }
 
         // Exactly HEX_SIZE (not slightly smaller): neighbors' shared edges must
         // coincide so the single stroke merges them into one line. Shrinking
@@ -656,8 +588,8 @@ export default function VTTCanvas({
     return {
       zoom, margin, width, height,
       groundPath, wallPath, inaccessiblePath, gridPath, highGroundPath, lowGroundPath,
-      highStepHatch, lowStepHatch, softWallHatch, aoeLayers, rangePaths,
-      coverPath, tallCoverPath, softWallPath, effectBuckets,
+      highStepHatch, lowStepHatch, softWallHatch,
+      coverPath, tallCoverPath, softWallPath,
     };
   };
 
@@ -665,13 +597,13 @@ export default function VTTCanvas({
   // later fills would otherwise paint over the grid lines and obstacle
   // borders of an earlier strip's hexes along the seam (borders extend past
   // the hex edge), which shows up as clipped hex edges.
-  //   1: base fills, AOE and range tints
-  //   2: grid lines, elevation tints and hatches, then effect areas
+  //   1: base fills
+  //   2: grid lines, elevation tints and hatches
   //   3: obstacle borders
   const drawTerrainPhase = (ctx, b, phase) => {
     const { zoom, groundPath, wallPath, inaccessiblePath, gridPath, highGroundPath, lowGroundPath,
-      highStepHatch, lowStepHatch, softWallHatch, aoeLayers, rangePaths,
-      coverPath, tallCoverPath, softWallPath, effectBuckets } = b;
+      highStepHatch, lowStepHatch, softWallHatch,
+      coverPath, tallCoverPath, softWallPath } = b;
     if (phase === 1) {
     ctx.fillStyle = GROUND_COLOR;
     ctx.fill(groundPath);
@@ -679,22 +611,6 @@ export default function VTTCanvas({
     ctx.fill(wallPath);
     ctx.fillStyle = INACCESSIBLE_FILL_COLOR;
     ctx.fill(inaccessiblePath);
-
-    ctx.globalAlpha = 0.28;
-    for (const layer of aoeLayers) {
-      if (!layer) continue;
-      for (const [color, path] of layer) {
-        ctx.fillStyle = color;
-        ctx.fill(path);
-      }
-    }
-    ctx.globalAlpha = 1;
-
-    // Plain solid fill, not a hatch — hatching is far more expensive.
-    for (const [tint, path] of rangePaths) {
-      ctx.fillStyle = `rgba(${tint}, ${BAND_TINT_ALPHA})`;
-      ctx.fill(path);
-    }
     } else if (phase === 2) {
     ctx.lineWidth = 1;
     ctx.strokeStyle = "rgba(0,0,0,0.35)";
@@ -711,35 +627,96 @@ export default function VTTCanvas({
     ctx.fill(lowGroundPath);
     ctx.globalAlpha = 1;
 
-    const viewport = { width: b.width, height: b.height, margin: b.margin };
-    fillHatchedBucket(ctx, highStepHatch, viewport, zoom, HIGH_GROUND_COLOR, HIGH_GROUND_FILL_ALPHA);
-    fillHatchedBucket(ctx, lowStepHatch, viewport, zoom, LOW_GROUND_COLOR, LOW_GROUND_FILL_ALPHA);
-    fillHatchedBucket(ctx, softWallHatch, viewport, zoom, WALL_FILL_COLOR, 0.7);
-
-    // Effect areas sit above the terrain tints so fire/smoke over high
-    // ground still reads, but under obstacle borders. Hatched effects get a
-    // faint tint under their lines so the area reads as one region.
-    effectBuckets.forEach((bucket, i) => {
-      if (!bucket.used) return;
-      const effect = visibleEffects[i];
-      const alpha = effectOpacity(effect);
-      if (effect.hatched) {
-        ctx.globalAlpha = alpha * EFFECT_HATCH_TINT;
-        ctx.fillStyle = effect.color;
-        ctx.fill(bucket.path);
-        ctx.globalAlpha = 1;
-        fillHatchedBucket(ctx, bucket, viewport, zoom, effect.color, alpha, true);
-      } else {
-        ctx.globalAlpha = alpha;
-        ctx.fillStyle = effect.color;
-        ctx.fill(bucket.path);
-        ctx.globalAlpha = 1;
-      }
-    });
+    const bounds = {
+      minX: -b.margin, maxX: b.width + b.margin,
+      minY: -b.margin, maxY: b.height + b.margin,
+    };
+    fillHatchedBucket(ctx, highStepHatch, bounds, zoom, HIGH_GROUND_COLOR, HIGH_GROUND_FILL_ALPHA);
+    fillHatchedBucket(ctx, lowStepHatch, bounds, zoom, LOW_GROUND_COLOR, LOW_GROUND_FILL_ALPHA);
+    fillHatchedBucket(ctx, softWallHatch, bounds, zoom, WALL_FILL_COLOR, 0.7);
     } else {
     strokeHexBorderBatch(ctx, coverPath, zoom, COVER_BORDER_COLOR, false);
     strokeHexBorderBatch(ctx, tallCoverPath, zoom, TALL_COVER_BORDER_COLOR, false);
     strokeHexBorderBatch(ctx, softWallPath, zoom, WALL_FILL_COLOR, false);
+    }
+  };
+
+  // Token-driven overlays, drawn straight onto the screen every frame on top
+  // of the terrain cache: AOO areas, the selected token's range bands, and
+  // effect areas. Each only visits the hexes it covers (hexesInRadius), never
+  // the whole map, so the cost is bounded by the overlays' own size — at
+  // most a few thousand hexes even with the range overlay's 3 bands.
+  const drawOverlays = (ctx, camera, width, height) => {
+    const zoom = camera.zoom;
+    const margin = HEX_SIZE * zoom * 1.5;
+
+    // Adds each hex in `list` that is on the map and on screen to `path`,
+    // growing `box` (screen-space bounds of what was added) if given.
+    const addHexes = (path, list, box) => {
+      let added = false;
+      for (const { q, r } of list) {
+        const row = r + (q - (q & 1)) / 2;
+        if (q < 0 || q >= map.cols || row < 0 || row >= map.rows) continue;
+        const [wx, wz] = axialToWorld(q, r);
+        const [cx, cy] = project(wx, wz, camera);
+        if (cx < -margin || cx > width + margin || cy < -margin || cy > height + margin) continue;
+        addHexToPath2D(path, cx, cy, HEX_SIZE, zoom);
+        added = true;
+        if (box) {
+          box.minX = Math.min(box.minX, cx - margin); box.maxX = Math.max(box.maxX, cx + margin);
+          box.minY = Math.min(box.minY, cy - margin); box.maxY = Math.max(box.maxY, cy + margin);
+        }
+      }
+      return added;
+    };
+
+    // AOO: one fill per token, so overlapping areas stack.
+    ctx.globalAlpha = AOE_FILL_ALPHA;
+    for (const token of tokens) {
+      if (!token.aoeRadius || token.hidden) continue;
+      const path = new Path2D();
+      if (!addHexes(path, hexesInRadius(token.q, token.r, token.aoeRadius))) continue;
+      ctx.fillStyle = resolveTokenColor(token);
+      ctx.fill(path);
+    }
+    ctx.globalAlpha = 1;
+
+    // Range bands around the selected token: plain tints, one path per band.
+    const selectedToken = showRangeOverlay && selectedTokenId != null ? tokensById.get(selectedTokenId) : null;
+    if (selectedToken) {
+      const bandHexes = new Map(); // tint -> hexes
+      for (const h of hexesInRadius(selectedToken.q, selectedToken.r, LAST_TINTED_BAND * RANGE_BAND_SIZE)) {
+        const tint = BAND_TINTS[rangeBand(hexDistance(selectedToken, h))];
+        if (!tint) continue;
+        const list = bandHexes.get(tint);
+        if (list) list.push(h);
+        else bandHexes.set(tint, [h]);
+      }
+      for (const [tint, list] of bandHexes) {
+        const path = new Path2D();
+        if (!addHexes(path, list)) continue;
+        ctx.fillStyle = `rgba(${tint}, ${BAND_TINT_ALPHA})`;
+        ctx.fill(path);
+      }
+    }
+
+    // Effect areas, in list order so later-placed effects stack on top.
+    // Hatched effects get a faint tint under their lines so the area reads
+    // as one region; the hatch sweep is limited to the effect's own screen
+    // bounds and pinned to the camera so it pans with the map.
+    for (const effect of visibleEffects) {
+      const bucket = makeBucket();
+      const box = { minX: Infinity, maxX: -Infinity, minY: Infinity, maxY: -Infinity };
+      bucket.used = addHexes(bucket.path, hexesInRadius(effect.q, effect.r, effect.radius ?? 0), box);
+      if (!bucket.used) continue;
+      const alpha = effectOpacity(effect);
+      ctx.fillStyle = effect.color;
+      ctx.globalAlpha = effect.hatched ? alpha * EFFECT_HATCH_TINT : alpha;
+      ctx.fill(bucket.path);
+      ctx.globalAlpha = 1;
+      if (effect.hatched) {
+        fillHatchedBucket(ctx, bucket, box, zoom, effect.color, alpha, true, camera);
+      }
     }
   };
 
@@ -766,8 +743,8 @@ export default function VTTCanvas({
     ctx.fillRect(0, 0, size.width, size.height);
 
     // Terrain comes from an offscreen cache a bit larger than the viewport.
-    // Panning just blits it at an offset; it's only re-rendered when the map,
-    // zoom, AOE/range state or viewport size changes, or the pan outruns the
+    // Panning just blits it at an offset; it's only re-rendered when the
+    // terrain, zoom or viewport size changes, or the pan outruns the
     // padding. While zoom is actively changing, the stale cache is blitted
     // scaled (slightly soft) and the real re-render waits until it settles.
     const now = performance.now();
@@ -860,7 +837,6 @@ export default function VTTCanvas({
       camX: job.camX,
       camY: job.camY,
       zoom: job.zoom,
-      sig: terrainSig,
       terrainStates,
       width: size.width,
       height: size.height,
@@ -902,7 +878,6 @@ export default function VTTCanvas({
     const matches =
       cache &&
       cache.terrainStates === terrainStates &&
-      cache.sig === terrainSig &&
       cache.width === size.width &&
       cache.height === size.height &&
       cache.dpr === dpr;
@@ -1009,6 +984,8 @@ export default function VTTCanvas({
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.drawImage(cache.canvas, 0, 0, cache.pixelW, cache.pixelH, tx, ty, cache.pixelW * scale, cache.pixelH * scale);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    drawOverlays(ctx, camera, size.width, size.height);
 
     if (mode === "paint" && hoveredHex) {
       const [hx, hz] = axialToWorld(hoveredHex.q, hoveredHex.r);
