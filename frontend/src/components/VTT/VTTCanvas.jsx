@@ -103,6 +103,27 @@ const ZOOM_SETTLE_MS = 150;
 // per frame, so input stays responsive on big maps.
 const TERRAIN_STRIP_COLS = 6;
 const TERRAIN_SLICE_MS = 8;
+// Terrain edits (painting) patch just the changed area of the terrain cache
+// instead of re-rendering all of it — unless more than this many hexes
+// changed at once, or the patch would cover more than this fraction of the
+// cache, where a full render costs about the same.
+const MAX_PATCH_CELLS = 2000;
+const MAX_PATCH_AREA_FRACTION = 0.5;
+
+// Grid-cell indexes (col * rows + row) whose terrain differs between two
+// terrainStates arrays of the same grid, or null if more than
+// MAX_PATCH_CELLS differ. Compares the two layer values rather than object
+// identity, since the states are rebuilt (as new objects) on every edit.
+function diffTerrainCells(a, b) {
+  const cells = [];
+  for (let i = 0; i < b.length; i++) {
+    if (a[i].elevation !== b[i].elevation || a[i].obstacle !== b[i].obstacle) {
+      cells.push(i);
+      if (cells.length > MAX_PATCH_CELLS) return null;
+    }
+  }
+  return cells;
+}
 
 const UNIT_CORNERS = hexCorners(HEX_SIZE);
 
@@ -634,9 +655,13 @@ export default function VTTCanvas({
       minX: -b.margin, maxX: b.width + b.margin,
       minY: -b.margin, maxY: b.height + b.margin,
     };
-    fillHatchedBucket(ctx, highStepHatch, bounds, zoom, HIGH_GROUND_COLOR, HIGH_GROUND_FILL_ALPHA);
-    fillHatchedBucket(ctx, lowStepHatch, bounds, zoom, LOW_GROUND_COLOR, LOW_GROUND_FILL_ALPHA);
-    fillHatchedBucket(ctx, softWallHatch, bounds, zoom, WALL_FILL_COLOR, 0.7);
+    // A cache patch renders with a camera offset to the patch's corner, so it
+    // passes an anchor that keeps its hatch lines in phase with the rest of
+    // the cache (a full render needs none).
+    const anchor = b.hatchAnchor ?? null;
+    fillHatchedBucket(ctx, highStepHatch, bounds, zoom, HIGH_GROUND_COLOR, HIGH_GROUND_FILL_ALPHA, false, anchor);
+    fillHatchedBucket(ctx, lowStepHatch, bounds, zoom, LOW_GROUND_COLOR, LOW_GROUND_FILL_ALPHA, false, anchor);
+    fillHatchedBucket(ctx, softWallHatch, bounds, zoom, WALL_FILL_COLOR, 0.7, false, anchor);
     } else {
     strokeHexBorderBatch(ctx, coverPath, zoom, COVER_BORDER_COLOR, false);
     strokeHexBorderBatch(ctx, tallCoverPath, zoom, TALL_COVER_BORDER_COLOR, false);
@@ -726,6 +751,59 @@ export default function VTTCanvas({
   const renderTerrain = (ctx, camera, width, height) => {
     const bundle = collectTerrain(camera, width, height);
     for (let phase = 1; phase <= 3; phase++) drawTerrainPhase(ctx, bundle, phase);
+  };
+
+  // Re-renders just the part of the terrain cache that `cells` (grid-cell
+  // indexes whose terrain changed) can affect, in place. The patch is the
+  // changed hexes' bounding box, padded by a hex and a half so neighbors'
+  // borders (which reach past their own hex edge) are included, and snapped
+  // to whole device pixels: an unaliased rectangular clip means the redrawn
+  // area meets the untouched cache with no seam. Inside it, every hex that
+  // can reach the rectangle is rendered through all three phases, exactly as
+  // a full render would, so layering and grid lines come out identical.
+  // Returns false when the patch would be too large to be worth it.
+  const patchCache = (cache, cells, dpr) => {
+    const cacheCamera = { x: cache.camX - cache.originX, y: cache.camY - cache.originY, zoom: cache.zoom };
+    const pad = HEX_SIZE * cache.zoom * 1.5 + 2;
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    for (const i of cells) {
+      const { q, r } = oddqToAxial(Math.floor(i / map.rows), i % map.rows);
+      const [wx, wz] = axialToWorld(q, r);
+      const [cx, cy] = project(wx, wz, cacheCamera);
+      minX = Math.min(minX, cx - pad); maxX = Math.max(maxX, cx + pad);
+      minY = Math.min(minY, cy - pad); maxY = Math.max(maxY, cy + pad);
+    }
+    const x0 = Math.max(0, Math.floor(minX * dpr));
+    const y0 = Math.max(0, Math.floor(minY * dpr));
+    const x1 = Math.min(cache.pixelW, Math.ceil(maxX * dpr));
+    const y1 = Math.min(cache.pixelH, Math.ceil(maxY * dpr));
+    // Changed hexes entirely outside the cached area: nothing to redraw.
+    if (x1 <= x0 || y1 <= y0) return true;
+    if ((x1 - x0) * (y1 - y0) > cache.pixelW * cache.pixelH * MAX_PATCH_AREA_FRACTION) return false;
+
+    const cctx = cache.canvas.getContext("2d", { alpha: false });
+    cctx.save();
+    cctx.setTransform(1, 0, 0, 1, 0, 0);
+    cctx.beginPath();
+    cctx.rect(x0, y0, x1 - x0, y1 - y0);
+    cctx.clip();
+    cctx.fillStyle = BG_COLOR;
+    cctx.fillRect(x0, y0, x1 - x0, y1 - y0);
+    // Render in patch-local CSS coords (origin at the patch corner). The
+    // offset is a whole number of device pixels, so the grid lines' pixel
+    // snapping lands exactly where the full render put it.
+    const ox = x0 / dpr;
+    const oy = y0 / dpr;
+    cctx.setTransform(dpr, 0, 0, dpr, x0, y0);
+    const bundle = collectTerrain(
+      { x: cacheCamera.x - ox, y: cacheCamera.y - oy, zoom: cache.zoom },
+      (x1 - x0) / dpr,
+      (y1 - y0) / dpr
+    );
+    bundle.hatchAnchor = { x: -ox, y: -oy };
+    for (let phase = 1; phase <= 3; phase++) drawTerrainPhase(cctx, bundle, phase);
+    cctx.restore();
+    return true;
   };
 
   const draw = () => {
@@ -841,6 +919,8 @@ export default function VTTCanvas({
       camY: job.camY,
       zoom: job.zoom,
       terrainStates,
+      cols: map.cols,
+      rows: map.rows,
       width: size.width,
       height: size.height,
       dpr,
@@ -877,6 +957,24 @@ export default function VTTCanvas({
       renderTerrain(job.cctx, jobCamera(job), job.plan.cssWidth, job.plan.cssHeight);
       return toCache(job);
     };
+
+    // Terrain edited but nothing else changed: patch the cache in place
+    // instead of re-rendering it. Skipped while a sliced rebuild is in
+    // progress (its strips would be stale), which falls through to a full
+    // render as before.
+    if (
+      cache &&
+      cache.terrainStates !== terrainStates &&
+      !terrainJobRef.current &&
+      cache.cols === map.cols &&
+      cache.rows === map.rows &&
+      cache.width === size.width &&
+      cache.height === size.height &&
+      cache.dpr === dpr
+    ) {
+      const cells = diffTerrainCells(cache.terrainStates, terrainStates);
+      if (cells && patchCache(cache, cells, dpr)) cache.terrainStates = terrainStates;
+    }
 
     const matches =
       cache &&
