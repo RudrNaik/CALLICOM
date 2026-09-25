@@ -7,6 +7,7 @@ import TokenListPanel from "./components/VTT/TokenListPanel";
 import { CLASS_KEYS, DEFAULT_FRIENDLY_COLOR } from "./components/VTT/tokenBadges";
 import { DEFAULT_EFFECT } from "./components/VTT/effects";
 import { copyHexes, placeClipboard } from "./components/VTT/hexClipboard";
+import { elevationFillRegion, FILL_CONFIRM_THRESHOLD } from "./components/VTT/elevationFill";
 import { hexKey } from "./utils/hexGrid";
 
 const DEFAULT_FRIENDLY_SCALE = 1.5;
@@ -42,6 +43,10 @@ export default function VTTPage() {
   const [paintLayer, setPaintLayer] = useState("obstacle");
   const [elevationBrush, setElevationBrush] = useState("normal");
   const [obstacleBrush, setObstacleBrush] = useState("none");
+  // Elevation layer only: "brush" paints hex by hex, "fill" bucket-fills
+  // the connected same-elevation area under a click.
+  const [paintTool, setPaintTool] = useState("brush");
+  const elevationFillActive = mode === "paint" && paintLayer === "elevation" && paintTool === "fill";
   const [doorType, setDoorType] = useState("standard");
   const [doorState, setDoorState] = useState("closed");
   const [addClassKey, setAddClassKey] = useState(CLASS_KEYS[0]);
@@ -143,6 +148,21 @@ export default function VTTPage() {
   }, [mode, clipboard, pasting, handleCopy]);
 
   const handleHexClick = (q, r) => {
+    if (elevationFillActive) {
+      if (!activeMap) return;
+      const cells = elevationFillRegion(activeMap, { q, r });
+      if (cells.length === 0) return;
+      if (
+        cells.length > FILL_CONFIRM_THRESHOLD &&
+        !window.confirm(
+          `This fill would change ${cells.length} hexes. If the area isn't fully outlined, it may have spread past it. Fill anyway?`
+        )
+      ) {
+        return;
+      }
+      setTerrain(cells, "elevation", elevationBrush);
+      return;
+    }
     if (mode === "copy") {
       if (pasting && clipboard && activeMap) stampTerrain(placeClipboard(clipboard, q, r, activeMap));
       return;
@@ -236,6 +256,7 @@ export default function VTTPage() {
             hexSelection={hexSelection}
             pastePreview={mode === "copy" && pasting ? clipboard : null}
             selectTool={selectTool}
+            elevationFill={elevationFillActive}
             onDoorAdd={handleDoorAdd}
             onDoorRemove={removeDoor}
             doorType={doorType}
@@ -294,6 +315,8 @@ export default function VTTPage() {
               onSetPasting={setPasting}
               selectTool={selectTool}
               setSelectTool={setSelectTool}
+              paintTool={paintTool}
+              setPaintTool={setPaintTool}
               paintLayer={paintLayer}
               setPaintLayer={setPaintLayer}
               elevationBrush={elevationBrush}

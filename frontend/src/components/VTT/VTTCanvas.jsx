@@ -370,6 +370,7 @@ export default function VTTCanvas({
   hexSelection,
   pastePreview,
   selectTool,
+  elevationFill,
   onDoorAdd,
   onDoorRemove,
   doorType,
@@ -1477,7 +1478,9 @@ export default function VTTCanvas({
     // paints (right-drag deselects); its pasting step is plain clicks.
     // With the box tool it drags a rectangle instead, applied on release.
     const boxSelecting = mode === "copy" && !pastePreview && selectTool === "box";
-    const brushesHexes = mode === "paint" || (mode === "copy" && !pastePreview && !boxSelecting);
+    // Elevation fill is a plain click (handled by onHexClick), not a brush.
+    const brushesHexes =
+      (mode === "paint" && !elevationFill) || (mode === "copy" && !pastePreview && !boxSelecting);
     const isBrushMode = brushesHexes || boxSelecting || mode === "door";
     const isEraseButton = isBrushMode && e.button === 2;
     const isPanButton = !isEraseButton && (e.button === 2 || e.button === 1 || e.shiftKey);

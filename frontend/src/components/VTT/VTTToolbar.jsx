@@ -62,6 +62,8 @@ export default function VTTToolbar({
   onSetPasting,
   selectTool,
   setSelectTool,
+  paintTool,
+  setPaintTool,
   showRangeOverlay,
   setShowRangeOverlay,
   selectedTokenId,
@@ -110,6 +112,25 @@ export default function VTTToolbar({
             ))}
           </div>
 
+          {paintLayer === "elevation" && (
+            <div className="grid grid-cols-2 gap-2 mb-3">
+              {[
+                { id: "brush", label: "Brush" },
+                { id: "fill", label: "Fill" },
+              ].map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => setPaintTool(t.id)}
+                  className={`px-2 py-1.5 rounded-xs border transition text-xs ${
+                    paintTool === t.id ? "border-orange-400 bg-orange-400/10" : "border-white/10 hover:border-white/30"
+                  }`}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+          )}
+
           {PAINT_LAYERS.filter((l) => l.id === paintLayer).map((l) => {
             const brush = l.id === "elevation" ? elevationBrush : obstacleBrush;
             const setBrush = l.id === "elevation" ? setElevationBrush : setObstacleBrush;
@@ -139,7 +160,9 @@ export default function VTTToolbar({
             );
           })}
           <p className="text-[11px] text-neutral-400 mt-2">
-            Click paints the active layer only. An obstacle painted onto high ground keeps that elevation. Right-click (or right-drag) clears the active layer on a hex.
+            {paintLayer === "elevation" && paintTool === "fill"
+              ? "Click a hex to fill it and every connected hex of the same elevation with the selected elevation. The fill stops wherever the elevation changes, so outline an area first. Obstacles don't block it."
+              : "Click paints the active layer only. An obstacle painted onto high ground keeps that elevation. Right-click (or right-drag) clears the active layer on a hex."}
           </p>
         </div>
       )}
