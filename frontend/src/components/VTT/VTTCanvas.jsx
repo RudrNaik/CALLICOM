@@ -22,7 +22,6 @@ import {
   BORDER_THICKNESS_RATIO,
   BORDER_OVERLAP_RATIO,
   EFFECT_BORDER_THICKNESS_RATIO,
-  EFFECT_BORDER_ALPHA,
   HIGH_GROUND_COLOR,
   HIGH_GROUND_FILL_ALPHA,
   LOW_GROUND_COLOR,
@@ -385,18 +384,26 @@ export default function VTTCanvas({
   );
 
   // Terrain state per grid cell (index col * rows + row), normalized once per
-  // map change instead of once per hex per frame.
+  // terrain change instead of once per hex per frame. Keyed on the hexes
+  // object and grid size only, not the whole map: every map edit (moving a
+  // token, renaming it, tweaking an effect) makes a new map object, but
+  // leaves `hexes` untouched unless terrain was painted. Since the terrain
+  // cache is invalidated whenever this array changes, depending on `map`
+  // would rebuild all the terrain for edits that can't affect it.
+  const hexes = map?.hexes;
+  const cols = map?.cols;
+  const rows = map?.rows;
   const terrainStates = useMemo(() => {
-    if (!map) return null;
-    const states = new Array(map.cols * map.rows);
-    for (let col = 0; col < map.cols; col++) {
-      for (let row = 0; row < map.rows; row++) {
+    if (!hexes) return null;
+    const states = new Array(cols * rows);
+    for (let col = 0; col < cols; col++) {
+      for (let row = 0; row < rows; row++) {
         const { q, r } = oddqToAxial(col, row);
-        states[col * map.rows + row] = normalizeHexState(map.hexes[hexKey(q, r)]);
+        states[col * rows + row] = normalizeHexState(hexes[hexKey(q, r)]);
       }
     }
     return states;
-  }, [map]);
+  }, [hexes, cols, rows]);
 
   const tokensById = useMemo(() => new Map(tokens.map((t) => [t.id, t])), [tokens]);
 
@@ -456,9 +463,9 @@ export default function VTTCanvas({
   // Center the camera on the grid once per map (or when its size changes).
   useEffect(() => {
     if (!map || size.width === 0) return;
-    const hexes = generateRectGrid(map.cols, map.rows);
+    const gridHexes = generateRectGrid(map.cols, map.rows);
     let minX = Infinity, maxX = -Infinity, minZ = Infinity, maxZ = -Infinity;
-    for (const { q, r } of hexes) {
+    for (const { q, r } of gridHexes) {
       const [x, z] = axialToWorld(q, r);
       minX = Math.min(minX, x); maxX = Math.max(maxX, x);
       minZ = Math.min(minZ, z); maxZ = Math.max(maxZ, z);
