@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { hexDistance, rangeBand, rangeBandLabel } from "../../utils/hexGrid";
 import { FRIENDLY_COLOR_PRESETS, MODIFIER_ICONS, MODIFIER_KEYS, classLabel, resolveTokenColor } from "./tokenBadges";
 import ClassOptions from "./ClassOptions";
@@ -57,6 +58,40 @@ function TokenRow({ token, selected, batchMate, onSelect, onRemove, onUpdate }) 
   );
 }
 
+// Which panel sections are collapsed, remembered per browser. A convenience
+// only: if storage is unavailable, every section just starts expanded.
+const COLLAPSED_KEY = "calamari_vtt_token_panel_collapsed_v1";
+function loadCollapsed() {
+  try {
+    return JSON.parse(localStorage.getItem(COLLAPSED_KEY)) || {};
+  } catch {
+    return {};
+  }
+}
+
+// A panel section whose title toggles its body. `action` sits on the right
+// of the header (e.g. the Batches "+ New" button) and stays usable while
+// collapsed.
+function Section({ title, color, count, collapsed, onToggle, action, children }) {
+  return (
+    <div>
+      <div className={`flex items-center justify-between ${collapsed ? "" : "mb-2"}`}>
+        <button
+          onClick={onToggle}
+          className={`flex items-center gap-1.5 text-xs uppercase tracking-widest ${color}`}
+          title={collapsed ? "Expand" : "Collapse"}
+        >
+          <span className="w-3 text-[10px]">{collapsed ? "▸" : "▾"}</span>
+          {title}
+          <span className="text-neutral-500 normal-case tracking-normal">({count})</span>
+        </button>
+        {action}
+      </div>
+      {!collapsed && children}
+    </div>
+  );
+}
+
 export default function TokenListPanel({
   friendlies,
   enemies,
@@ -77,10 +112,27 @@ export default function TokenListPanel({
   const selectedBatchId = selected && selected.type !== "effect" ? selected.batchId ?? null : null;
   const combatants = [...friendlies, ...enemies];
 
+  const [collapsed, setCollapsed] = useState(loadCollapsed);
+  const toggle = (id) =>
+    setCollapsed((prev) => {
+      const next = { ...prev, [id]: !prev[id] };
+      try {
+        localStorage.setItem(COLLAPSED_KEY, JSON.stringify(next));
+      } catch {
+        /* storage unavailable: the toggle still works for this session */
+      }
+      return next;
+    });
+
   return (
     <div className="flex flex-col gap-4 p-4 bg-gradient-to-t from-neutral-800 to-neutral-900 border border-r-4 border-r-orange-500 border-white/10 rounded-xs text-white text-sm font-mono">
-      <div>
-        <p className="text-xs uppercase tracking-widest text-sky-400 mb-2">Friendlies</p>
+      <Section
+        title="Friendlies"
+        color="text-sky-400"
+        count={friendlies.length}
+        collapsed={!!collapsed.friendlies}
+        onToggle={() => toggle("friendlies")}
+      >
         <div className="flex flex-col gap-1">
           {friendlies.length === 0 && <p className="text-xs text-neutral-500">None placed.</p>}
           {friendlies.map((t) => (
@@ -95,10 +147,15 @@ export default function TokenListPanel({
             />
           ))}
         </div>
-      </div>
+      </Section>
 
-      <div>
-        <p className="text-xs uppercase tracking-widest text-red-400 mb-2">Contacts</p>
+      <Section
+        title="Contacts"
+        color="text-red-400"
+        count={enemies.length}
+        collapsed={!!collapsed.contacts}
+        onToggle={() => toggle("contacts")}
+      >
         <div className="flex flex-col gap-1">
           {enemies.length === 0 && <p className="text-xs text-neutral-500">None placed.</p>}
           {enemies.map((t) => (
@@ -113,18 +170,23 @@ export default function TokenListPanel({
             />
           ))}
         </div>
-      </div>
+      </Section>
 
-      <div>
-        <div className="flex items-center justify-between mb-2">
-          <p className="text-xs uppercase tracking-widest text-green-400">Batches</p>
+      <Section
+        title="Batches"
+        color="text-green-400"
+        count={batches.length}
+        collapsed={!!collapsed.batches}
+        onToggle={() => toggle("batches")}
+        action={
           <button
             onClick={() => onAddBatch()}
             className="px-1.5 py-0.5 rounded-xs border border-white/15 hover:border-green-400/60 text-[11px]"
           >
             + New
           </button>
-        </div>
+        }
+      >
         <div className="flex flex-col gap-1.5">
           {batches.length === 0 && (
             <p className="text-xs text-neutral-500">None. Group tokens that act on the same initiative.</p>
@@ -196,10 +258,15 @@ export default function TokenListPanel({
             );
           })}
         </div>
-      </div>
+      </Section>
 
-      <div>
-        <p className="text-xs uppercase tracking-widest text-orange-400 mb-2">Effects</p>
+      <Section
+        title="Effects"
+        color="text-orange-400"
+        count={effects.length}
+        collapsed={!!collapsed.effects}
+        onToggle={() => toggle("effects")}
+      >
         <div className="flex flex-col gap-1">
           {effects.length === 0 && <p className="text-xs text-neutral-500">None placed.</p>}
           {effects.map((t) => (
@@ -214,11 +281,19 @@ export default function TokenListPanel({
             />
           ))}
         </div>
-      </div>
+      </Section>
 
       {selected && selected.type === "effect" && (
         <div className="flex flex-col gap-3 pt-2 border-t border-white/10">
-          <p className="text-xs uppercase tracking-widest text-orange-400">Editing {selected.name}</p>
+          <button
+            onClick={() => toggle("editing")}
+            className="flex items-center gap-1.5 text-xs uppercase tracking-widest text-orange-400 text-left"
+          >
+            <span className="w-3 text-[10px]">{collapsed.editing ? "▸" : "▾"}</span>
+            <span className="truncate">Editing {selected.name}</span>
+          </button>
+          {!collapsed.editing && (
+            <>
           <div className="flex items-center gap-2">
             <label className="text-xs text-neutral-400 w-16 shrink-0">Name</label>
             <input
@@ -229,12 +304,22 @@ export default function TokenListPanel({
             />
           </div>
           <EffectControls effect={selected} onChange={(patch) => onUpdate(selected.id, patch)} />
+            </>
+          )}
         </div>
       )}
 
       {selected && selected.type !== "effect" && (
         <div className="flex flex-col gap-3 pt-2 border-t border-white/10">
-          <p className="text-xs uppercase tracking-widest text-orange-400">Editing {selected.name}</p>
+          <button
+            onClick={() => toggle("editing")}
+            className="flex items-center gap-1.5 text-xs uppercase tracking-widest text-orange-400 text-left"
+          >
+            <span className="w-3 text-[10px]">{collapsed.editing ? "▸" : "▾"}</span>
+            <span className="truncate">Editing {selected.name}</span>
+          </button>
+          {!collapsed.editing && (
+            <>
 
           <div className="flex items-center gap-2">
             <label className="text-xs text-neutral-400 w-16 shrink-0">Name</label>
@@ -387,6 +472,8 @@ export default function TokenListPanel({
                 })}
             </div>
           </div>
+            </>
+          )}
         </div>
       )}
     </div>
