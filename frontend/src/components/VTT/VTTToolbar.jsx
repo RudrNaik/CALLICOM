@@ -8,7 +8,8 @@ import {
   DOOR_STATES,
   DOOR_STATE_ORDER,
 } from "./terrain";
-import { CLASS_KEYS, FRIENDLY_COLOR_PRESETS, resolveTokenColor } from "./tokenBadges";
+import { FRIENDLY_COLOR_PRESETS, resolveTokenColor } from "./tokenBadges";
+import ClassOptions from "./ClassOptions";
 
 const MODES = [
   { id: "select", label: "Select/ Move" },
@@ -205,11 +206,7 @@ export default function VTTToolbar({
             onChange={(e) => setAddClassKey(e.target.value)}
             className="bg-neutral-800 border border-white/15 rounded-xs px-2 py-1.5 text-xs outline-none focus:border-orange-400"
           >
-            {CLASS_KEYS.map((c) => (
-              <option key={c} value={c}>
-                {c.replaceAll("_", " ")}
-              </option>
-            ))}
+            <ClassOptions />
           </select>
 
           {mode === "addFriendly" && (

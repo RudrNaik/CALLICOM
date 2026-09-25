@@ -1,5 +1,6 @@
 import { hexDistance, rangeBand, rangeBandLabel } from "../../utils/hexGrid";
-import { CLASS_KEYS, FRIENDLY_COLOR_PRESETS, MODIFIER_ICONS, MODIFIER_KEYS, resolveTokenColor } from "./tokenBadges";
+import { FRIENDLY_COLOR_PRESETS, MODIFIER_ICONS, MODIFIER_KEYS, classLabel, resolveTokenColor } from "./tokenBadges";
+import ClassOptions from "./ClassOptions";
 
 function TokenRow({ token, selected, onSelect, onRemove, onUpdate }) {
   const color = resolveTokenColor(token);
@@ -32,7 +33,7 @@ function TokenRow({ token, selected, onSelect, onRemove, onUpdate }) {
           AOO {token.aoeRadius}
         </span>
       )}
-      <span className="text-neutral-400">{token.classKey.replaceAll("_", " ")}</span>
+      <span className="text-neutral-400">{classLabel(token.classKey)}</span>
       <button
         onClick={(e) => {
           e.stopPropagation();
@@ -107,11 +108,7 @@ export default function TokenListPanel({ friendlies, enemies, selectedTokenId, o
               onChange={(e) => onUpdate(selected.id, { classKey: e.target.value })}
               className="flex-1 bg-neutral-800 border border-white/15 rounded-xs px-2 py-1 text-xs"
             >
-              {CLASS_KEYS.map((c) => (
-                <option key={c} value={c}>
-                  {c.replaceAll("_", " ")}
-                </option>
-              ))}
+              <ClassOptions />
             </select>
           </div>
 
