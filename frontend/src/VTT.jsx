@@ -67,13 +67,16 @@ export default function VTTPage() {
     [activeMap, tokensById]
   );
 
-  const handleHexClick = (q, r, erase) => {
-    if (mode === "paint") {
-      const defaultValue = paintLayer === "elevation" ? "normal" : "none";
-      const brushValue = paintLayer === "elevation" ? elevationBrush : obstacleBrush;
-      setTerrain(q, r, paintLayer, erase ? defaultValue : brushValue);
-      return;
-    }
+  // Paint mode: the canvas hands over every hex a drag covered since its
+  // last event (not just the one under the pointer), so fast strokes on
+  // large maps don't leave gaps.
+  const handleHexPaint = (cells, erase) => {
+    const defaultValue = paintLayer === "elevation" ? "normal" : "none";
+    const brushValue = paintLayer === "elevation" ? elevationBrush : obstacleBrush;
+    setTerrain(cells, paintLayer, erase ? defaultValue : brushValue);
+  };
+
+  const handleHexClick = (q, r) => {
     if (mode === "addToken") {
       const type = addType;
       const count = allTokens.filter((t) => t.type === type).length + 1;
@@ -159,6 +162,7 @@ export default function VTTPage() {
             showRangeOverlay={showRangeOverlay}
             doors={Array.isArray(activeMap.doors) ? activeMap.doors : []}
             onHexClick={handleHexClick}
+            onHexPaint={handleHexPaint}
             onDoorAdd={handleDoorAdd}
             onDoorRemove={removeDoor}
             doorType={doorType}

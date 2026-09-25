@@ -8,6 +8,8 @@ import {
   oddqToAxial,
   hexDistance,
   hexesInRadius,
+  hexLine,
+  axialToOddq,
   rangeBand,
   RANGE_BAND_SIZE,
   generateRectGrid,
@@ -324,6 +326,7 @@ export default function VTTCanvas({
   showRangeOverlay,
   doors,
   onHexClick,
+  onHexPaint,
   onDoorAdd,
   onDoorRemove,
   doorType,
@@ -1205,8 +1208,12 @@ export default function VTTCanvas({
   };
 
   // Paints (or erases, clearing just the active layer) the hex under the
-  // pointer, deduping against the last hex painted this drag so a slow
-  // drag across one hex doesn't spam setTerrain calls.
+  // pointer, plus every hex on the line back to the last one painted this
+  // drag. On a big, zoomed-out map each paint re-renders and saves the map,
+  // so pointer events arrive further apart and the cursor can cross several
+  // hexes between two of them; filling the line keeps the stroke unbroken.
+  // A slow drag within one hex paints nothing new. Hexes off the map are
+  // skipped.
   const paintAtPointer = (e, erase) => {
     if (mode === "door") {
       // Only right-click reaches here; a right-click also cancels a
@@ -1216,13 +1223,15 @@ export default function VTTCanvas({
       return;
     }
     const hex = getHexUnderPointer(e);
-    const key = hexKey(hex.q, hex.r);
     const drag = dragState.current;
-    if (drag) {
-      if (drag.lastPaintedKey === key) return;
-      drag.lastPaintedKey = key;
-    }
-    onHexClick?.(hex.q, hex.r, erase);
+    const last = drag?.lastPaintedHex;
+    if (last && last.q === hex.q && last.r === hex.r) return;
+    if (drag) drag.lastPaintedHex = hex;
+    const cells = (last ? hexLine(last, hex).slice(1) : [hex]).filter(({ q, r }) => {
+      const { col, row } = axialToOddq(q, r);
+      return col >= 0 && col < map.cols && row >= 0 && row < map.rows;
+    });
+    if (cells.length) onHexPaint?.(cells, erase);
   };
 
   const handlePointerDown = (e) => {
@@ -1245,7 +1254,7 @@ export default function VTTCanvas({
       lastX: e.clientX,
       lastY: e.clientY,
       moved: false,
-      lastPaintedKey: null,
+      lastPaintedHex: null,
     };
     canvasRef.current.setPointerCapture(e.pointerId);
 

@@ -162,18 +162,23 @@ export default function useVTTMap() {
 
   // `layer` is "elevation" or "obstacle" — each hex tracks both
   // independently (e.g. a soft wall obstacle sitting on a high-ground
-  // elevation), so painting one leaves the other untouched.
+  // elevation), so painting one leaves the other untouched. Takes a list of
+  // { q, r } cells so a paint drag that covers several hexes in one pointer
+  // event lands as a single commit (one re-render and one save), not one
+  // per hex.
   const setTerrain = useCallback(
-    (q, r, layer, valueId) => {
-      if (!activeMapId) return;
+    (cells, layer, valueId) => {
+      if (!activeMapId || cells.length === 0) return;
       commit(activeMapId, (m) => {
         const hexes = { ...m.hexes };
-        const key = hexKey(q, r);
-        const next = { ...normalizeHexState(hexes[key]), [layer]: valueId };
-        if (next.elevation === "normal" && next.obstacle === "none") {
-          delete hexes[key];
-        } else {
-          hexes[key] = next;
+        for (const { q, r } of cells) {
+          const key = hexKey(q, r);
+          const next = { ...normalizeHexState(hexes[key]), [layer]: valueId };
+          if (next.elevation === "normal" && next.obstacle === "none") {
+            delete hexes[key];
+          } else {
+            hexes[key] = next;
+          }
         }
         return { ...m, hexes };
       });
