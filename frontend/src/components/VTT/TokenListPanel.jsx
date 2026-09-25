@@ -3,7 +3,7 @@ import { FRIENDLY_COLOR_PRESETS, MODIFIER_ICONS, MODIFIER_KEYS, classLabel, reso
 import ClassOptions from "./ClassOptions";
 import EffectControls from "./EffectControls";
 
-function TokenRow({ token, selected, onSelect, onRemove, onUpdate }) {
+function TokenRow({ token, selected, batchMate, onSelect, onRemove, onUpdate }) {
   const isEffect = token.type === "effect";
   const color = isEffect ? token.color : resolveTokenColor(token);
   const detail = isEffect ? `Radius ${token.radius ?? 0}` : classLabel(token.classKey);
@@ -11,7 +11,11 @@ function TokenRow({ token, selected, onSelect, onRemove, onUpdate }) {
     <div
       onClick={() => onSelect(selected ? null : token.id)}
       className={`flex items-center gap-2 px-2 py-1.5 rounded-xs border cursor-pointer text-xs ${
-        selected ? "border-orange-400 bg-orange-400/10" : "border-white/10 hover:border-white/30"
+        selected
+          ? "border-orange-400 bg-orange-400/10"
+          : batchMate
+            ? "border-green-500 bg-green-500/10"
+            : "border-white/10 hover:border-white/30"
       }`}
     >
       <span
@@ -53,8 +57,25 @@ function TokenRow({ token, selected, onSelect, onRemove, onUpdate }) {
   );
 }
 
-export default function TokenListPanel({ friendlies, enemies, effects, selectedTokenId, onSelect, onUpdate, onRemove }) {
+export default function TokenListPanel({
+  friendlies,
+  enemies,
+  effects,
+  batches,
+  selectedTokenId,
+  onSelect,
+  onUpdate,
+  onRemove,
+  onAddBatch,
+  onRenameBatch,
+  onRemoveBatch,
+  onMoveBatch,
+}) {
   const selected = [...friendlies, ...enemies, ...effects].find((t) => t.id === selectedTokenId);
+  // Batch of the selected token: its batch-mates get a green highlight here
+  // and a green underline on the map.
+  const selectedBatchId = selected && selected.type !== "effect" ? selected.batchId ?? null : null;
+  const combatants = [...friendlies, ...enemies];
 
   return (
     <div className="flex flex-col gap-4 p-4 bg-gradient-to-t from-neutral-800 to-neutral-900 border border-r-4 border-r-orange-500 border-white/10 rounded-xs text-white text-sm font-mono">
@@ -67,6 +88,7 @@ export default function TokenListPanel({ friendlies, enemies, effects, selectedT
               key={t.id}
               token={t}
               selected={t.id === selectedTokenId}
+              batchMate={selectedBatchId != null && t.batchId === selectedBatchId}
               onSelect={onSelect}
               onRemove={onRemove}
               onUpdate={onUpdate}
@@ -84,11 +106,95 @@ export default function TokenListPanel({ friendlies, enemies, effects, selectedT
               key={t.id}
               token={t}
               selected={t.id === selectedTokenId}
+              batchMate={selectedBatchId != null && t.batchId === selectedBatchId}
               onSelect={onSelect}
               onRemove={onRemove}
               onUpdate={onUpdate}
             />
           ))}
+        </div>
+      </div>
+
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-xs uppercase tracking-widest text-green-400">Batches</p>
+          <button
+            onClick={() => onAddBatch()}
+            className="px-1.5 py-0.5 rounded-xs border border-white/15 hover:border-green-400/60 text-[11px]"
+          >
+            + New
+          </button>
+        </div>
+        <div className="flex flex-col gap-1.5">
+          {batches.length === 0 && (
+            <p className="text-xs text-neutral-500">None. Group tokens that act on the same initiative.</p>
+          )}
+          {batches.map((b, i) => {
+            const members = combatants.filter((t) => t.batchId === b.id);
+            const active = b.id === selectedBatchId;
+            return (
+              <div
+                key={b.id}
+                className={`flex flex-col gap-1 px-2 py-1.5 rounded-xs border text-xs ${
+                  active ? "border-green-500 bg-green-500/10" : "border-white/10"
+                }`}
+              >
+                <div className="flex items-center gap-1.5">
+                  <span className="text-neutral-400 w-4 shrink-0 text-right">{i + 1}.</span>
+                  <input
+                    type="text"
+                    value={b.name}
+                    onChange={(e) => onRenameBatch(b.id, e.target.value)}
+                    className="flex-1 min-w-0 bg-neutral-800 border border-white/15 rounded-xs px-1.5 py-0.5 text-xs"
+                  />
+                  <button
+                    onClick={() => onMoveBatch(b.id, -1)}
+                    disabled={i === 0}
+                    className="px-1 border border-white/20 text-neutral-300 hover:text-white disabled:opacity-30"
+                    title="Earlier in initiative"
+                  >
+                    ▲
+                  </button>
+                  <button
+                    onClick={() => onMoveBatch(b.id, 1)}
+                    disabled={i === batches.length - 1}
+                    className="px-1 border border-white/20 text-neutral-300 hover:text-white disabled:opacity-30"
+                    title="Later in initiative"
+                  >
+                    ▼
+                  </button>
+                  <button
+                    onClick={() => onRemoveBatch(b.id)}
+                    className="text-red-400 hover:text-red-300 px-1 border border-red-400"
+                    title="Delete batch (its tokens stay on the map)"
+                  >
+                    ×
+                  </button>
+                </div>
+                {members.length === 0 ? (
+                  <p className="text-[11px] text-neutral-500 pl-5">No tokens yet.</p>
+                ) : (
+                  <div className="flex flex-wrap gap-1 pl-5">
+                    {members.map((t) => (
+                      <button
+                        key={t.id}
+                        onClick={() => onSelect(t.id)}
+                        className={`flex items-center gap-1 px-1.5 py-0.5 rounded-xs border text-[11px] ${
+                          t.id === selectedTokenId ? "border-orange-400" : "border-white/15 hover:border-white/40"
+                        } ${t.hidden ? "opacity-50 italic" : ""}`}
+                      >
+                        <span
+                          className={`w-1.5 h-1.5 shrink-0 ${t.type === "enemy" ? "rotate-45" : ""}`}
+                          style={{ background: resolveTokenColor(t) }}
+                        />
+                        {t.name}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 
@@ -101,6 +207,7 @@ export default function TokenListPanel({ friendlies, enemies, effects, selectedT
               key={t.id}
               token={t}
               selected={t.id === selectedTokenId}
+              batchMate={selectedBatchId != null && t.batchId === selectedBatchId}
               onSelect={onSelect}
               onRemove={onRemove}
               onUpdate={onUpdate}
@@ -147,6 +254,31 @@ export default function TokenListPanel({ friendlies, enemies, effects, selectedT
               className="flex-1 min-w-0 bg-neutral-800 border border-white/15 rounded-xs px-2 py-1 text-xs"
             >
               <ClassOptions />
+            </select>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <label className="text-xs text-neutral-400 w-16 shrink-0">Batch</label>
+            <select
+              value={selected.batchId ?? ""}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value === "__new__") {
+                  const id = onAddBatch();
+                  if (id) onUpdate(selected.id, { batchId: id });
+                } else {
+                  onUpdate(selected.id, { batchId: value || undefined });
+                }
+              }}
+              className="flex-1 min-w-0 bg-neutral-800 border border-white/15 rounded-xs px-2 py-1 text-xs"
+            >
+              <option value="">None</option>
+              {batches.map((b, i) => (
+                <option key={b.id} value={b.id}>
+                  {i + 1}. {b.name}
+                </option>
+              ))}
+              <option value="__new__">+ New batch</option>
             </select>
           </div>
 

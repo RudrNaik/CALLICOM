@@ -347,6 +347,8 @@ function effectAnchor(effect, camera) {
 const SELECTION_FILL = "rgba(250, 204, 21, 0.28)";
 const SELECTION_STROKE = "rgba(250, 204, 21, 0.9)";
 const PASTE_PREVIEW_ALPHA = 0.6;
+// Underline under the selected token's combat-batch mates.
+const BATCH_UNDERLINE_COLOR = "#22c55e";
 const BOX_SELECT_FILL = "rgba(250, 204, 21, 0.08)";
 const BOX_DESELECT_FILL = "rgba(239, 68, 68, 0.08)";
 const BOX_DESELECT_STROKE = "rgba(239, 68, 68, 0.9)";
@@ -1274,6 +1276,7 @@ export default function VTTCanvas({
       ctx.restore();
     }
 
+    const selectedBatchId = tokensById.get(selectedTokenId)?.batchId ?? null;
     for (const token of sortedTokens) {
       const [wx, wz] = axialToWorld(token.q, token.r);
       const [cx, cyBase] = project(wx, wz, camera);
@@ -1316,9 +1319,13 @@ export default function VTTCanvas({
         ctx.restore();
       }
 
-      if (token.id === selectedTokenId) {
+      // Selected token: yellow underline. Its visible batch-mates get a
+      // green one, so the GM can see who else resolves this turn.
+      const isBatchMate =
+        selectedBatchId != null && token.batchId === selectedBatchId && token.id !== selectedTokenId && !token.hidden;
+      if (token.id === selectedTokenId || isBatchMate) {
         ctx.save();
-        ctx.strokeStyle = "#facc15";
+        ctx.strokeStyle = isBatchMate ? BATCH_UNDERLINE_COLOR : "#facc15";
         ctx.lineWidth = Math.max(2, zoom * 0.04);
         ctx.beginPath();
         ctx.moveTo(cx - badgeSize * 0.55, cy + badgeSize / 2 + 4);

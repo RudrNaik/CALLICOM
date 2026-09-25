@@ -35,6 +35,10 @@ export default function VTTPage() {
     removeToken,
     addLine,
     removeLine,
+    addBatch,
+    renameBatch,
+    removeBatch,
+    moveBatch,
     exportMap,
     importMap,
   } = useVTTMap();
@@ -371,6 +375,11 @@ export default function VTTPage() {
           friendlies={activeMap?.friendlies || []}
           enemies={activeMap?.enemies || []}
           effects={effects}
+          batches={activeMap?.batches || []}
+          onAddBatch={addBatch}
+          onRenameBatch={renameBatch}
+          onRemoveBatch={removeBatch}
+          onMoveBatch={moveBatch}
           selectedTokenId={selectedTokenId}
           onSelect={handlePanelSelect}
           onUpdate={updateToken}

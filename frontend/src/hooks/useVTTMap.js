@@ -40,6 +40,7 @@ function makeBlankMap(name, cols, rows) {
     enemies: [],
     effects: [],
     lines: [],
+    batches: [],
     updatedAt: Date.now(),
   };
 }
@@ -301,6 +302,66 @@ export default function useVTTMap() {
     [activeMapId, commit]
   );
 
+  // Combat batches: named groups of tokens resolved together, stored as an
+  // ordered list (the order is the initiative order). Tokens join one via
+  // their `batchId`; deleting a batch just clears that field on its members.
+  const addBatch = useCallback(
+    (name) => {
+      if (!activeMapId) return;
+      const id = uid("batch");
+      commit(activeMapId, (m) => {
+        const batches = m.batches || [];
+        return { ...m, batches: [...batches, { id, name: name || `Batch ${batches.length + 1}` }] };
+      });
+      return id;
+    },
+    [activeMapId, commit]
+  );
+
+  const renameBatch = useCallback(
+    (batchId, name) => {
+      if (!activeMapId) return;
+      commit(activeMapId, (m) => ({
+        ...m,
+        batches: (m.batches || []).map((b) => (b.id === batchId ? { ...b, name } : b)),
+      }));
+    },
+    [activeMapId, commit]
+  );
+
+  const removeBatch = useCallback(
+    (batchId) => {
+      if (!activeMapId) return;
+      commit(activeMapId, (m) => {
+        const unbatch = (list = []) =>
+          list.map((t) => (t.batchId === batchId ? { ...t, batchId: undefined } : t));
+        return {
+          ...m,
+          batches: (m.batches || []).filter((b) => b.id !== batchId),
+          friendlies: unbatch(m.friendlies),
+          enemies: unbatch(m.enemies),
+        };
+      });
+    },
+    [activeMapId, commit]
+  );
+
+  // Moves a batch one step earlier (-1) or later (+1) in initiative order.
+  const moveBatch = useCallback(
+    (batchId, dir) => {
+      if (!activeMapId) return;
+      commit(activeMapId, (m) => {
+        const batches = [...(m.batches || [])];
+        const i = batches.findIndex((b) => b.id === batchId);
+        const j = i + dir;
+        if (i < 0 || j < 0 || j >= batches.length) return m;
+        [batches[i], batches[j]] = [batches[j], batches[i]];
+        return { ...m, batches };
+      });
+    },
+    [activeMapId, commit]
+  );
+
   const allTokens = useMemo(() => {
     if (!activeMap) return [];
     return [...(activeMap.friendlies || []), ...(activeMap.enemies || [])];
@@ -335,6 +396,7 @@ export default function useVTTMap() {
       enemies: imported.enemies || [],
       effects: imported.effects || [],
       lines: imported.lines || [],
+      batches: Array.isArray(imported.batches) ? imported.batches : [],
       updatedAt: Date.now(),
     };
     setMaps((prev) => {
@@ -375,6 +437,10 @@ export default function useVTTMap() {
     removeToken,
     addLine,
     removeLine,
+    addBatch,
+    renameBatch,
+    removeBatch,
+    moveBatch,
     exportMap,
     importMap,
   };
