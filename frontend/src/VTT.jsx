@@ -1,10 +1,14 @@
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import useVTTMap from "./hooks/useVTTMap";
 import VTTCanvas from "./components/VTT/VTTCanvas";
 import VTTToolbar from "./components/VTT/VTTToolbar";
 import MapManagerPanel from "./components/VTT/MapManagerPanel";
 import TokenListPanel from "./components/VTT/TokenListPanel";
 import { CLASS_KEYS, DEFAULT_FRIENDLY_COLOR } from "./components/VTT/tokenBadges";
+import { DEFAULT_EFFECT } from "./components/VTT/effects";
+import { copyHexes, placeClipboard } from "./components/VTT/hexClipboard";
+import { elevationFillRegion, FILL_CONFIRM_THRESHOLD } from "./components/VTT/elevationFill";
+import { hexKey } from "./utils/hexGrid";
 
 const DEFAULT_FRIENDLY_SCALE = 1.5;
 const DEFAULT_ENEMY_SCALE = 2;
@@ -14,6 +18,7 @@ export default function VTTPage() {
     maps,
     activeMap,
     allTokens,
+    effects,
     newMap,
     loadMap,
     renameMap,
@@ -23,12 +28,17 @@ export default function VTTPage() {
     setTerrain,
     addDoor,
     removeDoor,
+    stampTerrain,
     addToken,
     updateToken,
     moveToken,
     removeToken,
     addLine,
     removeLine,
+    addBatch,
+    renameBatch,
+    removeBatch,
+    moveBatch,
     exportMap,
     importMap,
   } = useVTTMap();
@@ -37,19 +47,38 @@ export default function VTTPage() {
   const [paintLayer, setPaintLayer] = useState("obstacle");
   const [elevationBrush, setElevationBrush] = useState("normal");
   const [obstacleBrush, setObstacleBrush] = useState("none");
+  // Elevation layer only: "brush" paints hex by hex, "fill" bucket-fills
+  // the connected same-elevation area under a click.
+  const [paintTool, setPaintTool] = useState("brush");
+  const elevationFillActive = mode === "paint" && paintLayer === "elevation" && paintTool === "fill";
   const [doorType, setDoorType] = useState("standard");
   const [doorState, setDoorState] = useState("closed");
   const [addClassKey, setAddClassKey] = useState(CLASS_KEYS[0]);
   const [addName, setAddName] = useState("");
   const [addColor, setAddColor] = useState(DEFAULT_FRIENDLY_COLOR);
   const [addAoeRadius, setAddAoeRadius] = useState(0);
+  const [addType, setAddType] = useState("friendly");
   const [addScale, setAddScale] = useState(DEFAULT_FRIENDLY_SCALE);
+  const [effectDraft, setEffectDraft] = useState(DEFAULT_EFFECT);
+  const updateEffectDraft = (patch) => setEffectDraft((d) => ({ ...d, ...patch }));
   const [selectedTokenId, setSelectedTokenId] = useState(null);
   const [showRangeOverlay, setShowRangeOverlay] = useState(true);
   const [zoom, setZoom] = useState(55);
   const [zoomRequest, setZoomRequest] = useState(null);
   const [leftOpen, setLeftOpen] = useState(true);
   const [rightOpen, setRightOpen] = useState(true);
+  // Copy/paste mode: the brushed selection (hex keys), the last copied
+  // stamp, and whether clicks currently paste it. The clipboard survives
+  // switching maps, so an area can be copied from one map to another.
+  const [hexSelection, setHexSelection] = useState(() => new Set());
+  const [clipboard, setClipboard] = useState(null);
+  const [pasting, setPasting] = useState(false);
+  const [selectTool, setSelectTool] = useState("brush"); // "brush" | "box"
+
+  const activeMapId = activeMap?.id;
+  useEffect(() => {
+    setHexSelection(new Set());
+  }, [activeMapId]);
 
   const tokensById = useMemo(() => new Map(allTokens.map((t) => [t.id, t])), [allTokens]);
 
@@ -62,15 +91,88 @@ export default function VTTPage() {
     [activeMap, tokensById]
   );
 
-  const handleHexClick = (q, r, erase) => {
-    if (mode === "paint") {
-      const defaultValue = paintLayer === "elevation" ? "normal" : "none";
-      const brushValue = paintLayer === "elevation" ? elevationBrush : obstacleBrush;
-      setTerrain(q, r, paintLayer, erase ? defaultValue : brushValue);
+  // Paint mode: the canvas hands over every hex a drag covered since its
+  // last event (not just the one under the pointer), so fast strokes on
+  // large maps don't leave gaps.
+  const handleHexPaint = (cells, erase) => {
+    if (mode === "copy") {
+      setHexSelection((prev) => {
+        const next = new Set(prev);
+        for (const { q, r } of cells) {
+          if (erase) next.delete(hexKey(q, r));
+          else next.add(hexKey(q, r));
+        }
+        return next;
+      });
       return;
     }
-    if (mode === "addFriendly" || mode === "addEnemy") {
-      const type = mode === "addFriendly" ? "friendly" : "enemy";
+    const defaultValue = paintLayer === "elevation" ? "normal" : "none";
+    const brushValue = paintLayer === "elevation" ? elevationBrush : obstacleBrush;
+    setTerrain(cells, paintLayer, erase ? defaultValue : brushValue);
+  };
+
+  // Copying switches straight to pasting, since that's the next step.
+  const handleCopy = useCallback(() => {
+    if (!activeMap) return;
+    const copied = copyHexes(activeMap, hexSelection);
+    if (!copied) return;
+    setClipboard(copied);
+    setPasting(true);
+  }, [activeMap, hexSelection]);
+
+  const handleModeChange = (nextMode) => {
+    setPasting(false);
+    setMode(nextMode);
+  };
+
+  // Copy mode shortcuts: Ctrl/Cmd+C copies the selection, Ctrl/Cmd+V goes
+  // back to pasting the clipboard, Escape stops pasting (or, when not
+  // pasting, clears the selection). Ignored while typing in a field.
+  useEffect(() => {
+    if (mode !== "copy") return;
+    const onKey = (e) => {
+      const t = e.target;
+      if (t instanceof HTMLElement && (t.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(t.tagName))) return;
+      const mod = e.ctrlKey || e.metaKey;
+      const key = e.key.toLowerCase();
+      if (mod && key === "c") {
+        e.preventDefault();
+        handleCopy();
+      } else if (mod && key === "v") {
+        if (!clipboard) return;
+        e.preventDefault();
+        setPasting(true);
+      } else if (e.key === "Escape") {
+        if (pasting) setPasting(false);
+        else setHexSelection(new Set());
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [mode, clipboard, pasting, handleCopy]);
+
+  const handleHexClick = (q, r) => {
+    if (elevationFillActive) {
+      if (!activeMap) return;
+      const cells = elevationFillRegion(activeMap, { q, r });
+      if (cells.length === 0) return;
+      if (
+        cells.length > FILL_CONFIRM_THRESHOLD &&
+        !window.confirm(
+          `This fill would change ${cells.length} hexes. If the area isn't fully outlined, it may have spread past it. Fill anyway?`
+        )
+      ) {
+        return;
+      }
+      setTerrain(cells, "elevation", elevationBrush);
+      return;
+    }
+    if (mode === "copy") {
+      if (pasting && clipboard && activeMap) stampTerrain(placeClipboard(clipboard, q, r, activeMap));
+      return;
+    }
+    if (mode === "addToken") {
+      const type = addType;
       const count = allTokens.filter((t) => t.type === type).length + 1;
       const id = addToken({
         name: addName.trim() || `${type === "friendly" ? "Friendly" : "Enemy"} ${count}`,
@@ -84,6 +186,17 @@ export default function VTTPage() {
       });
       setSelectedTokenId(id);
       setAddName("");
+      return;
+    }
+    if (mode === "addEffect") {
+      const id = addToken({
+        ...effectDraft,
+        name: effectDraft.name.trim() || `Effect ${effects.length + 1}`,
+        type: "effect",
+        q,
+        r,
+      });
+      setSelectedTokenId(id);
       return;
     }
     if (mode === "select" && selectedTokenId) {
@@ -112,13 +225,21 @@ export default function VTTPage() {
     }
   };
 
-  const handleModeChange = (nextMode) => {
+  // Picking a token (or effect) in the token panel drops whatever tool is
+  // active and switches to select, so the next hex click moves it.
+  // Deselecting (null) leaves the mode alone.
+  const handlePanelSelect = (tokenId) => {
+    setSelectedTokenId(tokenId);
+    if (tokenId !== null) setMode("select");
+  };
+
+  const handleAddTypeChange = (nextType) => {
     // Enemies default a bit bigger than friendlies; only nudge the scale
     // field when it's still at one of the two defaults, so a deliberately
-    // customized size survives switching modes and back.
-    if (nextMode === "addEnemy" && addScale === DEFAULT_FRIENDLY_SCALE) setAddScale(DEFAULT_ENEMY_SCALE);
-    else if (nextMode === "addFriendly" && addScale === DEFAULT_ENEMY_SCALE) setAddScale(DEFAULT_FRIENDLY_SCALE);
-    setMode(nextMode);
+    // customized size survives switching sides and back.
+    if (nextType === "enemy" && addScale === DEFAULT_FRIENDLY_SCALE) setAddScale(DEFAULT_ENEMY_SCALE);
+    else if (nextType === "friendly" && addScale === DEFAULT_ENEMY_SCALE) setAddScale(DEFAULT_FRIENDLY_SCALE);
+    setAddType(nextType);
   };
 
   return (
@@ -128,12 +249,18 @@ export default function VTTPage() {
           <VTTCanvas
             map={activeMap}
             tokens={allTokens}
+            effects={effects}
             lines={boardLines}
             mode={mode}
             selectedTokenId={selectedTokenId}
             showRangeOverlay={showRangeOverlay}
             doors={Array.isArray(activeMap.doors) ? activeMap.doors : []}
             onHexClick={handleHexClick}
+            onHexPaint={handleHexPaint}
+            hexSelection={hexSelection}
+            pastePreview={mode === "copy" && pasting ? clipboard : null}
+            selectTool={selectTool}
+            elevationFill={elevationFillActive}
             onDoorAdd={handleDoorAdd}
             onDoorRemove={removeDoor}
             doorType={doorType}
@@ -184,6 +311,16 @@ export default function VTTPage() {
             <VTTToolbar
               mode={mode}
               setMode={handleModeChange}
+              hexSelectionCount={hexSelection.size}
+              clipboard={clipboard}
+              pasting={pasting}
+              onCopy={handleCopy}
+              onClearSelection={() => setHexSelection(new Set())}
+              onSetPasting={setPasting}
+              selectTool={selectTool}
+              setSelectTool={setSelectTool}
+              paintTool={paintTool}
+              setPaintTool={setPaintTool}
               paintLayer={paintLayer}
               setPaintLayer={setPaintLayer}
               elevationBrush={elevationBrush}
@@ -194,6 +331,8 @@ export default function VTTPage() {
               setDoorType={setDoorType}
               doorState={doorState}
               setDoorState={setDoorState}
+              addType={addType}
+              setAddType={handleAddTypeChange}
               addClassKey={addClassKey}
               setAddClassKey={setAddClassKey}
               addName={addName}
@@ -204,6 +343,8 @@ export default function VTTPage() {
               setAddAoeRadius={setAddAoeRadius}
               addScale={addScale}
               setAddScale={setAddScale}
+              effectDraft={effectDraft}
+              onEffectDraftChange={updateEffectDraft}
               showRangeOverlay={showRangeOverlay}
               setShowRangeOverlay={setShowRangeOverlay}
               selectedTokenId={selectedTokenId}
@@ -233,8 +374,14 @@ export default function VTTPage() {
         <TokenListPanel
           friendlies={activeMap?.friendlies || []}
           enemies={activeMap?.enemies || []}
+          effects={effects}
+          batches={activeMap?.batches || []}
+          onAddBatch={addBatch}
+          onRenameBatch={renameBatch}
+          onRemoveBatch={removeBatch}
+          onMoveBatch={moveBatch}
           selectedTokenId={selectedTokenId}
-          onSelect={setSelectedTokenId}
+          onSelect={handlePanelSelect}
           onUpdate={updateToken}
           onRemove={(id) => {
             removeToken(id);

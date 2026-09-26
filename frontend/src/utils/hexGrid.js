@@ -70,6 +70,26 @@ export function worldToAxial(x, z, size = HEX_SIZE) {
   return cubeRound(q, -q - r, r);
 }
 
+// Every hex on the straight line from a to b, inclusive, in order. Used to
+// fill the gap when a paint drag jumps several hexes between pointer events.
+// Endpoints are nudged by a tiny epsilon so a line running exactly along a
+// hex edge rounds consistently to one side instead of zig-zagging.
+export function hexLine(a, b) {
+  const n = hexDistance(a, b);
+  if (n === 0) return [{ q: a.q, r: a.r }];
+  const eps = 1e-6;
+  const aq = a.q + eps, ar = a.r + eps;
+  const bq = b.q + eps, br = b.r + eps;
+  const results = [];
+  for (let i = 0; i <= n; i++) {
+    const t = i / n;
+    const q = aq + (bq - aq) * t;
+    const r = ar + (br - ar) * t;
+    results.push(cubeRound(q, -q - r, r));
+  }
+  return results;
+}
+
 export function hexDistance(a, b) {
   const ac = axialToCube(a.q, a.r);
   const bc = axialToCube(b.q, b.r);

@@ -10,6 +10,20 @@ import EliteIcon from "../../assets/classIcons/modifiers/Elite_Icon.png";
 import ArmorIcon from "../../assets/classIcons/modifiers/Armor_Icon.png";
 import FastIcon from "../../assets/classIcons/modifiers/Fast_Icon.png";
 import RezIcon from "../../assets/classIcons/modifiers/Rez_Icon.png";
+import ArmoredLightFriendly from "../../assets/classIcons/vehicles/friendlies/ArmoredLight_Friendly.png";
+import GunADFriendly from "../../assets/classIcons/vehicles/friendlies/GunAD_Friendly.png";
+import IFVFriendly from "../../assets/classIcons/vehicles/friendlies/IFV_Friendly.png";
+import LightFriendly from "../../assets/classIcons/vehicles/friendlies/Light_Friendly.png";
+import MBTFriendly from "../../assets/classIcons/vehicles/friendlies/MBT_Friendly.png";
+import RotorWingFriendly from "../../assets/classIcons/vehicles/friendlies/RotorWing_Friendly.png";
+import SAMADFriendly from "../../assets/classIcons/vehicles/friendlies/SAMAD_friendly.png";
+import ArmoredLightEnemy from "../../assets/classIcons/vehicles/enemies/ArmoredLight_Enemy.png";
+import GunADEnemy from "../../assets/classIcons/vehicles/enemies/GunAD_Enemy.png";
+import IFVEnemy from "../../assets/classIcons/vehicles/enemies/IFV_enemy.png";
+import LightEnemy from "../../assets/classIcons/vehicles/enemies/Light_Enemy.png";
+import MBTEnemy from "../../assets/classIcons/vehicles/enemies/MBT_Enemy.png";
+import RotorWingEnemy from "../../assets/classIcons/vehicles/enemies/RotorWing_Enemy.png";
+import SAMADEnemy from "../../assets/classIcons/vehicles/enemies/SAMAD_Enemy.png";
 
 export const CLASS_ICONS = {
   Combat_Engineer: CombatEngineer,
@@ -23,6 +37,30 @@ export const CLASS_ICONS = {
 };
 
 export const CLASS_KEYS = Object.keys(CLASS_ICONS);
+
+// Vehicles share the token's classKey field with infantry classes, so a
+// token becomes a vehicle just by picking one of these keys. Unlike class
+// icons, each vehicle PNG is the complete badge (border included), with a
+// separate friendly and enemy version.
+export const VEHICLE_ICONS = {
+  MBT: { label: "MBT", friendly: MBTFriendly, enemy: MBTEnemy },
+  IFV: { label: "IFV", friendly: IFVFriendly, enemy: IFVEnemy },
+  ArmoredLight: { label: "Armored Vehicle", friendly: ArmoredLightFriendly, enemy: ArmoredLightEnemy },
+  Light: { label: "Unarmored Vehicle", friendly: LightFriendly, enemy: LightEnemy },
+  GunAD: { label: "AA GUN", friendly: GunADFriendly, enemy: GunADEnemy },
+  SAMAD: { label: "SAM", friendly: SAMADFriendly, enemy: SAMADEnemy },
+  RotorWing: { label: "Rotary Wing", friendly: RotorWingFriendly, enemy: RotorWingEnemy },
+};
+
+export const VEHICLE_KEYS = Object.keys(VEHICLE_ICONS);
+
+export function isVehicleKey(classKey) {
+  return Object.hasOwn(VEHICLE_ICONS, classKey);
+}
+
+export function classLabel(classKey) {
+  return isVehicleKey(classKey) ? VEHICLE_ICONS[classKey].label : classKey.replaceAll("_", " ");
+}
 
 export const MODIFIER_ICONS = {
   Elite: EliteIcon,
@@ -127,6 +165,12 @@ export async function getTokenBadge(classKey, type, color) {
   const cacheKey = `${classKey}-${type}-${resolvedColor}`;
   if (badgeCache.has(cacheKey)) return badgeCache.get(cacheKey);
 
+  if (isVehicleKey(classKey)) {
+    const canvas = await buildVehicleBadge(classKey, type, resolvedColor);
+    badgeCache.set(cacheKey, canvas);
+    return canvas;
+  }
+
   const src = CLASS_ICONS[classKey] || CLASS_ICONS.Rifleman;
   const img = await loadImage(src);
 
@@ -165,5 +209,83 @@ export async function getTokenBadge(classKey, type, color) {
   ctx.drawImage(img, (size - iconSize) / 2, (size - iconSize) / 2, iconSize, iconSize);
 
   badgeCache.set(cacheKey, canvas);
+  return canvas;
+}
+
+// Extra line thickness (in badge-canvas pixels) added around every stroke
+// of a vehicle PNG. The source art is scaled down to fit the badge, which
+// thins its lines below the class badges' border width.
+const VEHICLE_LINE_BOOST = 0.5;
+
+// Vehicle PNGs already carry their border, so the badge is the PNG itself,
+// trimmed to its opaque pixels and fitted into the same 0.84-of-canvas box
+// the class badges' shapes occupy (keeping modifier icon placement and
+// on-map size consistent). Built in two layers:
+//  1. Outline: the PNG thickened by stamping it at small offsets in a ring
+//     (a cheap dilation). The PNGs are single-color, so a "source-in" fill
+//     then recolors them to the token's resolved color — the friendly's
+//     assigned color, or ENEMY_COLOR so enemy vehicles match enemy infantry.
+//  2. Fill: the same dark backing + color tint as the class badges, filled
+//     across each row between the outline's leftmost and rightmost pixel.
+//     Unlike a flood fill, this also fills the rotor-wing shapes, which
+//     are open at the bottom.
+async function buildVehicleBadge(classKey, type, color) {
+  const isEnemy = type === "enemy";
+  const vehicle = VEHICLE_ICONS[classKey];
+  const img = await loadImage(isEnemy ? vehicle.enemy : vehicle.friendly);
+  const { sx, sy, sw, sh } = opaqueBounds(img);
+
+  const size = 160;
+  const outline = document.createElement("canvas");
+  outline.width = size;
+  outline.height = size;
+  const octx = outline.getContext("2d", { willReadFrequently: true });
+
+  const box = size * 0.84;
+  const fit = Math.min(box / sw, box / sh);
+  const dw = sw * fit;
+  const dh = sh * fit;
+  const dx = (size - dw) / 2;
+  const dy = (size - dh) / 2;
+  const steps = 12;
+  for (let i = 0; i < steps; i++) {
+    const a = (i / steps) * Math.PI * 2;
+    octx.drawImage(
+      img, sx, sy, sw, sh,
+      dx + Math.cos(a) * VEHICLE_LINE_BOOST, dy + Math.sin(a) * VEHICLE_LINE_BOOST, dw, dh
+    );
+  }
+  octx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
+
+  octx.globalCompositeOperation = "source-in";
+  octx.fillStyle = color;
+  octx.fillRect(0, 0, size, size);
+  octx.globalCompositeOperation = "source-over";
+
+  const canvas = document.createElement("canvas");
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext("2d");
+
+  const data = octx.getImageData(0, 0, size, size).data;
+  const fillPath = new Path2D();
+  for (let y = 0; y < size; y++) {
+    let minX = -1, maxX = -1;
+    for (let x = 0; x < size; x++) {
+      if (data[(y * size + x) * 4 + 3] > 64) {
+        if (minX < 0) minX = x;
+        maxX = x;
+      }
+    }
+    if (maxX > minX) fillPath.rect(minX, y, maxX - minX + 1, 1);
+  }
+  ctx.fillStyle = "rgba(10, 10, 16, 0.42)";
+  ctx.fill(fillPath);
+  ctx.globalAlpha = 0.3;
+  ctx.fillStyle = color;
+  ctx.fill(fillPath);
+  ctx.globalAlpha = 1;
+
+  ctx.drawImage(outline, 0, 0);
   return canvas;
 }

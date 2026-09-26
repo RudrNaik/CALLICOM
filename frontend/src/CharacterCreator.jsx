@@ -2,7 +2,7 @@ import Footer from "./components/Footer";
 import background from "./assets/Images/4060492.jpg";
 import FinalReview from "./components/CharacterCreator/FinalView";
 import CharCreator from "./components/CharacterCreator/CharCreator";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import SkillCreator from "./components/CharacterCreator/SkillCreator";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
@@ -81,8 +81,13 @@ const CharacterCreator = () => {
     )
   );
   const { user } = useContext(AuthContext);
+  const submittedRef = useRef(false);
 
   const handleSubmit = () => {
+    // Guards against a double click saving (and POSTing) the character twice.
+    if (submittedRef.current) return;
+    submittedRef.current = true;
+
     const fullCharacter = {
       ...createCharacterDraft(user?.userName || ""),
       ...formData,

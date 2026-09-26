@@ -19,6 +19,7 @@ import {
   flushRemoteCharacterUpdate,
   flushAllRemoteCharacterUpdates,
   characterKey,
+  rosterEntryId,
 } from "../../engine/syncEngine";
 import { useCharacterRosterSync } from "../../hooks/useBackgroundCharacterSync";
 
@@ -96,9 +97,7 @@ function CharacterRoster({ userId }) {
 
     let updatedChar = null;
     const nextCharacters = characters.map((char) => {
-      const charKey = char._id || char.uniqueId || char.callsign;
-      const selectedKey = selectedCharacter?._id || selectedCharacter?.uniqueId || selectedCharacter?.callsign;
-      if (charKey !== selectedKey) return char;
+      if (rosterEntryId(char) !== rosterEntryId(selectedCharacter)) return char;
       updatedChar = normalizeCharacterData({ ...char, ...updates, updatedAt: Date.now() });
       return updatedChar;
     });
@@ -108,8 +107,7 @@ function CharacterRoster({ userId }) {
     setSelectedCharacter((current) => {
       if (!current) return current;
       return nextCharacters.find(
-        (char) => (char._id || char.uniqueId || char.callsign) ===
-          (current._id || current.uniqueId || current.callsign),
+        (char) => rosterEntryId(char) === rosterEntryId(current),
       ) || current;
     });
 
@@ -146,10 +144,8 @@ function CharacterRoster({ userId }) {
   useEffect(() => {
     setSelectedCharacter((current) => {
       if (!current) return current;
-      const currentKey = current._id || current.uniqueId || current.callsign;
-      const match = characters.find(
-        (char) => (char._id || char.uniqueId || char.callsign) === currentKey,
-      );
+      const currentKey = rosterEntryId(current);
+      const match = characters.find((char) => rosterEntryId(char) === currentKey);
       return match || current;
     });
   }, [characters]);
@@ -199,8 +195,7 @@ function CharacterRoster({ userId }) {
     setCharacters(nextCharacters);
     setSelectedCharacter((current) => {
       if (!current) return current;
-      const currentId = current._id || current.uniqueId || current.callsign;
-      return currentId === id ? undefined : current;
+      return rosterEntryId(current) === id ? undefined : current;
     });
 
     const remoteId = target?.uniqueId || target?.callsign;
@@ -269,7 +264,7 @@ function CharacterRoster({ userId }) {
       <div className="grid sm:grid-cols-2 md:grid-cols-5 gap-4 px-2">
         {characters.map((char) => (
           <div
-            key={char._id || char.uniqueId || char.callsign}
+            key={rosterEntryId(char)}
             className="flicker"
           >
             <CharacterCard
@@ -294,7 +289,7 @@ function CharacterRoster({ userId }) {
             </div>
             <div className="min-h[30rem]">
               <div
-                key={selectedCharacter?._id}
+                key={rosterEntryId(selectedCharacter)}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.2, delay: 0.2 }}

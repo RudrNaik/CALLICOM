@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { hexKey } from "../utils/hexGrid";
 import { normalizeHexState } from "../components/VTT/terrain";
+import { isDoorReplacedByStamp } from "../components/VTT/hexClipboard";
 
 const MAPS_KEY = "calamari_vtt_maps_v1";
 const ACTIVE_KEY = "calamari_vtt_active_map_v1";
@@ -37,9 +38,20 @@ function makeBlankMap(name, cols, rows) {
     doors: [],
     friendlies: [],
     enemies: [],
+    effects: [],
     lines: [],
+    batches: [],
     updatedAt: Date.now(),
   };
+}
+
+// Area effects live in their own list (they have no badge and never take
+// part in lines or range bands), but share the token id space so the same
+// select/update/remove calls work on them.
+function tokenListKey(type) {
+  if (type === "enemy") return "enemies";
+  if (type === "effect") return "effects";
+  return "friendlies";
 }
 
 export default function useVTTMap() {
@@ -152,18 +164,23 @@ export default function useVTTMap() {
 
   // `layer` is "elevation" or "obstacle" — each hex tracks both
   // independently (e.g. a soft wall obstacle sitting on a high-ground
-  // elevation), so painting one leaves the other untouched.
+  // elevation), so painting one leaves the other untouched. Takes a list of
+  // { q, r } cells so a paint drag that covers several hexes in one pointer
+  // event lands as a single commit (one re-render and one save), not one
+  // per hex.
   const setTerrain = useCallback(
-    (q, r, layer, valueId) => {
-      if (!activeMapId) return;
+    (cells, layer, valueId) => {
+      if (!activeMapId || cells.length === 0) return;
       commit(activeMapId, (m) => {
         const hexes = { ...m.hexes };
-        const key = hexKey(q, r);
-        const next = { ...normalizeHexState(hexes[key]), [layer]: valueId };
-        if (next.elevation === "normal" && next.obstacle === "none") {
-          delete hexes[key];
-        } else {
-          hexes[key] = next;
+        for (const { q, r } of cells) {
+          const key = hexKey(q, r);
+          const next = { ...normalizeHexState(hexes[key]), [layer]: valueId };
+          if (next.elevation === "normal" && next.obstacle === "none") {
+            delete hexes[key];
+          } else {
+            hexes[key] = next;
+          }
         }
         return { ...m, hexes };
       });
@@ -177,6 +194,26 @@ export default function useVTTMap() {
       commit(activeMapId, (m) => {
         const doors = Array.isArray(m.doors) ? m.doors : [];
         return { ...m, doors: [...doors, { id: uid("door"), a, b, type, state }] };
+      });
+    },
+    [activeMapId, commit]
+  );
+
+  // Applies a copy/paste stamp (from placeClipboard) as one commit: each
+  // cell's terrain is overwritten outright (plain ground included), and the
+  // stamped area's own doors are replaced by the stamp's.
+  const stampTerrain = useCallback(
+    ({ cells, doors, vertexKeys }) => {
+      if (!activeMapId || cells.length === 0) return;
+      commit(activeMapId, (m) => {
+        const hexes = { ...m.hexes };
+        for (const { q, r, state } of cells) {
+          const key = hexKey(q, r);
+          if (state.elevation === "normal" && state.obstacle === "none") delete hexes[key];
+          else hexes[key] = { elevation: state.elevation, obstacle: state.obstacle };
+        }
+        const kept = (Array.isArray(m.doors) ? m.doors : []).filter((d) => !isDoorReplacedByStamp(d, vertexKeys));
+        return { ...m, hexes, doors: [...kept, ...doors.map((d) => ({ id: uid("door"), ...d }))] };
       });
     },
     [activeMapId, commit]
@@ -196,8 +233,8 @@ export default function useVTTMap() {
   const addToken = useCallback(
     (token) => {
       if (!activeMapId) return;
-      const listKey = token.type === "enemy" ? "enemies" : "friendlies";
-      const newToken = { id: uid("tok"), ...token };
+      const listKey = tokenListKey(token.type);
+      const newToken = { id: uid(token.type === "effect" ? "fx" : "tok"), ...token };
       commit(activeMapId, (m) => ({ ...m, [listKey]: [...(m[listKey] || []), newToken] }));
       return newToken.id;
     },
@@ -210,7 +247,12 @@ export default function useVTTMap() {
       commit(activeMapId, (m) => {
         const updateList = (list = []) =>
           list.map((t) => (t.id === tokenId ? { ...t, ...patch } : t));
-        return { ...m, friendlies: updateList(m.friendlies), enemies: updateList(m.enemies) };
+        return {
+          ...m,
+          friendlies: updateList(m.friendlies),
+          enemies: updateList(m.enemies),
+          effects: updateList(m.effects),
+        };
       });
     },
     [activeMapId, commit]
@@ -228,6 +270,7 @@ export default function useVTTMap() {
         ...m,
         friendlies: (m.friendlies || []).filter((t) => t.id !== tokenId),
         enemies: (m.enemies || []).filter((t) => t.id !== tokenId),
+        effects: (m.effects || []).filter((t) => t.id !== tokenId),
         lines: (m.lines || []).filter((l) => l.fromId !== tokenId && l.toId !== tokenId),
       }));
     },
@@ -259,10 +302,72 @@ export default function useVTTMap() {
     [activeMapId, commit]
   );
 
+  // Combat batches: named groups of tokens resolved together, stored as an
+  // ordered list (the order is the initiative order). Tokens join one via
+  // their `batchId`; deleting a batch just clears that field on its members.
+  const addBatch = useCallback(
+    (name) => {
+      if (!activeMapId) return;
+      const id = uid("batch");
+      commit(activeMapId, (m) => {
+        const batches = m.batches || [];
+        return { ...m, batches: [...batches, { id, name: name || `Batch ${batches.length + 1}` }] };
+      });
+      return id;
+    },
+    [activeMapId, commit]
+  );
+
+  const renameBatch = useCallback(
+    (batchId, name) => {
+      if (!activeMapId) return;
+      commit(activeMapId, (m) => ({
+        ...m,
+        batches: (m.batches || []).map((b) => (b.id === batchId ? { ...b, name } : b)),
+      }));
+    },
+    [activeMapId, commit]
+  );
+
+  const removeBatch = useCallback(
+    (batchId) => {
+      if (!activeMapId) return;
+      commit(activeMapId, (m) => {
+        const unbatch = (list = []) =>
+          list.map((t) => (t.batchId === batchId ? { ...t, batchId: undefined } : t));
+        return {
+          ...m,
+          batches: (m.batches || []).filter((b) => b.id !== batchId),
+          friendlies: unbatch(m.friendlies),
+          enemies: unbatch(m.enemies),
+        };
+      });
+    },
+    [activeMapId, commit]
+  );
+
+  // Moves a batch one step earlier (-1) or later (+1) in initiative order.
+  const moveBatch = useCallback(
+    (batchId, dir) => {
+      if (!activeMapId) return;
+      commit(activeMapId, (m) => {
+        const batches = [...(m.batches || [])];
+        const i = batches.findIndex((b) => b.id === batchId);
+        const j = i + dir;
+        if (i < 0 || j < 0 || j >= batches.length) return m;
+        [batches[i], batches[j]] = [batches[j], batches[i]];
+        return { ...m, batches };
+      });
+    },
+    [activeMapId, commit]
+  );
+
   const allTokens = useMemo(() => {
     if (!activeMap) return [];
     return [...(activeMap.friendlies || []), ...(activeMap.enemies || [])];
   }, [activeMap]);
+
+  const effects = useMemo(() => activeMap?.effects || [], [activeMap]);
 
   const exportMap = useCallback(() => {
     if (!activeMap) return;
@@ -289,7 +394,9 @@ export default function useVTTMap() {
       doors: Array.isArray(imported.doors) ? imported.doors : [],
       friendlies: imported.friendlies || [],
       enemies: imported.enemies || [],
+      effects: imported.effects || [],
       lines: imported.lines || [],
+      batches: Array.isArray(imported.batches) ? imported.batches : [],
       updatedAt: Date.now(),
     };
     setMaps((prev) => {
@@ -313,6 +420,7 @@ export default function useVTTMap() {
     activeMap,
     activeMapId,
     allTokens,
+    effects,
     newMap,
     loadMap,
     renameMap,
@@ -322,12 +430,17 @@ export default function useVTTMap() {
     setTerrain,
     addDoor,
     removeDoor,
+    stampTerrain,
     addToken,
     updateToken,
     moveToken,
     removeToken,
     addLine,
     removeLine,
+    addBatch,
+    renameBatch,
+    removeBatch,
+    moveBatch,
     exportMap,
     importMap,
   };

@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { writeCharacterRosterCache } from "../engine/characterDataHandler";
+import {
+  normalizeCharacterData,
+  writeCharacterRosterCache,
+} from "../engine/characterDataHandler";
 import {
   getToken,
   getDeletedCharacterKeys,
@@ -12,7 +15,9 @@ import {
   deleteRemoteCharacter,
   diffCharacterRosters,
   backfillMissingUniqueIds,
+  cancelRemoteCharacterUpdate,
   characterKey,
+  waitForPendingCreates,
 } from "../engine/syncEngine";
 
 /**
@@ -59,6 +64,10 @@ export function useCharacterRosterSync(userId, characters, setCharacters) {
       setBackendSleeping(true);
     }, COLD_START_THRESHOLD_MS);
     try {
+      // A character created moments ago (CharacterCreator navigates here
+      // without waiting on its POST) would otherwise look local-only to the
+      // fetch below and be pushed a second time.
+      await waitForPendingCreates();
       const remoteCharacters = await fetchRemoteCharacters(userId, token);
       if (!Array.isArray(remoteCharacters)) return;
 
@@ -111,7 +120,7 @@ export function useCharacterRosterSync(userId, characters, setCharacters) {
             });
           }
           if (toPullLocal.length) {
-            next = [...next, ...toPullLocal];
+            next = [...next, ...toPullLocal.map(normalizeCharacterData)];
           }
           return next;
         });
@@ -153,8 +162,11 @@ export function useCharacterRosterSync(userId, characters, setCharacters) {
           }
         }
       } else {
+        const remoteId = conflict.local.uniqueId || conflict.local.callsign;
+        if (remoteId) cancelRemoteCharacterUpdate(userId, remoteId);
+        const serverCopy = normalizeCharacterData(conflict.remote);
         applyLocalUpdate((prev) =>
-          prev.map((char) => (characterKey(userId, char) === key ? conflict.remote : char)),
+          prev.map((char) => (characterKey(userId, char) === key ? serverCopy : char)),
         );
       }
 
@@ -183,7 +195,7 @@ export function useCharacterRosterSync(userId, characters, setCharacters) {
         }
         removeDeletedCharacterKey(userId, key);
       } else {
-        applyLocalUpdate((prev) => [...prev, conflict.remote]);
+        applyLocalUpdate((prev) => [...prev, normalizeCharacterData(conflict.remote)]);
         removeDeletedCharacterKey(userId, key);
       }
 
