@@ -653,11 +653,35 @@ app.post("/api/characters", async (req, res) => {
       return res.status(400).send({ error: "Missing user ID" });
     }
 
-    const result = await db.collection("characters").insertOne(character);
-    res.status(201).send(result);
+    const collection = db.collection("characters");
+    delete character._id;
+
+    if (!character.uniqueId) {
+      const result = await collection.insertOne(character);
+      return res.status(201).send(result);
+    }
+
+    // Idempotent on (userId, uniqueId): the frontend can send the same new
+    // character more than once (e.g. its roster sync racing the creator's own
+    // POST), and a plain insert would store each attempt as a duplicate.
+    const { userId, uniqueId, ...fields } = character;
+    const result = await collection.updateOne(
+      { userId, uniqueId },
+      { $setOnInsert: fields },
+      { upsert: true },
+    );
+
+    if (result.upsertedId) {
+      return res.status(201).send({ acknowledged: true, insertedId: result.upsertedId });
+    }
+
+    const existing = await collection.findOne({ userId, uniqueId }, { projection: { _id: 1 } });
+    res.status(200).send({ acknowledged: true, insertedId: existing?._id });
   } catch (err) {
     console.error("Error saving character:", err.message);
     res.status(500).send({ error: err.message });
+  } finally {
+    await client.close();
   }
 });
 

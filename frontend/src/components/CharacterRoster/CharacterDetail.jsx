@@ -38,6 +38,7 @@ import LogsView from "./CharDetailComponents/LogsView";
 import LogisticsView from "./CharDetailComponents/Logistics/LogisticsView";
 import { normalizeCharacterData } from "../../engine/characterDataHandler";
 import { useCharacterSaveStatus } from "../../hooks/useCharacterSaveStatus";
+import { rosterEntryId } from "../../engine/syncEngine";
 import "../../assets/css/terminal.css";
 
 const biographyFields = [
@@ -102,8 +103,7 @@ function CharacterDetail({ character, onUpdate, user }) {
   const woundsTimerRef = useRef(null);
   const equipmentRef = useRef(null);
 
-  const characterKey =
-    character?._id || character?.uniqueId || character?.callsign;
+  const characterKey = rosterEntryId(character);
 
   // Reseed every editing-draft field when switching to a *different*
   // character. This runs during render (React's documented pattern for
@@ -166,6 +166,27 @@ function CharacterDetail({ character, onUpdate, user }) {
     setEmergencyDiceXPSpent(character?.emergencyDiceXPSpent || 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [character, isEditing]);
+
+  // Wounds only reseed when the stored value moved away from what this view
+  // last saved (i.e. it changed elsewhere, like "Use Server Version"), so a
+  // click still waiting out the wound autosave debounce isn't reverted.
+  useEffect(() => {
+    const fw = character?.fleshWounds || 0;
+    const dw = character?.deepWounds || 0;
+    if (fw === prevWounds.current.fleshWounds && dw === prevWounds.current.deepWounds) return;
+    prevWounds.current = { fleshWounds: fw, deepWounds: dw };
+    setFleshWounds(fw);
+    setDeepWounds(dw);
+  }, [character?.fleshWounds, character?.deepWounds]);
+
+  useEffect(() => {
+    if (isEditingBio) return;
+    setBio(
+      character?.Bio && typeof character.Bio === "object"
+        ? { ...emptyBiography, ...character.Bio }
+        : character?.Bio || "",
+    );
+  }, [character?.Bio, isEditingBio]);
 
   // The campaign code field has its own Assign button (not gated by
   // isEditing), so it's keyed on the stored value alone: a sync conflict

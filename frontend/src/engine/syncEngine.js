@@ -8,7 +8,9 @@
  * against the backend once per mount to catch drift from other devices.
  */
 
-export const API_BASE = "https://callicom.onrender.com";
+import { normalizeCharacterData } from "./characterDataHandler";
+
+export const API_BASE ="https://callicom.onrender.com";
 
 /**
  * Fired when the backend rejects a request's token (401/403). Every character
@@ -39,7 +41,13 @@ export const fetchRemoteCharacters = async (userId, token) => {
   return res.json();
 };
 
-export const createRemoteCharacter = async (character, token) => {
+// Creates still in flight, keyed by uniqueId. CharacterCreator fires its POST
+// and navigates straight to the roster, whose mount-time reconcile would
+// otherwise fetch the server list before that POST lands, see the new
+// character as local-only, and POST it a second time.
+const pendingCreates = new Map();
+
+const postCharacter = async (character, token) => {
   const res = await fetch(`${API_BASE}/api/characters`, {
     method: "POST",
     headers: authHeaders(token),
@@ -52,6 +60,22 @@ export const createRemoteCharacter = async (character, token) => {
   if (!res.ok) throw new Error(`Failed to create character (${res.status})`);
   return res.json();
 };
+
+export const createRemoteCharacter = (character, token) => {
+  const id = character?.uniqueId;
+  if (id && pendingCreates.has(id)) return pendingCreates.get(id);
+
+  const request = postCharacter(character, token);
+  if (id) {
+    pendingCreates.set(id, request);
+    request.finally(() => pendingCreates.delete(id)).catch(() => {});
+  }
+  return request;
+};
+
+/** Resolves once every in-flight create has settled (success or failure). */
+export const waitForPendingCreates = () =>
+  Promise.allSettled([...pendingCreates.values()]);
 
 export const updateRemoteCharacter = async (userId, uniqueId, character, token) => {
   // _id must never round-trip into a write: it arrives as a plain JSON
@@ -176,6 +200,20 @@ export const flushRemoteCharacterUpdate = (userId, uniqueId) => {
   flushCharacterUpdate(key);
 };
 
+/**
+ * Drops a character's queued (not yet sent) update — used when the user
+ * resolves a conflict in favour of the server, so the stale local edit
+ * waiting out the debounce doesn't overwrite the version they just chose.
+ */
+export const cancelRemoteCharacterUpdate = (userId, uniqueId) => {
+  const key = `${userId}::${uniqueId}`;
+  const entry = updateQueues.get(key);
+  if (!entry || entry.sending) return;
+  if (entry.timeoutId) clearTimeout(entry.timeoutId);
+  updateQueues.delete(key);
+  notifyStatus(key);
+};
+
 /** Flushes every character with a pending queued update. */
 export const flushAllRemoteCharacterUpdates = () => {
   for (const [key, entry] of updateQueues) {
@@ -216,6 +254,16 @@ export const deleteRemoteCharacter = async (userId, uniqueId, token) => {
 export const characterKey = (userId, character) =>
   `${userId}::${character?.uniqueId || character?.callsign || ""}`;
 
+/**
+ * Identifies a character within the roster UI (selection, React keys,
+ * delete). Prefers uniqueId over Mongo's _id: a character created on this
+ * device has no _id locally while its server copy does, so an _id-first key
+ * would stop matching the moment the server copy replaces the local one
+ * (e.g. "Use Server Version") and the selected character would go stale.
+ */
+export const rosterEntryId = (character) =>
+  character?.uniqueId || character?._id || character?.callsign;
+
 // Bookkeeping fields that legitimately differ between a local record and
 // its backend counterpart without representing a real conflict: Mongo's
 // _id doesn't exist locally until a create round-trips, and updatedAt is
@@ -247,7 +295,12 @@ const deepEqualIgnoringSyncFields = (a, b) => {
   return false;
 };
 
-export const characterContentEqual = (a, b) => deepEqualIgnoringSyncFields(a, b);
+// Both sides are normalized first: the local cache always holds normalized
+// characters (see writeCharacterRosterCache) while the backend returns them
+// raw, so shape-only differences (e.g. a missing `metadata` block) would
+// otherwise read as a conflict that "Use Server Version" can never clear.
+export const characterContentEqual = (a, b) =>
+  deepEqualIgnoringSyncFields(normalizeCharacterData(a), normalizeCharacterData(b));
 
 /**
  * Backfills a real `uniqueId` onto legacy characters that predate the field

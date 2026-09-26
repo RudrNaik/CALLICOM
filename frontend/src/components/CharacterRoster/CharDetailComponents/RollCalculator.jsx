@@ -13,6 +13,7 @@ import {
   getBaseDiceCount,
   getEffectiveDiceCount,
 } from "../../../engine/characterEngine";
+import { rosterEntryId } from "../../../engine/syncEngine";
 
 function Calculator({
   characterData,
@@ -50,8 +51,7 @@ function Calculator({
 
   const [navigateRoll, setNavigateRoll] = useState(null);
 
-  const characterKey =
-    characterData?._id || characterData?.uniqueId || characterData?.callsign;
+  const characterKey = rosterEntryId(characterData);
 
   useEffect(() => {
     if (characterData) {

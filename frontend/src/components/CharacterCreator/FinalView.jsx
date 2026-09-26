@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import skillGroups from "../../data/skills.json";
 import SpecView from "../CharacterRoster/CharDetailComponents/Skills/SpecView";
 
@@ -97,14 +96,12 @@ const FinalReview = ({ formData, onBack, onSubmit }) => {
         >
           Back
         </button>
-        <Link to={"/CALLICOM/CharacterManager"}>
-          <button
-            onClick={onSubmit}
-            className="bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded"
-          >
-            Confirm & Create
-          </button>
-        </Link>
+        <button
+          onClick={onSubmit}
+          className="bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded"
+        >
+          Confirm & Create
+        </button>
       </div>
     </div>
   );
