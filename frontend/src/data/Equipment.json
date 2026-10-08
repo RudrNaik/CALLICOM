@@ -691,7 +691,7 @@
         "parentId": "Raider",
         "class": "Raider",
         "cost": 1700,
-        "max": 3,
+        "max": 4,
         "description": "'clack clack' - BOOM\n♪♫I'm coming down on the stereo, put me on the radio-♪♬",
         "rulesText": "[Breach][Explosive]\nOpens all doors up to ones heavily reinforced, blows through soft walls.\nCauses a loud explosion, gives guaranteed initiative to the team upon entry."
     },
@@ -711,7 +711,7 @@
         "parentId": "Raider",
         "class": "Raider",
         "cost": 5000,
-        "max": 3,
+        "max": 2,
         "description": "The breach pen's bigger brother, now with genetics of the breaching charge.\nA really big fucking hole. Coming right up.",
         "rulesText": "[Breach][Explosive]\nOpens all doors and walls, without exception.\nCauses a loud explosion, gives guaranteed initiative to the team upon entry."
     },
@@ -723,7 +723,7 @@
         "cost": 7000,
         "description": "Spotters, wallhacks, they go by many names but do the same thing. You throw them into an area or room, everyone gets pinged.\nFollow ups vary on user execution.",
         "rulesText": "[Throw][Spot]\n 0 DMG | 8 hex AOE\n When thrown in combat, prompts [Throw] vs [Stealth] or [Disguise] against targets not within line of sight and within the AOE, when it lands. Defenders within line of sight of the grenade when it lands automatically fail. Defenders that fail within the AOE are [Pinged] for one turn.",
-        "max": 3
+        "max": 2
     },
     {
         "id": "9bangs",
@@ -733,7 +733,7 @@
         "cost": 3600,
         "description": "For when compliance wasn't a request. Channels the power of chemistry to dissuade targets from considering shooting back. And also blinds them. And gives them hearing problems.",
         "rulesText": "[Throw][Interrupt][Stun]\n 0 DMG | 3 hex AOE\n When thrown in combat, prompts [Throw] vs [Spirit] to withstand or [Acrobatics] to dodge.\n Applies -2 malus on all afflicted targets within the AOE. Interrupts readied, aiming, and suppression if within the AOE and they fail the check. Upon defender MOF of 2, they are [Stunned] and lose their turn. If used before combat starts, will cause friendlies to have initaitive first instead of enemies.",
-        "max": 3
+        "max": 2
     },
     {
         "id": "emp",
