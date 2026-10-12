@@ -1132,16 +1132,6 @@
         "rulesText": "Increases Close and Medium Range Band modifier with a +1 bonus."
     },
     {
-        "id": "deployable-barricade",
-        "title": "Deployable Barricade",
-        "parentId": "F-SUP",
-        "class": "Fire Support",
-        "cost": 5500,
-        "max": 2,
-        "description": "An enlarged version of the deployable cover, this version unfolds rapidly when a cord on its base is yanked, flooding the kevlar with a rapidly expanding foam that unfolds it and then hardens into a HESCO-like barricade",
-        "rulesText": "[Deploy][Obscure]\n2 Charges\nCreates a 4 hex long piece of tall cover in any direction next to the user. This cover cannot be picked up and re-deployed like the Deployable Cover. Each hex must be on the same elevation, or it cannot be placed."
-    },
-    {
         "id": "Medic",
         "title": "Medic",
         "class": "None",
@@ -1150,12 +1140,12 @@
     },
     {
         "id": "stim-pouch",
-        "title": "Nanite Stimulants",
+        "title": "Nanite Pouch",
         "parentId": "Medic",
         "class": "Medic",
         "cost": 4000,
-        "description": "Contains all the stims a medic can carry, from regenerative nanites that heal you, to performance enhancing ones that let you react faster. Just dont get too reliant on them. Don't need junkies in the company. ",
-        "rulesText": "[Deploy][Medical]\nHolds all of the nanite stims for a medic. A medic can carry up to 4 stims of assorted types. Each has their own rules.",
+        "description": "Contains all the stimulants and boosters a medic can carry, from regenerative nanites that heal you, to performance enhancing ones that let you react faster. Includes a stim pistol for ranged applications.",
+        "rulesText": "[Deploy][Medical]\nHolds all of the nanite stims for a medic. Before a mission, choose an amount of injectors, up to an overall total of the capacity, from each nanite type that is purchased. Comes with a stim pistol which requires an [L-Wep] test against a threshold of 3 + the amount of range bands between you and the target, starting at +0 for close range, to a maximum of +2 long range. Cannot fire past Long Range.",
         "maxStims": 4,
         "options": [
             {
@@ -1179,6 +1169,10 @@
                 "label": "Nootropic"
             },
             {
+                "id": "lrk",
+                "label": "Ligament"
+            },
+            {
                 "id": "metOver",
                 "label": "MetabolicOvr"
             }
@@ -1192,7 +1186,7 @@
         "class": "Medic",
         "cost": 4000,
         "description": "Advanced nanomachines automatically help stop bleeding, apply painkillers, and make getting shot a little less un-fun.",
-        "rulesText": "Heal a flesh wound every turn, if no flesh wounds heal a deep wound every 2 turns.\nLasts for 1d6 turns/2 + medical skill level turns"
+        "rulesText": "[Stimulant]\nHeal a flesh wound every turn, if no flesh wounds heal a deep wound every 2 turns.\nLasts for (1d6 turns+ Medical Skill)/2 turns rounded up."
     },
     {
         "id": "snk",
@@ -1202,7 +1196,7 @@
         "class": "Medic",
         "cost": 2000,
         "description": "A concoction of nanites from every kind to stave off death and keep someone in the fight. Painkillers, coagulants, and stimulants get someone back on their feet instantly.",
-        "rulesText": "Revives a character from DBNO instantly with only a flesh wound. The turn after- remove a flesh wound."
+        "rulesText": "[Stimulant]\nRevives a character from DBNO instantly with only a flesh wound. The turn after- remove a flesh wound."
     },
     {
         "id": "tnk",
@@ -1211,8 +1205,8 @@
         "SubMunition": true,
         "class": "Medic",
         "cost": 3000,
-        "description": "Retooled for killing any and all pain, Truamadol Nanites make the user feel nothing, other than emotion — we didn't disable that just yet.",
-        "rulesText": "Temporarily removes all wounds\nLasts for 1d6 + medical skill level turns divided by 2"
+        "description": "Retooled for killing any and all pain, Truamadol Nanites make the user feel nothing, other than emotion. We didn't disable that just yet.",
+        "rulesText": "[Stimulant]\nIgnore the effects of wound modifiers on tests, or any afflictions caused by wounds or damage to yourself. A character can still enter system shock.\nLasts for (1d6 turns+ Medical Skill)/2 turns rounded up."
     },
     {
         "id": "dtnk",
@@ -1222,7 +1216,7 @@
         "class": "Medic",
         "cost": 6000,
         "description": "Created to simulate a release of adrenaline via nanites, the Adrenal Nanites give you a kick of energy in the moment.",
-        "rulesText": "Adds another standard action for the user\nLasts for the turn"
+        "rulesText": "[Booster]\nAdds another standard action.\nLasts for the turn"
     },
     {
         "id": "hank",
@@ -1232,7 +1226,17 @@
         "class": "Medic",
         "cost": 10000,
         "description": "Utilizing the power of nootropics and nicknamed 'high alert', these nanites give you a much more powerful boost of energy as they also mix in adrenaline. Leading to a single use but highly effective combat stimulant.",
-        "rulesText": "Adds another standard and movement action, reduces maluses from movement by 1.\nLasts for the turn."
+        "rulesText": "[Booster]\nAdds another standard and movement action, reduces maluses from movement by 1.\nLasts for the turn."
+    },
+    {
+        "id": "lrk",
+        "title": "Ligament Restorative Kit (LRK)",
+        "parentId": "Medic",
+        "SubMunition": true,
+        "class": "Medic",
+        "cost": 9000,
+        "description": "",
+        "rulesText": "[Booster]\nTemporary increases all Alertness/Body skills to level 2. Any skills above level 2 remain at their level.\nLasts for two turns."
     },
     {
         "id": "metOver",
@@ -1241,8 +1245,36 @@
         "SubMunition": true,
         "class": "Medic",
         "cost": 15000,
-        "description": "[Restricted under Black-5 Clearance]",
-        "rulesText": "Adds another standard and movement action, reduces maluses from movement by 1.\nLasts for the turn."
+        "description": "",
+        "rulesText": "[Booster]\nTemporary increases all Alertness/Body skills to level 3. Any skills above level 3 remain at their level.\nLasts for two turns. Causes the character to become [Exhausted] on the turn after the effect ends reducing their Alertness and Body skills to 1 for that turn."
+    },
+    {
+        "id": "deployable-barricade",
+        "title": "Deployable Barricade",
+        "parentId": "Medic",
+        "class": "Medic",
+        "cost": 5500,
+        "max": 3,
+        "description": "An enlarged version of the deployable cover, this version unfolds rapidly after a few seconds when a cord on its base is yanked, flooding the kevlar with a rapidly expanding foam that unfolds it and then hardens into a HESCO-like barricade.",
+        "rulesText": "[Deploy][Obscure]\n3 Charges\nCreates a 4 hex long piece of tall cover in any direction next to the user. This cover cannot be picked up and re-deployed like the Deployable Cover. Each hex must be on the same elevation, or it cannot be placed. The package can be thrown to a maximum of close range."
+    },
+    {
+        "id": "chud-lifesaver",
+        "title": "C/HUD Lifesaver",
+        "parentId": "Medic",
+        "class": "Medic",
+        "cost": 9000,
+        "description": "A small quadcopter fitted with a microdrone dispenser. Each microdrone is loaded with stimulants to heal someone during a fight that lands and inject small dosages of nanites on the target whenever they take damage. Also has an ascii face on its underside.",
+        "rulesText": "[Deploy][Airborne][Stimulant]\nUptime: 2 turns | Downtime: 2 turn\nWhen deployed, designate an infantry target. This target heals one deep wound every turn it is active, or two flesh wounds if there aren't any deep wounds. Upon the target being given enough damage to cause instant death, will instead only take 2 deep wounds. If the target enters system shock or otherwise enters DBNO- they are instantly revived with only a flesh wound, but still contribute to the total amount of downs they have taken.\n\nThese effects only last during the drone’s uptime, and upon that uptime running out- the drone will return to the medic who deployed it. While deployed, the drone can be given a new target to heal via a [Deploy] action."
+    },
+    {
+        "id": "chud-flowstate",
+        "title": "C/HUD Flowstate",
+        "parentId": "Medic",
+        "class": "Medic",
+        "cost": 6000,
+        "description": "A small quadcopter fitted with a microdrone dispenser. Each microdrone is loaded with painkillers to ensure someone doesn't feel the pain during a fight. Due to the powerful nature of the painkillers- less microdrones are needed per dosage, and it has a longer uptime at the cost of less healing.",
+        "rulesText": "[Deploy][Airborne][Booster]\nUptime: 2 turns | Downtime: 1 turns\nWhen deployed, designate an infantry target. This target heals one flesh wound every turn it is active, or a deep wound every 2 turns if there aren't any flesh wounds. While with the designated target, the target ignores the effects of wound modifiers on tests, or any afflictions caused by wounds or damage to them. They can still enter system shock.\n\nThese effects only last during the drone’s uptime, and upon that uptime running out- the drone will return to the medic who deployed it. While deployed, the drone can be given a new target to heal via a [Deploy] action on the medic’s turn."
     },
     {
         "id": "Recon",
@@ -1253,12 +1285,12 @@
     },
     {
         "id": "hummingbird-drone",
-        "title": "Hummingbird Reconaissance Drone",
+        "title": "Hummingbird Reconnaissance Drone",
         "parentId": "Recon",
         "class": "Sharpshooter",
         "cost": 6000,
-        "description": "Built off the chassis of the PD-105 Black Hornet, Hummingbird reconnaissance drones are Gold Coast's home brewed modification, also tying in BUDDI spotting software and hardened Datalinks.",
-        "rulesText": "[Deploy][Spot][Datalink]\nUser carried\nSpots traps, gadgets, vehicles, and more in the encounter area and one hex around\n Uptime: 4 turns\n 3 notice | 2 stealth | 1 investigation"
+        "description": "Built off the chassis of the PD-105 Black Hornet, Hummingbird reconnaissance drones are a unique modification tying in BUDDI spotting software and a hardened datalink uplink.",
+        "rulesText": "[Airborne][Repairable][Deploy][Spot][Datalink][IR]\nUser carried\nUptime: 1 | Downtime: 1\nSpot traps, gadgets, vehicles, and more within long range of the user via a quick scan before returning to the user. Uses Thermal/IR imaging.\nAOE: 24 hexes (long)\n1 general | 3 notice | 2 stealth | 1 investigation"
     },
     {
         "id": "silverbird-uav",
@@ -1267,25 +1299,16 @@
         "class": "Sharpshooter",
         "cost": 8000,
         "description": "Built off of the Marine's SUAV, the Silver Bird is an autonomous drone that orbits the user at a high altitude to mark targets. Has only NV. Pings for every turn it is up.",
-        "rulesText": "[Deploy][Spot][Datalink]\nUser Carried\nSpots in a large area, extending to 4 world hexes from the encounter area\n Uptime: 3 turns | Downtime: 1 turn\n 2 notice | 2 acrobatics | 2 investigation"
-    },
-    {
-        "id": "greybird-uav",
-        "title": "Grey Bird UAV (SUAV)",
-        "parentId": "Recon",
-        "class": "Sharpshooter",
-        "cost": 10000,
-        "description": "Built off of the Marine's SUAV, the Grey Bird is an autonomous drone that orbits the user at a high altitude to mark targets. Has IR and a LAM mounted to lase and designate targets.",
-        "rulesText": "[Deploy][Spot][Datalink]\nUser Carried\nSpots in a large area, extending to 4 world hexes from the encounter area\nUptime: 1 turn | Downtime: 1 turn\n 3 notice | 1 acrobatics | 1 investigation"
+        "rulesText": "[Airborne][Repairable][Deploy][Spot][Datalink][NVG]\nUser Carried\nSpots in a large area, extending to 4 world hexes from the encounter area. Will not spot gadgets, traps, or drones.\nUptime: 3 turns | Downtime: 2 turn\n1 general | 2 notice | 2 acrobatics | 2 investigation"
     },
     {
         "id": "bumblebee-echolocator",
-        "title": "Bumblebee Echolocator Micro UAV",
+        "title": "Bumblebee Echolocator MAV",
         "parentId": "Recon",
         "class": "Sharpshooter",
         "cost": 16000,
         "description": "Survey drone utilizing echolocation to mark moving enemies. Shakes the ground when activated, but will always provide a ping. Can be shot down easily once noticed, and is kinda fat.",
-        "rulesText": "[Deploy][Spot][Datalink]\nPre-Deployed\nSpots for 2 turns\n3 Notice \n[Aiborne][Repairable]"
+        "rulesText": "[Airborne][Repairable][Deploy][Mark][Datalink]\nPre-Deployed\n2 charges\nWhen activated using a [Deploy] action, it creates a large humming noise as it echolocates targets on the ground. It will scan everything within the world hex and one hex around, and [Mark] all targets."
     },
     {
         "id": "grappling-hook",
@@ -1293,9 +1316,9 @@
         "parentId": "Recon",
         "class": "Sharpshooter",
         "cost": 1000,
-        "description": "Intended to help scale vertical walls and buildings. Can be daisy chained up to three times and 75 meters total.",
-        "rulesText": "[Deploy][Traversal]\n1 turn deployment on vertical surfaces. This allows players to climb up any building as if on a makeshift ladder.\nRequires a throw check for if the target is hooked. Upon failure, charge is returned to the player.\n Can be used to gain overwatch positions in Dense Urban terrain, and negate many movement checks.\n3 uses.\nCan be used by teammates.",
-        "max": 3
+        "description": "",
+        "rulesText": "[Deploy][Traversal]\n2 Charges.\nWhen deployed using a [Deploy] action against an incline or vertical surface, it allows you to quickly climb up it using a Climb test with a threshold of your armor class. The grappling hook can be deployed up to three stories (6 steps in elevation) and only within close range of a ledge using a Throw test against the steps of elevation of the ledge you’re grappling to. A grappling hook can be re-used if picked up after deployment. In Grand Operations It can be used to override the original climb test with the one it provides.",
+        "max": 2
     },
     {
         "id": "zipline",
@@ -1303,18 +1326,8 @@
         "parentId": "Recon",
         "class": "Sharpshooter",
         "cost": 5000,
-        "description": "Intended to help traverse large gaps between buildings. Cannot be daisy chained, however can also be used to scale vertically if given enough distance. Very fun to ride, but make sure to hook in.",
-        "rulesText": "[Deploy][Traversal]\n1 turn deployment across large gaps. This allows players to create a zipline between adjacent buildings.\nRequires an M-weapons check to see if the target is hit. Upon failure, charge is expended.\nCan be used to skip certain movement checks,on downhill or from climb zones. downhill creates 3 hex movement, climb creates 5 hex movement.\n2 uses.\nCan be used by teammates.",
-        "max": 2
-    },
-    {
-        "id": "hydraulic-hook",
-        "title": "Hydraulic Hook",
-        "parentId": "Recon",
-        "class": "Sharpshooter",
-        "cost": 8000,
-        "description": "Intended for snipers to be able to scale and move between buildings and walls quickly with a universal tool. However, only the operator can move, and only to adjacent buildings or vertically up to 25 meters.",
-        "rulesText": "[Deploy][Traversal]\nRequires an M-weapons check to see if the target is hit. Upon failure the charge is expended.\nCan be used for overwatch positions in Dense Urban zones via providing a rapell, or to skip climb checks.\nUpon success, the hook needs to recharge, which takes two world ticks.\n3 uses.\nCannot be used by teammates.",
+        "description": "",
+        "rulesText": "[Deploy][Traversal][M-wep]\n3 Charges\nWhen deployed using a [Deploy] action, pick a hex further than medium range and within line of sight, abiding by elevation rules. When a hex is selected that isn't the one the shooter is on- they can fire the Zipline using an M-Wep test against a threshold of 1+ the amount of range bands between them and the selected hex (LR would be 2 EELR being 4). Upon failure- the zipline fails to catch and the charge is spent. Characters who interact with the zipline can sacrifice one range band of movement for moving between both points of the zipline freely. In Grand Operations- it allows you to traverse up to 6 hexes unimpeded.",
         "max": 3
     },
     {
@@ -1323,8 +1336,8 @@
         "parentId": "Recon",
         "class": "Sharpshooter",
         "cost": 6000,
-        "description": "Special ammo allows for sharpshooters to have a greater effect with their bullets than just killing people. From disabling electronics with a low power EMP round, to punching through even the heaviest of body armor with AP rounds, Gold Coast's special ammo provides snipers unmatched flexibility on the field.",
-        "rulesText": "[Deploy]\nSpecial ammo rules are detailed below. EMP, Lure, AP, and Smart Rounds. Requires a Deploy action to load.",
+        "description": "Special ammo allows for sharpshooters to have a greater effect with their bullets than just killing people. From disabling electronics with a condensed EMP round, to punching through even the heaviest of body armor with AP rounds.",
+        "rulesText": "[Deploy][Shoot]\n4 rounds\nBefore a mission, choose an amount of rounds, up to the capacity, from each ammo type that is purchased. Using a [Deploy] action, you can replace the current turn of ammo loaded with that round, and then fire with its effects. Can only be used with Marksman and Sniper Rifles.",
         "maxSpecAmmo": 4,
         "options": [
             {
@@ -1353,7 +1366,7 @@
         "class": "Sharpshooter",
         "cost": 0,
         "description": "Lures an enemy towards a specific location. Has a lower drop, and a lower lethality, and makes a cute chirping sound.",
-        "rulesText": "Reduces damage by 3, but makes a ping and a noise that makes enemies investigate within medium range of it's impact point. Subsonic."
+        "rulesText": "Reduces damage by 3, but makes a ping and a noise that makes enemies investigate within medium range of its impact point. Subsonic."
     },
     {
         "id": "ap-round",
@@ -1363,7 +1376,7 @@
         "class": "Sharpshooter",
         "cost": 7000,
         "description": "High penetration bullets that improve the penetration value of a weapon by 1.",
-        "rulesText": "Increases round penetration by 1. Can penetrate Juggernaut suits and disable vehicle parts with well-aimed shots."
+        "rulesText": "Increases round penetration by 1. Negates the effects of two stage armor systems (juggernaut suits)"
     },
     {
         "id": "smrt-round",
@@ -1383,7 +1396,7 @@
         "class": "Sharpshooter",
         "cost": 6000,
         "description": "Creates a small electromagnetic pulse around the impact point.",
-        "rulesText": "Disables and disrupts electronics for 1 turn, reduces damage by 4. If aimed- can disable specific parts on vehicles such as APS."
+        "rulesText": "Disables and disrupts electronics for 1 turn with a 1 hex AOE where it landed. Can disrupt APS and vehicle systems if aimed correctly."
     },
     {
         "id": "Trapper",
@@ -1398,8 +1411,8 @@
         "parentId": "Trapper",
         "class": "Trapper",
         "cost": 4000,
-        "description": "Shock Sticks are quiet, non-lethal traps which can be used to stealthily dispatch guards or patrols, bar the noise of them being tazed.",
-        "rulesText": "[Deploy][Throw][Electric]\nAttacker Throw vs Defender Acrobatics [thrown]\nor\nAttacker Disguise vs Defender Alertness [mine]\nUser carried, 3x\n 3 hex AOE \n\n Forces a Body check against 4 when caught in the trap.\n -Upon failure, you are tazed, forced prone, and take a flesh wound.\n -Upon success, you can disable the shock stick with an action- or leave its AOE.",
+        "description": "Shock Sticks are quiet, non-lethal traps which can be used to stealthily dispatch guards or patrols, bar the noise of them being tased.",
+        "rulesText": "[Deploy][Throw][Electric]\nAttacker Throw vs Defender Acrobatics [Throw]\nor\nAttacker Disguise vs Defender Alertness [Trap]\n3 Sticks\n3 hex AOE\nLoiters for 2 turns when activated\n\nForces a Body check against 4 when caught in the trap.\n-Upon failure, you are tased, forced prone, and take a flesh wound.\n-Upon success, you can disable the shock stick with a standard action- or leave its AOE.",
         "max": 3
     },
     {
@@ -1409,7 +1422,7 @@
         "class": "Trapper",
         "cost": 3500,
         "description": "Shotgun in a tin. Riddles a target with ball bearings when triggered, and will auto-detonate by itself whenever something passes by. Don't worry, it won't fire if friendlies are near.",
-        "rulesText": "[Deploy][Explosive]\nAttacker Disguise vs Defender Notice\nUser carried, 3x\n8 DMG\n 4 hex diagonal AOE\nWhen a Claymore’s laser tripwire is activated, it detonates and riddles the target with a combination of shrapnel and ball bearings.",
+        "rulesText": "[Deploy][Explosive]\nAttacker Disguise vs Defender Alertness\n3 Claymores\n8 DMG | PEN 2\n4 hex diagonal AOE\nIf a contact or object enters between the diagonal AOE of the claymore- it will trigger.",
         "max": 3
     },
     {
@@ -1418,29 +1431,19 @@
         "parentId": "Trapper",
         "class": "Trapper",
         "cost": 2500,
-        "description": "KNOCKOUT! When activated, the Lil Mac springs up from the ground and smacks into the enemy’s face, knocking them down.",
-        "rulesText": "[Deploy]\nAttacker Disguise vs Defender Alertness\nUser carried, 2x\nWhen triggered, mine props up and knocks investigator out for a total of 4 turns. Will not cause an alertness check when activated.",
-        "max": 3
-    },
-    {
-        "id": "ankle-busters",
-        "title": "Ankle Busters",
-        "parentId": "Trapper",
-        "class": "Trapper",
-        "cost": 3000,
-        "description": "When activated, enemy movement is disabled as their legs and feet are riddled with shrapnel.\n\n... Somehow this isn't much better than claymores.",
-        "rulesText": "[Deploy]\nAttacker Disguise vs Defender Alertness\nUser carried, simple action to deploy. 2x\nWhen activated the enemy cannot move until they bandage themselves or receive treatment from a medic.",
-        "max": 3
+        "description": "KNOCKOUT! When activated, Lil Mac springs up from the ground and smacks into the enemy’s face, knocking them down.",
+        "rulesText": "[Deploy]\nAttacker Disguise vs Defender Alertness\n2x Lil Mac’s\nWhen triggered, mine props up and knocks the defender out for a total of 4 turns. Silent. Can be re-used if picked up.",
+        "max": 2
     },
     {
         "id": "c4",
         "title": "C4",
         "parentId": "Trapper",
         "class": "Trapper",
-        "cost": 4000,
+        "cost": 6000,
         "description": "Better known as 'jeep stuff', C4 is a malleable material that when introduced to an electric charge—detonates spectacularly. There are a lot of use cases. Get creative.",
-        "rulesText": "[Deploy][Throw][Explosive]\nAttacker Throw/Disguise vs Defender Acrobatics/Notice\nUser carried, simple action to deploy. x4\nWhen detonated, the C4 creates a massive explosion, capable of wiping out entire groups or a vehicle if they are attached or right on top of the explosive.\n 7 dmg.",
-        "max": 4
+        "rulesText": "[Deploy][Throw][Explosive]\nAttacker Throw vs Defender Acrobatics [Throw]\nor\nAttacker Disguise vs Defender Alertness [Trap]\n3 charges\n4 hex AOE\n10 DMG | PEN 3",
+        "max": 3
     },
     {
         "id": "m5-slam",
@@ -1449,27 +1452,17 @@
         "class": "Trapper",
         "cost": 8000,
         "description": "Jeep stuff's younger, more tech-savvy cousin, M5 SLAMs are AT/Demo charges that can be set to detonate under a variety of circumstances. Easy to program, easy to detonate, and even float in water to act as aquatic mines.",
-        "rulesText": "[Deploy][Throw][Explosive]\nAttacker Throw/Disguise vs Defender Acrobatics/Notice. Can be deployed on any surface with either:\n- Timed detonation (turn count)\n- Attack detonation (automatic)\n- Remote detonation (manual)\n\n10 DMG",
+        "rulesText": "[Deploy][Throw][Explosive]\nAttacker Throw vs Defender Acrobatics [Throw]\nor\nAttacker Disguise vs Defender Alertness [Trap]\n\nCan be deployed on any surface with either:\n- Timed detonation (turn count)\n- Attack detonation (trap)\n- Remote detonation (manual)\n\n15 DMG | PEN 3",
         "max": 4
     },
     {
-        "id": "thermtex",
-        "title": "Thermtex",
-        "parentId": "Trapper",
-        "class": "Trapper",
-        "cost": 7000,
-        "description": "The power of chemistry once more, now re-engineered and applied to burn at 2000 degrees celsius, and then detonate into a spectacular explosion. Powerful enough to deal damage to vehicles and burn through armor. Not as effective against people unless stuck... But why would you do that?",
-        "rulesText": "[Throw][Explosive]\n8 DMG | 3 hex AOE.\n When thrown in combat, prompts [Throw] vs [Armor] or [Acrobatics]. Requires a turn to detonate. Turns hard walls into cover. Can damage armored vehicles.",
-        "max": 3
-    },
-    {
         "id": "thinkpad",
-        "title": "Thinkpad",
+        "title": "Cyberwarfare Suite",
         "parentId": "Trapper",
         "class": "Trapper",
         "cost": 9500,
         "description": "It’s a ThinkPad. You’re not leaving this job for a while brother, and this thing isn’t breaking unless you shoot it with a tank.",
-        "rulesText": "[Datalink][Deploy]\nProvides access to the cyberwarfare suite. Useful for hacking. Upon usage ends your turn.",
+        "rulesText": "[Datalink][Deploy]\nProvides access to the cyberwarfare suite. All hacks are successful and the opposed tests are made to determine how messy or clean an intrusion is. The attacker MOF is given to the defender as HEAT. The attacker always gives at least one HEAT to the defender. Certain hacks are more traceable than others, and take a traceability malus to the test as a byproduct.\n\nHEAT is used to make actions against a team, and can either be spent to reduce their traceability malus by consuming an amount of HEAT, or for every 3 HEAT against a team, can be consumed to make a free hack against an enemy. This free hack will cause or be affected by MAP.",
         "options": [
             {
                 "id": "cyb-cldwn",
@@ -1505,7 +1498,7 @@
             },
             {
                 "id": "cyb-MScsh",
-                "label": "Mass Crashout"
+                "label": "Mass Crash"
             }
         ]
     },
@@ -1516,8 +1509,8 @@
         "SubMunition": true,
         "class": "Trapper",
         "cost": 0,
-        "description": "Utilizing Gold Coast's algorithms, automatically scrambles your position and traceable data to shake enemy cyberwarfare or intrusion countermeasure software.",
-        "rulesText": "Lowers your HEAT by 1"
+        "description": "Automatically scrambles your position and traceable data to shake enemy cyberwarfare or intrusion countermeasure software.",
+        "rulesText": "Lowers your HEAT by 2"
     },
     {
         "id": "cyb-ppt",
@@ -1527,7 +1520,7 @@
         "class": "Trapper",
         "cost": 0,
         "description": "Manipulate basic device functions, such as opening/closing doors and deactivating/accessing cameras.",
-        "rulesText": "Allows you to open select doors and see through cameras. Does not work with drones or HUDs."
+        "rulesText": "Allows you to open select doors and see through cameras. Does not work with drones, combat vehicles, or HUDs."
     },
     {
         "id": "cyb-ping",
@@ -1536,8 +1529,8 @@
         "SubMunition": true,
         "class": "Trapper",
         "cost": 0,
-        "description": "Accesses local cameras and devices and pings enemies that are visible.",
-        "rulesText": "[-1 Traceability] Pings all enemies within 25 hexes. Can be distrupted if cameras are shot, or if target is obscured. Requires user connection. Ping lasts 1 turn."
+        "description": "Accesses local cameras and devices and pings contacts it can find.",
+        "rulesText": "[-1 Traceability] Pings all enemies within 16 hexes. If someone’s electronics are [Disabled]- they are not pinged."
     },
     {
         "id": "cyb-svr",
@@ -1545,9 +1538,9 @@
         "parentId": "thinkpad",
         "SubMunition": true,
         "class": "Trapper",
-        "cost": 5000,
-        "description": "Accesses a specific target and cuts their connection to all downlink and uplink connections, effectively 'severing' them from their own command. ",
-        "rulesText": "[-1 Traceability] Disable an enemy's ability to call reinforcements, mark targets, or control drones. 2 Turns."
+        "cost": 3000,
+        "description": "Accesses a specific target and cuts their connection to all downlink and uplink connections, effectively 'severing' them from their own command.",
+        "rulesText": "[-1 Traceability] Disable an enemy's ability to call reinforcements, mark targets, or control drones for 2 Turns."
     },
     {
         "id": "cyb-fdbk",
@@ -1555,9 +1548,9 @@
         "parentId": "thinkpad",
         "SubMunition": true,
         "class": "Trapper",
-        "cost": 7000,
+        "cost": 5000,
         "description": "Deafens a target and scrambles their communications system, making them unable to communicate with others through a deafening tone. Very effective in annoying enemies to forcefully disable their radios, or disrupting them entirely",
-        "rulesText": "[-2 Traceability] Interrupts an enemy for a turn and applies a -1 to all actions. Countered by disabling radio."
+        "rulesText": "[-2 Traceability] Interrupts an enemy and applies a -1 to all actions for their turn. Countered by disabling [Datalink] via a bonus action."
     },
     {
         "id": "cyb-trc",
@@ -1565,9 +1558,9 @@
         "parentId": "thinkpad",
         "SubMunition": true,
         "class": "Trapper",
-        "cost": 13000,
+        "cost": 7000,
         "description": "Ping's bigger brother, penetrates into an enemy datalink to trace it back to everything using it. Pings any and every enemy on the local network.",
-        "rulesText": "[-3 Traceability] Pings all enemies on a network. Works regardless of cameras. EMP'd or severed targets are immune."
+        "rulesText": "[-3 Traceability] Pings all enemies within the world hex."
     },
     {
         "id": "cyb-MShck",
@@ -1575,9 +1568,9 @@
         "parentId": "thinkpad",
         "SubMunition": true,
         "class": "Trapper",
-        "cost": 21000,
-        "description": "Brute forcing one's way into all local networks, this locks out all enemy users from the datalink. However, it will also spread to the rest of the connected signals, leading a mass lockout that spreads to vehicles, drones, and more.",
-        "rulesText": "[-4 traceability] Blocks all enemy connections on a network. Disables radio, cameras, and tech like HUDs, turrets, and drones. Effective against vehicles to narrow crew awareness. Erases all enemy pings. lasts for 2 turns."
+        "cost": 10000,
+        "description": "Brute forcing one's way into all local networks, this locks out all enemy users from the datalink. However, it will also spread to the rest of the connected signals, leading to a mass lockout that spreads to vehicles, drones, and more.",
+        "rulesText": "[-4 traceability] [Disables] all enemy electronics within the world hex. Disables radio, cameras, and tech like HUDs, turrets, and drones. Effective against vehicles to narrow crew awareness. Lasts for 2 turns."
     },
     {
         "id": "cyb-brn",
@@ -1585,9 +1578,9 @@
         "parentId": "thinkpad",
         "SubMunition": true,
         "class": "Trapper",
-        "cost": 19000,
-        "description": "Connects to all devices on a network and overclocks the CPU of the to burn and disable them. Takes one turn to overclock, but permanently disables that device if successful. When used against vehicles, it automatically leads to a shutdown of non-essential systems to protect itself, effectively kneecapping them until the reboot proces can start.",
-        "rulesText": "[-5 Traceability] Causes a one turn timer to start on all enemy electronics, if the enemies dont react within that turn and disable their equipment- it burns and is permanently disabled. Vehciles electronics are disabled for the next turn and need to restart."
+        "cost": 11000,
+        "description": "Connects to all devices on a network and overclocks the CPU of the to burn and disable them. Takes one turn to overclock, but permanently disables that device if successful. When used against vehicles, it automatically leads to a shutdown of non-essential systems to protect itself, effectively kneecapping them until the reboot process can start.",
+        "rulesText": "[-5 Traceability] Causes a one turn timer to start on all enemy electronics, if the enemies don't react within that turn and disable their equipment using a Bonus Action- their electronics burn and are permanently disabled. Vehicle electronics are disabled for the next turn and need to restart."
     },
     {
         "id": "cyb-MScsh",
@@ -1595,8 +1588,8 @@
         "parentId": "thinkpad",
         "SubMunition": true,
         "class": "Trapper",
-        "cost": 26000,
+        "cost": 12000,
         "description": "Much like Mass Hack and Burnout, Mass Crash also penetrates into an enemy's network- but goes even deeper. Going as far as to intrude into the local power grid to disable everything in the local area. Lights, power, and all enemy electronics are severed and shut down. Useful for creating either perfect darkness to escape, or an opening to push while hostiles. are confused and dazed.",
-        "rulesText": "[-5 traceability] Same effect as Mass Hack, however also disables all non-natural lighting in the operational area."
+        "rulesText": "[-5 traceability] [Disables] all enemy electronics within the world hex. Disables radio, cameras, and tech like HUDs, turrets, and drones. Effective against vehicles to narrow crew awareness. Disables all non-natural lighting. Lasts for 3 turns."
     }
 ]
