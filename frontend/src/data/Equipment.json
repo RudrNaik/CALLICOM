@@ -1299,7 +1299,7 @@
         "class": "Sharpshooter",
         "cost": 8000,
         "description": "Built off of the Marine's SUAV, the Silver Bird is an autonomous drone that orbits the user at a high altitude to mark targets. Has only NV. Pings for every turn it is up.",
-        "rulesText": "[Airborne][Repairable][Deploy][Ping][Designate][Datalink][NVG]\nUser Carried\nUptime: 3 turns | Downtime: 2 turns\n1 general | 2 notice | 2 acrobatics | 2 investigation\nPings in a large area, extending to 3 world hexes from and including the encounter area. Causes a stealth or disguise test, using the lower, against any contact in the area. Will not spot gadgets, traps, drones, or anyone indoors. Has a LAM and can [Designate] targets."
+        "rulesText": "[Airborne][Repairable][Deploy][Ping][Designate][Datalink][NVG]\nUser Carried\nUptime: 3 turns | Downtime: 2 turns\n1 general | 2 notice | 2 acrobatics | 2 investigation\nPings in a large area, extending to 3 world hexes from and including the encounter area. Causes a stealth or disguise test, using the lower, against any contact in the area. Will not spot gadgets, traps, drones, or anyone indoors. Has a LAM and can [Designate] targets. Cannot be used indoors."
     },
     {
         "id": "bumblebee-echolocator",
