@@ -160,23 +160,6 @@ app.get("/api/campaignEquipment", async (req, res) => {
   }
 });
 
-app.get("/api/lore", async (req, res) => {
-  const client = new MongoClient(url);
-  try {
-    await client.connect();
-    const db = client.db(dbName);
-    const collection = db.collection("loreDocs");
-
-    const lore = await collection.find().toArray();
-    res.status(200).json(lore);
-  } catch (err) {
-    console.error("Error fetching archives:", err.message);
-    res.status(500).json({ error: "Failed to fetch lore archives" });
-  } finally {
-    await client.close();
-  }
-});
-
 app.use(authenticateJWT); // All routes after this require JWT authentication
 
 // ---- Campaign ownership / access -------------------------------------------
