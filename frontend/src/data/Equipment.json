@@ -3,7 +3,7 @@
         "id": "Weapons",
         "title": "Weapons",
         "class": "None",
-        "rulesText": "As a member of a premier PMC with leading military R&D, characters get access to a wide range of weapons and gadgets to use against their many foes. Weapons in Calamari are divided across weapon classes, each weapon class has a universal statistic associated with it allowing players to select whatever weapon of their choosing that fits into that weapon class and simply copy the stats.",
+        "rulesText": "As a member of a premier PMC with leading military R&D, characters get access to a wide range of weapons to use against their many foes. Weapons in Calamari are divided across weapon classes, each weapon class has a universal statistic associated with it allowing players to select whatever weapon of their choosing that fits into that weapon class and simply copy the stats. Within those classes are weapon families that can alter the specific stats or functions of a weapon. Family costs are added onto the base weapon's costs when purchased.\n\nAmmo is handled in turns of ammunition- where the total reserve ammo is how many turns of ammo you have for that weapon in total, and the turns per magazine are the amount of turns you can fire until empty. When firing, mark down a turn of ammunition spent from your magazine and your total reserves, and keep track of how many you have left in the magazine.\n\nReloading allows you to restock the turns of ammo in your magazine. When you reload, reset the turns of ammo in your weapon's magazine to its capacity. Reloading from empty applies a -1 to all actions that turn, while reloading with ammo left in the magazine will apply a -1 malus to your shooting test.\n\nWeapon stats are formatted where PEN is a weapon's penetration value, DMG is the base damage a weapon will do to targets before modifiers and MOS, RSV is the total turns of ammo a weapon has, and CAP is how many turns are in a magazine.",
         "description": "GUNS GUNS GUNS"
     },
     {
@@ -12,16 +12,14 @@
         "parentId": "Weapons",
         "class": "L-Weapons",
         "cost": 1200,
-        "description": "Light Pistols are handguns shooting conventional pistol calibers such as 9x19, .45 ACP, and 5.7x28. Though light on damage they make up for this with decent-sized magazines and general reliability at short to medium distances",
-        "rulesText": "[Light Weapons][CQC]\nRange modifier: +1 C | -2 L | -3 ELR\n PEN: 1 | DMG: 4 \n RSV: 4 | CAP: 2",
+        "description": "Light Pistols are handguns shooting conventional pistol calibers such as 9x19 Parabellum and below Though light on damage they make up for this with decent-sized magazines and general reliability at short to medium distances",
+        "rulesText": "[Light Weapons][CQC]\nRange modifier: +1 C | -2 L | -3 ELR\n PEN: 1 | DMG: 4 \n RSV: 6 | CAP: 3",
         "families": [
             {
                 "family": "Wonder-9",
                 "cost": 200,
-                "effect": "Gain an extra magazine and an extra turn of ammo per magazine. Gain [Spray]",
+                "effect": "Gain [Spray]",
                 "modifiers": {
-                    "magazines": 1,
-                    "magazineSize": 1,
                     "abilities": [
                         "Spray"
                     ]
@@ -30,13 +28,13 @@
             {
                 "family": "Micros",
                 "cost": 100,
-                "effect": "Gain a +1 to disguise checks, uses subsonic ammo",
+                "effect": "Gain a +1 to disguise tests, uses subsonic ammo",
                 "modifiers": {}
             },
             {
                 "family": "Power-10",
-                "cost": 300,
-                "effect": "Limb shots debilitate targets by removing their ability to sprint if hit in the leg, or reducing any action involving two hands by one dice.",
+                "cost": 400,
+                "effect": "Limb shots apply [Debilitated] to targets if hit in the leg.",
                 "modifiers": {}
             }
         ],
@@ -52,18 +50,19 @@
         "title": "Heavy Pistols",
         "parentId": "Weapons",
         "class": "L-Weapons",
-        "cost": 1200,
-        "description": "Heavy Pistols are handguns and revolvers shooting heavier calibers such as .44 Magnum, .357 Magnum, .50 AE. These weapons trade large magazine sizes and accuracy at longer distances for heavy damage.",
-        "rulesText": "[Light Weapons][Precision]\nRange modifier: +1 M | -1 L | -2 ELR\n PEN: 2 | DMG: 6 \n RSV: 4 | CAP: 2",
+        "cost": 1500,
+        "description": "Heavy Pistols are handguns and revolvers shooting heavier calibers such as .44 Magnum, .357 Magnum, .50 AE as well as including .45 ACP and .40 S&W. These weapons trade large magazine sizes and accuracy at longer distances for heavy damage.",
+        "rulesText": "[Light Weapons][Precision]\nRange modifier: +1 M | -1 L | -2 ELR\n PEN: 1 | DMG: 5 \n RSV: 4 | CAP: 2",
         "families": [
             {
                 "family": "Hand-cannons",
                 "cost": 500,
-                "effect": "Increases damage by 1. You only have one cylinder with 3 turns of ammo.",
+                "effect": "Increases damage and penetration by 1. You only have one cylinder with 3 turns of ammo (-1 RSV, +1 CAP).",
                 "modifiers": {
                     "damage": 1,
+                    "penetration": 1,
                     "magazineSize": 1,
-                    "magazines": -1
+                    "totalTurns": -3
                 }
             },
             {
@@ -84,7 +83,7 @@
             }
         ],
         "damage": 5,
-        "penetration": 2,
+        "penetration": 1,
         "range": "+1 M | -1 L | -2 ELR",
         "totalTurns": 4,
         "magazineSize": 2,
@@ -96,7 +95,7 @@
         "parentId": "Weapons",
         "class": "L-Weapons",
         "cost": 2000,
-        "description": "Submachine Guns are compact weapons shooting conventional pistol calibers such as 9x19, .45 ACP, and 10mm at high rates of fire. These weapons come with the ability to Spray which allows them to saturate anywhere between 1-3 targets in their cone of fire (note this can also include teammates if the player is not careful). When used in the secondary slot- the total ammo is halved.",
+        "description": "Submachine Guns are compact weapons shooting conventional pistol calibers such as 9x19, .45 ACP, and 10mm at high rates of fire. These weapons come with the ability to Spray which allows them to saturate targets in their cone of fire. Machine pistols can be used in the secondary slot, but the total ammo is halved.",
         "rulesText": "[Light Weapons][Spray]\nRange modifier: +1 C | -1 L | -2 ELR\n PEN: 1 | DMG: 4 \n RSV: 9 | CAP: 3",
         "families": [
             {
@@ -104,14 +103,14 @@
                 "cost": 400,
                 "effect": "Only Equippable as a secondary, lose a magazine and a turn of ammo per mag.",
                 "modifiers": {
-                    "totalTurns": -3,
+                    "magazineSize": -1,
                     "magazines": -1
                 }
             },
             {
                 "family": "Heavy SMGs",
                 "cost": 300,
-                "effect": "Gain +1 to damage, uses Subsonic ammo. Gain [Burst]",
+                "effect": "Gain +1 to damage, uses Subsonic ammo. Replace [Spray] with [Burst].",
                 "modifiers": {
                     "damage": 1,
                     "abilities": [
@@ -122,7 +121,7 @@
             {
                 "family": "Light SMGs",
                 "cost": 100,
-                "effect": "Gain an extra turn per magazine, Gain +1 to disguise checks in Social Stealth as it's easier to conceal.",
+                "effect": "Gain an extra turn per magazine,  Gain +1 to disguise checks and +1 bonus to Stealth tests as it's easier to conceal.",
                 "modifiers": {
                     "magazineSize": 1
                 }
@@ -155,7 +154,7 @@
             {
                 "family": "Compact Carbines",
                 "cost": 100,
-                "effect": "+1 to stealth, can be concealed easier and provides a +1 to Disguise in social stealth",
+                "effect": "Gain a +1 bonus to Disguise tests in social stealth",
                 "modifiers": {}
             },
             {
@@ -183,33 +182,33 @@
         "parentId": "Weapons",
         "class": "M-Weapons",
         "cost": 3500,
-        "description": "Assault Rifles are the big brothers to the carbines, covering weapons that fire intermediate cartridges like 5.56x45, 5.45x39, and 7.62x39. The true middle ground when it comes to weapons, they dominate mid-range engagements but take a hit in CQB. These weapons come with the ability to Burst Fire, enabling them to fire a tight burst towards a single opponent at the expense of less dice, for more damage.",
+        "description": "Assault Rifles are the big brothers to the carbines, covering weapons that fire intermediate cartridges like 5.56x45, 5.45x39, and 7.62x39. The true middle ground when it comes to weapons, they dominate mid-range engagements but take a hit in CQB. These weapons come with the ability to Burst Fire, enabling them to fire a tight burst towards a single opponent for more damage, at the expense of less dice.",
         "rulesText": "[Medium Weapons][Burst]\nRange modifier: -1 C | +1 M | -1 ELR\n PEN: 1 | DMG: 5 \n RSV: 9 | CAP: 3",
         "families": [
             {
                 "family": "Kalashnikovs",
-                "cost": 100,
-                "effect": "All 1's are no longer considered automatic failures. Cannot Jam.",
+                "cost": 200,
+                "effect": "Cannot jam. Reloading never applies a malus, even from empty. Shooting tests ignore the first -1 of wound malus.",
                 "modifiers": {}
             },
             {
                 "family": "Armalites",
-                "cost": 200,
-                "effect": "Can expend a bonus action to gain the effects of having aimed for one turn already, has a cooldown of two turns.",
+                "cost": 400,
+                "effect": "Can consume a bonus action to gain the effects of having steadied for one turn already, the effect has a cooldown of two turns.",
                 "modifiers": {}
             },
             {
                 "family": "Bullpups",
                 "cost": 300,
-                "effect": "Gain a +1 to your roll when in Close range of your target.",
+                "effect": "Gain a +1 bonus when in Close range of the target.",
                 "modifiers": {
                     "C": 1
                 }
             },
             {
                 "family": "E-Bolt",
-                "cost": 9999999999,
-                "effect": "You can Overclock your rifle to gain a +1 to penetration and +2 to damage for one turn during an encounter. After an overclock, results below 4 will automatically jam for two turns.",
+                "cost": 30000,
+                "effect": "You can Overclock your rifle to gain a +1 to penetration and +2 to damage for one turn during an encounter. After an overclock, results below 5 will automatically jam for the next two turns.",
                 "modifiers": {}
             }
         ],
@@ -226,7 +225,7 @@
         "parentId": "Weapons",
         "class": "M-Weapons",
         "cost": 4300,
-        "description": "Marksman rifles are hard-hitting semi-automatic rifles chambered in heavier-hitting calibers such as 7.62x51, 7.62x54, and 6.8x51. Capped with a reduced magazine size and suffering in CQC, these weapons make up for this with their high damage and ranged performance. These weapons come with the ability to Burst Fire, enabling them to fire a tight burst towards a single opponent at the expense of less dice, for more damage.",
+        "description": "Marksman rifles are hard-hitting semi-automatic rifles chambered in heavier-hitting calibers such as 7.62x51, 7.62x54, and 6.8x51. Capped with a reduced magazine size and suffering in CQC, these weapons make up for this with their high damage and ranged performance. These weapons come with the ability to Burst Fire, enabling them to fire a tight burst towards a single opponent for more damage, at the expense of less dice.",
         "rulesText": "[Medium Weapons][Burst][Precision]\nRange modifier: -1 C | +1 L | -1 ELR\n PEN: 2 | DMG: 6 \n RSV: 6 | CAP: 2",
         "families": [
             {
@@ -240,7 +239,7 @@
             {
                 "family": "Precision Rifles",
                 "cost": 500,
-                "effect": "Aiming for limbs doesnt remove a dice. Has a cooldown of two turns.",
+                "effect": "Aiming for limbs doesn't remove a dice. Has a cooldown of two turns.",
                 "modifiers": {}
             },
             {
@@ -271,7 +270,7 @@
             {
                 "family": "Pump-Action",
                 "cost": 300,
-                "effect": "As a bonus action, you can load a slug round that has a custom range band of -1 C | +1 L | -2 ELR",
+                "effect": "As a bonus action, you can load a slug round that has a custom range band of -1 C | +1 L | -2 ELR. When firing- still mark a turn of ammo.",
                 "modifiers": {}
             },
             {
@@ -302,15 +301,15 @@
         "id": "sr",
         "title": "Sniper Rifles",
         "parentId": "Weapons",
-        "class": "M-Weapons",
+        "class": "H-Weapons",
         "cost": 5100,
-        "description": "Undisputed champions of long-range engagements, sniper rifles are a go-to choice for marksmen. Chambered from anything between 7.62x51 AP, 338 Lupua, and .300 Norma these weapons are perfect for dropping individual targets long before they know what hit them, made all the better with their armour-penetrating rounds that can hit targets behind soft walls and cover. The major downside however is drawbacks for trying to use them in CQC and their low ammo count. Make each shot count.",
-        "rulesText": "[Medium Weapons][Sharpshooter][Precision]\nRange modifier: -2 C | +1 L | +2 ELR\n PEN: 2 | DMG: 7 \n RSV: 6 | CAP: 3",
+        "description": "Undisputed champions of long-range engagements, sniper rifles are a go-to choice for marksmen. Chambered from anything between 7.62x51 AP, 338 Lapua, and .300 Norma these weapons are perfect for dropping individual targets long before they know what hit them, made all the better with their armour-penetrating rounds that can hit targets behind soft walls and cover. The major downside however is drawbacks for trying to use them in CQC and their low ammo count. Make each shot count.",
+        "rulesText": "[Heavy Weapons][Sharpshooter][Precision]\nRange modifier: -2 C | +1 L | +2 ELR\n PEN: 2 | DMG: 7 \n RSV: 6 | CAP: 3",
         "families": [
             {
                 "family": "Endurance Rifles",
                 "cost": 200,
-                "effect": "Each magazine has an extra turn of ammo, Gain an extra magazine.",
+                "effect": "Each magazine has an extra turn of ammo (CAP +1), Gain an extra magazine (+CAP Turns).",
                 "modifiers": {
                     "magazineSize": 1,
                     "magazines": 1
@@ -319,19 +318,19 @@
             {
                 "family": "High Caliber",
                 "cost": 300,
-                "effect": "+1 to navigate checks when making a shot from EELR.",
+                "effect": "+1 bonus to navigate tests when making a shot from EELR.",
                 "modifiers": {}
             },
             {
                 "family": "Fun Size",
                 "cost": 100,
-                "effect": "+1 to stealth and disguise checks. Easier to conceal in cases and luggage, +1 to disguise when in social stealth.",
+                "effect": "+1 bonus to stealth and disguise tests. Easier to conceal in cases and luggage, +1 bonus to disguise when in social stealth.",
                 "modifiers": {}
             },
             {
                 "family": "E-Bolt",
-                "cost": 9999999999,
-                "effect": "Spend a turn charging your rifle to negate navigate rolls in exchange for a flat +2. Aim bonuses do not count. Charged rounds have +1 penetration.",
+                "cost": 30000,
+                "effect": "Spend a turn charging your rifle to negate navigate tests in exchange for a flat +2 bonus. Aim bonuses do not count. Charged rounds have +1 penetration.",
                 "modifiers": {}
             }
         ],
@@ -348,13 +347,13 @@
         "parentId": "Weapons",
         "class": "H-Weapons",
         "cost": 4800,
-        "description": "Lead spitting machines of the battlefield, machine guns are chambered in a mixture of intermediate and heavier hitting calibers ranging from 5.56,5.8x42, 7.62x51, 6.8x51, and 7.62x39. Despite this mix of calibers, their main purpose isn’t to inflict pinpoint precision damage but to instead shatter the will and the cover of anyone in front of their field of fire. Comes with the ability to Suppress this allows the attacker to choose an area of up to 3 hexes wide to suppress.",
-        "rulesText": "[Heavy Weapons][Fire Support][Suppression]\nRange modifier: +1 Bipod | +1 M | -1 L | -1 ELR\n PEN: 2 | DMG: 5 \n RSV: 8 | CAP: 4",
+        "description": "Lead spitting machines of the battlefield, machine guns are chambered in a mixture of intermediate and heavier hitting calibers ranging from 5.56,5.8x42, 7.62x51, 6.8x51, and 7.62x39. Despite this mix of calibers, their main purpose isn't to inflict pinpoint precision damage but to instead shatter the will and the cover of anyone in front of their field of fire. Comes with the ability to suppress and pin down targets.",
+        "rulesText": "[Heavy Weapons][Fire Support][Suppression]\nRange modifier: +1 M | -1 L | -1 ELR\n PEN: 2 | DMG: 5 \n RSV: 8 | CAP: 4",
         "families": [
             {
                 "family": "LSW",
-                "cost": 100,
-                "effect": "Reduces your capacity to 3 turns, you now have 3 magazines. Gains [Burst].",
+                "cost": 200,
+                "effect": "Reduce your magazine capacity to 3 turns (CAP: 3), you now have 3 magazines of ammunition in total. (RSV: 3*CAP). Gain [Burst].",
                 "modifiers": {
                     "magazineSize": -1,
                     "magazines": 1,
@@ -365,8 +364,8 @@
             },
             {
                 "family": "LMG",
-                "cost": 200,
-                "effect": "Gain the ability to [Spray].",
+                "cost": 100,
+                "effect": "Gain [Spray].",
                 "modifiers": {
                     "abilities": [
                         "Spray"
@@ -376,7 +375,7 @@
             {
                 "family": "MMG",
                 "cost": 300,
-                "effect": "Increase damage by 1. When in close range of a target, add a malus of -2.",
+                "effect": "Increase damage by 1. When in close range of the target, add a malus of -2 to your shooting test.",
                 "modifiers": {
                     "damage": 1,
                     "C": -2
