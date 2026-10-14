@@ -1,5 +1,30 @@
 [
   {
+    "id": "Timeline",
+    "title": "Timeline"
+  },
+  {
+    "id": "prey2k",
+    "parentId": "Timeline",
+    "title": "1965-2000",
+    "fluff": "20th century, pre crash.",
+    "content": "- 1986: Challenger II space launch succeeds, TDRS system established during Challenger I is repaired for future space launches and missions from NASA.\n\n- 1987: Gold Coast Laboratories formed by disgruntled raytheon engineers after the cancellation of their work in the US Army’s LandWarrior program. Gold Coast then develops the integrated fighting system and submits it to DARPA. The first iteration is considered a success by the US government, and Gold Coast is given a grant to continue developing Land Warrior.\n\n- 1990: Cold War hots up, and cools down. The fall of the berlin wall marks the end of the cold war as the Soviet Union breaks up and becomes the Russian Federation. However, with old animosities fanning the flames of strife, conflict erupts in these former soviet states, Yugoslavia, and elsewhere.\n\n- 1998: crisis in Georgia leads to a clandestine deployment of Green Berets equipped with the current generation of Land Warrior technology. The operation is a resounding success, and tips the scales of the crisis in the favor of the Georgians.\n\n- 1999: Bastogne-Martel Foundation finish work on the French FELIN program, leading to another NATO country now on equal footing with the United States after Gold Coast refused to sell the LandWarrior system to countries other than the US and UK.\n\nThe South American Prosperity Pact is also formed in this time, which was an alliance between Brazil, Chile, and Argentina to curb the drug and cartel problem in their countries and provide mutual defense.\n\n- 2000: Creation of NATO TF:Sundog after the start of an ecoterror movement in Europe. The unit stopped the ‘Welcome to Earth’ movement and a bioterror disaster from happening in the Syndey Olympics."
+  },
+  {
+    "id": "2k-pre-crash",
+    "parentId": "Timeline",
+    "title": "2000-2016",
+    "fluff": "21st century, before Crash.",
+    "content": "- 2001: 9/11 happens. Global War on Terror begins.\n\n- 2002: NASA monitors abnormal sunspot activity. An earlier than expected solar maximum is predicted. Solar storms and flares become frequent and baffle scientists due to the abnormality.\n\n- 2003: NASA report predicts the probability of a solar storm hitting the Earth after previous estimates. New estimates report a 12.43% chance of a solar storm hitting the Earth compared to the 0.98 and 0.49 percent chances from earlier assessments. Space agencies begin working to develop Coronal Mass Ejection action plans and technologies to reduce the damage that can be caused.\n\n- 2005: United Nations ratified the 'Paris Accords', a series of rules and regulations for private military contractors to turn them into international actors. The guidelines set down by the accords are simple. PMCs act as international and independent entities and must be contracted by a sovereign state to enter a conflict. They cannot target civilian populations, and all PMC operational units must be given the status of official combatants. PMCs are also subject to the Geneva Conventions and face harsher punishments for violations. They are also to supply their own equipment to fulfill missions.\n\nThat same year, Coronal Mass Ejections continue to be monitored. CNES reports that CMEs are 'more powerful' and that 'The amount of damage that could be caused could create billions of dollars in infrastructure loss.'\n\n- 2009: a Coronal Mass Ejection was reported on course for Earth and was predicted to affect Europe. Governments quickly formed plans in their 16 days of preparation, and CME technology was given its first test run. On the 17th of April, the skies above Europe shone with bright, colorful lights as the Solar Storm hit. But the preparations were not enough. All of Europe was left without power for the next three months. Reparation costs were around 15 trillion to bring power and satellite connection back to Europe.\n\n- 2010: Following the 'Black April' events, world governments began investing heavily in CME-resistant technology in fear of it happening again.\n\n- 2013: Technological breakthroughs in nanomachines and nanites led to the first recorded usage of medical nanomachines. The procedure was successful, but the cost of nanomachine treatments was incredibly high. Some companies, such as SYNTEK medical technologies, began to invest heavily into the development of these technologies nevertheless.\n\n- 2014: The United States and NATO begin a three-year plan to reduce overseas troops. Due to the possibility of an absence of the international community, PMCs see a rise in popularity to assist countries and clients in hot zones. PMCs such as Calamari OSG see massive gains in contracts in the Middle East and the Horn of Africa.\n\n- 2016: Early warning satellites monitoring the sun for solar flares or CMEs report a coronal mass ejection on course for the Earth. Projections estimated this was 'the big one' as some scientists predicted. 15 days were allotted for preparations, and countries scrambled to enact their CME plans in that time frame. Stay-behind forces in the Middle East and overseas were quickly activated, countries scrambled to bring their people home, and satellites quickly shifted into safe mode to survive the oncoming storm. However, when 'the big one' hit, many of these plans quickly fell apart due to the power of the CME, miscommunications between countries, and a lack of time.\n\nMost satellites were thrown into the expanse of space, power grids fried and caused fires, trillions of dollars in irreversible infrastructure damage was dealt with, and countries collapsed into failed states. The four years that followed were dubbed ‘The Crash’ on what remained of social networks."
+  },
+  {
+    "id": "2k-post-crash",
+    "parentId": "Timeline",
+    "title": "2017-present",
+    "fluff": "21st century, after Crash.",
+    "content": "- 2017: NASA and other space agencies rushed to unlock the satellites still in orbit and relaunch satellites to bring back coverage. Many launches failed due to various factors, but communications were partially restored for government use by late 2017.\n\nLater that year, China undergoes an internal governmental crisis. It is said that the prior president died during the situation, and a new, controversial president came into power: former Navy Admiral Yuan. A few months later, Taiwan was annexed by China. The specifics of what happened are still being determined due to a lack of information and propaganda. Russia also undergoes a similar crisis, and the Siberian Republics are formed east of the Ural Mountain Range. Immediate denuclearization talks are established between them and the United States.\n\nThat same year, SAPP industry spies were caught in the United States, relations between them and the United States began to falter, which was furthered by eight astronauts that were taken ransom by SAPP as retaliation and leverage. Neither side wanted war, however neither side wished to let go of their leverage. Publically it was reported that the Cartels had their hands on the astronauts.\n\nThis then sparked the creation of Task Force Gold, a small task force comprising of remnants of NATO SOF. This team drew from CIA-SAD, SRR, SAS, SBS, Delta Force, 4e RPIMA, Green Berets, and other tier one units, borders and protocols ignored. Gold Coast and Bastogne-Martel both provided specialized equipment for the misson from their pre-crash Techvaults in the Alps and Cascadia.\n\n- 2019: More satellites are sent into space with CME-resistant technology; NASA reports a reduction in abnormal sunspot activity. The internet is re-established for civilian use, and satellite coverage is 60% complete. Only areas in South Africa, South America, and parts of the Middle East are left without coverage.\n\nThat same, year, Turkey formally announces that they are leaving NATO.\n\n- 2020: Satellite coverage restored in full across the globe.\n\n- 2021: Siberian Nuke Crisis begins as reports surfaced of an ultranationalist Siberian group possessing three nuclear devices. NATO contracts Calamari OSG on behalf of the Siberian government in secret to assist them in finding the nukes. Russia, at this time, began moving troops to the border with Siberia to prevent any ultranationalists from crossing the border with the nuke. This is seen as a move to invade by the Siberians, and tensions rise between the two countries. The crisis ended two months later as the Siberians were able to retrieve the nukes with the help of Calamari OSG."
+  },
+  {
     "_id": {
       "$oid": "69120eb4049319aba29de2bf"
     },
@@ -83,16 +108,6 @@
     },
     "id": "Nations&Alliances",
     "title": "Nations and Alliances"
-  },
-  {
-    "_id": {
-      "$oid": "69123cbd049319aba29de2ce"
-    },
-    "id": "Example",
-    "parentId": "Example",
-    "title": "Example",
-    "fluff": "Example",
-    "content": "Example"
   },
   {
     "_id": {
