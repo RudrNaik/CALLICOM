@@ -49,7 +49,7 @@ const GrenadesPanel = ({
               <div key={i} className="text-sm text-white space-y-1 flex flex-col">
                 <div>
                   <span className="font-semibold text-neutral-300">
-                    {grenadeData?.title || `Grenade ${i + 1}`}
+                    {grenadeData?.title || `None`}
                   </span>
                 </div>
                 {grenadeData && (
@@ -57,7 +57,7 @@ const GrenadesPanel = ({
                     {grenadeData?.rulesText}
                   </div>
                 )}
-                {charActive && (
+                {charActive && grenadeData?.title && (
                   <div>
                     <div className="px-2 py-1 rounded-xs bg-neutral-900 mb-2">
                       <span className="text-yellow-400">
