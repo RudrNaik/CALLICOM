@@ -42,7 +42,7 @@
         "penetration": 1,
         "range": "+1 C | -2 L | -3 ELR",
         "totalTurns": 6,
-        "magazineSize": 3,
+        "magazineSize": 2,
         "categoryName": "Light Pistols"
     },
     {
