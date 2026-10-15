@@ -68,12 +68,20 @@ function Campaigns() {
 
   /**
    * Keeps the selection on a campaign this user can actually see, defaulting
-   * to the first one when nothing (or something no longer visible) is selected.
+   * to the most recently created one when nothing (or something no longer
+   * visible) is selected. Mongo ObjectIds start with a creation timestamp, so
+   * `_id` orders by recency when there is no explicit createdAt.
    */
   useEffect(() => {
     if (!hasLoadedData) return;
     if (!campaigns.some((c) => c.id === currentCampaignId)) {
-      setCurrentCampaignId(campaigns[0]?.id || "");
+      const recency = (c) =>
+        c.createdAt ? new Date(c.createdAt).getTime() : parseInt(String(c._id || "").slice(0, 8), 16) * 1000 || 0;
+      const newest = campaigns.reduce(
+        (best, c) => (!best || recency(c) > recency(best) ? c : best),
+        null
+      );
+      setCurrentCampaignId(newest?.id || "");
     }
   }, [campaigns, hasLoadedData]);
 
