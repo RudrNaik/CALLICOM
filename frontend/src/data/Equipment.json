@@ -239,7 +239,7 @@
             {
                 "family": "Precision Rifles",
                 "cost": 500,
-                "effect": "Aiming for limbs doesn't remove a dice. Has a cooldown of two turns.",
+                "effect": "Reduces maluses for firing at limbs by one dice. Has a cooldown of two turns.",
                 "modifiers": {}
             },
             {
@@ -276,7 +276,7 @@
             {
                 "family": "Semi-Auto",
                 "cost": 100,
-                "effect": "Firing at a soft wall can turn it into cover. Can be used as a breaching tool for a bonus action instead of a full action.",
+                "effect": "Firing at a soft wall can turn it into cover. Can be used as a breaching tool against all doors up to reinforced doors as a bonus action, when doing so- still mark a turn of ammo.",
                 "modifiers": {}
             },
             {
@@ -446,7 +446,7 @@
         "class": "Class",
         "cost": 0,
         "description": "Equipped with a laser designator, laser mic, rangefinder, and an integrated datalink module to stream information directly to CAS and Indirect Fire systems, the SOFLAM allows Riflemen to observe, designate, and destroy targets with fast air or artillery.",
-        "rulesText": "[Datalink][Mark][Designate][Deploy]\nUsing a [Deploy] action, the user can [Mark] a target or [Designate] them. Provides a +1 CAS and Artillery tests when used to call in fire."
+        "rulesText": "[Datalink][Mark][Designate][Deploy]\nUsing a [Deploy] action, the user can [Mark] a target or [Designate] them. Provides a +1 navigate tests when used to call in CAs or Artillery."
     },
     {
         "id": "halligan",
