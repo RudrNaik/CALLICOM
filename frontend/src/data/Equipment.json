@@ -301,10 +301,10 @@
         "id": "sr",
         "title": "Sniper Rifles",
         "parentId": "Weapons",
-        "class": "H-Weapons",
+        "class": "M-Weapons",
         "cost": 5100,
         "description": "Undisputed champions of long-range engagements, sniper rifles are a go-to choice for marksmen. Chambered from anything between 7.62x51 AP, 338 Lapua, and .300 Norma these weapons are perfect for dropping individual targets long before they know what hit them, made all the better with their armour-penetrating rounds that can hit targets behind soft walls and cover. The major downside however is drawbacks for trying to use them in CQC and their low ammo count. Make each shot count.",
-        "rulesText": "[Heavy Weapons][Sharpshooter][Precision]\nRange modifier: -2 C | +1 L | +2 ELR\n PEN: 2 | DMG: 7 \n RSV: 6 | CAP: 3",
+        "rulesText": "[Medium Weapons][Sharpshooter][Precision]\nRange modifier: -2 C | +1 L | +2 ELR\n PEN: 2 | DMG: 7 \n RSV: 6 | CAP: 3",
         "families": [
             {
                 "family": "Endurance Rifles",
