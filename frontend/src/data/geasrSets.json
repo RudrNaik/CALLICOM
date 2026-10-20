@@ -21,7 +21,7 @@
                         "slot": "Headgear",
                         "tier": 2,
                         "flavor": "Figuring out the math of something as unpredictable as the 40mm LBV is... Difficult. However- we've come up with an advanced simulation algorithm to predict with a 90% success rate exactly where your 40mm will go when it bounces off the wall.",
-                        "effect": "You can now make a navigate test against a threshold of 4 to guarantee it will land on the exact hex you want."
+                        "effect": "You can now make a navigate test against a threshold of 4 to guarantee a 40mm LBV will land on the exact hex you want."
                     },
                     {
                         "id": "thumper_spaceOptimization",
@@ -410,6 +410,53 @@
                         "effect": "Effects of this Gear Set's pieces, excluding Improved Ammunition Control, apply to every drone within close range of you."
                     }
                 ]
+            },
+            {
+                "id": "mechanicalSurgeon",
+                "name": "Mechanical Surgeon",
+                "manufacturer": "GC_AUS",
+                "pieces": [
+                    {
+                        "id": "mechanicalSurgeon_fieldLiveDiagnosticGlasses",
+                        "name": "Field Live-Diagnostic Glasses",
+                        "slot": "Headgear",
+                        "tier": 2,
+                        "flavor": "",
+                        "effect": "While in [Datalink], gain the effects of [Pinged] on enemy drones that are damaged below 20HP."
+                    },
+                    {
+                        "id": "mechanicalSurgeon_zeroShockAntiStaticGloves",
+                        "name": "ZeroShock Anti-Static Gloves",
+                        "slot": "Gloves",
+                        "tier": 1,
+                        "flavor": "",
+                        "effect": "Gain a +1 bonus to [Athletics][Acrobatics][CQC][Tinker] rolls involving direct contact with drones."
+                    },
+                    {
+                        "id": "mechanicalSurgeon_droneRepairEquipmentPouch",
+                        "name": "Drone Repair Equipment Pouch",
+                        "slot": "Vest",
+                        "tier": 3,
+                        "flavor": "",
+                        "effect": "Increase the HP heal multiple of your drone [Repairs] by 1."
+                    },
+                    {
+                        "id": "mechanicalSurgeon_emergencyLimpToHelpProtocol",
+                        "name": "Emergency Limp-to-Help Protocol",
+                        "slot": "Equipment",
+                        "tier": 4,
+                        "flavor": "",
+                        "effect": "If your drone becomes [Downed] but not completely destroyed, on what would be its next turn, call heads or tails and flip a coin. If called correctly, your drone gets back up with 1 HP, but may only do [Movement] actions (excluding Sprint, Double Time and Triple Time) on its turn(s) until a [Repair] is made on them."
+                    },
+                    {
+                        "id": "mechanicalSurgeon_mecaniqueSansFrontieres",
+                        "name": "Mécanique Sans Frontières",
+                        "slot": "Patch",
+                        "tier": 0,
+                        "flavor": "",
+                        "effect": "You may attempt to [Repair] an enemy drone you can reach the location of; if you do so, additionally roll a Tech test against a threshold of (7-[Tech]). On success, you gain control of the drone; on failure, the drone has its full attention on you for the next turn. This can initiate encounters if [Downed] enemy drones that were not completely destroyed are repaired."
+                    }
+                ]
             }
         ]
     },
@@ -427,7 +474,7 @@
                         "slot": "Vest",
                         "tier": 4,
                         "flavor": "Replaces Rocket Launchers conventional High Explosive munitions with slow firing, burrowing munitions that tunnel through armour and cover before shooting out steel ball bearings in a 4 hex diagonal blast radius. Effective at clearing out dug in enemies and killing unprotected vehicle crews without excessive damage to the vehicle's structure.",
-                        "effect": "Replaces HE rockets for Unguided Rocket with burrowing munitions (8 damage, x4 hex of diagonal damage) that can burrow into walls and enemy vehicles to kill infantry on the other side. Has a maximum of medium range, defender countermeasures get +1 dice when defending against it."
+                        "effect": "Replaces HE rockets for the Unguided Launcher with burrowing munitions (8 damage, x4 hex of diagonal damage) that can burrow into walls and enemy vehicles to kill infantry on the other side. Has a maximum of medium range, defender countermeasures get +1 dice when defending against it."
                     },
                     {
                         "id": "burrowingBeaver_enhancedTrajectoryTrackerOptic",
@@ -499,6 +546,53 @@
                         "tier": 0,
                         "flavor": "A patch doubling as a round holder for a single, custom-worked round, with a saboted core bullet that itself is made up of dual tandem-stacked penetrators (tungsten carbide front, tungsten alloy rear), spaced by a small spark-triggered HE charge, and microelectronic spin-guidance controls. Your almost literal magic bullet!",
                         "effect": "Gain an additional Anti-Material Rifle/HVAM Railgun ammo; this specific ammo gains AP and SMRT effects as per Sharpshooter's Special Ammo rules, and requires a [Deploy] to load. This additional ammo cannot be [Resupplied] in-mission."
+                    }
+                ]
+            },
+            {
+                "id": "slitheringSerpent",
+                "name": "Slithering Serpent",
+                "manufacturer": "TS_Dynamics",
+                "pieces": [
+                    {
+                        "id": "slitheringSerpent_firstLookTargetAcquisitionFlipSight",
+                        "name": "FirstLook Target Acquisition Flip Sight",
+                        "slot": "Headgear",
+                        "tier": 2,
+                        "flavor": "Using the datalink- an augmented reality flip sight is created on the top of your launcher that corresponds to pings- and syncs with your munitions.",
+                        "effect": "If you have line of sight to your target and are not affected by any other [Vision] malus, you no longer take the -1 no-[Deploy] malus for Wire-Guided or Guided Launcher attacks against [Pinged] or [Marked] targets."
+                    },
+                    {
+                        "id": "slitheringSerpent_quickLaunchGloves",
+                        "name": "Quick-Launch Gloves",
+                        "slot": "Gloves",
+                        "tier": 3,
+                        "flavor": "Grippier gloves built specific to the launcher you're using. Also includes new- improved grips for the launcher to pair to ensure a faster, speedier draw.",
+                        "effect": "You no longer take any maluses from not being set up with any kind of launcher."
+                    },
+                    {
+                        "id": "slitheringSerpent_additionalRocketStorageSupport",
+                        "name": "Additional Rocket Storage Support",
+                        "slot": "Vest",
+                        "tier": 1,
+                        "flavor": "An improved, customizable launcher storage system that allows you to customize how many rockets you want in exchange for weight and space on your rig.",
+                        "effect": "If you do not carry any Grenades into a mission, your first Launcher (any kind) use is free."
+                    },
+                    {
+                        "id": "slitheringSerpent_counterCountermeasureSeekerUpgrade",
+                        "name": "Counter-Countermeasure Seeker Upgrade",
+                        "slot": "Equipment",
+                        "tier": 4,
+                        "flavor": "Adding an extra sensor onto the seeker allows the rocket to remain in connection with the user to launch a quick cyberattack to disable countermeasures on approach.",
+                        "effect": "Whenever a hostile defends against your Wire-Guided or Guided Rocket Launcher attack by using countermeasures, their alertness test can be opposed by a Tech test from the shooter to negate the countermeasures."
+                    },
+                    {
+                        "id": "slitheringSerpent_smartDialAYield",
+                        "name": "Smart-Dial-a-Yield",
+                        "slot": "Patch",
+                        "tier": 0,
+                        "flavor": "A patch of a snake rocketing from a launcher and curving in the air, attached is a modular dial kit for rockets to adjust the direction the explosive material is sent in, allowing for a wider or more focused AOE.",
+                        "effect": "As a [Deploy], you may adjust the Damage and Penetration values of your next Wire-Guided or Guided Rocket ammo before firing it; lose 3 Damage for every 1 Penetration to be gained, and vice versa."
                     }
                 ]
             }
@@ -588,7 +682,7 @@
                         "name": "Adrenal Spinal Shot",
                         "slot": "Headgear",
                         "tier": 1,
-                        "flavor": "An experimental helmet attachment that allows for an embedded needle to inject an nanite adrenal shot into the top of the user's spine.",
+                        "flavor": "An experimental helmet attachment that allows for an embedded needle to inject an adrenal shot into the top of the user's spine.",
                         "effect": "When the juggernaut suit reaches less than a third of its HP, for the turn after, gain an extra standard action."
                     },
                     {
@@ -597,7 +691,54 @@
                         "slot": "Patch",
                         "tier": 0,
                         "flavor": "A complimentary patch courtesy of Syntek for your continued service in pushing the medical field forward towards a brighter tomorrow.",
-                        "effect": " Upgrades the effect of the adrenal spinal shot to now also provide an extra movement action. All damage while the suit is above a fifth of its health that would cause wounds now abide by wound overflow."
+                        "effect": "Upgrades the effect of the Adrenal Spinal Shot to now also provide an extra movement action. Damage taken to yourself while the suit health is above one fifth now abides by wound overflow."
+                    }
+                ]
+            },
+            {
+                "id": "bulletBaker",
+                "name": "Bullet Baker",
+                "manufacturer": "TS_Dynamics",
+                "pieces": [
+                    {
+                        "id": "bulletBaker_dealmakerAmmunitionTrackerSightWidget",
+                        "name": "Dealmaker Ammunition Tracker Sight Widget",
+                        "slot": "Headgear",
+                        "tier": 4,
+                        "flavor": "Using similar throwing algorithms to grenades, but just fine tuned for supply packs and magazines, you can now throw ammo to teammates more effectively.",
+                        "effect": "Gain a +1 bonus to [Throwing] loaded magazines or equipment to a [Friendly]. You may [Throw] a magazine loaded with (one of, if multiple) your carried Ammo Type to a [Friendly], if not otherwise prohibited from [Throwing], with a threshold of 2 + the amount of range bands between you and the target starting at +0 for close range, to a maximum of +2 at long range."
+                    },
+                    {
+                        "id": "bulletBaker_specialOfferHighVisibilitySpecialMagazineHolder",
+                        "name": "Special Offer High-Visibility Special Magazine Holder",
+                        "slot": "Vest",
+                        "tier": 3,
+                        "flavor": "A dedicated magazine holder to store an extra mag of special ammo. A special offer in a pinch.",
+                        "effect": "You start out with a free magazine of an Ammo Type you have selected; you must declare whether your Primary or Secondary Weapon gains the Ammo Type, and which Ammo Type you take for this effect if you carry multiple into a mission."
+                    },
+                    {
+                        "id": "bulletBaker_bakersGloves",
+                        "name": "Baker's Gloves",
+                        "slot": "Gloves",
+                        "tier": 1,
+                        "flavor": "Using better materials on the palms and fingers, these gloves are able to grip something as large as the ammo bags and resupply bags to throw them better.",
+                        "effect": "You may [Throw] your Resupply or Ammo Bag to [Deploy] it, counting as a bonus action. On a Fumble, it becomes unusable as the Bag is torn open on landing and the ammunition spills out."
+                    },
+                    {
+                        "id": "bulletBaker_warmOvenExtendedBagVolume",
+                        "name": "Warm Oven Extended Bag Volume",
+                        "slot": "Equipment",
+                        "tier": 2,
+                        "flavor": "You'd think making the bag bigger would cause it to become more cumbersome- but it's surprising just how much ammo one can store in a smidget of extra space.",
+                        "effect": "Gain an additional Resupply Bag charge. This includes two free additional Ammo Type charges if using an Ammo Bag"
+                    },
+                    {
+                        "id": "bulletBaker_naughtyAntiThiefSurprise",
+                        "name": "Naughty Anti-Thief Surprise",
+                        "slot": "Patch",
+                        "tier": 0,
+                        "flavor": "A patch of a baker swatting a fly is attached, along with a little anti-tampering mechanism that will detonate and cook off all the ammo inside if a non-friendly IFF attempts to take ammo.",
+                        "effect": "Remove the malus associated with Fumbling the [Throw] of a Resupply Bag. If a [Hostile] would attempt to [Investigate] or [Resupply] from the Bag, the bag is treated as an [Explosive] [Trap] with 8 DMG multiplied by the number of remaining charges, and a 2-hex AOE."
                     }
                 ]
             }
@@ -650,6 +791,100 @@
                         "tier": 0,
                         "flavor": "It was a golden thread given to Theseus by Ariadne to trace his path back out from the Minotaur's Labyrinth once he had slayed the beast. One wonders what else one could do with that thread.",
                         "effect": "Each character's first use of the Medic Bag deployed by the user counts as a free charge, including for the user themselves."
+                    }
+                ]
+            },
+            {
+                "id": "sanctionedBooster",
+                "name": "Sanctioned Booster",
+                "manufacturer": "Syntek",
+                "pieces": [
+                    {
+                        "id": "sanctionedBooster_lowVelocityParabolaEstimator",
+                        "name": "Low-Velocity Parabola Estimator",
+                        "slot": "Headgear",
+                        "tier": 2,
+                        "flavor": "Typical ARD software does not work well with really low-velocity projectiles - like stim-gun darts. However, this plugin seeks to counteract that for the moments you really need to give your teammate an extra gear.",
+                        "effect": "You may attempt to deliver a Nanite Kit to a [Friendly] that is not in line of sight, via an arcing stim-gun shot. To do this, they must be in [Datalink], and you need to make a [L-Weapon] test against a threshold of 2 in Close Range, increasing by 1 every range band. Failure in the [L-Weapon] test still consumes the Nanite Kit."
+                    },
+                    {
+                        "id": "sanctionedBooster_naniteDopedGloves",
+                        "name": "Nanite-Doped Gloves",
+                        "slot": "Gloves",
+                        "tier": 1,
+                        "flavor": "Patented microneedle finger pads fed through a microfluidic network from wrist-mounted reservoirs deliver additional low-dose stimulants upon direct skin contact.",
+                        "effect": "Your [Booster] Nanite Kits all also grant an extra bonus action for the same turn if they are manually applied."
+                    },
+                    {
+                        "id": "sanctionedBooster_stimulantClimateControlledHardPouch",
+                        "name": "Stimulant Climate-Controlled Hard Pouch",
+                        "slot": "Vest",
+                        "tier": 3,
+                        "flavor": "Keep your boosters safe and climate controlled to ensure you don't run out of them so fast, and that they are ready and fully effective when you need them.",
+                        "effect": "The first use of your [Booster] Nanite Kits, per type, is free."
+                    },
+                    {
+                        "id": "sanctionedBooster_dualTubeInjectors",
+                        "name": "Dual Tube Injectors",
+                        "slot": "Equipment",
+                        "tier": 4,
+                        "flavor": "Using a modified injector including two tubes of nanites, they can now apply a stimulant and a booster at the same time",
+                        "effect": "When making a [Heal] using a [Booster] Nanite Kit, you may then apply a second [Booster] Nanite Kit in the same action."
+                    },
+                    {
+                        "id": "sanctionedBooster_runningClock",
+                        "name": "Running Clock",
+                        "slot": "Patch",
+                        "tier": 0,
+                        "flavor": "A patch of a clock with the dual tube injectors for hands- along with a license for experimental, underclocked nanites that extend their effective lifetime in the bloodstream.",
+                        "effect": "Extend the effects of your [Booster] Nanite Kits by an additional turn."
+                    }
+                ]
+            },
+            {
+                "id": "mercyRules",
+                "name": "Mercy Rules",
+                "manufacturer": "GC_STL",
+                "pieces": [
+                    {
+                        "id": "mercyRules_biometricsAlertSystem",
+                        "name": "Biometrics Alert System",
+                        "slot": "Headgear",
+                        "tier": 1,
+                        "flavor": "Using the already pre-existing biometric nanites inside the bloodstream, with a quick set of parameters to help with triage, medics are able to get access to more information on who needs help sooner.",
+                        "effect": "Gain a +1 bonus to [Medical] rolls aiding [Friendlies] with at least 2 Deep Wounds or the equivalent in injuries."
+                    },
+                    {
+                        "id": "mercyRules_medicinalPaddedGloves",
+                        "name": "Medicinal Padded Gloves",
+                        "slot": "Gloves",
+                        "tier": 3,
+                        "flavor": "Surgical grade gloves with additional medicinal compounds in the palm-side traction pads. Also easy to wash.",
+                        "effect": "If you are [Healing] from an adjacent hex to your target, remove one Flesh Wound on top of all other applied effects; if there are no Flesh Wounds to remove, downgrade a Deep Wound to a Flesh Wound if any are present."
+                    },
+                    {
+                        "id": "mercyRules_dressingDouser",
+                        "name": "Dressing Douser",
+                        "slot": "Vest",
+                        "tier": 2,
+                        "flavor": "Using a new mount integrated into the nanite pouch- medics can quickly douse a dressing with a stimulant to allow them to both bandage a wound and apply nanites at the exact same time.",
+                        "effect": "You may turn a [Heal] into a standard action; if you do so, you may combine the usage of an FAK (any type) with one or more [Stimulants]."
+                    },
+                    {
+                        "id": "mercyRules_autoRegulatingInjectors",
+                        "name": "Auto-Regulating Injectors",
+                        "slot": "Equipment",
+                        "tier": 4,
+                        "flavor": "Utilizing biometric nanites and the information they provide, injectors now regulate the amount of nanites needed before injection. Also includes a means of changing the needles for sanitary reasons.",
+                        "effect": "Make an additional Tech test when using a [Stimulant] Nanite Kit in a [Heal]; on a 4+ roll, the Kit use is free."
+                    },
+                    {
+                        "id": "mercyRules_healingTree",
+                        "name": "Healing Tree",
+                        "slot": "Patch",
+                        "tier": 0,
+                        "flavor": "Provided is a patch of a tree growing nanite injectors, IFAKs, and AFAKs, alongside a license for improved stimulants that overclock their effects.",
+                        "effect": "Your [Stimulant] Nanite Kits all remove a Deep Wound or the equivalent in Flesh Wounds upon each use; for Shock Nanite Kit, the Flesh Wound that would persist after the revive is no longer given, and a Deep Wound (or equivalent in Flesh Wounds) is removed if present on the turn after."
                     }
                 ]
             }
@@ -755,7 +990,7 @@
             {
                 "id": "floatAndSting",
                 "name": "Float and Sting",
-                "manufacturer": "GC_STL",
+                "manufacturer": "MSMK",
                 "pieces": [
                     {
                         "id": "floatAndSting_bumblebeeBuddiIntegration",
@@ -787,7 +1022,7 @@
                         "slot": "Equipment",
                         "tier": 4,
                         "flavor": "A tuning of echolocation frequency harmonics and an additional echolocation-activated laser dazzler turret enable even the most sneakily cloaked enemies to be flushed out into the visible.",
-                        "effect": " Enemies with active stealth systems like OctoCamo and STALKER Digital Presence Reducer get said systems [Disabled] whenever you [Deploy] a Bumblebee’s echolocation charge within Medium Range of them."
+                        "effect": " Enemies with active stealth systems like OctoCamo and STALKER Digital Presence Reducer get said systems [Disabled] for the next turn whenever you [Deploy] a Bumblebee’s echolocation charge within Medium Range of them."
                     },
                     {
                         "id": "floatAndSting_queenMeshDisseminationNetwork",
@@ -900,7 +1135,7 @@
             },
             {
                 "id": "loveOfTheBoom",
-                "name": "Love of the Boom",
+                "name": "Ordnance Ignorance",
                 "manufacturer": "GC_STL",
                 "pieces": [
                     {
@@ -994,6 +1229,92 @@
                         "tier": 0,
                         "flavor": "A complimentary coin from the Koi Precision Plant in Osaka as a token of appreciation for your continued brand loyalty.",
                         "effect": "When firing the last shot from a magazine, roll acrobatics: \n1-3 Fail, no effect. \n4-5 Free reload. \n6 Reload and gain another shooting action with a -1 malus."
+                    }
+                ]
+            },
+            {
+                "id": "spear",
+                "name": "S.P.E.A.R.",
+                "manufacturer": "NessTac",
+                "pieces": [
+                    {
+                        "id": "spear_gaidhealFurnitureSet",
+                        "name": "Gàidheal Furniture Set",
+                        "slot": "Gloves",
+                        "tier": 2,
+                        "flavor": "Consisting of an ergonomic pistol grip and a lightweight buttstock the Gàidheal package has seen widespread adoption on assaulter-configured rifles including those in SOCOM's inventory",
+                        "effect": "All Marksman Rifles equipped by the user gain +1 to Close Range"
+                    },
+                    {
+                        "id": "spear_haubarcAssaultPlateCarrier",
+                        "name": "Haubarc Assault Plate Carrier",
+                        "slot": "Vest",
+                        "tier": 2,
+                        "flavor": "The first plate carrier designed by NessTac specifically with full caliber rifles in mind the Haubarc features a four-mag placard made to fit SR25, G3, and FAL pattern magazines while fitting many other kinds",
+                        "effect": "Your first magazine is free with equipped Marksman Rifles (you still have to reload)"
+                    },
+                    {
+                        "id": "spear_tamLevelIIIBallisticHelmet",
+                        "name": "Tam Level III+ Ballistic Helmet",
+                        "slot": "Headgear",
+                        "tier": 1,
+                        "flavor": "Made out of a proprietary ballistic polymer the Tam is a simple helmet modeled after a ProTec snowboarding helmet for wearer comfort while retaining an NIJ Level III+ ballistic rating",
+                        "effect": "Enemies aiming for the head no longer halves your wound threshold"
+                    },
+                    {
+                        "id": "spear_heavyweightMatchGradeRounds",
+                        "name": "Heavyweight Match Grade Rounds",
+                        "slot": "Equipment",
+                        "tier": 1,
+                        "flavor": "Although a reduced velocity hurts the rifle's efficacy at range the increased bullet mass is devastating closer in",
+                        "effect": "All equipped Marksman Rifles gain +1 to Close and Medium Range while taking a -1 malus to Long Range and above"
+                    }
+                ]
+            },
+            {
+                "id": "jazzHandsTranceGuns",
+                "name": "Jazz Hands, Trance Guns",
+                "manufacturer": "Unlisted",
+                "pieces": [
+                    {
+                        "id": "jazzHandsTranceGuns_threatDiscriminatorVisorOverlay",
+                        "name": "Threat Discriminator Visor Overlay",
+                        "slot": "Headgear",
+                        "tier": 2,
+                        "flavor": "Advanced threat recognition and discrimination information overlaid on a slide-down half-height visor attached to the front of the tactical helmet. Also provides sunglasses-level UV protection.",
+                        "effect": "Gain a +1 bonus against enemies within line of sight and Close Range."
+                    },
+                    {
+                        "id": "jazzHandsTranceGuns_gungHoSpeedTapeGloves",
+                        "name": "Gung-Ho Speed Tape Gloves",
+                        "slot": "Gloves",
+                        "tier": 2,
+                        "flavor": "Tactical full-fingered gloves with additional speed tape on the finger pads to provide optimal grip in pinch-grabbing actions.",
+                        "effect": "[Reloads] from empty now only give a -1 malus to the next test of the turn (as if [Reloading] with rounds in the magazine)."
+                    },
+                    {
+                        "id": "jazzHandsTranceGuns_smallStickSideSlots",
+                        "name": "Small-Stick Side-Slots",
+                        "slot": "Vest",
+                        "tier": 1,
+                        "flavor": "Magazine pouches with an additional slot on the side to accommodate a pistol-caliber stick magazine, simplifying hand movements during multi-gun reloading.",
+                        "effect": "You may use a standard action to [Reload] both your Primary and Secondary Weapons, taking only the malus of a single [Reload] action. (If there is a [Reload] from empty and a [Reload] with rounds in the magazine, the malus of the [Reload] from empty will apply.)"
+                    },
+                    {
+                        "id": "jazzHandsTranceGuns_integralSuppressorConversion",
+                        "name": "Integral Suppressor Conversion",
+                        "slot": "Equipment",
+                        "tier": 2,
+                        "flavor": "Sub-machine guns retain a small niche in their adaptability to sound suppression. Swap your SMG's barrel to an integrally suppressed version for quiet performance out of the box - no ammunition switching necessary!",
+                        "effect": "If using an SMG as your Primary Weapon, [Shooting] from [Stealth] with the SMG no longer triggers alertness checks for enemies. Also gain an additional (-1 M) range modifier for the SMG."
+                    },
+                    {
+                        "id": "jazzHandsTranceGuns_cycleOfShooting",
+                        "name": "Cycle of Shooting",
+                        "slot": "Patch",
+                        "tier": 0,
+                        "flavor": "",
+                        "effect": "If using an SMG in both Primary and Secondary Weapon slots, whenever you would empty the magazine of one of your SMGs by [Shooting], you may then [Shoot] using the other SMG as a free action."
                     }
                 ]
             }
