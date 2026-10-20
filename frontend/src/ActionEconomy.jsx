@@ -6,7 +6,7 @@ import shooting from "./data/shootingActions.json";
 import cqc from "./data/closeCombatActions.json";
 import background from "./assets/Images/4060492.jpg";
 import Footer from "./components/Footer";
-import ActionCard from "./components/Rulebook/ActionCard";
+import ActionCard from "./components/Compendium/ActionCard";
 
 const TABS = [
   { key: "all", label: "All" },

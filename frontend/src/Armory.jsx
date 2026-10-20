@@ -1,6 +1,6 @@
 import Footer from "./components/Footer";
 import background from "./assets/Images/4060492.jpg";
-import EquipmentView from "./components/Rulebook/Equipment";
+import EquipmentView from "./components/Compendium/EquipmentView";
 
 const Armory = () => {
   return (
