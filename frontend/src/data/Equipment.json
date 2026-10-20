@@ -1141,7 +1141,7 @@
         "SubMunition": true,
         "class": "Fire Support",
         "cost": 5000,
-        "description": "",
+        "description": "Special ammo that spalls easier, reduces penetration due to the softer, frangible function.",
         "rulesText": "If a target is shot in the legs, they are now afflicted with [Debilitated]."
     },
     {

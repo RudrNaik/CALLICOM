@@ -1274,7 +1274,7 @@
             {
                 "id": "jazzHandsTranceGuns",
                 "name": "Jazz Hands, Trance Guns",
-                "manufacturer": "Unlisted",
+                "manufacturer": "MSMK",
                 "pieces": [
                     {
                         "id": "jazzHandsTranceGuns_threatDiscriminatorVisorOverlay",
@@ -1288,7 +1288,7 @@
                         "id": "jazzHandsTranceGuns_gungHoSpeedTapeGloves",
                         "name": "Gung-Ho Speed Tape Gloves",
                         "slot": "Gloves",
-                        "tier": 2,
+                        "tier": 1,
                         "flavor": "Tactical full-fingered gloves with additional speed tape on the finger pads to provide optimal grip in pinch-grabbing actions.",
                         "effect": "[Reloads] from empty now only give a -1 malus to the next test of the turn (as if [Reloading] with rounds in the magazine)."
                     },
