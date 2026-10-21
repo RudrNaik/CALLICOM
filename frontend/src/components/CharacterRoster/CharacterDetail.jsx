@@ -482,7 +482,7 @@ function CharacterDetail({ character, onUpdate, user }) {
     setIsEditingEquipment(false);
     onUpdate(updates);
   };
-
+   
   if (!character) return null;
 
   return (
