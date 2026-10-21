@@ -24,7 +24,7 @@ const GearCard = ({ gear }) => {
   return (
     <div
       id={gear.id}
-      className="relative bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-6 border-orange-500 p-4 rounded-xs shadow"
+      className="relative bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-6 border-orange-500 p-4 rounded-xs shadow overflow-hidden"
       style={{ fontFamily: "Geist_Mono" }}
     >
       <div className="relative flex justify-between items-center mb-2">
@@ -39,29 +39,31 @@ const GearCard = ({ gear }) => {
           className="absolute right-10 top-1/2 z-0 -translate-y-1/2 size-50 opacity-15 object-contain pointer-events-none"
         />
       )}
-      <p className=" relative text-sm text-gray-200 whitespace-pre-line">
-        {gear.rulesText}
-      </p>
-      <p className="relative text-xs text-gray-400 whitespace-pre-line">
-        {gear.description}
-      </p>
-
-      {gear?.families && (
-        <p className="relative whitespace-pre-line text-xs mt-2 mb-1">
-          Sub Classes:{" "}
+      <div className="text-sm">
+        <p className=" relative text-gray-200 whitespace-pre-line">
+          {gear.rulesText}
         </p>
-      )}
+        <p className="relative text-gray-400 whitespace-pre-line italic mt-2">
+          {gear.description}
+        </p>
 
-      {gear?.families?.map((family) => (
-        <div key={family.id} className="relative text-xs">
-          <div className="text-orange-400">
-            {family.family} // + ${family.cost}
+        {gear?.families && (
+          <p className="relative whitespace-pre-line mt-2 mb-1">
+            Sub Classes:{" "}
+          </p>
+        )}
+
+        {gear?.families?.map((family) => (
+          <div key={family.id} className="relative">
+            <div className="text-orange-400">
+              {family.family} // + ${family.cost}
+            </div>
+            <div className=" italic text-gray-400 whitespace-pre-line">
+              {family.effect}
+            </div>
           </div>
-          <div className="text-xs italic text-gray-400 whitespace-pre-line">
-            {family.effect}
-          </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 };
