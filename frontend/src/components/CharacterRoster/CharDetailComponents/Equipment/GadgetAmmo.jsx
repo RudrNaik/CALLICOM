@@ -138,7 +138,7 @@ export default function GadgetAmmo({
                   <div className="flex items-baseline gap-2">
                     <span className="text-xs font-semibold">{opt.label}</span>
                     {rules && (
-                      <span className="text-[10px] text-gray-400">{rules}</span>
+                      <span className="text-[10px] text-gray-400 whitespace-pre-line">{rules}</span>
                     )}
                   </div>
                 </div>

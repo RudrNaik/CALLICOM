@@ -512,7 +512,7 @@ function CharacterDetail({ character, onUpdate, user }) {
         )}
       </h1>
       <h2 className="text-gray-400 mb-5">
-        {character.class} {character.multiClass}
+        {character.class} // {character.multiClass || "--------"}
       </h2>
 
       <div className="flex border-b border-neutral-700 mb-4">

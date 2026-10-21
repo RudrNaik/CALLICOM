@@ -36,7 +36,7 @@ const GearCard = ({ gear }) => {
       {gear.class in classIcons && (
         <img
           src={classIcons[gear.class]}
-          className="absolute right-10 top-1/2 z-0 -translate-y-1/2 size-50 opacity-15 object-contain pointer-events-none"
+          className="absolute right-10 top-1/5 z-0 size-50 opacity-15 object-contain pointer-events-none"
         />
       )}
       <div className="text-sm">
