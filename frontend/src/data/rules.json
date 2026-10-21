@@ -271,7 +271,7 @@
         "description": "In grand operations, maps are much bigger, and encounters are spread across long distances a team needs to trek. These maps are also in a hex grid like others, however- they also now include specific areas marked in different colored hexes that require specific checks to pass, and will increase travel time upon success or failure. To move from one hex to another, it is 1 world tick. \n\n>Yellow [inclune/downslope]: Requires an endurance check. upon failure, travel time doubles. Even number inclines in a row have the other half as downslope, odd number inclines are all uphill or downhill. You can lose or break gear here \n>Orange [Climb]: Requires a climb check. Upon failure of the climb per climb rules, travel time doubles, but you also can mark wounds here if you fall.\n>Blue [Water]: Requires an athletics if passing through only one hex. 2+ adjacent requires endurance for each hex, with a malus of -1 per each. Failure doubles travel time.\n>Green [Dense]: Requires navigate and alertness. is considered dense forest/dense urban, can be used to hide from drones and vehicles. Vehicles will have 3 times the travel time through these areas upon a failed navigate check."
     },
     {
-        "id": "GrandOperations",
+        "id": "GrandOperationsVehicles",
         "title": "Vehicles In Grand Operations",
         "mechanic": "Grand Operations",
         "parentId": "GrandOperations",

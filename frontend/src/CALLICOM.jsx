@@ -118,7 +118,7 @@ const TerminalPage = () => {
               subtitle="Operations Field Manual"
               icon="🗊"
               onHover={handleHover}
-              link={"/CALLICOM/Rulebook"}
+              link={"https://docs.google.com/document/d/1CzHhGABZYwjduxuukAZZ-BtgGbUaNpohkvClDNkapcM/edit?usp=sharing"}
             />
           </motion.div>
 

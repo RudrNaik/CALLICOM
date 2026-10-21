@@ -1,5 +1,25 @@
 import GadgetAmmo from "./GadgetAmmo";
 
+import RiflemanIcon from "../../../../assets/classIcons/Rifleman.png";
+import RaiderIcon from "../../../../assets/classIcons/Raider.png";
+import CombatEngineerIcon from "../../../../assets/classIcons/Combat_Engineer.png";
+import TechnicalEngineerIcon from "../../../../assets/classIcons/Technical_Engineer.png";
+import SupportIcon from "../../../../assets/classIcons/Support.png";
+import MedicIcon from "../../../../assets/classIcons/Medic.png";
+import SharpshooterIcon from "../../../../assets/classIcons/Sharpshooter.png";
+import TrapperIcon from "../../../../assets/classIcons/Trapper.png";
+
+const classIcons = {
+  Rifleman: RiflemanIcon,
+  Raider: RaiderIcon,
+  "Combat Engineer": CombatEngineerIcon,
+  "Technical Engineer": TechnicalEngineerIcon,
+  "Fire Support": SupportIcon,
+  Medic: MedicIcon,
+  Sharpshooter: SharpshooterIcon,
+  Trapper: TrapperIcon,
+};
+
 const GadgetPanel = ({
   gadgetId,
   classGadgets,
@@ -23,11 +43,11 @@ const GadgetPanel = ({
   const selectedGadget = equipmentData.find((gadget) => gadget.id === gadgetId);
 
   return (
-    <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-4 border-orange-500 p-4 rounded-xs shadow">
+    <div className="bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-4 border-orange-500 p-4 rounded-xs shadow relative">
       <h3 className="font-semibold text-orange-300">Gadget</h3>
       {isEditing ? (
         <select
-          className="w-full select-themed p-2 rounded"
+          className="relative w-full select-themed p-2 rounded z-2"
           value={gadgetId}
           onChange={(e) => onGadgetChange(e.target.value)}
         >
@@ -45,6 +65,14 @@ const GadgetPanel = ({
         </p>
       )}
 
+      {selectedGadget?.class in classIcons && (
+        <img
+          src={classIcons[selectedGadget?.class]}
+          className="absolute right-10 top-1/5 z-0 -translate-y-1/2 size-50 opacity-15 object-contain pointer-events-none"
+        />
+      )}
+
+
       {gadgetId && (
         <div className="text-xs text-gray-300 space-y-2 mt-2">
           <p className="whitespace-pre-line">
@@ -54,6 +82,7 @@ const GadgetPanel = ({
         </div>
       )}
 
+      <div className="relative z-2">
       {/* Special Ammo UI */}
       {activeGadgetConfig && (
         <GadgetAmmo
@@ -70,6 +99,7 @@ const GadgetPanel = ({
           ownedOptionIds={ownedGadgetIds}
         />
       )}
+      </div>
 
       {(secondaryGadget || hasMulticlass) && (
         <div className="text-sm text-gray-300 space-y-2 mt-2">

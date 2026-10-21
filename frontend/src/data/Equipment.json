@@ -512,40 +512,6 @@
         "rulesText": "[Datalink]\nCannot be pinged or marked."
     },
     {
-        "id": "misc",
-        "title": "Misc Gear",
-        "class": "None",
-        "rulesText": "Ranging from NVGs to Thermals, Miscellaneous gear is anything not encompassed by any of the classes.",
-        "description": "The violence has escalated."
-    },
-    {
-        "id": "nvg",
-        "title": "Night Vision Goggles",
-        "parentId": "misc",
-        "class": "All",
-        "cost": 0,
-        "description": "Moons out Goons out.",
-        "rulesText": "[Vision][Night]\n Normalizes all lighting conditions. Applies a 'poorly lit' (-1) modifier to Long Range and Extreme Long Range. Ideal for CQB. Counteracts all lighting-based visibility debuffs."
-    },
-    {
-        "id": "irnvg",
-        "title": "IR/Thermal Goggles",
-        "parentId": "misc",
-        "class": "All",
-        "cost": 20000,
-        "description": "The bane of modern warfare.",
-        "rulesText": "[Vision][IR]\n normalizes all lighting and weather conditions. Applies a -1 malus at Medium Range and close range. Best suited for long-range spotting roles. Counters smoke, and all weather conditions."
-    },
-    {
-        "id": "envg",
-        "title": "Magnetic Vision Goggles",
-        "parentId": "misc",
-        "class": "All",
-        "cost": 35000,
-        "description": "The Future is now old man. ",
-        "rulesText": "[Vision][Magnetics]\n normalizes all lighting and weather conditions. Applies a 'poorly lit' (-1) modifier to Long Range and a 'very poorly lit' (-2) modifier to Extreme Long Range. Allows the user to see through all walls up to medium range when active. Counters smoke and all weather conditions. \n\n Only purchaseable through the Bastogne Martel Foundation."
-    },
-    {
         "id": "Rifleman",
         "title": "Rifleman",
         "class": "None",
@@ -1141,7 +1107,7 @@
         "SubMunition": true,
         "class": "Fire Support",
         "cost": 5000,
-        "description": "",
+        "description": "Special ammo that spalls easier, reduces penetration due to the softer, frangible function.",
         "rulesText": "If a target is shot in the legs, they are now afflicted with [Debilitated]."
     },
     {

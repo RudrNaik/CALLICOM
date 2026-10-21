@@ -1,6 +1,6 @@
 import Footer from "./components/Footer";
 import background from "./assets/Images/4060492.jpg";
-import Intro from "./components/Rulebook/Introduction";
+import RulebookView from "./components/Compendium/RulebookView";
 
 const Rulebook = () => {
   return (
@@ -10,7 +10,7 @@ const Rulebook = () => {
     >
       <div className="py-10"> </div>
 
-      <Intro />
+      <RulebookView />
 
     </div>
   );
