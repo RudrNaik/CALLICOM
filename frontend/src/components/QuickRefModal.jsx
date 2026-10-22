@@ -72,7 +72,7 @@ export default function QuickRefModal({ open, onClose }) {
              overflow-hidden flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="px-6 shrink-0">
+            <div className="px-6 pt-4 shrink-0">
               {/* Title */}
               <h2 className="text-2xl font-bold text-neutral-100 tracking-wide">
                 QUICK REFERENCE
@@ -98,7 +98,7 @@ export default function QuickRefModal({ open, onClose }) {
                     }`}
                     onClick={() => setTab("rules")}
                   >
-                    rules
+                    Rules
                   </button>
                 </div>
               </div>

@@ -51,8 +51,8 @@ export default function ActionEconomyPage() {
         <div className="max-w-screen-xl mx-auto px-3 py-3">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div>
-              <h1 className="text-3xl font-bold">Action Economy</h1>
-              <p className="text-sm text-gray-300">Per turn:</p>
+              <h1 className="text-xl font-bold">Action Economy</h1>
+              <p className="text-xs text-gray-300">Per turn:<br></br> [Standard] [Bonus] [Movement]</p>
             </div>
 
             <div className="flex items-center gap-2 font-mono">
@@ -113,17 +113,6 @@ export default function ActionEconomyPage() {
               ))}
             </div>
           </div>
-
-          {/* Legend */}
-          <div className="mt-3 grid grid-cols-3 gap-2 text-center font-mono">
-            <div className="bg-orange-500/90 text-black rounded-lg py-2">
-              Standard Action
-            </div>
-            <div className="bg-orange-400/90 text-black rounded-lg py-2">
-              Bonus Action
-            </div>
-            <div className="bg-orange-800/90 rounded-lg py-2">Movement</div>
-          </div>
         </div>
       </div>
 
@@ -157,7 +146,7 @@ function Section({ title, items }) {
         <div className="flex-grow border-t border-white/20" />
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3 font-mono">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 font-mono">
         {items.map((action, idx) => (
           <ActionCard key={`${action.name ?? idx}-${idx}`} action={action} />
         ))}
