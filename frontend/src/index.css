@@ -137,9 +137,3 @@ select.select-themed::-ms-expand {
 @media (prefers-reduced-motion: reduce) {
   .horus--subtle { animation: none; }
 }
-
-
-
-
-
-

@@ -20,7 +20,7 @@ const profiles = [
     },
     {
         "name": "Chris (From 1789)",
-        "title": "Co-Writer/Resident Mujahideen",
+        "title": "Co-Writer",
         "alt": "Picture of Chris",
         "image": Chris,
         "bio": "Chris is a writer from Chile and is one of the other people helping create, test, and develop calamari as a TTRPG. He is also one of the other major writers helping to create the lore and write for the current campaign."
