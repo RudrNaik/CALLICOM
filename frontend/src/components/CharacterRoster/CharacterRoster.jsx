@@ -23,6 +23,9 @@ import {
 } from "../../engine/syncEngine";
 import { useCharacterRosterSync } from "../../hooks/useBackgroundCharacterSync";
 
+import Collapsible from "../Collapsible";
+import { Collapse } from "react-bootstrap";
+
 const CACHE_KEY_EQUIP = `roster_equipment`;
 
 /**
@@ -98,7 +101,11 @@ function CharacterRoster({ userId }) {
     let updatedChar = null;
     const nextCharacters = characters.map((char) => {
       if (rosterEntryId(char) !== rosterEntryId(selectedCharacter)) return char;
-      updatedChar = normalizeCharacterData({ ...char, ...updates, updatedAt: Date.now() });
+      updatedChar = normalizeCharacterData({
+        ...char,
+        ...updates,
+        updatedAt: Date.now(),
+      });
       return updatedChar;
     });
 
@@ -106,9 +113,11 @@ function CharacterRoster({ userId }) {
     setCharacters(nextCharacters);
     setSelectedCharacter((current) => {
       if (!current) return current;
-      return nextCharacters.find(
-        (char) => rosterEntryId(char) === rosterEntryId(current),
-      ) || current;
+      return (
+        nextCharacters.find(
+          (char) => rosterEntryId(char) === rosterEntryId(current),
+        ) || current
+      );
     });
 
     // Backend identifies a character by (userId, uniqueId) — see
@@ -145,7 +154,9 @@ function CharacterRoster({ userId }) {
     setSelectedCharacter((current) => {
       if (!current) return current;
       const currentKey = rosterEntryId(current);
-      const match = characters.find((char) => rosterEntryId(char) === currentKey);
+      const match = characters.find(
+        (char) => rosterEntryId(char) === currentKey,
+      );
       return match || current;
     });
   }, [characters]);
@@ -172,7 +183,10 @@ function CharacterRoster({ userId }) {
     window.addEventListener("beforeunload", flushAllRemoteCharacterUpdates);
     window.addEventListener("pagehide", flushAllRemoteCharacterUpdates);
     return () => {
-      window.removeEventListener("beforeunload", flushAllRemoteCharacterUpdates);
+      window.removeEventListener(
+        "beforeunload",
+        flushAllRemoteCharacterUpdates,
+      );
       window.removeEventListener("pagehide", flushAllRemoteCharacterUpdates);
     };
   }, []);
@@ -217,9 +231,6 @@ function CharacterRoster({ userId }) {
       className="scroll-anchor-none sm:max-w-full md:max-w-95/100 mx-auto space-y-1 text-white bg-neutral-900/80"
       style={{ fontFamily: "Geist_Mono" }}
     >
-      <h1 className="text-2xl font-bold text-orange-400 px-2">
-        Your Characters
-      </h1>
 
       {backendSleeping && (
         <div className="px-2">
@@ -227,66 +238,60 @@ function CharacterRoster({ userId }) {
         </div>
       )}
 
-      {/* Loading and status */}
-      <div className="flicker">
-        {isLoading ? (
-          <div className="flex items-center text-orange-400 font-bold py-2 px-2">
-            <svg
-              className="animate-spin h-4 w-4 inline-block text-orange-500 mr-2"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-              />
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-              />
-            </svg>
-            Fetching Operators...
-          </div>
-        ) : (
-          <div className="text-gray-400 mb-2 text-xs px-2">
-            Operators Updated. {equipment.length}x equipment ready.
-          </div>
-        )}
-      </div>
+      <div className="px-4">
+      <Collapsible color={"orange-400"} title={"Characters"} headerSize={"2xl"} autoOpen={true}>
+        {/* Loading and status */}
+        <div className="flicker">
+          {isLoading ? (
+            <div className="flex items-center text-orange-400 font-bold py-2">
+              <svg
+                className="animate-spin h-4 w-4 inline-block text-orange-500 mr-2"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                />
+              </svg>
+              Fetching Operators...
+            </div>
+          ) : (
+            <div className="text-gray-400 mb-2 text-xs">
+              Operators Updated.
+            </div>
+          )}
+        </div>
 
-      {/* Characters */}
-      <div className="grid sm:grid-cols-2 md:grid-cols-5 gap-4 px-2">
-        {characters.map((char) => (
-          <div
-            key={rosterEntryId(char)}
-            className="flicker"
-          >
-            <CharacterCard
-              character={char}
-              onSelect={setSelectedCharacter}
-              onDelete={handleDeleteCharacter}
-            />
-          </div>
-        ))}
+        {/* Characters */}
+        <div className="grid sm:grid-cols-2 md:grid-cols-5 gap-4">
+          {characters.map((char) => (
+            <div key={rosterEntryId(char)} className="flicker">
+              <CharacterCard
+                character={char}
+                onSelect={setSelectedCharacter}
+                onDelete={handleDeleteCharacter}
+              />
+            </div>
+          ))}
+        </div>
+      </Collapsible>
       </div>
 
       {/* Selected Character */}
       <div>
         {selectedCharacter ? (
           <div>
-            <div className="relative flex py-5 px-2 items-center">
-              <div className="flex-grow border-t border-gray-100" />
-              <span className="flex-shrink mx-4 text-gray-100">
-                Detailed View
-              </span>
-              <div className="flex-grow border-t border-gray-100" />
-            </div>
             <div className="min-h[30rem]">
               <div
                 key={rosterEntryId(selectedCharacter)}

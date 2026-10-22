@@ -68,10 +68,9 @@ const GadgetPanel = ({
       {selectedGadget?.class in classIcons && (
         <img
           src={classIcons[selectedGadget?.class]}
-          className="absolute right-10 top-1/5 z-0 -translate-y-1/2 size-50 opacity-15 object-contain pointer-events-none"
+          className="absolute right-5 top-1 z-0 size-40 opacity-15 object-contain pointer-events-none"
         />
       )}
-
 
       {gadgetId && (
         <div className="text-xs text-gray-300 space-y-2 mt-2">
@@ -83,26 +82,26 @@ const GadgetPanel = ({
       )}
 
       <div className="relative z-2">
-      {/* Special Ammo UI */}
-      {activeGadgetConfig && (
-        <GadgetAmmo
-          key={`${characterId}-${gadgetId}`}
-          isEditing={isEditing}
-          isActive={charActive}
-          gadgetId={gadgetId}
-          gadgetAmmo={gadgetAmmo || {}}
-          setGadgetAmmo={onGadgetAmmoChange}
-          itemById={itemById}
-          classGadget={secondaryGadget?.id}
-          characterId={characterId}
-          config={activeGadgetConfig}
-          ownedOptionIds={ownedGadgetIds}
-        />
-      )}
+        {/* Special Ammo UI */}
+        {activeGadgetConfig && (
+          <GadgetAmmo
+            key={`${characterId}-${gadgetId}`}
+            isEditing={isEditing}
+            isActive={charActive}
+            gadgetId={gadgetId}
+            gadgetAmmo={gadgetAmmo || {}}
+            setGadgetAmmo={onGadgetAmmoChange}
+            itemById={itemById}
+            classGadget={secondaryGadget?.id}
+            characterId={characterId}
+            config={activeGadgetConfig}
+            ownedOptionIds={ownedGadgetIds}
+          />
+        )}
       </div>
 
       {(secondaryGadget || hasMulticlass) && (
-        <div className="text-sm text-gray-300 space-y-2 mt-2">
+        <div className="text-sm text-gray-300 space-y-2 mt-2 relative overflow-hidden">
           {hasMulticlass &&
             (isEditing ? (
               <div className="flex items-center gap-2 text-xs flex-wrap">
@@ -130,6 +129,13 @@ const GadgetPanel = ({
             ) : (
               <></>
             ))}
+
+          {!isEditing && (
+            <img
+              src={classIcons[secondaryGadgetSource === "multi" ? multiClass : charClass]}
+              className="absolute right-2 top-2 z-0 size-20 opacity-15 object-contain pointer-events-none"
+            />
+          )}
 
           {secondaryGadget ? (
             <p className="text-xs text-gray-200 whitespace-pre-line border-orange-400/30 border bg-orange-900/20 px-2 py-1 mt-2 rounded-xs">
