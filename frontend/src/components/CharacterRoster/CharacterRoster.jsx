@@ -292,12 +292,12 @@ function CharacterRoster({ userId }) {
       <div>
         {selectedCharacter ? (
           <div>
-            <div className="min-h[30rem]">
+            <div className="min-h[30rem] transition-all duration-300 overflow-hidden">
               <div
                 key={rosterEntryId(selectedCharacter)}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 0.2, delay: 0.2 }}
+                transition={{ duration: 0.2, delay: 0.0 }}
                 className="flicker"
               >
                 <CharacterDetail

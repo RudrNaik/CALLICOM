@@ -12,7 +12,7 @@ const Navbar = ({}) => {
   const [scrolled, setScrolled] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [hamburgerOpen, setHamburgerOpen] = useState(false);
-  const [modalOpen, setModalOpen] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
   const dropdownRef = useRef(null);
   const { isLoggedIn, logout, isAdmin } = useContext(AuthContext);
 
@@ -74,8 +74,16 @@ const Navbar = ({}) => {
               [↳] CALLI/COM
             </Link>
           </li>
+          <li>
+            {" "}
+            <button
+              onClick={() => setModalOpen(true)}
+              className="hover:bg-orange-400"
+            >
+              Quickref
+            </button>
+          </li>
           <li>{isAdmin && <Pinger />}</li>
-          <li> <button onClick={() => setModalOpen(true)} className="hover:bg-orange-400" >Quickref</button></li>
         </ul>
 
         {/*Hamburger... only appears when smaller than Md*/}
@@ -207,13 +215,13 @@ const Navbar = ({}) => {
             </Link>
           </li>
           <li>
-            <Link
-              to="/CALLICOM/VTT"
-              className="block px-3 py-2 rounded-md hover:bg-orange-400/90"
-              onClick={() => setHamburgerOpen(false)}
+            {" "}
+            <button
+              onClick={() => setModalOpen(true)}
+              className="rounded-md block px-2 py-2 bg-neutral-800/60"
             >
-              [↳] Tactical Map
-            </Link>
+              [↳] Quickref
+            </button>
           </li>
           {isAdmin && (
             <li className="px-1">

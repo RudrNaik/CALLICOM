@@ -57,12 +57,12 @@ export default function ActionEconomyPage() {
 
             <div className="flex items-center gap-2 font-mono">
               {/* Tabs */}
-              <div className="hidden md:flex p-1 bg-black/40 rounded-xl border border-white/10">
+              <div className="hidden md:flex p-1 bg-black/40 rounded-sm border border-white/10">
                 {TABS.map((t) => (
                   <button
                     key={t.key}
                     onClick={() => setActiveTab(t.key)}
-                    className={`px-3 py-1.5 rounded-lg text-sm transition font-mono
+                    className={`px-3 py-1.5 rounded-sm text-xs transition-all font-mono
                       ${
                         activeTab === t.key
                           ? "bg-orange-500 text-gray-200"
@@ -75,7 +75,7 @@ export default function ActionEconomyPage() {
               </div>
 
               {/* Search */}
-              <div className="flex-1 md:w-72">
+              <div className="flex-1 md:w-72 text-xs">
                 <input
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
@@ -96,7 +96,7 @@ export default function ActionEconomyPage() {
             </div>
 
             {/* Mobile tabs */}
-            <div className="md:hidden grid grid-cols-3 gap-2 font-mono">
+            <div className="md:hidden grid grid-cols-6 gap-2 font-mono">
               {TABS.map((t) => (
                 <button
                   key={t.key}

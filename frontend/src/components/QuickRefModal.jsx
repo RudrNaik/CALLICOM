@@ -60,7 +60,7 @@ export default function QuickRefModal({ open, onClose }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[100] bg-black/30"
+          className="fixed inset-0 z-[100] bg-black/60"
           onClick={onClose}
           aria-modal="true"
           role="dialog"
@@ -68,20 +68,20 @@ export default function QuickRefModal({ open, onClose }) {
           <div
             className="absolute left-1/2 top-1/2 w-[min(64rem,95vw)] 
              min-h-[90vh] max-h-[90vh] -translate-x-1/2 -translate-y-1/2
-             rounded-sm border border-orange-400 bg-neutral-900/95 shadow-2xl 
+             rounded-2xl border border-orange-400 bg-neutral-900/95 shadow-2xl 
              overflow-hidden flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="px-6 pt-4 shrink-0">
               {/* Title */}
               <h2 className="text-2xl font-bold text-neutral-100 tracking-wide">
-                QUICK REFERENCE
+                QUICK REFERENCE 
               </h2>
               {/* Tabs */}
               <div>
-                <div className="inline-flex rounded-xl border border-orange-500/40 bg-neutral-900/60 overflow-hidden mt-4">
+                <div className="inline-flex rounded-sm border border-orange-500/40 bg-neutral-900/60 overflow-hidden mt-4">
                   <button
-                    className={`px-4 py-2 text-sm font-semibold ${
+                    className={`px-2 py-2 text-xs font-semibold ${
                       tab === "actions"
                         ? "bg-orange-500 text-white"
                         : "text-orange-300 hover:bg-neutral-800"
@@ -91,7 +91,7 @@ export default function QuickRefModal({ open, onClose }) {
                     Actions
                   </button>
                   <button
-                    className={`px-4 py-2 text-sm font-semibold border-l border-orange-500/40 ${
+                    className={`px-2 py-2 text-xs font-semibold border-l border-orange-500/40 ${
                       tab === "rules"
                         ? "bg-orange-500 text-white"
                         : "text-orange-300 hover:bg-neutral-800"
@@ -105,7 +105,7 @@ export default function QuickRefModal({ open, onClose }) {
             </div>
 
             {/* content */}
-            <div className="flex-1 min-h-0 overflow-y-auto px-6 pb-6 scrollbar-thin scrollbar-thumb-orange-400 scrollbar-track-neutral-700">
+            <div className="flex-1 min-h-0 overflow-y-auto scrollbar-thin scrollbar-thumb-orange-400 scrollbar-track-neutral-700">
               {tab === "actions" && <ActionEconomy />}
             </div>
           </div>

@@ -185,7 +185,7 @@ function EnemyView() {
     <div
       className="
         bg-gradient-to-t from-neutral-800 to-neutral-850
-        border border-orange-500 rounded-xl p-6 shadow-lg mt-5
+        border border-orange-500 rounded-sm p-6 shadow-lg mt-5
         overflow-y-auto scrollbar-thin scrollbar-thumb-orange-400 scrollbar-track-neutral-700
       "
     >

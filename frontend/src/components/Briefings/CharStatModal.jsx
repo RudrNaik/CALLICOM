@@ -103,7 +103,7 @@ export default function CharacterSheetModal({ char, open, onClose }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-[1px]"
+          className="fixed inset-0 z-[100] bg-black/70"
           onClick={onClose}
           aria-modal="true"
           role="dialog"
