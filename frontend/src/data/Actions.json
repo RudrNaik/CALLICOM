@@ -1,0 +1,258 @@
+[
+  {
+    "name": "Shoot",
+    "category": "standard",
+    "color": "bg-neutral-800/80",
+    "type": "Full",
+    "icon": "/FullAction.png",
+    "description": "[Offensive] [Shoot]\nFire away.\n\nShoot your selected weapon, reducing rounds from the magazine and your total ammo count.\n\nShooting is an opposed action test between an attacker's respective weapon skill + bonuses, and the defender's armor class + bonuses.\n\nAbides by ranged combat rules. A character can aim at a specific vehicle or body part (e.g. torso, arm or leg, APS, or wheels). \n-Aiming at a torso-sized target removes one die from the skill test.\n-Aiming at a limb sized target removes two dice from the skill test.\n-Aiming at a head sized target removes three dice from the skill test.\n\nFor torso and limb shots, the target’s wound thresholds are halved (rounded up). Limb shots specifically cause Wound Overflow and not instant death. For headshots, the instant death threshold is also halved- as well as negating the use of E-dice to escape instant death.\n\nYou can aim at inanimate objects against a threshold of 2.You can peek 1 hex in any direction to get line of sight on a target."
+  },
+  {
+    "name": "Rally",
+    "category": "standard",
+    "type": "Full",
+    "color": "bg-neutral-800/80",
+    "icon": "/FullAction.png",
+    "description": "[Support] [Leadership]\nRally your team and other allies.\n\nOnce per turn a team member can rally, using a leadership test to bolster the morale of friendlies. The bonus thresholds are:\n\n<= 1 : no bonuses\n2-4 : +1 bonus to all friendly actions for the next turn.\n5: +1 dice bonus to all friendly actions the next turn.\n6+: +1 dice bonus and +1 bonus  all friendly actions for the next turn.\n\nEach team member can rally once per encounter. Effect lasts one turn once used.\n\nHowever, you can also use rally on a specific friendly target, giving them a callout or command that applies the same effect to them. This can be done multiple times in an encounter and follows the same curve.\n\nOnly comes into effect if roleplayed out."
+  },
+  {
+    "name": "Close Combat",
+    "category": "standard",
+    "type": "Full",
+    "color": "bg-neutral-800/80",
+    "icon": "/FullAction.png",
+    "description": "[Offensive] [CQC]\nGet up close and personal.\n\nAttackers get 2 CQC actions per turn including attacking normally. If the attacker lands both hits in their turn, they get a third action for free. This attack can be either undodgeable or unblockable.\n\nAttackers can also make a heavy attack via applying a -[x] dice to their roll in exchange for adding [x] to their damage if landed.\n\nAll attacks with hands are CQC, all attacks utilizing an object as a weapon are Melee.\n\nCQC attacks inflict Temporary Wounds that can be removed using Recover, and are removed upon exiting combat."
+  },
+  {
+    "name": "Disengage",
+    "category": "standard",
+    "color": "bg-neutral-800/80",
+    "type": "Full",
+    "icon": "/FullAction.png",
+    "description": "[Defensive]\nDisengage from a fight and slip away.\n\nWhen disengaging, do an opposed test against an enemy's alertness using your stealth skill. Upon success, you are disengaged. Enemies will search your last known position, and in combat it makes enemies unaware of you, but any offensive action will re-engage you.\n\nWhen moving while disengaged, you will roll stealth tests against an enemy's alertness to remain disengaged and disguise tests if remaining still. Upon firing on an enemy or failing a test, you re-engage with them.\n\nYou can also search for disengaged enemies using Eyes Up, and prompt a notice test against a defender’s Disguise test."
+  },
+  {
+    "name": "Ready",
+    "category": "standard",
+    "type": "Full",
+    "color": "bg-neutral-800/80",
+    "icon": "/FullAction.png",
+    "description": "[Support]\nReady yourself for a trigger.\n\nWhen readying you can hold an action until a specified event occurs. Such as a door opening, an enemy becoming visible or stepping into place, etc. Once declared with a trigger, or the specified event, the character will remain readied until the trigger happens or they leave the readied state.\n\nWhen readied, you will enact the action even out of your own turn."
+  },
+  {
+    "name": "Intimidate",
+    "category": "standard",
+    "type": "Full",
+    "color": "bg-neutral-800/80",
+    "icon": "/FullAction.png",
+    "description": "[Offensive]\nIntimidate your foes or others for compliance.\n\nWhen Intimidating, you roll your intimidation against an enemy's spirit. If you win the opposed roll, you apply your margin of success as a debuff to their actions against for a turn. If you lose, you get the enemy's ire, and they will focus on you.\n\nOnly comes into effect if roleplayed out."
+  },
+  {
+    "name": "Throw",
+    "category": "standard",
+    "type": "Full",
+    "color": "bg-neutral-800/80",
+    "icon": "/FullAction.png",
+    "description": "[Offensive] [Throw]\nThrow something hard.\n\nThrow a grenade or a throwable object/gadget at an enemy, reduces gadget/grenade count if throwing a grenade or gadget.\n\nThrowing at an individual is usually an opposed action test between an attacker's throw skill and a defender's acrobatics skill, or any other skill depending on the specific grenade or item thrown. Upon success, the defender is able to get out of the way, but is forced out of cover for the rest of the turn. If they have an MOS less than 2 with their result, they are knocked Prone"
+  },
+  {
+    "name": "Triple Time",
+    "category": "standard",
+    "type": "Movement",
+    "color": "bg-neutral-800/80",
+    "icon": "/MovementAction2.png",
+    "description": "[Movement]\nConsume your standard action for another instance of movement (2 range bands), allowing you to move in a deadprint towards a destination.\n\nCan only do bonus actions once you arrive at your destination- and with a -2 malus to all actions done during movement."
+  },
+  {
+    "name": "Eyes Up",
+    "category": "bonus",
+    "color": "bg-neutral-800/80",
+    "type": "Half",
+    "icon": "/HalfAction.png",
+    "description": "[Misc] [Environmental] [Opportunistic]\nDo an action not encompassed by any standard one. The specific effects and actual action are determined by the GM."
+  },
+  {
+    "name": "Brace",
+    "category": "bonus",
+    "type": "Half",
+    "color": "bg-neutral-800/80",
+    "icon": "/MovementAction2.png",
+    "description": "[Defensive] [Stance]\nBrace yourself against cover.\n\nWhen bracing, you get an extra +1 bonus to your armor rolls, however, it reduces your ability to move by one range band the next time you move. Negated by high penetration rifles and a ping.\n\nCan be used out of turn as a reaction, and applies the maluses immediately on your next turn."
+  },
+  {
+    "name": "Mount",
+    "category": "bonus",
+    "type": "Half",
+    "color": "bg-neutral-800/80",
+    "icon": "/MovementAction2.png",
+    "description": "[Offensive] [Stance]\nMount your rifle against cover\n\nWhen mounted onto cover, you get an extra +1 to your weapon rolls. However, mounting restricts your movement by 1 range band until the turn after you unmount or leave cover."
+  },
+  {
+    "name": "Prone",
+    "category": "bonus",
+    "type": "Movement",
+    "color": "bg-neutral-800/80",
+    "icon": "/MovementAction2.png",
+    "description": "[Defensive] [Stance]\nGet supine/on your belly or mount your rifle on some cover.\n\nWhile prone you gain the bonuses of being Mounted as well as a +1 bonus to stealth rolls if moving, or a +1 bonus to disguise if still. When prone, the distance you can cover is reduced by one range band\n\nYou make little noise while prone, and can easily sneak under vehicles and into vents if need be.\n\nHowever, you also suffer a -3 to all [CQC] and [Melee] rolls, and a -2 to all movement related rolls [Acrobatics]."
+  },
+  {
+    "name": "Deploy",
+    "category": "bonus",
+    "color": "bg-neutral-800/80",
+    "type": "Half",
+    "icon": "/HalfAction.png",
+    "description": "[Offensive]\nDeploy or use a gadget.\n\nCertain gadgets may end your turn immediately."
+  },
+  {
+    "name": "Reload",
+    "category": "bonus",
+    "type": "Full",
+    "color": "bg-neutral-800/80",
+    "icon": "/HalfAction.png",
+    "description": "[Support]\nReload your selected weapon, restoring your round count to full.\n\nWhen reloading with ammunition in the mag, it will apply a -1 malus to your shot.\n\nReloading from empty applies a -1 to all actions that turn."
+  },
+  {
+    "name": "Double Time",
+    "category": "bonus",
+    "type": "Half",
+    "color": "bg-neutral-800/80",
+    "icon": "/HalfAction.png",
+    "description": "[Offensive] [Movement]\nGo the extra mile.\n\nAllows you consume your bonus action to move an extra range band (up to long range) in a pinch at the cost of a compounding -1 malus to all rolls taken during or after moving."
+  },
+  {
+    "name": "Patch up/Repair",
+    "category": "bonus",
+    "type": "Half",
+    "color": "bg-neutral-800/80",
+    "icon": "/HalfAction.png",
+    "description": "[Support] [Medical] [Tinker] [Repair Tool]\nPatch yourself or someone else up. Or repair vehicles, equipment, and drones\n\nPatching yourself or someone else up requires having 1 FAK for flesh wounds, and 2 FAKs or an AFAK for deep wounds. When consumed, these items are removed from your inventory.\n\nYou remove 1+ [Medical skill result] divided by 2, rounded down worth of wounds when consumed.\n\nWhen repairing, roll with tinker to determine the amount of wounds of damage repaired. Remove 1+ [Medical skill result] divided by 2, rounded down worth of critical damage when consumed. Prioritizes Critical Damage first, and then fixes equivalent minor damage. Vehicle crews 'relax' when their vehicles are being repaired. Abides by the same rules as healing wounds.\n\nFor drones or specific parts that use HP, multiply the result by 3 for how much HP is repaired."
+  },
+  {
+    "name": "Steadying",
+    "category": "shooting",
+    "color": "bg-neutral-800/80",
+    "type": "Half",
+    "icon": "/FullAction.png",
+    "description": "Available for: \n[All Weapons]\n\nA character can spend up to 3 combat rounds steadying their aim to improve their odds to hit. Add one die to the attacker’s test per round spent steadying, up to a maximum of +3. The character may not move while Steadying.\nWhen Steadying, you take a -1 malus to reactions and your awareness, such as getting away from a grenade or noticing someone sneaking up on you. This doesn't apply to the target you are steadying your aim at, if there is one."
+  },
+  {
+    "name": "Burst",
+    "category": "shooting",
+    "color": "bg-neutral-800/80",
+    "type": "Half",
+    "icon": "/FullAction.png",
+    "description": "Available for:\n[Assault Rifles] [Marksman Rifles]\n\nSome weapons are capable of burst fire. Burst attacks usually consist of firing a tight burst towards a single opponent. The attacker may decrease a number of his dice, up to a maximum of -2. \n\nIf the attack succeeds, the amount of dice decreased is added to the attack’s Margin of Success, thus increasing the damage."
+  },
+  {
+    "name": "Spray",
+    "category": "shooting",
+    "color": "bg-neutral-800/80",
+    "type": "Half",
+    "icon": "/FullAction.png",
+    "description": "Available for: \n[SMGs] [Carbines]\n\n Weapons capable of rapid, automatic fire can be used to attack multiple targets in a single action by spraying across targets. Thus, people or objects between the targets can be hit as well. A player must declare that they are spraying before any attacks are made. The player then chooses the targets of his attack.\n\n Maximum number of targets that possibly can be attacked is three. All targets must be no more than three hexes apart (if they are, count each three hexes as a target or every 5m gap). Each attack is rolled separately, and each individual target can be attacked more than once per round by the same weapon. This attack consumes the same amount of ammo as a normal firing action, multiplied by the amount of times fired."
+  },
+  {
+    "name": "Supression",
+    "category": "shooting",
+    "color": "bg-neutral-800/80",
+    "type": "Half",
+    "icon": "/FullAction.png",
+    "description": "Available for: \n [Machine Guns]\n\nSuppression is putting lots of lead in the air to make others keep their head down. The attacker chooses a target, draw a line from the attacker to the defender, then rolls their attack normally and marks down an extra turn of ammo. Record the result and add 2 to it: that’s the Saturation Fire Threshold. Anyone or anything which enters within one hex of the line of fire or the target during the round must beat the Saturation Threshold or take damage. Anyone within one hex of the line of fire, along with one hex around the defender, are considered Suppressed.\n\n When Suppressed Offensive actions such as shooting or deploying drones and grenades will roll against the saturation fire threshold for damage.\n\n If a defender isnt in cover, they are immediately shifted to prone. The defender must roll a Spirit test against a threshold of 4. \n\n Upon success: defender can move or make offensive actions. \nUpon failure: -1 dice to all rolls. No movement or offensive actions allowed.\n\nAttackers can split their fire towards a maximum of 3 targets, however this will divide the threshold by how many targets there are. If damage is taken or interrupted by items such as a flashbang, supression is stopped."
+  },
+  {
+    "name": "Grappling",
+    "category": "cqc",
+    "color": "bg-neutral-800/80",
+    "type": "Half",
+    "icon": "/HalfAction.png",
+    "description": "[Offensive]\nAttacker CQC versus Defender CQC. If attacker wins, attacker has defender in a grapple to varying degrees of control.\n -------------\n MOF 2+: Whiff, Defender punish. \n MOF 1-0: Bunt, no extra action. \n MOS 1/2: Partial, shove \n MOS 3+: Full, attack/shove (now is a guaranteed knockdown that makes them prone if they fail)\n\n If opponent runs within 2 hexes of you while not in CQC with someone else, you are entitled to a grab attempt at them. However, you move to their position immediately and it can drag you out of cover. Upon MOS of 2+, you can drag them towards you instead. \n\n Opponent recieves -1 to all actions while grappled. Goes both ways when they return the favor. When grappled, defenders have a -1 to all defending for that turn until let go."
+  },
+  {
+    "name": "Disarming",
+    "category": "cqc",
+    "type": "Full",
+    "color": "bg-neutral-800/80",
+    "icon": "/HalfAction.png",
+    "description": "[Offensive]\nAttacker CQC/Melee vs Defender Alertness. Attacker must have at least 2 MoS to succeed.\n\n If the defender succeeds, nothing happens. if attacker succeeds, the weapon is knocked out of the defender's hands. If using CQC, the weapon is now in the attackers hands"
+  },
+  {
+    "name": "Tripping",
+    "category": "cqc",
+    "type": "Half",
+    "color": "bg-neutral-800/80",
+    "icon": "/HalfAction.png",
+    "description": "[Offensive]\nAttacker CQC vs Defender Notice and Acrobatics. \n\n Defenders rolls notice first, if it suceeds against the attack, then roll acrobatics to dodge.\n\n MOS of 1 applies a -1 to defender's next action or check (Off Stance)\n MOS of 2+ knocks the opponent down (prone)."
+  },
+  {
+    "name": "Shove",
+    "category": "cqc",
+    "type": "Half",
+    "color": "bg-neutral-800/80",
+    "icon": "/HalfAction.png",
+    "description": "[Offensive]\nAttacker CQC vs Defender Body to resist.\n Shoves the defender up to 3+ body hexes away. If Defender knocked into wall/cover, they recieve a -1 malus on their next defending action.\n if from a full control shove, immediate knockdown. Walls compound.\n if MOS >2 or in a grapple with full control, opponent is knocked down (prone). "
+  },
+  {
+    "name": "Recover",
+    "category": "cqc",
+    "type": "Half",
+    "color": "bg-neutral-800/80",
+    "icon": "/HalfAction.png",
+    "description": "[Defensive]\n You can use Recover for one of three actions: \n\nTo restore temporary wounds:\n-------------\nRoll Body. Recover a temporary deep wound, or temporary flesh equivalent based off of the result of your roll on the curve of: \n 1 = 0 Deep Wounds\n 2-4 = 1 Deep wounds\n 5-6 = 2 Deep wounds\n -And then end turn immediately.\n\n To get up from being prone:\n-------------\nConsumes one CQC action.\n\n To improve your defensive stance.\n-------------\n Consumes one CQC action, improves your next defensive check by 1 dice."
+  },
+  {
+    "name": "Dodge",
+    "category": "cqc",
+    "type": "Half",
+    "color": "bg-neutral-800/80",
+    "icon": "/HalfAction.png",
+    "description": "[Defensive]\n Defender Athletics vs Attacker roll.\n\nEvery dodge after the first will incur a compounding -1 malus until you Recover.\n\n Converts all attacks to flesh wounds if MOF less than 2. MOS of 2+ results in a defender punish.\n\n Punishing allows the Defender to immediately return an attack and end the attacker's turn. This attack has a -1 to the defender's check and isnt counted in the 2 standard CQC Actions a character would have in a turn."
+  },
+  {
+    "name": "Block",
+    "category": "cqc",
+    "type": "Half",
+    "color": "bg-neutral-800/80",
+    "icon": "/HalfAction.png",
+    "description": "[Defensive]\n Defender Body Stat vs Attacker roll.\n\nEvery block after the first will incur a compounding -1 malus until you Recover.\n\n Always reduces opponent MOS by 1. Negates instant death even when failed, but causes Wound Overflow instead.\n\n Wound Overflow causes the attacker to take the excess damage from an attack that would cause instant death, and instead convert them into further flesh and deep wounds."
+  },
+  {
+    "name": "Parry",
+    "category": "cqc",
+    "type": "Half",
+    "color": "bg-neutral-800/80",
+    "icon": "/HalfAction.png",
+    "description": "[Defensive]\n Defender matching stat vs Attacker roll\n\n Every parry after the first will incur a compounding -1 malus until you Recover.\n\n Parrying requires an MOS of 2 to succeed, if it fails, the attack goes through with at least MOS of 2. If successful, immediately ends Attacker turn. MOS of 3+ results in a defender punish.\n\n Punishing allows the Defender to immediately return an attack and end the attacker's turn. This attack has a -1 to the opposing roll, and isnt counted in the 2 standard CQC Actions a character would have in a turn."
+  },
+  {
+    "name": "Move/Sprint",
+    "category": "movement",
+    "color": "bg-neutral-800/80",
+    "type": "Movement",
+    "icon": "/MovementAction2.png",
+    "description": "[Movement]\nMove within one range band (Close Range).\n\nWhile moving, if you do any actions you will take a -1 to all rolls because of it. If using AC0 armor, this is negated.\n\nYou can also Sprint up to two range bands (Medium Range) at a blistering pace.\n\nYou can do actions while sprinting, but not too well. you suffer a -1 to all actions while sprinting. If using AC0 armor, this is reduced to 0."
+  },
+  {
+    "name": "Triple Time",
+    "category": "movement",
+    "type": "Movement",
+    "color": "bg-neutral-800/80",
+    "icon": "/MovementAction2.png",
+    "description": "[Movement]\nConsume your standard action for another instance of movement (2 range bands), allowing you to move in a deadprint towards a destination.\n\nCan only do bonus actions once you arrive at your destination- and with a -2 malus to all actions done during movement."
+  },
+  {
+    "name": "Prone",
+    "category": "movement",
+    "type": "Movement",
+    "color": "bg-neutral-800/80",
+    "icon": "/MovementAction2.png",
+    "description": "[Movement] [Stance]\nGet supine/on your belly or mount your rifle on some cover.\n\nWhile prone you gain the bonuses of being Mounted as well as a +1 bonus to stealth rolls if moving, or a +1 bonus to disguise if still. Alongside these, when rolling against explosives you gain a +1 bonus.\n\nThe distance you can cover is reduced by one range band.\n\nYou make little noise while prone, and can easily sneak under vehicles and into vents if need be.\n\nHowever, you also suffer a -3 to all defensive close combat rolls, and a -2 to all movement related rolls [Acrobatics]."
+  },
+  {
+    "name": "Mantle",
+    "category": "movement",
+    "type": "Movement",
+    "color": "bg-neutral-800/80",
+    "icon": "/MovementAction2.png",
+    "description": "[Movement] [Elevation]\nMantle onto cover\n\nWhen mantling, you are able to increase your elevation, or decrease it by jumping down to a lower level. To do so, make a jump test against 2+ your armor class. On success, you reach the elevation you want to be at. Upon failure, you fall and abide by falling rules. If the fall causes no wounds, you become winded instead, taking a -1 malus to your next action.\n\nWhen mantling onto cover, you make an action test against 2+ your armor class. Mantling onto standard cover or a vehicle grants a transition-level elevation boost and functions as a transition between elevations while also allowing you to shoot over tall cover. Mantling onto Tall Cover grants a full elevation bump to the next elevation.\n\nWhile mantled, you are no longer considered in cover; you cannot be shielded by the object you're standing on top of. You may still gain cover from Tall Cover if you’re on top of normal cover, or a soft or hard wall if on top of tall cover, in a hex adjacent to what you're standing on (e.g. mantled on a car being used as cover, with a Tall Cover wall in the adjacent hex you can peek over)."
+  }
+]

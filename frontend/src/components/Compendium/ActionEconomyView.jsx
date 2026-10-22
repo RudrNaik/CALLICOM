@@ -1,9 +1,5 @@
 import { useMemo, useState } from "react";
-import actions from "../../data/actions.json";
-import halfActions from "../../data/halfActions.json";
-import movement from "../../data/movement.json";
-import shooting from "../../data/shootingActions.json";
-import cqc from "../../data/closeCombatActions.json";
+import Actions from "../../data/Actions.json";
 import background from "../../assets/Images/4060492.jpg";
 import Footer from "../Footer";
 import ActionCard from "./ActionCard";
@@ -18,11 +14,11 @@ const TABS = [
 ];
 
 const SECTIONS = [
-  { key: "standard", title: "Standard Actions", data: actions },
-  { key: "bonus", title: "Bonus Actions", data: halfActions },
-  { key: "shooting", title: "Shooting Actions", data: shooting },
-  { key: "cqc", title: "Close Combat", data: cqc },
-  { key: "movement", title: "Movement", data: movement },
+  { key: "standard", title: "Standard Actions" },
+  { key: "bonus", title: "Bonus Actions" },
+  { key: "shooting", title: "Shooting Actions" },
+  { key: "cqc", title: "Close Combat" },
+  { key: "movement", title: "Movement" },
 ];
 
 export default function ActionEconomyPage() {
@@ -39,7 +35,7 @@ export default function ActionEconomyPage() {
   const filteredSections = useMemo(() => {
     return SECTIONS.map((s) => ({
       ...s,
-      items: s.data.filter(filterFn),
+      items: Actions.filter((a) => a.category === s.key && filterFn(a)),
     }));
   }, [q]);
 
@@ -161,7 +157,7 @@ function Section({ title, items }) {
         <div className="flex-grow border-t border-white/20" />
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 font-mono">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3 font-mono">
         {items.map((action, idx) => (
           <ActionCard key={`${action.name ?? idx}-${idx}`} action={action} />
         ))}
