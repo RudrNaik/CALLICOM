@@ -9,9 +9,9 @@ const Rulebook = () => {
       style={{ backgroundImage: `url(${background})` }}
     >
       <div className="py-10"> </div>
-
-      <ActionEconomyView />
-
+      <div className="mt-10">
+        <ActionEconomyView />
+      </div>
     </div>
   );
 };

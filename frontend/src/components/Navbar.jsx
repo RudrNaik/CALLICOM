@@ -1,16 +1,18 @@
 // src/components/Navbar.jsx
 import { useContext, useEffect, useState, useRef } from "react";
 import SpinyLogo from "../assets/Images/SpinyLogoRevamp.png";
-import CalamariLogo from "../assets/Images/Calamari_Logo_inverted.png"
+import CalamariLogo from "../assets/Images/Calamari_Logo_inverted.png";
 import { Link } from "react-router-dom";
 import UserIcon from "../assets/Images/UserIcon.png";
 import { AuthContext } from "../AuthContext";
 import Pinger from "./CharacterRoster/Pinger";
+import QuickRefModal from "./QuickRefModal";
 
 const Navbar = ({}) => {
   const [scrolled, setScrolled] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [hamburgerOpen, setHamburgerOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(true);
   const dropdownRef = useRef(null);
   const { isLoggedIn, logout, isAdmin } = useContext(AuthContext);
 
@@ -73,6 +75,7 @@ const Navbar = ({}) => {
             </Link>
           </li>
           <li>{isAdmin && <Pinger />}</li>
+          <li> <button onClick={() => setModalOpen(true)} className="hover:bg-orange-400" >Quickref</button></li>
         </ul>
 
         {/*Hamburger... only appears when smaller than Md*/}
@@ -103,7 +106,7 @@ const Navbar = ({}) => {
             <path d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
-        
+
         {/* User profile button */}
         <div
           className="absolute right-4 top-1/2 -translate-y-1/2"
@@ -164,9 +167,10 @@ const Navbar = ({}) => {
             </div>
           )}
         </div>
+
+        <QuickRefModal open={modalOpen} onClose={() => setModalOpen(false)} />
       </div>
 
-      
       <div
         id="mobile-nav"
         className={`md:hidden overflow-hidden transition-[max-height,opacity] duration-300 ${
