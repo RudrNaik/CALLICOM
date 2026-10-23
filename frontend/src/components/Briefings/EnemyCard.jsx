@@ -189,7 +189,7 @@ function EnemyCard({ id, onDelete }) {
      RENDER
   ======================= */
   return (
-    <div className="relative w-70 bg-neutral-900/90 bg-[radial-gradient(circle,_rgba(255,120,0,0.05)_1px,_transparent_1px)] [background-size:8px_8px] rounded-lg p-3 border border-orange-400 hover:border-neutral-100 transition">
+    <div className="relative w-66 bg-neutral-900/90 bg-[radial-gradient(circle,_rgba(255,120,0,0.05)_1px,_transparent_1px)] [background-size:8px_8px] rounded-sm p-3 border border-orange-400 hover:border-neutral-100 transition">
       {/* DELETE */}
       <button
         onClick={deleteSelf}
@@ -207,7 +207,7 @@ function EnemyCard({ id, onDelete }) {
             onChange={(e) => update(["identity", "name"], e.target.value)}
           />
           <select
-            className="w-full bg-neutral-900 text-neutral-400 text-xs mt-1"
+            className="w-full bg-neutral-900 text-xs border-1 border-orange-400/60"
             value={identity.class}
             onChange={(e) => update(["identity", "class"], e.target.value)}
           >
@@ -233,7 +233,7 @@ function EnemyCard({ id, onDelete }) {
       </div>
 
       {/* CORE STATS */}
-      <div className="grid grid-cols-4 text-xs text-center mb-2 gap-2">
+      <div className="grid grid-cols-5 text-xs text-center mb-1 gap-1">
         {["Alertness", "Body", "Intelligence", "Spirit"].map((a) => (
           <div key={a}>
             <div className="text-orange-300">{a.slice(0, 3)}</div>
@@ -246,91 +246,92 @@ function EnemyCard({ id, onDelete }) {
             />
           </div>
         ))}
-      </div>
-
-      {/* DEFENSE */}
-      <div className="grid grid-cols-2 text-xs mb-2">
         <div>
-          AC{" "}
+          <div className="text-orange-300">AC</div>
           <input
-            className="w-10 bg-neutral-800 text-center rounded ml-1"
+            className="w-full bg-neutral-800 text-center rounded-xs"
             value={stats.AC}
             onChange={(e) =>
               update(["stats", "AC"], parseInt(e.target.value) || 0)
             }
           />
         </div>
-        <div className="text-orange-300">CS {CombatSense}</div>
       </div>
 
       {/* WOUNDS */}
       <div className="border-t border-orange-500/30 pt-1 text-xs">
-        <div className="font-bold">
-          WND <span className="text-red-500">{woundMod}</span>
+        <div className="flex justify-between font-bold">
+          <span>
+            WND <span className="text-red-500">{woundMod}</span>
+          </span>
+          <span className="text-orange-300">CS {CombatSense}</span>
+          <span className="text-[10px] font-normal">
+            SYS {systemShock} |{" "}
+            <span className="text-red-700">DTH {instantDeath}</span>
+          </span>
         </div>
 
-        <div>
-          FWT {FleshWoundThreshold}{" "}
-          <button
-            className="border-1 border-orange-500 rounded-sm mx-1 mb-0.5 px-1 cursor-pointer"
-            onClick={() => update(["wounds", "FW"], wounds.FW + 1)}
-          >
-            +
-          </button>
-          <button
-            className="border-1 border-orange-500 rounded-sm mx-1 px-1 cursor-pointer"
-            onClick={() => update(["wounds", "FW"], wounds.FW - 1)}
-          >
-            -
-          </button>
-        </div>
+        <div className="grid grid-cols-2 gap-1 mt-0.5">
+          <div className="whitespace-nowrap">
+            FWT {FleshWoundThreshold}
+            <button
+              className="border border-orange-500 rounded-sm mx-1 px-1 cursor-pointer"
+              onClick={() => update(["wounds", "FW"], wounds.FW + 1)}
+            >
+              +
+            </button>
+            <button
+              className="border border-orange-500 rounded-sm px-1 cursor-pointer"
+              onClick={() => update(["wounds", "FW"], wounds.FW - 1)}
+            >
+              -
+            </button>
+          </div>
 
-        <div>
-          DWT {DeepWoundThreshold}{" "}
-          <button
-            className="border-1 border-orange-500 rounded-sm mx-1 px-1 cursor-pointer"
-            onClick={() => update(["wounds", "DW"], wounds.DW + 1)}
-          >
-            +
-          </button>
-          <button
-            className="border-1 border-orange-500 rounded-sm mx-1 px-1 cursor-pointer"
-            onClick={() => update(["wounds", "DW"], wounds.DW - 1)}
-          >
-            -
-          </button>
-        </div>
-
-        <div className="text-[10px] mt-0.5">
-          SYS {systemShock} |{" "}
-          <span className="text-red-700">DTH {instantDeath}</span>
+          <div className="whitespace-nowrap">
+            DWT {DeepWoundThreshold}
+            <button
+              className="border border-orange-500 rounded-sm mx-1 px-1 cursor-pointer"
+              onClick={() => update(["wounds", "DW"], wounds.DW + 1)}
+            >
+              +
+            </button>
+            <button
+              className="border border-orange-500 rounded-sm px-1 cursor-pointer"
+              onClick={() => update(["wounds", "DW"], wounds.DW - 1)}
+            >
+              -
+            </button>
+          </div>
         </div>
       </div>
 
       {/* COMBAT */}
-      <div className="border-t border-orange-500/30 mt-2 pt-1 text-xs">
-        <div className="font-bold text-orange-300">Combat</div>
-
-        <div className="flex items-center gap-1 mt-1">
-          <span>CQC:</span>
-          <input
-            className="w-10 bg-neutral-800 text-center rounded"
-            value={stats.Melee}
-            onChange={(e) =>
-              update(["stats", "Melee"], parseInt(e.target.value) || 0)
-            }
-          />
-          <span className="text-orange-300">DMG {meleeDamage}</span>
+      <div className="border-t border-orange-500/30 mt-1 pt-1 text-xs">
+        <div className="grid grid-cols-2 gap-1 items-center">
+          <div className="flex items-center gap-1">
+            <span>CQC:</span>
+            <input
+              className="w-8 bg-neutral-800 text-center rounded"
+              value={stats.Melee}
+              onChange={(e) =>
+                update(["stats", "Melee"], parseInt(e.target.value) || 0)
+              }
+            />
+            <span className="text-orange-300">DMG {meleeDamage}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <span>WPN:</span>
+            <input
+              className="w-8 bg-neutral-800 text-center rounded"
+              value={stats.Weapon}
+              onChange={(e) =>
+                update(["stats", "Weapon"], parseInt(e.target.value) || 0)
+              }
+            />
+          </div>
         </div>
-        <div className="flex items-center gap-1 mt-1">
-          <span>WPN:</span>
-          <input
-            className="w-10 bg-neutral-800 text-center rounded"
-            value={stats.Weapon}
-            onChange={(e) =>
-              update(["stats", "Weapon"], parseInt(e.target.value) || 0)
-            }
-          />
+        <div className="grid grid-cols-2 gap-1 mt-1">
           <input
             className="w-full bg-neutral-800 text-center rounded-xs"
             value={stats.rng}
@@ -351,9 +352,8 @@ function EnemyCard({ id, onDelete }) {
       </div>
 
       {/* WEAPON */}
-      <div className="border-t border-orange-500/30 mt-2 pt-1 text-xs">
-        <div className="font-bold text-orange-300">Weapon</div>
-        <div className="flex flex-row gap-1 mt-1">
+      <div className="border-t border-orange-500/30 mt-1 pt-1 text-xs">
+        <div className="flex flex-row gap-1">
           <select
             className="w-full bg-neutral-900 text-xs border-1 border-orange-400/60"
             value={loadout.Primary}
@@ -386,13 +386,11 @@ function EnemyCard({ id, onDelete }) {
         </div>
 
         {weaponInfo && (
-          <div className="text-[10px] text-neutral-400 border border-orange-500/20 rounded-xs p-1">
+          <div className="mt-1 text-[10px] text-neutral-400 border border-orange-500/20 rounded-xs p-1">
             <div>
               <span className="text-orange-300">DMG:</span> {weaponInfo.damage}{" "}
               | <span className="text-orange-300">PEN:</span>{" "}
-              {weaponInfo.penetration}
-            </div>
-            <div>
+              {weaponInfo.penetration} |{" "}
               <span className="text-orange-300">RNG:</span> {weaponInfo.range}
             </div>
             {loadout.PrimaryFamily && baseWeaponInfo?.families && (
@@ -432,9 +430,14 @@ function EnemyCard({ id, onDelete }) {
         </div>
 
         {selectedGadget && (
-          <div className="mt-1 text-[10px] text-neutral-400 border border-orange-500/20 rounded p-1 max-h-28 overflow-y-auto">
-            {selectedGadget.rulesText}
-          </div>
+          <details className="mt-1 text-[10px] text-neutral-400 border border-orange-500/20 rounded">
+            <summary className="cursor-pointer px-1 text-orange-300">
+              Rules
+            </summary>
+            <div className="p-1 max-h-28 overflow-y-auto">
+              {selectedGadget.rulesText}
+            </div>
+          </details>
         )}
       </div>
 
@@ -457,9 +460,14 @@ function EnemyCard({ id, onDelete }) {
         </div>
 
         {selectedSecondaryGadget && (
-          <div className="mt-1 text-[10px] text-neutral-400 border border-orange-500/20 rounded p-1 max-h-28 overflow-y-auto">
-            {selectedSecondaryGadget.rulesText}
-          </div>
+          <details className="mt-1 text-[10px] text-neutral-400 border border-orange-500/20 rounded">
+            <summary className="cursor-pointer px-1 text-orange-300">
+              Rules
+            </summary>
+            <div className="p-1 max-h-28 overflow-y-auto">
+              {selectedSecondaryGadget.rulesText}
+            </div>
+          </details>
         )}
       </div>
 
