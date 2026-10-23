@@ -61,7 +61,7 @@ select.select-themed {
   background-color: #171717;      /* black background */
   border: 1px solid #fb923c99;    /* orange-400/60 border */
   border-radius: 0.25rem;
-  padding: 0.25rem 1.75rem 0.25rem 0.5rem;
+  padding: 0.25rem 0.5rem 0.25rem 0.5rem;
   background-image:
     linear-gradient(45deg, transparent 50%, #fb923c 50%),
     linear-gradient(135deg, #fb923c 50%, transparent 50%);

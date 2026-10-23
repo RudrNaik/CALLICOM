@@ -2,11 +2,15 @@ import React, { useState, useEffect, useMemo } from "react";
 import equipmentData from "../../data/Equipment.json";
 import classes from "../../data/classSkills.json";
 import gearSetsData from "../../data/geasrSets.json";
-import { applyModifiers, getWeaponCategoriesByIdLookup } from "../../engine/weaponEngine";
+import {
+  applyModifiers,
+  getWeaponCategoriesByIdLookup,
+} from "../../engine/weaponEngine";
 import {
   getGearsetsForClass,
   getGearPiecesBySlot,
   getGearPieceById,
+  getActiveGearsetPatch,
   GEAR_SLOT_KEYS,
 } from "../../engine/equipmentEngine";
 import Collapsible from "../Collapsible";
@@ -37,12 +41,13 @@ const DEFAULT_STATE = {
     Melee: 1,
     Weapon: 1,
     rng: "",
-    tgt: ""
+    tgt: "",
   },
   loadout: {
     Primary: "Assault Rifles",
     PrimaryFamily: null,
     Gadget: "",
+    SecondaryGadget: "",
   },
   wounds: {
     FW: 0,
@@ -60,6 +65,7 @@ function EnemyCard({ id, onDelete }) {
   const [state, setState] = useState(DEFAULT_STATE);
   const [loaded, setLoaded] = useState(false);
   const [filteredGadgets, setFilteredGadgets] = useState([]);
+  const [secondaryGadgets, setSecondaryGadgets] = useState([]);
 
   const weaponCatsLookup = useMemo(
     () => getWeaponCategoriesByIdLookup(equipmentData),
@@ -93,9 +99,13 @@ function EnemyCard({ id, onDelete }) {
   ======================= */
   useEffect(() => {
     setFilteredGadgets(
-      equipmentData.filter((g) => g.class === state.identity.class)
+      equipmentData.filter((g) => g.class === state.identity.class),
     );
   }, [state.identity.class]);
+
+  useEffect(() => {
+    setSecondaryGadgets(equipmentData.filter((g) => g.parentId === "passives"));
+  });
 
   /* =======================
      UPDATE HELPER
@@ -127,6 +137,11 @@ function EnemyCard({ id, onDelete }) {
     [identity.class],
   );
 
+  const activePatch = useMemo(
+    () => getActiveGearsetPatch(gearsets, gearSlots),
+    [gearsets, gearSlots],
+  );
+
   const Body = Number(stats.Body) || 0;
   const Spirit = Number(stats.Spirit) || 0;
   const Intelligence = Number(stats.Intelligence) || 0;
@@ -143,29 +158,38 @@ function EnemyCard({ id, onDelete }) {
   const systemShock = 5 + Math.ceil((Body + Spirit) / 2);
   const instantDeath = Stamina * 2;
 
-  const meleeDamage = Math.max(4, Math.ceil((3 + Body + MeleeBonus)/1.5));
+  const meleeDamage = Math.max(4, Math.ceil((3 + Body + MeleeBonus) / 1.5));
   const WeaponSkill = stats.Weapon;
 
   // Get weapon base stats
   const baseWeaponInfo = weaponCatsLookup[loadout.Primary] || null;
 
   // Apply family modifiers if selected
-  const weaponInfo = baseWeaponInfo && loadout.PrimaryFamily && baseWeaponInfo.families
-    ? (() => {
-        const family = baseWeaponInfo.families.find(f => f.family === loadout.PrimaryFamily);
-        return family ? applyModifiers(baseWeaponInfo, family.modifiers) : baseWeaponInfo;
-      })()
-    : baseWeaponInfo;
+  const weaponInfo =
+    baseWeaponInfo && loadout.PrimaryFamily && baseWeaponInfo.families
+      ? (() => {
+          const family = baseWeaponInfo.families.find(
+            (f) => f.family === loadout.PrimaryFamily,
+          );
+          return family
+            ? applyModifiers(baseWeaponInfo, family.modifiers)
+            : baseWeaponInfo;
+        })()
+      : baseWeaponInfo;
 
   const selectedGadget = filteredGadgets.find(
-    (g) => g.title === loadout.Gadget
+    (g) => g.title === loadout.Gadget,
+  );
+
+  const selectedSecondaryGadget = secondaryGadgets.find(
+    (g) => g.title === loadout.SecondaryGadget,
   );
 
   /* =======================
      RENDER
   ======================= */
   return (
-    <div className="relative w-66 mb-4 bg-neutral-900/90 bg-[radial-gradient(circle,_rgba(255,120,0,0.05)_1px,_transparent_1px)] [background-size:8px_8px] rounded-lg p-4 border border-orange-400 hover:border-neutral-100 transition">
+    <div className="relative w-70 bg-neutral-900/90 bg-[radial-gradient(circle,_rgba(255,120,0,0.05)_1px,_transparent_1px)] [background-size:8px_8px] rounded-lg p-3 border border-orange-400 hover:border-neutral-100 transition">
       {/* DELETE */}
       <button
         onClick={deleteSelf}
@@ -197,20 +221,13 @@ function EnemyCard({ id, onDelete }) {
         {/* FLAGS */}
         <div className="flex flex-col items-end gap-1">
           <button
-            title="Pinged"
-            onClick={() => update(["identity", "pinged"], !identity.pinged)}
-            className={`w-3 h-3 rounded-full cursor-pointer ${
-              identity.pinged ? "bg-red-500" : "border border-neutral-500"
-            }`}
-          />
-          <button
             title="Firing"
             onClick={() => update(["identity", "firing"], !identity.firing)}
             className={`text-xs cursor-pointer ${
               identity.firing ? "text-red-500" : "text-neutral-500"
             }`}
           >
-            {">>>"}
+            {"[>>>]"}
           </button>
         </div>
       </div>
@@ -315,60 +332,61 @@ function EnemyCard({ id, onDelete }) {
             }
           />
           <input
-              className="w-full bg-neutral-800 text-center rounded-xs"
-              value={stats.rng}
-              type="text"
-              placeholder="RNG"
-              onChange={(e) =>
-                update(["stats", "rng"], e.target.value.toUpperCase())
-              }
-            />
-            <input
-              className="w-full bg-neutral-800 text-center rounded-xs"
-              value={stats.tgt}
-              type="text"
-              placeholder="TGT"
-              onChange={(e) =>
-                update(["stats", "tgt"], e.target.value)
-              }
-            />
+            className="w-full bg-neutral-800 text-center rounded-xs"
+            value={stats.rng}
+            type="text"
+            placeholder="RNG"
+            onChange={(e) =>
+              update(["stats", "rng"], e.target.value.toUpperCase())
+            }
+          />
+          <input
+            className="w-full bg-neutral-800 text-center rounded-xs"
+            value={stats.tgt}
+            type="text"
+            placeholder="TGT"
+            onChange={(e) => update(["stats", "tgt"], e.target.value)}
+          />
         </div>
       </div>
 
       {/* WEAPON */}
       <div className="border-t border-orange-500/30 mt-2 pt-1 text-xs">
         <div className="font-bold text-orange-300">Weapon</div>
-
-        <select
-          className="w-full bg-neutral-900 text-xs mt-1"
-          value={loadout.Primary}
-          onChange={(e) => update(["loadout", "Primary"], e.target.value)}
-        >
-          <option value="">Select Weapon</option>
-          {Object.entries(weaponCatsLookup).map(([weaponId, weapon]) => (
-            <option key={weaponId} value={weaponId}>
-              {weapon?.categoryName || weaponId}
-            </option>
-          ))}
-        </select>
-
-        {baseWeaponInfo?.families && baseWeaponInfo.families.length > 0 && (
+        <div className="flex flex-row gap-1 mt-1">
           <select
-            className="w-full bg-neutral-900 text-xs mt-1"
-            value={loadout.PrimaryFamily || ""}
-            onChange={(e) => update(["loadout", "PrimaryFamily"], e.target.value || null)}
+            className="w-full bg-neutral-900 text-xs border-1 border-orange-400/60"
+            value={loadout.Primary}
+            onChange={(e) => update(["loadout", "Primary"], e.target.value)}
           >
-            <option value="">No Family</option>
-            {baseWeaponInfo.families.map((family) => (
-              <option key={family.family} value={family.family}>
-                {family.family}
+            <option value="">Select Weapon</option>
+            {Object.entries(weaponCatsLookup).map(([weaponId, weapon]) => (
+              <option key={weaponId} value={weaponId}>
+                {weapon?.categoryName || weaponId}
               </option>
             ))}
           </select>
-        )}
+
+          {baseWeaponInfo?.families && baseWeaponInfo.families.length > 0 && (
+            <select
+              className="w-full bg-neutral-900 text-xs border-1 border-orange-400/60"
+              value={loadout.PrimaryFamily || ""}
+              onChange={(e) =>
+                update(["loadout", "PrimaryFamily"], e.target.value || null)
+              }
+            >
+              <option value="">No Family</option>
+              {baseWeaponInfo.families.map((family) => (
+                <option key={family.family} value={family.family}>
+                  {family.family}
+                </option>
+              ))}
+            </select>
+          )}
+        </div>
 
         {weaponInfo && (
-          <div className="mt-1 text-[10px] text-neutral-400 border border-orange-500/20 rounded p-1">
+          <div className="text-[10px] text-neutral-400 border border-orange-500/20 rounded-xs p-1">
             <div>
               <span className="text-orange-300">DMG:</span> {weaponInfo.damage}{" "}
               | <span className="text-orange-300">PEN:</span>{" "}
@@ -379,9 +397,15 @@ function EnemyCard({ id, onDelete }) {
             </div>
             {loadout.PrimaryFamily && baseWeaponInfo?.families && (
               <div className="mt-1 pt-1 border-t border-orange-500/20">
-                <div className="text-orange-300">Family: {loadout.PrimaryFamily}</div>
+                <div className="text-orange-300">
+                  Family: {loadout.PrimaryFamily}
+                </div>
                 <div className="text-[9px] mt-1">
-                  {baseWeaponInfo.families.find(f => f.family === loadout.PrimaryFamily)?.effect}
+                  {
+                    baseWeaponInfo.families.find(
+                      (f) => f.family === loadout.PrimaryFamily,
+                    )?.effect
+                  }
                 </div>
               </div>
             )}
@@ -390,19 +414,22 @@ function EnemyCard({ id, onDelete }) {
       </div>
 
       {/* GADGET */}
-      <div className="border-t border-orange-500/30 mt-2 pt-1 text-xs">
-        <div className="font-bold text-orange-300">Gadget</div>
+      <div className="border-t border-orange-500/30 mt-1 pt-1 text-xs">
+        <div className="flex flex-row gap-1">
+          <div className="font-bold text-orange-300">Gadget: </div>
 
-        <select
-          className="w-full bg-neutral-900 text-xs mt-1"
-          value={loadout.Gadget}
-          onChange={(e) => update(["loadout", "Gadget"], e.target.value)}
-        >
-          <option value="">Select Gadget</option>
-          {filteredGadgets.map((g) => (
-            <option key={g.title}>{g.title}</option>
-          ))}
-        </select>
+          <select
+            className="w-full bg-neutral-900 text-xs border-1 border-orange-400/60"
+            value={loadout.Gadget}
+            onChange={(e) => update(["loadout", "Gadget"], e.target.value)}
+            placeholder={"Secondary Gadget"}
+          >
+            <option value="">Select Gadget</option>
+            {filteredGadgets.map((g) => (
+              <option key={g.title}>{g.title}</option>
+            ))}
+          </select>
+        </div>
 
         {selectedGadget && (
           <div className="mt-1 text-[10px] text-neutral-400 border border-orange-500/20 rounded p-1 max-h-28 overflow-y-auto">
@@ -411,20 +438,71 @@ function EnemyCard({ id, onDelete }) {
         )}
       </div>
 
+      <div className="border-t border-orange-500/30 mt-1 pt-1 text-xs">
+        <div className="flex flex-row gap-1">
+          <div className="font-bold text-orange-300">Sec.Gadget</div>
+
+          <select
+            className="w-full bg-neutral-900 text-xs border-1 border-orange-400/60"
+            value={loadout.SecondaryGadget}
+            onChange={(e) =>
+              update(["loadout", "SecondaryGadget"], e.target.value)
+            }
+          >
+            <option value="">Select Gadget</option>
+            {secondaryGadgets.map((g) => (
+              <option key={g.title}>{g.title}</option>
+            ))}
+          </select>
+        </div>
+
+        {selectedSecondaryGadget && (
+          <div className="mt-1 text-[10px] text-neutral-400 border border-orange-500/20 rounded p-1 max-h-28 overflow-y-auto">
+            {selectedSecondaryGadget.rulesText}
+          </div>
+        )}
+      </div>
+
       {/* GEAR SLOTS */}
       {identity.class && gearsets.length > 0 && (
-        <Collapsible title="Gear Slots" color="orange-400" headerSize="xs" bottomMargin={false}>
-          <div className="space-y-2 text-xs">
+        <Collapsible
+          title="Gear Slots"
+          color="orange-400"
+          headerSize="xs"
+          bottomMargin={false}
+        >
+          <div className="space-y-1 text-xs">
+            {activePatch && (
+              <div className="border border-orange-400/30 bg-orange-900/20 rounded-xs p-1">
+                <div className="text-orange-300">Patch</div>
+                <div className="font-semibold text-white">
+                  {activePatch.name}{" "}
+                  <span className="text-orange-400 text-[10px] italic font-light">
+                    {activePatch.gearsetName}
+                  </span>
+                </div>
+                <div className="mt-1 text-[10px] text-neutral-400 whitespace-pre-line">
+                  {activePatch.effect}
+                </div>
+              </div>
+            )}
             {GEAR_SLOT_KEYS.map((slotKey) => {
               const options = getGearPiecesBySlot(gearsets, slotKey);
-              const equippedPiece = getGearPieceById(gearsets, gearSlots[slotKey]);
+              const equippedPiece = getGearPieceById(
+                gearsets,
+                gearSlots[slotKey],
+              );
               return (
                 <div key={slotKey}>
-                  <div className="text-orange-300">{GEAR_SLOT_LABELS[slotKey]}</div>
+                  <div className="text-orange-300">
+                    {GEAR_SLOT_LABELS[slotKey]}
+                  </div>
                   <select
-                    className="w-full bg-neutral-900 text-xs mt-1"
+                    className="w-full bg-neutral-900 text-xs border-1 border-orange-400/60"
                     value={gearSlots[slotKey] || ""}
-                    onChange={(e) => update(["gearSlots", slotKey], e.target.value)}
+                    onChange={(e) =>
+                      update(["gearSlots", slotKey], e.target.value)
+                    }
                   >
                     <option value="">None</option>
                     {options.map((piece) => (
