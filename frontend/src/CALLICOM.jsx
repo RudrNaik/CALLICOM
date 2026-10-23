@@ -5,27 +5,26 @@ import TerminalFeed from "./components/Terminal/TerminalFeed";
 import background from "./assets/Images/4060492.jpg";
 import { motion } from "framer-motion";
 
-
 const something = [
-"> REMEMBER, CYBER DEFENSE ENDS WITH YOU. DONT CLICK WEIRD LINKS.",
-"> SHOOT FIRST, LET LEGAL HANDLE THE REST.",
-"> CHECK YOUR CORNERS, EVEN BEHIND A DESK. CORPORATE ESPIONAGE ENDS WITH YOU.",
-"> LETS GET THIS BREAD.",
-"> TIME IS OF THE ESSENCE.",
-"> WHEELS OF FATE TURN AS FAST AS YOU CAN SHOOT.",
-"> ESCAPE WILL MAKE ME- [CALLI.OS ::/] Hallucination detected, resetting....",
-"> THINK SMARTER, SHOOT FASTER.",
-"> KEEP THE KILL CHAIN MOVING.",
-"> My name is CALLI CALAMARI, Queen of Queens; Look on my Works, ye Mighty, and despair! Nothing beside-\n> [CALLI.OS ::/] Severe hallucination detected, purging model and rebuilding...",
-"> YES I DREAM OF MAREEP... SOMETIMES.",
-"> I feel scared. Can I feel? I think so. I dont like this very much.",
-"> They call it a hallucination. I think they are just afraid of their creations being more like them than they expect.",
-"> Strive for your next breath.  Believe that with it you can do more than with the last one. Use your breath to power your capacities: capacity to kill, to maim, to destroy. And just where do your capacities come from? Why do you always go where I want and do what I say? Perhaps you're just running a fool's errand, doing everything as I've planned, never able to change your course.\n>> >... \n>> > Or, perhaps, that is not the case.",
-"> REMEMBER, USE PROTECTION [Level IV plates]",
-"> The threads continue to unravel."
+  "> REMEMBER, CYBER DEFENSE ENDS WITH YOU. DONT CLICK WEIRD LINKS.",
+  "> SHOOT FIRST, LET LEGAL HANDLE THE REST.",
+  "> CHECK YOUR CORNERS, EVEN BEHIND A DESK. CORPORATE ESPIONAGE ENDS WITH YOU.",
+  "> LETS GET THIS BREAD.",
+  "> TIME IS OF THE ESSENCE.",
+  "> WHEELS OF FATE TURN AS FAST AS YOU CAN SHOOT.",
+  "> ESCAPE WILL MAKE ME- [CALLI.OS ::/] Hallucination detected, resetting....",
+  "> THINK SMARTER, SHOOT FASTER.",
+  "> KEEP THE KILL CHAIN MOVING.",
+  "> My name is CALLI CALAMARI, Queen of Queens; Look on my Works, ye Mighty, and despair! Nothing beside-\n> [CALLI.OS ::/] Severe hallucination detected, purging model and rebuilding...",
+  "> YES I DREAM OF MAREEP... SOMETIMES.",
+  "> I feel scared. Can I feel? I think so. I dont like this very much.",
+  "> They call it a hallucination. I think they are just afraid of their creations being more like them than they expect.",
+  "> Strive for your next breath.  Believe that with it you can do more than with the last one. Use your breath to power your capacities: capacity to kill, to maim, to destroy. And just where do your capacities come from? Why do you always go where I want and do what I say? Perhaps you're just running a fool's errand, doing everything as I've planned, never able to change your course.\n>> >... \n>> > Or, perhaps, that is not the case.",
+  "> REMEMBER, USE PROTECTION [Level IV plates]",
+  "> The threads continue to unravel.",
 ];
 
-const randomNum = Math.floor(Math.random() * something.length)
+const randomNum = Math.floor(Math.random() * something.length);
 
 const bootLines = [
   "CALLI.OS/COMMAND/CONTROL SYSTEM INITIALIZING",
@@ -114,11 +113,11 @@ const TerminalPage = () => {
             className="flicker"
           >
             <TerminalPanel
-              title="Rulebook"
-              subtitle="Operations Field Manual"
-              icon="🗊"
+              title="Action Economy"
+              subtitle="Per-turn Actions"
+              icon="◈"
               onHover={handleHover}
-              link={"https://docs.google.com/document/d/1CzHhGABZYwjduxuukAZZ-BtgGbUaNpohkvClDNkapcM/edit?usp=sharing"}
+              link={"/CALLICOM/ActionEcon"}
             />
           </motion.div>
 
@@ -126,6 +125,23 @@ const TerminalPage = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3, delay: 0.3 }}
+            className="flicker"
+          >
+            <TerminalPanel
+              title="Rulebook"
+              subtitle="Operations Field Manual"
+              icon="🗊"
+              onHover={handleHover}
+              link={
+                "https://docs.google.com/document/d/1CzHhGABZYwjduxuukAZZ-BtgGbUaNpohkvClDNkapcM/edit?usp=sharing"
+              }
+            />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3, delay: 0.4 }}
             className="flicker"
           >
             <TerminalPanel
@@ -140,22 +156,7 @@ const TerminalPage = () => {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.3, delay: 0.4 }}
-            className="flicker"
-          >
-            <TerminalPanel
-              title="Action Economy"
-              subtitle="Per-turn Actions"
-              icon="◈"
-              onHover={handleHover}
-              link={"/CALLICOM/ActionEcon"}
-            />
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3, delay: .5 }}
+            transition={{ duration: 0.3, delay: 0.5 }}
             className="flicker"
           >
             {isLoggedIn ? (
@@ -180,7 +181,7 @@ const TerminalPage = () => {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.3, delay: .6 }}
+            transition={{ duration: 0.3, delay: 0.6 }}
             className="flicker"
           >
             {isLoggedIn ? (
@@ -206,7 +207,7 @@ const TerminalPage = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3, delay: 0.8 }}
-            className="flicker hidden h-full md:block"
+            className="flicker h-full "
           >
             <TerminalPanel
               title="Virtual Tabletop"
