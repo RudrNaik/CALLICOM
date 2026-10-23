@@ -6,6 +6,7 @@ import Sharpshooter from "../../assets/classIcons/Sharpshooter.png";
 import Support from "../../assets/classIcons/Support.png";
 import TechnicalEngineer from "../../assets/classIcons/Technical_Engineer.png";
 import Trapper from "../../assets/classIcons/Trapper.png";
+import SofIcon from "../../assets/classIcons/modifiers/SOF_Icon.png";
 import EliteIcon from "../../assets/classIcons/modifiers/Elite_Icon.png";
 import ArmorIcon from "../../assets/classIcons/modifiers/Armor_Icon.png";
 import FastIcon from "../../assets/classIcons/modifiers/Fast_Icon.png";
@@ -63,6 +64,7 @@ export function classLabel(classKey) {
 }
 
 export const MODIFIER_ICONS = {
+  SOF: SofIcon,
   Elite: EliteIcon,
   Armor: ArmorIcon,
   Light: FastIcon,

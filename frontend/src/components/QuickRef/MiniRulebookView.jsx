@@ -1,12 +1,23 @@
 import RuleCard from "./MiniRuleCard";
-import { useState, useEffect } from "react";
+import { useState, useDeferredValue, useMemo } from "react";
 import rules from "../../data/rules.json";
 
 const Rules = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const deferredTerm = useDeferredValue(searchTerm);
+
+  const filtered = useMemo(() => {
+    const q = deferredTerm.toLowerCase();
+    if (!q) return rules;
+    return rules.filter(
+      (rule) =>
+        rule.title.toLowerCase().includes(q) ||
+        rule.description.toLowerCase().includes(q),
+    );
+  }, [deferredTerm]);
 
   return (
-    <div className="relative">
+    <div className="relative min-h-full">
       <div className="sticky top-0 bg-black/90 border-b border-white/10 font-mono">
         <div className="max-w-screen-xl mx-auto px-3 py-3">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -40,15 +51,9 @@ const Rules = () => {
       </div>
       <div>
         <main className="flex-1 px-4 py-4 space-y-6 overflow-y-auto scroll-smooth">
-          {rules
-            .filter(
-              (rule) =>
-                rule.title.toLowerCase().includes(searchTerm) ||
-                rule.description.toLowerCase().includes(searchTerm),
-            )
-            .map((rule) => (
-              <RuleCard key={rule.id} rule={rule} />
-            ))}
+          {filtered.map((rule) => (
+            <RuleCard key={rule.id} rule={rule} term={deferredTerm} />
+          ))}
         </main>
       </div>
     </div>
