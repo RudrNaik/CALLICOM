@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 import ActionEconomy from "./QuickRef/MiniActionEconView";
+import Rulebook from "./QuickRef/MiniRulebookView";
 
 const getLockCount = () => window.__scrollLockCount ?? 0;
 const setLockCount = (n) => (window.__scrollLockCount = n);
@@ -51,6 +52,7 @@ export default function QuickRefModal({ open, onClose }) {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose]);
+  
 
   return (
     <AnimatePresence>
@@ -105,8 +107,11 @@ export default function QuickRefModal({ open, onClose }) {
             </div>
 
             {/* content */}
-            <div className="flex-1 min-h-0 overflow-y-auto scrollbar-thin scrollbar-thumb-orange-400 scrollbar-track-neutral-700">
+            <div className="flex-1 min-h-0 overflow-y-auto">
               {tab === "actions" && <ActionEconomy />}
+            </div>
+            <div className="flex-1 min-h-0 overflow-y-auto">
+              {tab === "rules" && <Rulebook />}
             </div>
           </div>
         </motion.div>

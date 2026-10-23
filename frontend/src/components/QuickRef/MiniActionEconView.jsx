@@ -47,7 +47,7 @@ export default function ActionEconomyPage() {
   return (
     <div className="relative">
       {/* Sticky header */}
-      <div className="sticky top-1 bg-black/90 border-b border-white/10 font-mono">
+      <div className="sticky top-0 bg-black/90 border-b border-white/10 font-mono">
         <div className="max-w-screen-xl mx-auto px-3 py-3">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div>
