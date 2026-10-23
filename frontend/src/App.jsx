@@ -61,7 +61,7 @@ export default function App() {
   return (
     <AuthProvider>
       <Router>
-        <div className="min-h-screen bg-gray-100 text-gray-900">
+        <div className="min-h-screen bg-neutral-900 text-gray-900">
           <Navbar isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
           <ScrollToTop />
           <AuthExpiredRedirect />
