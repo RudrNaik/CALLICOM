@@ -207,7 +207,7 @@ const TerminalPage = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3, delay: 0.8 }}
-            className="flicker hidden h-full md:block"
+            className="flicker h-full "
           >
             <TerminalPanel
               title="Virtual Tabletop"
