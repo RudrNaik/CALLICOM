@@ -491,7 +491,7 @@
         "class": "Class",
         "cost": 0,
         "description": "One cannot carry all the medicine they need on them at all times. However, the revolutionary idea of ‘stuff everything else into another bag and carry it too' was invented, which the Medic Bag utilizes.",
-        "rulesText": "[Deploy][Medical]\nResupplies all AFAKs and IFAKs, requires someone to come directly to the hex it is deployed on to resupply. Each party member can only resupply once. Can throw med-packs to teammates with a threshold of 3 + the amount of range bands between you and the target starting at +0 for close range, to a maximum of +2 long range"
+        "rulesText": "[Deploy][Medical]\nResupplies all AFAKs and IFAKs, requires someone to come directly to the hex it is deployed on to resupply. Each party member can only resupply once. Includes a stim pistol to use AFAKs and IFAKs on others from range, which requires an [L-Wep] test against a threshold of 3 + the amount of range bands between you and the target. Starting at +0 for close range, to a maximum of +2 long range. Cannot fire past Long Range."
     },
     {
         "id": "BUDDI",
@@ -1124,7 +1124,7 @@
         "class": "Medic",
         "cost": 4000,
         "description": "Contains all the stimulants and boosters a medic can carry, from regenerative nanites that heal you, to performance enhancing ones that let you react faster. Includes a stim pistol for ranged applications.",
-        "rulesText": "[Deploy][Medical]\nHolds all of the nanite stims for a medic. Before a mission, choose an amount of injectors, up to an overall total of the capacity, from each nanite type that is purchased. Comes with a stim pistol which requires an [L-Wep] test against a threshold of 3 + the amount of range bands between you and the target, starting at +0 for close range, to a maximum of +2 long range. Cannot fire past Long Range.",
+        "rulesText": "[Deploy][Medical]\nHolds all of the nanite stims for a medic. Before a mission, choose an amount of injectors, up to an overall total of the capacity, from each nanite type that is purchased. Includes a stim pistol which requires an [L-Wep] test against a threshold of 3 + the amount of range bands between you and the target, starting at +0 for close range, to a maximum of +2 long range. Cannot fire past Long Range.",
         "maxStims": 4,
         "options": [
             {
@@ -1165,7 +1165,7 @@
         "class": "Medic",
         "cost": 4000,
         "description": "Advanced nanomachines automatically help stop bleeding, apply painkillers, and make getting shot a little less un-fun.",
-        "rulesText": "[Stimulant]\nHeal a flesh wound every turn, if no flesh wounds heal a deep wound every 2 turns.\nLasts for (1d6 turns+ Medical Skill)/2 turns rounded up."
+        "rulesText": "[Stimulant]\nHeal a Deep wound at the start of every turn, or two flesh wounds.\nLasts for (1d6 turns+ Medical Skill)/2 turns rounded up starting on the turn it was used, or until the target has no more wounds to heal."
     },
     {
         "id": "snk",
@@ -1185,7 +1185,7 @@
         "class": "Medic",
         "cost": 3000,
         "description": "Retooled for killing any and all pain, Truamadol Nanites make the user feel nothing, other than emotion. We didn't disable that just yet.",
-        "rulesText": "[Stimulant]\nIgnore the effects of wound modifiers on tests, or any afflictions caused by wounds or damage to yourself. A character can still enter system shock.\nLasts for (1d6 turns+ Medical Skill)/2 turns rounded up."
+        "rulesText": "[Stimulant]\nIgnore the effects of wound modifiers on tests, or any afflictions caused by wounds or damage to yourself. A character can still enter system shock or go down from their instant death threshold.\nLasts for (1d6 turns+ Medical Skill)/2 turns rounded up starting on the turn it was used."
     },
     {
         "id": "dtnk",
@@ -1195,7 +1195,7 @@
         "class": "Medic",
         "cost": 6000,
         "description": "Created to simulate a release of adrenaline via nanites, the Adrenal Nanites give you a kick of energy in the moment.",
-        "rulesText": "[Booster]\nAdds another standard action.\nLasts for the turn"
+        "rulesText": "[Booster]\nAdds another standard action to the target.\nLasts for the turn"
     },
     {
         "id": "hank",
@@ -1205,7 +1205,7 @@
         "class": "Medic",
         "cost": 10000,
         "description": "Utilizing the power of nootropics and nicknamed 'high alert', these nanites give you a much more powerful boost of energy as they also mix in adrenaline. Leading to a single use but highly effective combat stimulant.",
-        "rulesText": "[Booster]\nAdds another standard and movement action, reduces maluses from movement by 1.\nLasts for the turn."
+        "rulesText": "[Booster]\nAdds another standard and movement action to the target, reduces maluses from movement by 1.\nLasts for the turn."
     },
     {
         "id": "lrk",
@@ -1244,7 +1244,7 @@
         "class": "Medic",
         "cost": 9000,
         "description": "A small quadcopter fitted with a microdrone dispenser. Each microdrone is loaded with stimulants to heal someone during a fight that lands and inject small dosages of nanites on the target whenever they take damage. Also has an ascii face on its underside.",
-        "rulesText": "[Deploy][Airborne][Stimulant]\nUptime: 2 turns | Downtime: 2 turn\nWhen deployed, designate an infantry target. This target heals one deep wound every turn it is active, or two flesh wounds if there aren't any deep wounds. Upon the target being given enough damage to cause instant death, will instead only take 2 deep wounds. If the target enters system shock or otherwise enters DBNO- they are instantly revived with only a flesh wound, but still contribute to the total amount of downs they have taken.\n\nThese effects only last during the drone’s uptime, and upon that uptime running out- the drone will return to the medic who deployed it. While deployed, the drone can be given a new target to heal via a [Deploy] action."
+        "rulesText": "[Deploy][Airborne][Stimulant]\nUptime: 2 turns | Downtime: 2 turns\nWhen deployed, designate an infantry target. This target heals one deep wound every turn it is active, or two flesh wounds if there aren't any deep wounds. Upon the target being given enough damage to cause instant death, they will instead only take 2 deep wounds. If the target enters system shock or otherwise enters DBNO- they are instantly revived with only a flesh wound, but still contribute to the total amount of downs they have taken.\n\nThese effects only last during the drone’s uptime, and upon that uptime running out- the drone will return to the medic who deployed it. While deployed, the drone can be given a new target to heal via a [Deploy] action."
     },
     {
         "id": "chud-flowstate",
