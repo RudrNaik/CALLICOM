@@ -1,6 +1,6 @@
 import RuleCard from "./MiniRuleCard";
 import { useState, useDeferredValue, useMemo } from "react";
-import rules from "../../data/rules.json";
+import rules from "../../data/rulebook.json";
 
 const Rules = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -12,7 +12,7 @@ const Rules = () => {
     return rules.filter(
       (rule) =>
         rule.title.toLowerCase().includes(q) ||
-        rule.description.toLowerCase().includes(q),
+        rule.body.toLowerCase().includes(q),
     );
   }, [deferredTerm]);
 

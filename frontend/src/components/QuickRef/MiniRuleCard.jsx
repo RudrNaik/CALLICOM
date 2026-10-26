@@ -1,4 +1,6 @@
 import { memo, useMemo } from "react";
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 const RuleCard = memo(({ rule, term }) => {
   return (
@@ -9,14 +11,15 @@ const RuleCard = memo(({ rule, term }) => {
     >
       <div className="flex justify-between items-center mb-2">
         <h2 className="text-xl font-bold">
-          <Highlighter text={rule?.title} terms={[term]}/>
+          <Markdown remarkPlugins={[remarkGfm]}>
+            {rule?.title}
+          </Markdown>
         </h2>
-        <span className="text-xs text-orange-400 font-semibold">
-          <Highlighter text={rule?.mechanic} terms={[term]}/>
-        </span>
       </div>
       <p className="text-xs text-gray-200 whitespace-pre-line">
-        <Highlighter text={rule?.description} terms={[term]}/>
+        <Markdown remarkPlugins={[remarkGfm]}>
+          {rule?.body}
+        </Markdown>
       </p>
     </section>
   );
