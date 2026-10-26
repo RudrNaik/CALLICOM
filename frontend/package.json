@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "rulebook": "node src/utils/rulebookToJSON.js",
+    "glossary": "node src/utils/glossaryToJSON.js",
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",

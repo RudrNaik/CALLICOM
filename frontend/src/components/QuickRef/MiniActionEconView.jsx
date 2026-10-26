@@ -140,7 +140,7 @@ function Section({ title, items }) {
 
   return (
     <>
-      <div className="relative flex items-center py-6 font-mono">
+      <div className="relative flex items-center py-6 font-mono -z-10">
         <div className="flex-grow border-t border-white/20" />
         <span className="mx-4 text-gray-100">{title}</span>
         <div className="flex-grow border-t border-white/20" />

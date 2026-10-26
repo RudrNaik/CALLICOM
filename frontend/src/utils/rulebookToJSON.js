@@ -29,8 +29,7 @@ const rulebookPath = path.resolve(
 const raw = fs.readFileSync(rulebookPath, "utf-8");
 const { content } = matter(raw);
 
-// The lines of the file split by newline chars.
-const lines = content.split("\n");
+const lines = content.replace(/\v/g, "<br>").replace(/﻿/g, "").split("\n");
 
 /**
  * Checks if a string would be a markdown header, denoted by the line starting with some amount of `#` without any leading spaces.

@@ -84,7 +84,6 @@ select.select-themed:focus {
   box-shadow: 0.5px #fb923c;
 }
 
-/* Optional for Firefox extra padding issue */
 select.select-themed::-ms-expand {
   display: none;
 }
@@ -98,15 +97,10 @@ select.select-themed::-ms-expand {
 }
 .rule-body th,
 .rule-body td {
-  border: 1px solid #fb923c33;    /* orange-400 w/ alpha */
+  border: 2px solid #fb923c33;    /* orange-400 w/ alpha */
   padding: 0.35rem 0.6rem;
   text-align: left;
   vertical-align: top;
-}
-.rule-body th {
-  background-color: #fb923c1a;
-  color: #fdba74;                 /* orange-300 */
-  font-weight: 700;
 }
 .rule-body tbody tr:nth-child(even) {
   background-color: #ffffff08;

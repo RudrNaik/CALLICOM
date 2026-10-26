@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 import ActionEconomy from "./QuickRef/MiniActionEconView";
 import Rulebook from "./QuickRef/MiniRulebookView";
+import Glossary from "./QuickRef/MiniGlossary";
 
 const getLockCount = () => window.__scrollLockCount ?? 0;
 const setLockCount = (n) => (window.__scrollLockCount = n);
@@ -81,7 +82,7 @@ export default function QuickRefModal({ open, onClose }) {
               </h2>
               {/* Tabs */}
               <div>
-                <div className="inline-flex rounded-sm border border-orange-500/40 bg-neutral-900/60 overflow-hidden mt-4">
+                <div className="inline-flex rounded-sm border border-orange-500/40 bg-neutral-900/60 overflow-hidden my-2">
                   <button
                     className={`px-2 py-2 text-xs font-semibold ${
                       tab === "actions"
@@ -102,6 +103,16 @@ export default function QuickRefModal({ open, onClose }) {
                   >
                     Rules
                   </button>
+                  <button
+                    className={`px-2 py-2 text-xs font-semibold border-l border-orange-500/40 ${
+                      tab === "defs"
+                        ? "bg-orange-500 text-white"
+                        : "text-orange-300 hover:bg-neutral-800"
+                    }`}
+                    onClick={() => setTab("defs")}
+                  >
+                    Definitions
+                  </button>
                 </div>
               </div>
             </div>
@@ -110,6 +121,9 @@ export default function QuickRefModal({ open, onClose }) {
             <div className="flex-1 min-h-0 overflow-y-auto">
               {tab === "actions" && <ActionEconomy />}
               {tab === "rules" && <Rulebook />}
+              {
+                tab === "defs" && <Glossary/>
+              }
             </div>
           </div>
         </motion.div>
