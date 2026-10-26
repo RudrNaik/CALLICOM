@@ -4,6 +4,7 @@
   "version": "0.2.0",
   "type": "module",
   "scripts": {
+    "rulebook": "node src/utils/rulebookToJSON.js",
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",

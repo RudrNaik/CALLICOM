@@ -1,7 +1,5 @@
 import { memo } from "react";
 
-// titleHtml / bodyHtml are pre-rendered from our own rulebook.json at build
-// time (see the rulebook-html plugin in vite.config.js), so they are trusted.
 const RuleCard = memo(({ rule }) => {
   return (
     <section

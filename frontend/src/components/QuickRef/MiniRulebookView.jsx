@@ -1,6 +1,6 @@
 import RuleCard from "./MiniRuleCard";
 import { useState, useDeferredValue, useMemo } from "react";
-import rules from "virtual:rulebook-html";
+import rules from "../../data/rulebook.json";
 
 const Rules = () => {
   const [searchTerm, setSearchTerm] = useState("");
