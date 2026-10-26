@@ -89,12 +89,35 @@ select.select-themed::-ms-expand {
   display: none;
 }
 
-/* Base class to apply the effect */
+/* Tables for minirulecard. */
+.rule-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.5rem 0;
+  white-space: normal; /* don't inherit pre-line from the card body */
+}
+.rule-body th,
+.rule-body td {
+  border: 1px solid #fb923c33;    /* orange-400 w/ alpha */
+  padding: 0.35rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+.rule-body th {
+  background-color: #fb923c1a;
+  color: #fdba74;                 /* orange-300 */
+  font-weight: 700;
+}
+.rule-body tbody tr:nth-child(even) {
+  background-color: #ffffff08;
+}
+
+/* Base class to apply the glitch effect */
 .horus--subtle {
   animation: distort-subtle 5s ease infinite;
 }
 
-/* The glitch: brief bursts at two windows in the timeline */
+/* brief bursts at two windows in the timeline */
 @keyframes distort-subtle {
   0%, 24%, 30%, 74%, 80%, 100% {
     text-shadow: none;

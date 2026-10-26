@@ -2,8 +2,16 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import matter from "gray-matter";
-import { string } from "three/tsl";
-import { create } from "framer-motion/m";
+
+const omittedSections = [
+  " ",
+  "![][image1]",
+  "Character Creation",
+  "Rotor Wing Vehicles",
+  "Ground Vehicles",
+  "Movement Rules",
+  "Injuries"
+]
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const rulebookPath = path.resolve(
@@ -57,6 +65,14 @@ function createJSONSection(title, depth, body, parent) {
   };
 }
 
+function checkSkippableSections(line, skippables){
+  if(skippables.includes(line.replace(/[#*`]/g, "").trim())){
+    return true;
+  } else {
+    return false;
+  }
+}
+
 function buildJSONSectionRecursive(content, startLineIndex, sections) {
   let body = "";
   let title = content[startLineIndex];
@@ -79,7 +95,9 @@ function buildJSONSectionRecursive(content, startLineIndex, sections) {
 
   let jsonSection = createJSONSection(title, depth, body);
 
+  if(!checkSkippableSections(title, omittedSections)){
   sections.push(jsonSection);
+  }
 
   return [jsonSection, j];
 }
@@ -109,7 +127,7 @@ export function main(content) {
     }
   }
 
-  console.log(sections);
+  //console.log(sections);
 
   exportToFile(sections, "rulebook.json");
 }

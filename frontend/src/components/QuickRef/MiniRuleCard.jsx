@@ -1,57 +1,26 @@
-import { memo, useMemo } from "react";
-import Markdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import { memo } from "react";
 
-const RuleCard = memo(({ rule, term }) => {
+// titleHtml / bodyHtml are pre-rendered from our own rulebook.json at build
+// time (see the rulebook-html plugin in vite.config.js), so they are trusted.
+const RuleCard = memo(({ rule }) => {
   return (
     <section
       id={rule.id}
       className="scroll-mt-[130px] bg-gradient-to-t from-neutral-800 to-neutral-850 border-l-6 border-orange-500 p-4 rounded-sm"
-      style={{ fontFamily: "Geist_Mono" }}
+      style={{ fontFamily: "Geist_Mono", contentVisibility: "auto", containIntrinsicSize: "auto 200px" }}
     >
       <div className="flex justify-between items-center mb-2">
-        <h2 className="text-xl font-bold">
-          <Markdown remarkPlugins={[remarkGfm]}>
-            {rule?.title}
-          </Markdown>
-        </h2>
+        <h2
+          className="text-xl font-bold"
+          dangerouslySetInnerHTML={{ __html: rule.titleHtml }}
+        />
       </div>
-      <p className="text-xs text-gray-200 whitespace-pre-line">
-        <Markdown remarkPlugins={[remarkGfm]}>
-          {rule?.body}
-        </Markdown>
-      </p>
+      <div
+        className="rule-body text-xs text-gray-200 whitespace-pre-line"
+        dangerouslySetInnerHTML={{ __html: rule.bodyHtml }}
+      />
     </section>
   );
 });
-
-const escapeRegex = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
-function Highlighter({ text, terms }) {
-  const term = terms[0];
-  const parts = useMemo(() => {
-    if (!term || !text) return null;
-    // Capture group => matches land on odd indices of the split result
-    return String(text).split(new RegExp("(" + escapeRegex(term) + ")", "i"));
-  }, [text, term]);
-
-  if (!parts) return <>{text}</>;
-  return (
-    <>
-      {parts.map((p, i) =>
-        i % 2 === 1 ? (
-          <mark
-            key={i}
-            className="bg-orange-500/20 text-orange-300 rounded px-0.5"
-          >
-            {p}
-          </mark>
-        ) : (
-          p
-        ),
-      )}
-    </>
-  );
-}
 
 export default RuleCard;

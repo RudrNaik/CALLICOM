@@ -406,8 +406,6 @@ Unlike their close Sharpshooter cousins, Trappers focus on ambushes with traps a
 | Carbine Families SMG families Tracking Disguise Intelligence gathering Surveillance Interfacing Takedowns Rucking |
 | :---- |
 
-# 
-
 # **`Character Progression`**
 
 Every mission, or from specific achievements, tasks, and more- each character is rewarded with anywhere between one and five XP points, as the GM sees fit. XP points can be spent in a number of ways to allow your character to grow throughout a campaign.
@@ -482,15 +480,15 @@ If the die roll, with all modifiers (Attribute, situation, gear, etc.) added, su
 
 If the die roll, again with modifiers added, is less than the Threshold, the test fails. The degree of failure is defined by the Margin of Failure (MoF): a value equal to the Threshold minus the die roll plus modifiers. A high Margin of Failure indicates a miserably failed action test. For example, a MoF of 1 would be a close call, while a MoF of 6 would be a real (and potentially deadly) failure. If the total die roll and the Threshold are equal, a draw occurs. In role playing situations, draws are often interpreted as marginal successes or ambiguous results.
 
+## **`Skill/Attribute Tests`**
+
+The skill test is the most common form of action test in the game. The number of dice rolled in a skill or attribute test is equal to the level of the skill or attribute being used for that particular test. The appropriate modifiers (Normal and dice bonus and maluses) are added to the result. 
+
 ## **`Opposed Action Tests`**
 
 Sometimes, two individuals will oppose each other’s actions. When two or more individuals oppose each other’s actions, an Opposed Action Test is called for. Each opponent makes a die roll using the appropriate Attribute or skill as Attackers or Defenders. Compare them: the highest result wins the test. The Margin of Success of an Opposed Action Test is equal to the winner’s roll minus the loser’s roll. If more than two participants are involved, separate Margins of Success are worked out between each of the participants as needed. 
 
 Tied results are draws; draws are wins for the Defender.
-
-## **`Skill/Attribute Tests`**
-
-The skill test is the most common form of action test in the game. The number of dice rolled in a skill or attribute test is equal to the level of the skill or attribute being used for that particular test. The appropriate modifiers (Normal and dice bonus and maluses) are added to the result. 
 
 ## **`Accumulated Successes`**
 
@@ -919,13 +917,13 @@ You can aim at inanimate objects against a threshold of 2\.
 
 ### **`Bursting`**
 
-Assault rifles and Marksman Rifles are capable of burst fire. Burst attacks usually consist of firing a tight burst towards a single opponent. The attacker may decrease a number of his dice, up to a maximum of \-2.
+Some weapons are capable of burst fire. Burst attacks usually consist of firing a tight burst towards a single opponent. The attacker may decrease a number of his dice, up to a maximum of \-2.
 
 If the attack succeeds, the amount of dice decreased is added to the attack’s Margin of Success, increasing the damage. 
 
 ### **`Spraying`**
 
-SMGs and Carbines are capable of rapid, automatic fire that can be used to attack multiple targets in a single action by spraying across targets. Thus, people or objects between the targets can be hit as well. A player must declare that they are spraying before any attacks are made. The player then chooses the targets of his attack.
+Some weapons are capable of rapid, automatic fire that can be used to attack multiple targets in a single action by spraying across targets. Thus, people or objects between the targets can be hit as well. A player must declare that they are spraying before any attacks are made. The player then chooses the targets of his attack.
 
 The maximum number of targets that possibly can be attacked is three. All targets must be no more than five hexes apart (if they are, count each set of hexes as a target or every 5m gap). Each attack is rolled separately, and each individual target can be attacked more than once per round by the same weapon. This attack consumes the same amount of ammo as a normal firing action, multiplied by the amount of times fired. 
 
@@ -1115,7 +1113,7 @@ When a vehicle enters system shock or is hit with enough damage to surpass the i
 
 The stats shown below are 
 
-\[x\]A (Alertness) | \[x\]B (Body) | \[x\]I (Intelligence) | \[x\]S (Spirit)  
+\[x\]A (Alertness) \| \[x\]B (Body) \| \[x\]I (Intelligence) \| \[x\]S (Spirit)  
 AC/AT: Armor Value  
 INS-DTH: Instant Death  
 FWT: Flesh Wound threshold  
@@ -1127,12 +1125,12 @@ AOO: Area of occupation
 
 | Vehicle  | Stats | Armaments | Countermeasures |
 | :---- | :---- | :---- | :---- |
-| MBT | 1A | 6B | 2I | 4S AT1 (Can angle at a target to add an extra dice when defending against that target.) INS-DTH: 30 FWT: 9 DWT: 16 SYS: 10 AOO: 2 hexes Occupants:  1x Commander 1x Gunner Core Parts: 2x Tracks: Torso Sized, Disables movement, 10 HP 1x Gun: Head Sized, disables Cannon, 14 HP 1x Coaxial HMG: Torso Sized, disables Coax, 14HP 1x RWS: Torso sized, disables RWS, 14HP | Tank Cannon \[H-Wep\]\[Explosive\] RNG: \-3C | \+1ELR PEN: 3  DMG: 10 AOE: 2 Against infantry, abides by grenade rules. Against Ground Vehicles, abides by ranged rules. Against Air Vehicles, causes an opposed \[Notice\] test, and then an \[Acrobatics\] test to evade. Coaxial HMG \[H-wep\]\[Kinetic\]\[SuppressionRNG: \-2 C | \+1 M | \-1 ELR DMG: 6 PEN: 2 RWS LMG \[H-wep\]\[Kinetic\]\[Suppression\]RNG: \-2 C | \+1 M | \-1 ELR DMG: 5 PEN: 2  | 3x APS: Intercepts munitions for one turn. Takes one turn to recharge. Dispensers can be shot (AC1, torso sized target, removes one charge, 5HP), Sensor can be shot (AC1, head sized target, disables APS, 20HP). |
-| APC/IFV | 2A | 4B | 2I | 3S AT1 INS-DTH: 24 FWT: 7 DWT: 13 SYS: 9 AOO: 2 hexes Occupants:  1x Commander 1x Gunner 6x Passenger Core Parts 2x Tracks: Torso sized, disables movement, 10HP 1x Gun: Head sized, disables Chaingun, 14HP 1x RWS: Torso sized, disables RWS, 14HP | Chaingun \[H-Wep\]\[Explosive\] RNG: \-3C | \+1L  PEN: 3  DMG: 8 AOE: 1 Against infantry, abides by grenade rules. Against Ground Vehicles, abides by ranged rules. Against Air Vehicles, causes an opposed \[Notice\] test, and then an \[Acrobatics\] test to evade. RWS LMG \[H-wep\]\[Kinetic\]\[Suppression\]RNG: \-2 C | \+1 M | \-1 ELR DMG: 5 PEN: 2 | 3x APS: Intercepts munitions for one turn. Takes one turn to recharge. Dispensers can be shot (AC1, torso sized target, removes one charge, 5HP), Sensor can be shot (AC1, head sized target, disables APS, 20HP). 2x Thermal Smoke:  Creates a 5 hex AOE that obscures an area in a smokey haze. Causes guided munitions to miss their target. Dispensers can be shot  (AC1, torso sized target, removes one charge, 5HP). |
-| Armored Vehicles | 3A | 2B | 2I | 2S AT1 INS-DTH: 18 FWT: 6 DWT: 10 SYS: 7 AOO: 1 hex Occupants:  1x Driver 1x Gunner 4x Passenger Core Parts: 4x Wheels: AC1, Torso sized, Reduces movement by one range band each, 5HP 1x Engine: AC2, Torso sized, Disables movement, 20HP | Armaments vary from model to model but may include: Mounted LMG \[H-wep\]\[Kinetic\]\[Suppression\]RNG: \-2 C | \+1 M | \-1 ELR DMG: 5 PEN: 2 Mounted Recoilless Rifle \[H-wep\]\[Explosive\] RNG: \-3C | \+1ELR PEN: 3  DMG: 8 AOE: 2 SHORAD Launcher \[H-Wep\]\[Explosive\] Only can target Airborne targets. Requires countermeasures to evade. DMG: 15PEN: 2 AOE: 3 | 1x Hopes and Prayers: Upon Vehicle destruction, every occupant makes a spirit test against a threshold of 7\. If they succeed, they survive miraculously without any wounds. ‘How’ is determined by the GM. |
-| Unarmored Cars/Trucks | 3A | 1B | 2I | 1S AC1 INS-DTH: 18 FWT: 6 DWT: 10 SYS: 7 AOO: 1 hex Occupants:  1x Driver 1x Gunner 3x Passenger Core Parts: 4x Wheels: AC0, Torso sized, Reduces movement by one range band each, 5HP 1x Engine: AC1, Torso sized, Disables movement, 20HP | Armaments vary from model to model but may include: Mounted LMG \[H-wep\]\[Kinetic\]\[Suppression\]RNG: \-2 C | \+1 M | \-1 ELR DMG: 5 PEN: 2 Mounted Recoilless Rifle \[H-wep\]\[Explosive\] RNG: \-3C | \+1ELR PEN: 3  DMG: 8 AOE: 2 SHORAD Launcher \[H-Wep\]\[Explosive\] Only can target Airborne targets. Requires countermeasures to evade. DMG: 15PEN: 2 AOE: 3 | 1x Hopes and Prayers: Upon Vehicle destruction, every occupant makes a spirit test against a threshold of 7\. If they succeed, they survive miraculously without any wounds. ‘How’ is determined by the GM. |
+| MBT | 1A \| 6B \| 2I \| 4S AT1 (Can angle at a target to add an extra dice when defending against that target.) INS-DTH: 30 FWT: 9 DWT: 16 SYS: 10 AOO: 2 hexes Occupants:  1x Commander 1x Gunner Core Parts: 2x Tracks: Torso Sized, Disables movement, 10 HP 1x Gun: Head Sized, disables Cannon, 14 HP 1x Coaxial HMG: Torso Sized, disables Coax, 14HP 1x RWS: Torso sized, disables RWS, 14HP | Tank Cannon \[H-Wep\]\[Explosive\] RNG: \-3C \| \+1ELR PEN: 3  DMG: 10 AOE: 2 Against infantry, abides by grenade rules. Against Ground Vehicles, abides by ranged rules. Against Air Vehicles, causes an opposed \[Notice\] test, and then an \[Acrobatics\] test to evade. Coaxial HMG \[H-wep\]\[Kinetic\]\[SuppressionRNG: \-2 C \| \+1 M \| \-1 ELR DMG: 6 PEN: 2 RWS LMG \[H-wep\]\[Kinetic\]\[Suppression\]RNG: \-2 C \| \+1 M \| \-1 ELR DMG: 5 PEN: 2  | 3x APS: Intercepts munitions for one turn. Takes one turn to recharge. Dispensers can be shot (AC1, torso sized target, removes one charge, 5HP), Sensor can be shot (AC1, head sized target, disables APS, 20HP). |
+| APC/IFV | 2A \| 4B \| 2I \| 3S AT1 INS-DTH: 24 FWT: 7 DWT: 13 SYS: 9 AOO: 2 hexes Occupants:  1x Commander 1x Gunner 6x Passenger Core Parts 2x Tracks: Torso sized, disables movement, 10HP 1x Gun: Head sized, disables Chaingun, 14HP 1x RWS: Torso sized, disables RWS, 14HP | Chaingun \[H-Wep\]\[Explosive\] RNG: \-3C \| \+1L  PEN: 3  DMG: 8 AOE: 1 Against infantry, abides by grenade rules. Against Ground Vehicles, abides by ranged rules. Against Air Vehicles, causes an opposed \[Notice\] test, and then an \[Acrobatics\] test to evade. RWS LMG \[H-wep\]\[Kinetic\]\[Suppression\]RNG: \-2 C \| \+1 M \| \-1 ELR DMG: 5 PEN: 2 | 3x APS: Intercepts munitions for one turn. Takes one turn to recharge. Dispensers can be shot (AC1, torso sized target, removes one charge, 5HP), Sensor can be shot (AC1, head sized target, disables APS, 20HP). 2x Thermal Smoke:  Creates a 5 hex AOE that obscures an area in a smokey haze. Causes guided munitions to miss their target. Dispensers can be shot  (AC1, torso sized target, removes one charge, 5HP). |
+| Armored Vehicles | 3A \| 2B \| 2I \| 2S AT1 INS-DTH: 18 FWT: 6 DWT: 10 SYS: 7 AOO: 1 hex Occupants:  1x Driver 1x Gunner 4x Passenger Core Parts: 4x Wheels: AC1, Torso sized, Reduces movement by one range band each, 5HP 1x Engine: AC2, Torso sized, Disables movement, 20HP | Armaments vary from model to model but may include: Mounted LMG \[H-wep\]\[Kinetic\]\[Suppression\]RNG: \-2 C \| \+1 M \| \-1 ELR DMG: 5 PEN: 2 Mounted Recoilless Rifle \[H-wep\]\[Explosive\] RNG: \-3C \| \+1ELR PEN: 3  DMG: 8 AOE: 2 SHORAD Launcher \[H-Wep\]\[Explosive\] Only can target Airborne targets. Requires countermeasures to evade. DMG: 15PEN: 2 AOE: 3 | 1x Hopes and Prayers: Upon Vehicle destruction, every occupant makes a spirit test against a threshold of 7\. If they succeed, they survive miraculously without any wounds. ‘How’ is determined by the GM. |
+| Unarmored Cars/Trucks | 3A \| 1B \| 2I \| 1S AC1 INS-DTH: 18 FWT: 6 DWT: 10 SYS: 7 AOO: 1 hex Occupants:  1x Driver 1x Gunner 3x Passenger Core Parts: 4x Wheels: AC0, Torso sized, Reduces movement by one range band each, 5HP 1x Engine: AC1, Torso sized, Disables movement, 20HP | Armaments vary from model to model but may include: Mounted LMG \[H-wep\]\[Kinetic\]\[Suppression\]RNG: \-2 C \| \+1 M \| \-1 ELR DMG: 5 PEN: 2 Mounted Recoilless Rifle \[H-wep\]\[Explosive\] RNG: \-3C \| \+1ELR PEN: 3  DMG: 8 AOE: 2 SHORAD Launcher \[H-Wep\]\[Explosive\] Only can target Airborne targets. Requires countermeasures to evade. DMG: 15PEN: 2 AOE: 3 | 1x Hopes and Prayers: Upon Vehicle destruction, every occupant makes a spirit test against a threshold of 7\. If they succeed, they survive miraculously without any wounds. ‘How’ is determined by the GM. |
 
-# **`Rotor Wing Aircraft`**
+# **`Rotor Wing Combat`**
 
 Rotor Wing Aircraft are unique in that they are airborne instead of on the ground. As such- they have a unique mechanic to switch between **High Altitude** and **Low Altitude** during their movement. At both altitudes, they can ignore cover, tall cover, terrain, and anything else that can impede movement on the ground.
 
@@ -1146,11 +1144,13 @@ For rotor and fixed wing aircraft, a pilot or gunner’s weapons stats are inste
 \[M-Wep\]: Missiles and Rockets  
 \[H-Wep\]: Bombs and heavy munitions
 
+# **`Rotor Wing Vehicles`** 
+
 | Vehicle  | Stats | Armaments | Countermeasures |
 | :---- | :---- | :---- | :---- |
-| Attack Helicopters | 1A | 6B | 2I | 4S AT1  INS-DTH: 30 FWT: 9 DWT: 16 SYS: 10 AOO: 2 hexes Occupants:  1x Pilot 1x Gunner Core Parts: 1x Tail Rotor: Torso Sized, if still- causes death, 20 HP, AC2 1x Gun: Head Sized, disables Cannon, 14 HP, AC2 1x Ground Optics: Head sized, \-1 Dice Malus to all tests when destroyed, AC1 | Chaingun \[L-Wep\]\[Explosive\] RNG: \-3C | \+1L  PEN: 3  DMG: 8 AOE: 1 Against infantry, abides by grenade rules. Against Ground Vehicles, abides by ranged rules. Against air vehicles, causes an opposed \[Notice\] test, and then an \[Acrobatics\] test to evade. AGM \[M-Wep\]\[Explosive\] Only can target ground vehicles with a large IR signature. Requires countermeasures to evade. If no countermeasures are used- causes the defender to make an armor test against the attacker’s result. PEN: 3 DMG: 20 AOE: 1  | 3x Flares and Chaff When deployed- redirects all incoming guided munitions away from the aircraft. Dispensers can be shot. (AC1, head sized target, removes one charge, 5HP).  |
-| Transport Helicopter | 1A | 6B | 2I | 4S AT1  INS-DTH: 30 FWT: 9 DWT: 16 SYS: 10 AOO: 2 hexes Occupants:  1x Pilot 2x Gunner 6x Passengers Core Parts: 1x Tail Rotor: Torso Sized, if still- causes death, 20 HP, AC2  | Rotary Minigun \[L-wep\]\[Kinetic\]\[Suppression\]RNG: \-2 C | \+1 M | \-1 ELR DMG: 5 PEN: 2 | 2x Flares and Chaff When deployed- redirects all incoming guided munitions away from the aircraft. Dispensers can be shot. (AC1, head sized target, removes one charge, 5HP). |
-| Scout Helicopter | 1A | 3B | 2I | 2S AC2 INS-DTH: 20 FWT: 7 DWT: 12 SYS: 8 AOO: 2 hexes Occupants:  1x Pilot 1x Gunner Core Parts: 1x Tail Rotor: Torso Sized, if still- causes death, 20 HP 1x Ground Optics: Head sized, \-1 Dice Malus to all tests when destroyed, AC1 | Rotary Minigun \[L-wep\]\[Kinetic\]\[Suppression\]RNG: \-2 C | \+1 M | \-1 ELR DMG: 5 PEN: 2 Zuni Rocket Pods \[M-wep\]\[Explosive\] PEN: 3 DMG: 7 AOE: 1 Against infantry, abides by grenade rules. Against Ground Vehicles, abides by ranged rules. Against air vehicles, causes an opposed \[Notice\] test, and then an \[Acrobatics\] test to evade.  | 2x Flares and Chaff When deployed- redirects all incoming guided munitions away from the aircraft. Dispensers can be shot. (AC1, head sized target, removes one charge, 5HP). |
+| Attack Helicopters | 1A \| 6B \| 2I \| 4S AT1  INS-DTH: 30 FWT: 9 DWT: 16 SYS: 10 AOO: 2 hexes Occupants:  1x Pilot 1x Gunner Core Parts: 1x Tail Rotor: Torso Sized, if still- causes death, 20 HP, AC2 1x Gun: Head Sized, disables Cannon, 14 HP, AC2 1x Ground Optics: Head sized, \-1 Dice Malus to all tests when destroyed, AC1 | Chaingun \[L-Wep\]\[Explosive\] RNG: \-3C \| \+1L  PEN: 3  DMG: 8 AOE: 1 Against infantry, abides by grenade rules. Against Ground Vehicles, abides by ranged rules. Against air vehicles, causes an opposed \[Notice\] test, and then an \[Acrobatics\] test to evade. AGM \[M-Wep\]\[Explosive\] Only can target ground vehicles with a large IR signature. Requires countermeasures to evade. If no countermeasures are used- causes the defender to make an armor test against the attacker’s result. PEN: 3 DMG: 20 AOE: 1  | 3x Flares and Chaff When deployed- redirects all incoming guided munitions away from the aircraft. Dispensers can be shot. (AC1, head sized target, removes one charge, 5HP).  |
+| Transport Helicopter | 1A \| 6B \| 2I \| 4S AT1  INS-DTH: 30 FWT: 9 DWT: 16 SYS: 10 AOO: 2 hexes Occupants:  1x Pilot 2x Gunner 6x Passengers Core Parts: 1x Tail Rotor: Torso Sized, if still- causes death, 20 HP, AC2  | Rotary Minigun \[L-wep\]\[Kinetic\]\[Suppression\]RNG: \-2 C \| \+1 M \| \-1 ELR DMG: 5 PEN: 2 | 2x Flares and Chaff When deployed- redirects all incoming guided munitions away from the aircraft. Dispensers can be shot. (AC1, head sized target, removes one charge, 5HP). |
+| Scout Helicopter | 1A \| 3B \| 2I \| 2S AC2 INS-DTH: 20 FWT: 7 DWT: 12 SYS: 8 AOO: 2 hexes Occupants:  1x Pilot 1x Gunner Core Parts: 1x Tail Rotor: Torso Sized, if still- causes death, 20 HP 1x Ground Optics: Head sized, \-1 Dice Malus to all tests when destroyed, AC1 | Rotary Minigun \[L-wep\]\[Kinetic\]\[Suppression\]RNG: \-2 C \| \+1 M \| \-1 ELR DMG: 5 PEN: 2 Zuni Rocket Pods \[M-wep\]\[Explosive\] PEN: 3 DMG: 7 AOE: 1 Against infantry, abides by grenade rules. Against Ground Vehicles, abides by ranged rules. Against air vehicles, causes an opposed \[Notice\] test, and then an \[Acrobatics\] test to evade.  | 2x Flares and Chaff When deployed- redirects all incoming guided munitions away from the aircraft. Dispensers can be shot. (AC1, head sized target, removes one charge, 5HP). |
 
 # **`Enemies/NPCs`**
 
@@ -1230,7 +1230,7 @@ When attacking, pilots roll Intelligence. When defending against ground fire fro
 Some Examples of aircraft statlines are provided below. GMs provide their stats and munitions before a session starts or when they become available.
 
 Example  
-A: Alertness | B: Body | I: Intelligence | S: Spirit  
+A: Alertness \| B: Body \| I: Intelligence \| S: Spirit  
 \-------------------------------------------  
 Guns (X DMG, Stat1, Stat2, Stat3...)  
 Munition 1 (X DMG, Stat1, Stat2, Stat3...)  
@@ -1238,7 +1238,7 @@ Munition 2 (X DMG, Stat1, Stat2, Stat3...)
 etc...
 
 Multirole Jet:  
-A3|B1|I\[x\]|S\[x\]  
+A3\|B1\|I\[x\]\|S\[x\]  
 \-------------------------------------------  
 20mm Vulcan (7 damage, Strafe)  
 2x GBU-24 paveway III (30 Damage, 8 hex splash, 17 suppress, craters to 8 hexes)  
@@ -1320,9 +1320,9 @@ Penetration Values are as follows:
 
 \[ \$1200 \]  
 \[Light Weapons\]\[CQC\]  
-Range modifier: \+1 C | \-2 L | \-3 ELR  
-**PEN:** 1 | **DMG:** 4  
-**RSV:** 6 | **CAP:** 3
+Range modifier: \+1 C \| \-2 L \| \-3 ELR  
+**PEN:** 1 \| **DMG:** 4  
+**RSV:** 6 \| **CAP:** 3
 
 *“Light Pistols are handguns shooting conventional pistol calibers such as 9x19 Parabellum and below Though light on damage they make up for this with decent-sized magazines and general reliability at short to medium distances”*
 
@@ -1339,9 +1339,9 @@ Limb shots apply \[Crippled\] to targets if hit in the leg.
 
 \[ \$1500 \]  
 \[Light Weapons\]\[Precision\]  
-Range modifier: \+1 M | \-1 L | \-2 ELR  
-**PEN:** 1 | **DMG:** 5  
-**RSV:** 4 | **CAP:** 2
+Range modifier: \+1 M \| \-1 L \| \-2 ELR  
+**PEN:** 1 \| **DMG:** 5  
+**RSV:** 4 \| **CAP:** 2
 
 *“Heavy Pistols are handguns and revolvers shooting heavier calibers such as .44 Magnum, .357 Magnum, .50 AE as well as including .45 ACP and .40 S\&W. These weapons trade large magazine sizes and accuracy at longer distances for heavy damage.”*
 
@@ -1358,9 +1358,9 @@ Gain \[Burst\]
 
 \[ \$2000 \]  
 \[Light Weapons\]\[Spray\]  
-Range modifier: \+1 C | \-1 L | \-2 ELR  
-**PEN:** 1 | **DMG:** 4  
-**RSV:** 9 | **CAP:** 3
+Range modifier: \+1 C \| \-1 L \| \-2 ELR  
+**PEN:** 1 \| **DMG:** 4  
+**RSV:** 9 \| **CAP:** 3
 
 *“Submachine Guns are compact weapons shooting conventional pistol calibers such as 9x19, .45 ACP, and 10mm at high rates of fire. These weapons come with the ability to Spray which allows them to saturate targets in their cone of fire. Machine pistols can be used in the secondary slot, but the total ammo is halved.”*
 
@@ -1377,9 +1377,9 @@ Gain an extra turn per magazine,  Gain \+1 to disguise checks and \+1 bonus to S
 
 \[ \$2600 \]  
 \[Light Weapons\]\[Spray\]  
-Range modifier: \+1 M | \-1L | \-2 ELR  
-**PEN:** 1 | **DMG:** 4  
-**RSV:** 9 | **CAP:** 3
+Range modifier: \+1 M \| \-1L \| \-2 ELR  
+**PEN:** 1 \| **DMG:** 4  
+**RSV:** 9 \| **CAP:** 3
 
 *“Carbines and PDWs are the stepping stone from SMG to Assault Rifle, covering weapons that fire intermediate cartridges like 5.56x45, 4.6x30, and 5.7x28. A bit more wieldy than the SMG, the carbine is much more tuned to medium-range engagements and cannot burst like their AR cousins.”*
 
@@ -1398,9 +1398,9 @@ Increase Damage by 1, Replace \[Spray\] with \[Burst\]
 
 \[ \$3500 \]  
 \[Medium Weapons\]\[Burst\]  
-Range modifier: \-1 C | \+1 M | \-1 ELR  
-**PEN:** 1 | **DMG:** 5  
-**RSV:** 9 | **CAP:** 3
+Range modifier: \-1 C \| \+1 M \| \-1 ELR  
+**PEN:** 1 \| **DMG:** 5  
+**RSV:** 9 \| **CAP:** 3
 
 *“Assault Rifles are the big brothers to the carbines, covering weapons that fire intermediate cartridges like 5.56x45, 5.45x39, and 7.62x39. The true middle ground when it comes to weapons, they dominate mid-range engagements but take a hit in CQB. These weapons come with the ability to Burst Fire, enabling them to fire a tight burst towards a single opponent for more damage, at the expense of less dice.”*
 
@@ -1419,9 +1419,9 @@ You can Overclock your rifle to gain a \+1 to penetration and \+2 to damage for 
 
 \[ \$4300 \]  
 \[Medium Weapons\]\[Burst\]\[Precision\]  
-Range modifier: \-1 C | \+1 L | \-1 ELR  
-**PEN:** 2 | **DMG:** 6  
-**RSV:** 6 | **CAP:** 2
+Range modifier: \-1 C \| \+1 L \| \-1 ELR  
+**PEN:** 2 \| **DMG:** 6  
+**RSV:** 6 \| **CAP:** 2
 
 *“Marksman rifles are hard-hitting semi-automatic rifles chambered in heavier-hitting calibers such as 7.62x51, 7.62x54, and 6.8x51. Capped with a reduced magazine size and suffering in CQC, these weapons make up for this with their high damage and ranged performance. These weapons come with the ability to Burst Fire, enabling them to fire a tight burst towards a single opponent for more damage, at the expense of less dice.”*
 
@@ -1438,9 +1438,9 @@ Carry 1 extra magazine, \+1 when firing from ELR. Does not apply to EELR.
 
 \[ \$5100 \]  
 \[Medium Weapons\]\[Sharpshooter\]\[Precision\]  
-Range modifier: \-2 C | \+1 L | \+2 ELR  
-**PEN:** 2 | **DMG:** 7  
-**RSV:** 6 | **CAP:** 3
+Range modifier: \-2 C \| \+1 L \| \+2 ELR  
+**PEN:** 2 \| **DMG:** 7  
+**RSV:** 6 \| **CAP:** 3
 
 *“Undisputed champions of long-range engagements, sniper rifles are a go-to choice for marksmen. Chambered from anything between 7.62x51 AP, 338 Lapua, and .300 Norma these weapons are perfect for dropping individual targets long before they know what hit them, made all the better with their armour-penetrating rounds that can hit targets behind soft walls and cover. The major downside however is drawbacks for trying to use them in CQC and their low ammo count. Make each shot count.”*
 
@@ -1459,16 +1459,16 @@ Spend a turn charging your rifle to negate navigate tests in exchange for a flat
 
 \[ \$3000 \]  
 \[Medium Weapons\]  
-Range modifier: \+2 C | \-1 M | \-3 L | \-4 ELR  
-**PEN:** 1 | **DMG:** 6  
-**RSV:** 6 | **CAP:** 3
+Range modifier: \+2 C \| \-1 M \| \-3 L \| \-4 ELR  
+**PEN:** 1 \| **DMG:** 6  
+**RSV:** 6 \| **CAP:** 3
 
 *“Shotguns are the kings of close quarters, chambered in a variety of 12 gauge shells, and occasionally in 8 gauge, they will annihilate anything foolish enough to stand less than 10 meters in front of them. This high damage potential does come with the caveat of a massive damage drop-off over long distances. These weapons can also be used as makeshift breaching devices and have destructive abilities against soft walls.”*
 
 #### `Families`
 
 **Pump-Action** // \+ \$300  
-As a bonus action, you can load a slug round that has a custom range band of \-1 C | \+1 L | \-2 ELR. When firing- still mark a turn of ammo.  
+As a bonus action, you can load a slug round that has a custom range band of \-1 C \| \+1 L \| \-2 ELR. When firing- still mark a turn of ammo.  
 **Semi-Auto** // \+ \$100  
 Firing at a soft wall can turn it into cover. Can be used as a breaching tool for a bonus action instead of a full action.  
 **Automatic** // \+ \$200  
@@ -1480,9 +1480,9 @@ Firing at a soft wall can turn it into either cover or remove it entirely. Gains
 
 \[ \$4800 \]  
 \[Heavy Weapons\]\[Fire Support\]\[Suppression\]  
-Range modifier: \+1 BP | \+1 M | \-1 L | \-1 ELR  
-**PEN:** 2 | **DMG:** 5  
-**RSV:** 8 | **CAP:** 4
+Range modifier: \+1 BP \| \+1 M \| \-1 L \| \-1 ELR  
+**PEN:** 2 \| **DMG:** 5  
+**RSV:** 8 \| **CAP:** 4
 
 *“Lead spitting machines of the battlefield, machine guns are chambered in a mixture of intermediate and heavier hitting calibers ranging from 5.56,5.8x42, 7.62x51, 6.8x51, and 7.62x39. Despite this mix of calibers, their main purpose isn’t to inflict pinpoint precision damage but to instead shatter the will and the cover of anyone in front of their field of fire. Comes with the ability to suppress and pin down targets.”*
 
@@ -1509,7 +1509,7 @@ When using an acrobatics test to evade, an MOS greater than 2 has the defender s
 
 \[ \$3000 \]  
 \[Throw\]\[Explosive\]  
-7 Damage. | 1 hex AOE  
+7 Damage. \| 1 hex AOE  
 When thrown in combat, prompts \[Throw\] vs \[Armor\] to brace or \[Acrobatics\] to dodge. Out of combat, requires an \[Alertness\] roll check if they react, and then their reaction.
 
 *“A bog standard high explosive fragmentation grenade. Light, easy to carry, easier to throw. Useful for many applications.”*
@@ -1518,7 +1518,7 @@ When thrown in combat, prompts \[Throw\] vs \[Armor\] to brace or \[Acrobatics\]
 
 \[ \$2000 \]  
 \[Throw\]\[Interrupt\]  
-0 DMG | 3 hex AOE  
+0 DMG \| 3 hex AOE  
 When thrown in combat, prompts \[Throw\] vs \[Spirit\] to withstand or \[Acrobatics\] to dodge. Applies \-1 malus on all afflicted targets within the AOE. Interrupts readied, aiming, and suppression if within the AOE and they fail the check. If used before combat starts, will cause friendlies to have initiative first instead of enemies.
 
 *“The power of chemistry, in the palm of your hand. Useful in dissuading people from choosing to shoot back, or to create an opening and interrupt them.”*
@@ -1528,7 +1528,7 @@ When thrown in combat, prompts \[Throw\] vs \[Spirit\] to withstand or \[Acrobat
 \[ \$1900 \]  
 \[Throw\]\[Obscure\]  
 When thrown in combat, prompts \[Throw\] against a threshold of 2\.  
-0 DMG | 3 hex AOE.  
+0 DMG \| 3 hex AOE.  
 Applies very dimly lit \[-2\] to the area and areas behind it when attempting to look through the smoke. Lasts for 2 turns starting when it was deployed.
 
 *“Creates a plume of smoke around a designated location. Perfect for slipping away from enemies, or covering an advance.”*
@@ -1537,7 +1537,7 @@ Applies very dimly lit \[-2\] to the area and areas behind it when attempting to
 
 \[ \$2500 \]  
 \[Throw\]\[Stealth\]  
-7 DMG. | No AOE  
+7 DMG. \| No AOE  
 When thrown in combat, prompts \[Throw\] vs \[Acrobatics\]. Makes no noise, and can be aimed to debilitate limbs if need be.
 
 *“Knife to meet you.”*
@@ -1569,7 +1569,7 @@ Underslung and Underbarrel grenade launchers get 4 total rounds, and players can
 
 \[\$6500\]  
 \[M-Wep\] \[Shoot\]  
-Range modifier: \-3C | \+1M | \-1L | \-2ELR  
+Range modifier: \-3C \| \+1M \| \-1L \| \-2ELR  
 Pen: 1  
 Ammo: 4  
 Capacity: 1 
@@ -1618,9 +1618,9 @@ The PMGL or precision munition grenade launchers, are a more precise alternative
 
 \[\$17000\]   
 \[H-Wep\]\[Shoot\]\[Deploy\]  
-Range modifier: \-3C | \+1L | \-1ELR  
+Range modifier: \-3C \| \+1L \| \-1ELR  
 Ammo: 4  
-PEN: 1 | DMG: 8  
+PEN: 1 \| DMG: 8  
 M-Weapons attacker test vs Acrobatics defender test.  
 Uses programmable, airburst munitions. Can use a \[Deploy\] bonus action to range and then fire. Also can be fired without using a \[Deploy\] as a direct impact HE round but reduces damage by 1 and allows the defender to use armor and cover with their defender test.
 
@@ -1632,8 +1632,8 @@ For close quarters violence in a pinch, underbarrel/underslung shotguns pack a d
 
 \[\$4300\]  
 \[M-wep\]\[Breach\]\[Deploy\]  
-Range modifier: \+2 C | \-1 M | \-3 L | \-4 ELR  
-PEN: 1 | DMG: 6  
+Range modifier: \+2 C \| \-1 M \| \-3 L \| \-4 ELR  
+PEN: 1 \| DMG: 6  
 CAP: 3  
 Can be used as a breaching tool against doors as a Deploy action.
 
@@ -1778,9 +1778,9 @@ The main tool for taking out buildings and armored vehicles, Rocket Launchers ar
 
 \[\$10000\]  
 \[H-Wep\]\[Deploy\]\[Shoot\]  
-Range Modifiers: \-1NS | \-100C | \+1M | \-1ELR  
+Range Modifiers: \-1NS \| \-100C \| \+1M \| \-1ELR  
 Ammo: 3  
-PEN: 3 | Damage: 10
+PEN: 3 \| Damage: 10
 
 Against infantry, abides by grenade rules. Against Ground Vehicles, abides by ranged rules. Against Air Vehicles, causes an opposed \[Notice\] test against the shooter’s result, and then an \[Acrobatics\] test to evade against the same threshold. Requires a \[Deploy\] action to set up, if not set up- the shooting test takes a \-1 malus.
 
@@ -1790,9 +1790,9 @@ Against infantry, abides by grenade rules. Against Ground Vehicles, abides by ra
 
 \[\$17000\]  
 \[H-Wep\]\[Deploy\]\[Shoot\]  
-Range Modifiers: \-1NS | \-100C | \+1L  
+Range Modifiers: \-1NS \| \-100C \| \+1L  
 Ammo: 2  
-Pen: 3 | Damage: 12
+Pen: 3 \| Damage: 12
 
 Can be guided where every 6 hexes, you can change its direction of travel by angling one hex from its current path as long as the hex it will end up on after traveling 6 hexes in that direction is within line of sight of the shooter. Requires a deploy action to set up, if not set up- the shooting test takes a \-1 malus.
 
@@ -1805,7 +1805,7 @@ Against infantry, abides by grenade rules. Against vehicles, Opposed \[Notice\] 
 \[\$19000\]  
 \[H-Wep\]\[Datalink\]\[Deploy\]\[Shoot\]  
 Ammo: 2  
-Pen: 3 | Damage: 15
+Pen: 3 \| Damage: 15
 
 Guaranteed hit if the target is within LOS or \[Pinged\], no countermeasures are deployed, and no large overhead structures would block a top attack from the target. Can only target ground vehicles with a large IR signature. Opposed \[Notice\] check to notice, and then an armor test if no countermeasures deployed. Requires a \[Deploy\] action to set up, if not set up- the shooting test takes a \-1 malus.
 
@@ -1819,9 +1819,9 @@ Hard cover, soft cover, no cover, the anti-material rifle can punch through all 
 
 \[\$8000\]  
 \[H-Wep\]\[Deploy\]  
-Range Modifiers: \-1NS | \-2C | \+1L | \+2ELR  
+Range Modifiers: \-1NS \| \-2C \| \+1L \| \+2ELR  
 Ammo: 5  
-Pen: 3 | Damage: 7
+Pen: 3 \| Damage: 7
 
 Damage to AT1+ vehicles will cause wound overflow unless targeting individual parts. Requires a \[Deploy\] action to set up, if not set up- the shooting test takes a \-1 malus.
 
@@ -1831,9 +1831,9 @@ Damage to AT1+ vehicles will cause wound overflow unless targeting individual pa
 
 \[\$35000\]  
 \[H-Wep\]\[Deploy\]  
-Range Modifiers:  \-1NS | \-2C | \+1L | \+2ELR  
+Range Modifiers:  \-1NS \| \-2C \| \+1L \| \+2ELR  
 Ammo: 3  
-Pen: 4 | Damage: 12
+Pen: 4 \| Damage: 12
 
 Will cause characters within the room it's fired in or one hex from the round path to make a defensive suppression test against a threshold of 4\. Requires a \[Deploy\] action to set up, if not set up- the shooting test takes a \-1 malus.
 
@@ -1862,11 +1862,11 @@ Airborne drones can be at two different altitudes. When at High Altitude, they a
 
 \[\$20000\]  
 \[Airborne\]\[Repairable\]\[Deploy\]\[Datalink\]   
-General: 1 | All Weapons: 2 | Endurance: 1 | Notice: 2 | Investigation: 1   
+General: 1 \| All Weapons: 2 \| Endurance: 1 \| Notice: 2 \| Investigation: 1   
 Range Modifiers: \+1 C, \-1 L, \-2 ELR   
 Ammo: 6  
-10 HP | AC:0   
-PEN: 1 | Damage: 4
+10 HP \| AC:0   
+PEN: 1 \| Damage: 4
 
 Airborne drones can be at two different altitudes. When at High Altitude, they are able to have elevation overmatch on all targets in an area and ignore terrain, but cannot enter buildings. When at Low Alt they are able to enter into buildings and smaller spaces, but also have to abide by terrain rules.
 
@@ -1884,11 +1884,11 @@ Each drone has a ‘General’ stat which is any unlisted stat affected by their
 
 \[\$0\]  
 \[Ground\]\[Repairable\]\[Deploy\]\[Datalink\]   
-General: 1 | Weapons: 2 | Endurance: 3  
-Range Modifiers: \+1 M  | \-1 L | \-1 ELR   
+General: 1 \| Weapons: 2 \| Endurance: 3  
+Range Modifiers: \+1 M  \| \-1 L \| \-1 ELR   
 Ammo: 6  
-30 HP | AC:1   
-PEN: 2 | Damage: 5
+30 HP \| AC:1   
+PEN: 2 \| Damage: 5
 
 *“The original, and ever beloved Demo Dog armed with a GCR-500 Assault Rifle. Don't fix what ain't broken.”*
 
@@ -1896,11 +1896,11 @@ PEN: 2 | Damage: 5
 
 \[\$7000\]  
 \[Ground\]\[Repairable\]\[Deploy\]\[Datalink\]   
-General: 1 | Weapons: 2 | Endurance: 2 | Stealth: 3  
-Range Modifiers: \+1 C | \-1 L |  \-2 ELR   
+General: 1 \| Weapons: 2 \| Endurance: 2 \| Stealth: 3  
+Range Modifiers: \+1 C \| \-1 L \|  \-2 ELR   
 Ammo: 6  
-30 HP | AC:0   
-PEN: 1 | Damage: 4
+30 HP \| AC:0   
+PEN: 1 \| Damage: 4
 
 *“Customised stealth package for the demo-dog. Originally created for Special Reconnaissance teams and SOCOM requirements, the package installs whisper quiet servos, strips unnecessary armour, and swaps the standard belt fed GCR-500 for a suppressed .300 blackout variant called the ‘Kitty Kat’.”*
 
@@ -1908,11 +1908,11 @@ PEN: 1 | Damage: 4
 
 \[\$4000\]  
 \[Ground\]\[Repairable\]\[Deploy\]\[Datalink\]   
-General: 1 | Weapons: 2 | Endurance: 2 | Notice: 2   
-Range Modifiers: \-1 C | \+1 L | \-1 ELR   
+General: 1 \| Weapons: 2 \| Endurance: 2 \| Notice: 2   
+Range Modifiers: \-1 C \| \+1 L \| \-1 ELR   
 Ammo: 6  
-30 HP | AC:0   
-PEN: 2 | Damage: 6
+30 HP \| AC:0   
+PEN: 2 \| Damage: 6
 
 *“Dedicated marksman variant for Long Range Recon and endurance. Strips down the armor much like the stealth variant in favor of an advanced sensor suite.”*
 
@@ -1920,11 +1920,11 @@ PEN: 2 | Damage: 6
 
 \[\$6000\]  
 \[Ground\]\[Repairable\]\[Deploy\]\[Datalink\]   
-General: 1 | Weapons: 2 | Endurance: 2  
-Range Modifiers: \-1 C | \+1 M | \-1 L | \-1 ELR   
+General: 1 \| Weapons: 2 \| Endurance: 2  
+Range Modifiers: \-1 C \| \+1 M \| \-1 L \| \-1 ELR   
 Ammo: 6  
-30 HP | AC:0   
-PEN: 2 | Damage: 5
+30 HP \| AC:0   
+PEN: 2 \| Damage: 5
 
 *“Based on prototypes found in 2018, the Gunner variant offers more firepower and ammo in exchange for poor close range performance due to the weight of the machine gun.”*
 
@@ -1936,7 +1936,7 @@ The whir of electric motors and the buzz of small drones have become the new age
 
 \[\$9000\]  
 \[Airborne\]\[Explosive\]\[Deploy\]\[Datalink\]   
-PEN 1 | DMG 7  
+PEN 1 \| DMG 7  
 AOE 2  
 When deployed, the user's turn ends immediately. When attacking an enemy, the defender rolls acrobatics if they wish to dodge, their armor with cover bonuses if they wish to brace, or their respective weapons with a \-1 dice malus if they want to shoot it out of the sky. Uses a Drive check when deployed. Fumbles pre-detonate the warhead. 
 
@@ -1946,7 +1946,7 @@ When deployed, the user's turn ends immediately. When attacking an enemy, the de
 
 \[\$12000\]  
 \[Airborne\]\[Explosive\]\[Deploy\]\[Datalink\]   
-PEN 3 | DMG 8  
+PEN 3 \| DMG 8  
 AOE 0\.   
 When deployed, the user's turn ends immediately. When attacking an enemy, the defender rolls acrobatics if they wish to dodge, their armor with cover bonuses if they wish to brace, or their respective weapons with a \-1 dice malus if they want to shoot it out of the sky. Uses a Drive check when deployed. Fumbles pre-detonate the warhead. 
 
@@ -2021,9 +2021,9 @@ Increases Close and Medium Range Band modifier with a \+1 bonus.
 ### **`Frangible`**
 
 \[\$5000\]  
-If a target is shot in the legs, they are now afflicted with \[Debilitated\].
+If a target is shot in the legs, they are now afflicted with \[Debilitated\]. Reduce penetration to 1\.
 
-*“High quality ammunition built for competition shooting. Improves close range performance through improved powders that fit better within the tolerances of the firearm. Essentially, bougie ammo.”*
+*“Special ammo that spalls easier, reduces penetration due to the softer, frangible function.”*
 
 ## **`Mortar Systems`**
 
@@ -2045,7 +2045,7 @@ Ammo: 4
 \[\$0\]  
 \[Explosive\]  
 H-wep attacker test vs Acrobatics defender test.  
-Pen 1 | 8 DMG   
+Pen 1 \| 8 DMG   
 2 hex AOE
 
 *“Standard High Explosive Ordnance. Kaboom.”*
@@ -2055,7 +2055,7 @@ Pen 1 | 8 DMG
 \[\$5000\]  
 \[Explosive\]\[Datalink\]  
 H-wep attacker test vs Acrobatics defender test.  
-Pen 3 | 8 DMG   
+Pen 3 \| 8 DMG   
 1 hex AOE  
 If the target is pinged, the attacker test is made with an extra dice. If a vehicle is designated, the attack is guaranteed to hit unless countermeasures are used.
 
@@ -2066,7 +2066,7 @@ If the target is pinged, the attacker test is made with an extra dice. If a vehi
 \[\$4500\]  
 \[Obscure\]  
 H-wep Attacker test against a threshold of 3  
-Pen 1 | No DMG  
+Pen 1 \| No DMG  
 AOE 3  
 Applies ‘very dimly lit’ effect to an area. Removes \[Pinged\] if a target is no longer visible with smoke.
 
@@ -2077,7 +2077,7 @@ Applies ‘very dimly lit’ effect to an area. Removes \[Pinged\] if a target i
 \[\$6000\]  
 \[Ping\]\[Loitering\]  
 H-Weapons attacker test vs lower Disguise or Stealth defender test.  
-No DMG | AOE: LR  
+No DMG \| AOE: LR  
 Pings all enemies within Long Range of where it hovers over  
 Loiters for 2 turns.  
 Upon fumble, the Sauron will tag no targets. Can be shot down.
@@ -2089,7 +2089,7 @@ Upon fumble, the Sauron will tag no targets. Can be shot down.
 \[\$3500\]  
 \[EMP\]  
 H-wep Attacker test against a threshold of 3  
-No DMG | AOE: C  
+No DMG \| AOE: C  
 Disables all non-friendly electronics and lights around the user.  
 If indoors with no natural lighting, it applies a pitch black effect to the room and any adjacent. If there is natural lighting, it will apply ‘very dimly lit’ to the room. At night, it can be used to make anywhere pitch black.  
 Electronics will return in 1 turn from when it was deployed..
@@ -2149,7 +2149,7 @@ Deployables encompass more of the ‘Support’ of Fire Support, encompassing it
 ### **`Medic Bag`**
 
 \[Deploy\]\[Medical\]  
-Resupplies all AFAKs and IFAKs, requires someone to come directly to the hex it is deployed on to resupply. Each party member can only resupply once. Can throw med-packs to teammates with a threshold of 3 \+ the amount of range bands between you and the target starting at \+0 for close range, to a maximum of \+2 long range 
+Resupplies all AFAKs and IFAKs, requires someone to come directly to the hex it is deployed on to resupply. Each party member can only resupply once. Includes a stim pistol to use AFAKs and IFAKs on others from range, which requires an \[L-Wep\] test against a threshold of 3 \+ the amount of range bands between you and the target. Starting at \+0 for close range, to a maximum of \+2 long range. Cannot fire past Long Range.
 
 *“One cannot carry all the medicine they need on them at all times. However, the revolutionary idea of ‘stuff everything else into another bag and carry it too' was invented, which the Medic Bag utilizes.”*
 
@@ -2161,15 +2161,16 @@ Nanite stimulants and boosters are fast acting nanomachines that supplement, and
 
 \[\$4000\]  
 \[Deploy\]\[Medical\]  
-Holds all of the nanite stims for a medic. Before a mission, choose an amount of injectors, up to an overall total of the capacity, from each nanite type that is purchased. Comes with a stim pistol which requires an \[L-Wep\] test against a threshold of 3 \+ the amount of range bands between you and the target, starting at \+0 for close range, to a maximum of \+2 long range. Cannot fire past Long Range.
+4x Injectors  
+Holds all of the nanite stims for a medic. Before a mission, choose an amount of injectors, up to an overall total of the capacity, from each nanite type that is purchased. Includes a stim pistol which requires an \[L-Wep\] test against a threshold of 3 \+ the amount of range bands between you and the target, starting at \+0 for close range, to a maximum of \+2 long range. Cannot fire past Long Range.
 
 *“Contains all the stimulants and boosters a medic can carry, from regenerative nanites that heal you, to performance enhancing ones that let you react faster. Includes a stim pistol for ranged applications.”*
 
 ### **`Regen Nanite Kit (RNK)`**
 
 \[\$4000\]\[Stimulant\]  
-Heal a flesh wound every turn, if no flesh wounds heal a deep wound every 2 turns.  
-Lasts for (1d6 turns+ Medical Skill)/2 turns rounded up.
+Once, immediately heal 1 deep wound. At the end of each turn, heal 1 deep wound or its flesh wound equivalent.  
+Lasts for (1d6 turns+ Medical Skill)/ turns rounded down, starting on the turn it was used.
 
 *“Advanced nanomachines automatically help stop bleeding, apply painkillers, and make getting shot a little less un-fun.”*
 
@@ -2183,15 +2184,15 @@ Revives a character from DBNO instantly with only a flesh wound. The turn after-
 ### **`Traumadol Nanite Kit (TNK)`**
 
 \[\$3000\]\[Stimulant\]  
-Ignore the effects of wound modifiers on tests, or any afflictions caused by wounds or damage to yourself. A character can still enter system shock.  
-Lasts for (1d6 turns+ Medical Skill)/2 turns rounded up.
+Ignore the effects of wound modifiers on tests, or any afflictions caused by wounds or damage to yourself. A character can still enter system shock or go down from their instant death threshold.  
+Lasts for (1d6 turns+ Medical Skill)/2 turns rounded down, starting on the turn it was used.
 
 *“Retooled for killing any and all pain, Truamadol Nanites make the user feel nothing, other than emotion. We didn't disable that just yet.”*
 
 ### **`Adrenal Nanite Kit (DTNK)`**
 
 \[\$6000\]\[Booster\]  
-Adds another standard action.  
+Adds another standard action to the target.  
 Lasts for the turn
 
 *“Created to simulate a release of adrenaline via nanites, the Adrenal Nanites give you a kick of energy in the moment.”*
@@ -2239,8 +2240,8 @@ Some drones have an uptime and downtime. The uptime starts during the turn the d
 
 \[\$9000\]  
 \[Deploy\]\[Airborne\]\[Stimulant\]  
-Uptime: 2 turns | Downtime: 2 turn  
-When deployed, designate an infantry target. This target heals one deep wound every turn it is active, or two flesh wounds if there aren't any deep wounds. Upon the target being given enough damage to cause instant death, will instead only take 2 deep wounds. If the target enters system shock or otherwise enters DBNO- they are instantly revived with only a flesh wound, but still contribute to the total amount of downs they have taken.
+Uptime: 2 turns \| Downtime: 2 turns  
+When deployed, designate an infantry target. This target heals one deep wound every turn it is active, or two flesh wounds if there aren't any deep wounds. Upon the target being given enough damage to cause instant death, they will instead only take 2 deep wounds. If the target enters system shock or otherwise enters DBNO- they are instantly revived with only a flesh wound, but still contribute to the total amount of downs they have taken.
 
 These effects only last during the drone’s uptime, and upon that uptime running out- the drone will return to the medic who deployed it. While deployed, the drone can be given a new target to heal via a \[Deploy\] action.
 
@@ -2250,7 +2251,7 @@ These effects only last during the drone’s uptime, and upon that uptime runnin
 
 \[\$6000\]  
 \[Deploy\]\[Airborne\]\[Booster\]  
-Uptime: 2 turns | Downtime: 1 turns  
+Uptime: 2 turns \| Downtime: 1 turns  
 When deployed, designate an infantry target. This target heals one flesh wound every turn it is active, or a deep wound every 2 turns if there aren't any flesh wounds. While with the designated target, the target ignores the effects of wound modifiers on tests, or any afflictions caused by wounds or damage to them. They can still enter system shock.
 
 These effects only last during the drone’s uptime, and upon that uptime running out- the drone will return to the medic who deployed it. While deployed, the drone can be given a new target to heal via a \[Deploy\] action on the medic’s turn.
@@ -2287,8 +2288,8 @@ Each drone has a ‘General’ stat which is any unlisted stat affected by their
 \[ \$6000 \]  
 \[Airborne\]\[Repairable\]\[Deploy\]\[Ping\]\[Datalink\]\[IR\]  
 User carried  
-Uptime: 1 | Downtime: 1  
-1 general | 3 notice | 2 stealth | 2 investigation  
+Uptime: 1 \| Downtime: 1  
+1 general \| 3 notice \| 2 stealth \| 2 investigation  
 Spot traps, gadgets, vehicles, and more within the world hex via a quick scan before returning to the user. Causes a stealth or disguise test, using the lower, against any contact in the area. Uses Thermal/IR imaging.
 
 *“Built off the chassis of the PD-105 Black Hornet, Hummingbird reconnaissance drones are a unique modification tying in BUDDI spotting software, Infrared imaging, and a hardened datalink uplink.”*
@@ -2298,8 +2299,8 @@ Spot traps, gadgets, vehicles, and more within the world hex via a quick scan be
 \[ \$8000 \]  
 \[Airborne\]\[Repairable\]\[Deploy\]\[Ping\]\[Designate\]\[Datalink\]\[NVG\]  
 User Carried  
-Uptime: 3 turns | Downtime: 2 turns  
-1 general | 2 notice | 2 acrobatics | 2 investigation  
+Uptime: 3 turns \| Downtime: 2 turns  
+1 general \| 2 notice \| 2 acrobatics \| 2 investigation  
 Pings in a large area, extending to 3 world hexes from and including the encounter area. Causes a stealth or disguise test, using the lower, against any contact in the area. Will not spot gadgets, traps, drones, or anyone indoors. Has a LAM and can \[Designate\] targets. Cannot be used indoors.
 
 *“Built off of the Marine's SUAV, the Silver Bird is an autonomous drone that orbits the user at a high altitude to mark targets. Has only NV. Pings for every turn it is up.”*
@@ -2370,7 +2371,7 @@ Can only be used on marked or pinged targets, Adds a flat \+1 to the roll.
 
 ### **`EMP Round`**
 
-\[ \$6000 | Sharpshooter \]  
+\[ \$6000 \| Sharpshooter \]  
 Disables and disrupts electronics for 1 turn with a 1 hex AOE where it landed. Can disrupt APS and vehicle systems if aimed correctly.
 
 *“Creates a small electromagnetic pulse around the impact point.”*
@@ -2417,7 +2418,7 @@ Forces a Body check against 4 when caught in the trap.
 \[Deploy\]\[Explosive\]  
 Attacker Disguise vs Defender Alertness  
 3 Claymores  
-8 DMG | PEN 2  
+8 DMG \| PEN 2  
 4 hex diagonal AOE  
 If a contact or object enters between the diagonal AOE of the claymore- it will trigger.
 
@@ -2442,7 +2443,7 @@ or
 Attacker Disguise vs Defender Alertness \[Trap\]  
 3 charges  
 4 hex AOE  
-10 DMG | PEN 3
+10 DMG \| PEN 3
 
 *“Better known as 'jeep stuff', C4 is a malleable material that when introduced to an electric charge—detonates spectacularly. There are a lot of use cases. Get creative.”*
 
@@ -2459,7 +2460,7 @@ Can be deployed on any surface with either:
 \- Attack detonation (trap)  
 \- Remote detonation (manual)
 
-15 DMG | PEN 3
+15 DMG \| PEN 3
 
 *“Jeep stuff's younger, more tech-savvy cousin, M5 SLAMs are AT/Demo charges that can be set to detonate under a variety of circumstances. Easy to program, easy to detonate, and even float in water to act as aquatic mines.”*
 
@@ -3246,19 +3247,19 @@ Ammo is consumed as per normal rules. Suppression effects from HVAM Railgun stac
 
 # **`S.P.E.A.R. (NessTac)`**
 
-**Gàidheal Furniture Set**  \[Gloves\]\[Tier 2\]  
+**Gàidheal Furniture Set  \[Gloves\]\[Tier 2\]**  
 *“Consisting of an ergonomic pistol grip and a lightweight buttstock the Gàidheal package has seen widespread adoption on assaulter-configured rifles including those in SOCOM’s inventory”*   
 **Effect:** All Marksman Rifles equipped by the user gain \+1 to Close Range 
 
-**Haubarc Assault Plate Carrier** \[Vest\]\[Tier 2\]  
+**Haubarc Assault Plate Carrier \[Vest\]\[Tier 2\]**  
 *“The first plate carrier designed by NessTac specifically with full caliber rifles in mind the Haubarc features a four-mag placard made to fit SR25, G3, and FAL pattern magazines while fitting many other kinds”*   
 **Effect:** Your first magazine is free with equipped Marksman Rifles (you still have to reload)
 
-**Tam Level III+ Ballistic Helmet** \[Helmet\]\[Tier 1\]  
+**Tam Level III+ Ballistic Helmet \[Helmet\]\[Tier 1\]**  
 *“Made out of a proprietary ballistic polymer the Tam is a simple helmet modeled after a ProTec snowboarding helmet for wearer comfort while retaining an NIJ Level III+ ballistic rating”*  
 **Effect:** Enemies aiming for the head no longer halves your wound threshold
 
-**Heavyweight Match Grade Rounds** \[Gear\]\[Tier 1\]  
+**Heavyweight Match Grade Rounds \[Gear\]\[Tier 1\]**  
 *“Although a reduced velocity hurts the rifle’s efficacy at range the increased bullet mass is devastating closer in”*  
 **Effect:** All equipped Marksman Rifles gain \+1 to Close and Medium Range while taking a \-1 malus to Long Range and above
 
@@ -3268,7 +3269,7 @@ Ammo is consumed as per normal rules. Suppression effects from HVAM Railgun stac
 *“Advanced threat recognition and discrimination information overlaid on a slide-down half-height visor attached to the front of the tactical helmet. Also provides sunglasses-level UV protection.”*  
 **Effect:** Gain a \+1 bonus against enemies within line of sight and Close Range.
 
-**Gung-Ho Speed Tape Gloves \[Gloves\]**  
+**Gung-Ho Speed Tape Gloves \[Gloves\]\[Tier 1\]**  
 *“Tactical full-fingered gloves with additional speed tape on the finger pads to provide optimal grip in pinch-grabbing actions.”*  
 **Effect:** \[Reloads\] from empty now only give a \-1 malus to the next test of the turn (as if \[Reloading\] with rounds in the magazine).
 
