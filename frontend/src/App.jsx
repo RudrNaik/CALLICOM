@@ -14,7 +14,7 @@ import Campaigns from "./Campaign";
 import SignUp from "./SignUp";
 import Navbar from "./components/Navbar";
 import { AuthProvider, AuthContext } from "./AuthContext";
-import { AUTH_EXPIRED_EVENT } from "./engine/syncEngine";
+import { AUTH_EXPIRED_EVENT } from "./engine/characterManager/syncEngine";
 import "./App.css";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";

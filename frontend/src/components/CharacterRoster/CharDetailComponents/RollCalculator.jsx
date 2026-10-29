@@ -7,13 +7,13 @@ import {
   getNavigateModifier,
   totalModifierValue as computeTotalModifierValue,
   rollExpression as buildRollExpression,
-} from "../../../engine/weaponEngine";
+} from "../../../engine/characterManager/weaponEngine";
 import {
   getWoundPenalty,
   getBaseDiceCount,
   getEffectiveDiceCount,
-} from "../../../engine/characterEngine";
-import { rosterEntryId } from "../../../engine/syncEngine";
+} from "../../../engine/characterManager/characterEngine";
+import { rosterEntryId } from "../../../engine/characterManager/syncEngine";
 
 function Calculator({
   characterData,

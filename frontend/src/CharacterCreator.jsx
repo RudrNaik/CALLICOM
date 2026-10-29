@@ -7,8 +7,8 @@ import SkillCreator from "./components/CharacterCreator/SkillCreator";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "./AuthContext";
-import { createRemoteCharacter } from "./engine/syncEngine";
-import { getToken } from "./engine/memoryEngine";
+import { createRemoteCharacter } from "./engine/characterManager/syncEngine";
+import { getToken } from "./engine/characterManager/memoryEngine";
 
 const createCharacterId = () => {
   if (typeof crypto !== "undefined" && crypto.randomUUID) {

@@ -5,7 +5,6 @@
 export const EFFECT_PRESETS = [
   { id: "fire", label: "Fire", color: "#f97316", hatched: false },
   { id: "smoke", label: "Smoke", color: "#9ca3af", hatched: true },
-  { id: "gas", label: "Gas", color: "#84cc16", hatched: true },
 ];
 
 export const EFFECT_COLOR_PRESETS = [
@@ -23,7 +22,7 @@ export const DEFAULT_EFFECT = {
   name: "",
   color: EFFECT_PRESETS[1].color,
   hatched: EFFECT_PRESETS[1].hatched,
-  radius: 1,
+  radius: 2,
   opacity: 0.3,
 };
 

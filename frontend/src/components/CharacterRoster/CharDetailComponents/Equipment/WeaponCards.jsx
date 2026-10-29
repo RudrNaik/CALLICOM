@@ -7,7 +7,7 @@ import {
   computeFireResult,
   resupplyWeaponAmmo,
   computeReloadResult,
-} from "../../../../engine/weaponEngine";
+} from "../../../../engine/characterManager/weaponEngine";
 
 const WeaponSlot = ({
   slot,

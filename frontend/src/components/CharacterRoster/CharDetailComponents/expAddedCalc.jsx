@@ -1,8 +1,8 @@
 import {
   getXPBreakdown,
   getAvailableXP,
-} from "../../../engine/characterEngine";
-import { getLogTotals } from "../../../engine/logsEngine";
+} from "../../../engine/characterManager/characterEngine";
+import { getLogTotals } from "../../../engine/characterManager/logsEngine";
 
 function LedgerRow({ label, value, sub, total = false, indent = false }) {
   return (

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import useVTTMap from "./hooks/useVTTMap";
+import useVTTMap from "./engine/hexMap/useVTTMap";
 import VTTCanvas from "./components/VTT/VTTCanvas";
 import VTTToolbar from "./components/VTT/VTTToolbar";
 import MapManagerPanel from "./components/VTT/MapManagerPanel";
@@ -8,7 +8,7 @@ import { CLASS_KEYS, DEFAULT_FRIENDLY_COLOR } from "./components/VTT/tokenBadges
 import { DEFAULT_EFFECT } from "./components/VTT/effects";
 import { copyHexes, placeClipboard } from "./components/VTT/hexClipboard";
 import { elevationFillRegion, FILL_CONFIRM_THRESHOLD } from "./components/VTT/elevationFill";
-import { hexKey } from "./utils/hexGrid";
+import { hexKey } from "./engine/hexMap/hexGrid";
 
 const DEFAULT_FRIENDLY_SCALE = 1.5;
 const DEFAULT_ENEMY_SCALE = 2;

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import classData from "../../../data/classSkills.json";
-import { getAvailableMulticlassOptions } from "../../../engine/characterEngine";
+import { getAvailableMulticlassOptions } from "../../../engine/characterManager/characterEngine";
 
 function MultiClassModal({
   onClose,

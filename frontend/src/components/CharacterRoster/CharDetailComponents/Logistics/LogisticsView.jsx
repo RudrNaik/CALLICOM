@@ -5,12 +5,12 @@ import {
   sellPurchase,
   getPurchaseEntries,
   getGadgetSubmunitionOptions,
-} from "../../../../engine/logisticsEngine";
+} from "../../../../engine/characterManager/logisticsEngine";
 import {
   getPurchasedGadgetIds,
   getGearPieceByIdAnyClass,
-} from "../../../../engine/equipmentEngine";
-import { getMoneyTotal, ensureStartingLog } from "../../../../engine/logsEngine";
+} from "../../../../engine/characterManager/equipmentEngine";
+import { getMoneyTotal, ensureStartingLog } from "../../../../engine/characterManager/logsEngine";
 import EquipmentPurchaseCard from "./EquipmentPurchaseCard";
 import GearSlotPurchaseCard, { GEAR_SLOT_LABELS } from "./GearSlotPurchaseCard";
 

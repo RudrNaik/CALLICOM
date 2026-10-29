@@ -11,7 +11,7 @@ import {
   getSkillUpgradeCost,
   CREATION_XP_BUDGET,
   BASELINE_EMERGENCY_DICE,
-} from "../../engine/characterEngine";
+} from "../../engine/characterManager/characterEngine";
 
 const attributeList = ["Alertness", "Body", "Intelligence", "Spirit"];
 

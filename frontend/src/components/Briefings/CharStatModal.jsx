@@ -6,21 +6,21 @@ import SkillsView from "../CharacterRoster/CharDetailComponents/Skills/SkillsVie
 import skillGroups from "../../data/skills.json";
 import SpecView from "../CharacterRoster/CharDetailComponents/Skills/SpecView";
 import PurchasedList from "../CharacterRoster/CharDetailComponents/Logistics/PurchasedList";
-import { getPurchaseEntries } from "../../engine/logisticsEngine";
+import { getPurchaseEntries } from "../../engine/characterManager/logisticsEngine";
 import {
   getGearsetsForClass,
   getGearPieceById,
   getGearPieceByIdAnyClass,
   getActiveGearsetPatch,
   GEAR_SLOT_KEYS,
-} from "../../engine/equipmentEngine";
+} from "../../engine/characterManager/equipmentEngine";
 import {
   getMoneyTotal,
   getLogTotals,
   getMissionEarnings,
   describeReceipt,
   ensureStartingLog,
-} from "../../engine/logsEngine";
+} from "../../engine/characterManager/logsEngine";
 
 const biographyFields = [
   ["bio", "Biography"],

@@ -23,14 +23,14 @@ import {
   getArmorClassCap,
   getSecondaryGadgetForClass,
   getGearsetsForClass,
-} from "../../../../engine/equipmentEngine";
+} from "../../../../engine/characterManager/equipmentEngine";
 import {
   getWeaponCategoriesLookup,
   getOwnedWeaponCategories,
   getExcludedPrimaryCategories,
   getExcludedSecondaryCategories,
-} from "../../../../engine/weaponEngine";
-import { normalizeEquipmentForView } from "../../../../engine/characterDataHandler";
+} from "../../../../engine/characterManager/weaponEngine";
+import { normalizeEquipmentForView } from "../../../../engine/characterManager/characterDataHandler";
 
 const DEFAULT_GRENADE_COUNTS = [2, 2];
 const DEFAULT_MED_COUNTS = [1, 2]; // [AFAK, IFAK]

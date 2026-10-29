@@ -1,4 +1,4 @@
-import classStartingSkills from "../data/classSkills.json";
+import classStartingSkills from "../../data/classSkills.json";
 
 export const EXP_COST = [0, 1, 5, 15, 30];
 export const ATTR_EXP_COST = 30;

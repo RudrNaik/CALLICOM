@@ -15,13 +15,13 @@ import {
   applyEmergencyDiceDecrease,
   getAvailableXP,
   getTotalSkillXP,
-} from "../../engine/characterEngine";
+} from "../../engine/characterManager/characterEngine";
 import {
   getLogTotals,
   diffCounts,
   recordSpendOnLatestMission,
   ensureStartingLog,
-} from "../../engine/logsEngine";
+} from "../../engine/characterManager/logsEngine";
 import Edice from "./CharDetailComponents/Skills/EDice";
 import SpecModal from "./CharDetailComponents/Skills/SpecModal";
 import SpecView from "./CharDetailComponents/Skills/SpecView";
@@ -36,9 +36,9 @@ import RollCalculator from "./CharDetailComponents/RollCalculator";
 import ExpAddedCalc from "./CharDetailComponents/expAddedCalc";
 import LogsView from "./CharDetailComponents/LogsView";
 import LogisticsView from "./CharDetailComponents/Logistics/LogisticsView";
-import { normalizeCharacterData } from "../../engine/characterDataHandler";
-import { useCharacterSaveStatus } from "../../hooks/useCharacterSaveStatus";
-import { rosterEntryId } from "../../engine/syncEngine";
+import { normalizeCharacterData } from "../../engine/characterManager/characterDataHandler";
+import { useCharacterSaveStatus } from "../../engine/characterManager/useCharacterSaveStatus";
+import { rosterEntryId } from "../../engine/characterManager/syncEngine";
 import "../../assets/css/terminal.css";
 
 const biographyFields = [

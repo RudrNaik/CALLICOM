@@ -1,4 +1,4 @@
-import { axialToOddq, hexKey } from "../../utils/hexGrid";
+import { axialToOddq, hexKey } from "../../engine/hexMap/hexGrid";
 import { normalizeHexState } from "./terrain";
 
 // Paint-bucket fill for the elevation layer: every on-map hex connected to

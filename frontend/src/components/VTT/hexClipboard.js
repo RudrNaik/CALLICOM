@@ -1,4 +1,4 @@
-import { HEX_SIZE, axialToWorld, axialToOddq, hexCorners, hexKey, nearestVertex, parseHexKey } from "../../utils/hexGrid";
+import { HEX_SIZE, axialToWorld, axialToOddq, hexCorners, hexKey, nearestVertex, parseHexKey } from "../../engine/hexMap/hexGrid";
 import { normalizeHexState, normalizeDoor } from "./terrain";
 
 // Copy/paste ("stamping") of terrain. A clipboard holds the copied hexes'
