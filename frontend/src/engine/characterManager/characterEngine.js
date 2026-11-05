@@ -13,7 +13,7 @@ export const CREATION_XP_BUDGET = 15;
 export const BASELINE_EMERGENCY_DICE = 4;
 
 /**
- * gets the total wound penalty (2*DW + FW)
+ * Gets the total wound penalty (2*DW + FW)
  * @param {number} fleshWounds the amount of fleshwounds a character has
  * @param {number} deepWounds the amount of deep wounds a character has
  * @returns {number} the wound modifier.
@@ -32,7 +32,7 @@ export function checkUnskilledTest(skillLevel) {
 }
 
 /**
- * gets the total dice for the test accounting for if the character is making an unskilled test or not.
+ * Gets the total dice for the test accounting for if the character is making an unskilled test or not.
  * @param {number} skillLevel 
  * @param {number} diceDelta 
  * @returns {number} the total dice to be rolled.
@@ -157,7 +157,7 @@ export function getSkillUpgradeCost(currentLevel) {
 }
 
 /**
- * returns the total xp needed to get to a specific xp level.
+ * Returns the total xp needed to get to a specific xp level.
  * @param {number} level the level a character is at.
  * @returns {number} the xp required to reach that level.
  */
@@ -195,13 +195,6 @@ export function initializeCharacterSkills(characterClass, classStartingSkills) {
 export function getAvailableMulticlassOptions(currentClass) {
   return Object.keys(classData).filter((spec) => spec != currentClass);
 }
-
-/**
- * Pure variant of upgradeSkill that operates on CharacterDetail.jsx's edited
- * skills draft, checking cost against the character's derived available XP
- * (`getAvailableXP`) rather than a stored/mutable pool.
- * @returns {{skills: object}|null} null if blocked
- */
 
 /**
  * Upgrades a characters skill using their current skills, the available xp.
@@ -259,7 +252,7 @@ export function applyAttributeIncrease(attributes, availableXP, attrKey) {
 }
 
 /**
- * downgrades a characters attribute using their current skills and the available xp. Cannot be reduced more than when the editing first started.
+ * Downgrades a characters attribute using their current skills and the available xp. Cannot be reduced more than when the editing first started.
  * @param {*} attributes a character's current attributes
  * @param {*} availableXP the available xp for that character
  * @param {*} attrKey the key of the attribute being changed. 
@@ -331,7 +324,7 @@ export function applyEmergencyDiceIncrease(emergencyDice, emergencyDiceXPSpent, 
 }
 
 /**
- * reduces the amount of E-dice a character has by one, specific for editing mode where its not intended to be a permanent change if you're still deciding.
+ * Reduces the amount of E-dice a character has by one, specific for editing mode where its not intended to be a permanent change if you're still deciding.
  * @param {*} emergencyDice a character's current listed E-dice
  * @param {*} emergencyDiceXPSpent the tracked amount of E-dice spent.
  * @param {*} isEditing flag for if the UI is in edit mode.
