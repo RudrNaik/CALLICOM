@@ -5,16 +5,16 @@ import {
   SPEC_EXP_COST,
   MULTICLASS_EXP_COST,
   BASE_ATTR_POINTS,
-  applySkillIncrease,
-  applySkillDecrease,
+  upgradeSkill,
+  downgradeSkill,
   applyAttributeIncrease,
   applyAttributeDecrease,
-  applySpecializationRemoval,
-  applyMulticlassSelection,
+  removeSpec,
+  addMultiClass,
   applyEmergencyDiceIncrease,
   applyEmergencyDiceDecrease,
   getAvailableXP,
-  getTotalSkillXP,
+  getSkillXpInvestment,
 } from "../../engine/characterManager/characterEngine";
 import {
   getLogTotals,
@@ -238,8 +238,7 @@ function CharacterDetail({ character, onUpdate, user }) {
       specializations,
       multiClass,
       emergencyDiceXPSpent,
-    },
-    missionXPTotal,
+    }
   );
 
   const handleDecreaseFleshWounds = () =>
@@ -256,7 +255,7 @@ function CharacterDetail({ character, onUpdate, user }) {
    * @returns sets the edited skill in the payload to the level + 1.
    */
   const increaseSkill = (skill) => {
-    const result = applySkillIncrease(editedSkills, availableXP, skill);
+    const result = upgradeSkill(editedSkills, availableXP, skill);
     if (!result) return;
     setEditedSkills(result.skills);
   };
@@ -266,7 +265,7 @@ function CharacterDetail({ character, onUpdate, user }) {
    * @param {*} skill Selected skill
    */
   const decreaseSkill = (skill) => {
-    const result = applySkillDecrease(editedSkills, skill, character.skills);
+    const result = downgradeSkill(editedSkills, skill, character.skills);
     if (!result) return;
     setEditedSkills(result.skills);
   };
@@ -330,10 +329,9 @@ function CharacterDetail({ character, onUpdate, user }) {
    * @returns
    */
   const removeSpecialization = (index) => {
-    const result = applySpecializationRemoval(
+    const result = removeSpec(
       specializations,
       index,
-      character.specializations.length,
       isEditing,
     );
     if (!result) return;
@@ -358,7 +356,7 @@ function CharacterDetail({ character, onUpdate, user }) {
    * @returns nothing if blocked.
    */
   const patchMulticlass = async (secClass) => {
-    const result = applyMulticlassSelection(availableXP, multiClass, secClass);
+    const result = addMultiClass(availableXP, multiClass, secClass);
     if (!result) {
       if (secClass && !multiClass) {
         alert(`You need at least ${MULTICLASS_EXP_COST} XP to multiclass.`);
@@ -436,7 +434,7 @@ function CharacterDetail({ character, onUpdate, user }) {
     const skillXPCost = Object.keys(skillDeltas).reduce((sum, skill) => {
       const before = character.skills?.[skill] || 0;
       const after = editedSkills[skill] || 0;
-      return sum + (getTotalSkillXP(after) - getTotalSkillXP(before));
+      return sum + (getSkillXpInvestment(after) - getSkillXpInvestment(before));
     }, 0);
 
     const attributeDeltas = diffCounts(character.attributes, attributes);

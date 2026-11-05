@@ -10,8 +10,8 @@ import {
 } from "../../../engine/characterManager/weaponEngine";
 import {
   getWoundPenalty,
-  getBaseDiceCount,
-  getEffectiveDiceCount,
+  checkUnskilledTest,
+  getTotalTestDice,
 } from "../../../engine/characterManager/characterEngine";
 import { rosterEntryId } from "../../../engine/characterManager/syncEngine";
 
@@ -102,8 +102,8 @@ function Calculator({
   }, [diceModifiers]);
 
   const skillLevel = getSkillLevel();
-  const baseDiceCount = getBaseDiceCount(skillLevel);
-  const effectiveDiceCount = getEffectiveDiceCount(skillLevel, totalDiceChange);
+  const baseDiceCount = checkUnskilledTest(skillLevel);
+  const effectiveDiceCount = getTotalTestDice(skillLevel, totalDiceChange);
 
   const totalModValue = useMemo(() => {
     return computeTotalModifierValue({

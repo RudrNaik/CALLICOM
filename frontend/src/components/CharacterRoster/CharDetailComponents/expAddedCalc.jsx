@@ -60,8 +60,7 @@ function ExpBreakdown({ character }) {
   } = getXPBreakdown(character);
 
   const bonusXP = character?.XP ?? 0;
-  const missionXPTotal = getLogTotals(character?.logs).totalMissionXP;
-  const availableXP = getAvailableXP(character, missionXPTotal);
+  const availableXP = getAvailableXP(character);
 
   return (
     <div className="text-white font-geist">

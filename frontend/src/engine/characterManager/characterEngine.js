@@ -1,69 +1,51 @@
-import classStartingSkills from "../../data/classSkills.json";
+import classData from "../../data/classSkills.json";
+import skills from  "../../data/skills.json"
+import * as logEngine from "./logsEngine"
 
 export const EXP_COST = [0, 1, 5, 15, 30];
 export const ATTR_EXP_COST = 30;
 export const SPEC_EXP_COST = 5;
 export const MULTICLASS_EXP_COST = 20;
+export const BASE_CLASS_EXP
 export const BASE_ATTR_POINTS = 5;
 
-// Character creation (SkillCreator.jsx): the shared XP budget for buying
-// extra skills/specializations beyond the free class package, and the free
-// starting/maximum emergency dice count — trading dice away during creation
-// frees up more of that budget (1 die = 1 XP), and trading back up spends it
-// again, capped at this baseline.
 export const CREATION_XP_BUDGET = 15;
 export const BASELINE_EMERGENCY_DICE = 4;
 
 /**
- * The XP value of a class's free starting skill package (its level1/level2
- * skills, per classSkills.json, costed via EXP_COST). Computed per-class
- * rather than a flat constant, since it must exactly match whatever free
- * skills a class actually grants for the derived available-XP formula to
- * balance to zero on a freshly created character.
- */
-export function getBaseClassXP(characterClass) {
-  const config = classStartingSkills[characterClass];
-  if (!config) return 0;
-
-  return (
-    config.level2.length * EXP_COST[2] + config.level1.length * EXP_COST[1]
-  );
-}
-
-/**
- * Computes the wound penalty from flesh/deep wound counts.
+ * gets the total wound penalty (2*DW + FW)
+ * @param {number} fleshWounds the amount of fleshwounds a character has
+ * @param {number} deepWounds the amount of deep wounds a character has
+ * @returns {number} the wound modifier.
  */
 export function getWoundPenalty(fleshWounds, deepWounds) {
   return (fleshWounds || 0) + (deepWounds || 0) * 2;
 }
 
 /**
- * Sums the roll calculator's ad-hoc dice modifiers into a single delta.
+ * Checks if a character is unskilled in that specific test. (Has a 0 in a skill or the total dice is reduced to less than zero)
+ * @param {number} skillLevel the level of the skill being tested
+ * @returns {number} returns 2 if unskilled, otherwise, returns the skill level.
  */
-export function getTotalDiceChange(diceModifiers) {
-  return diceModifiers.reduce((sum, m) => sum + Number(m.value), 0);
-}
-
-/**
- * Base dice pool for a given skill level: unskilled (<=0) rolls 2 dice and
- * takes the lower, otherwise rolls `skillLevel` dice and keeps the highest.
- */
-export function getBaseDiceCount(skillLevel) {
+export function checkUnskilledTest(skillLevel) {
   return skillLevel <= 0 ? 2 : skillLevel;
 }
 
 /**
- * Effective dice pool after applying ad-hoc dice modifiers, floored so an
- * unskilled roll can never drop below 2 dice (skilled rolls can drop to 0).
+ * gets the total dice for the test accounting for if the character is making an unskilled test or not.
+ * @param {number} skillLevel 
+ * @param {number} diceDelta 
+ * @returns {number} the total dice to be rolled.
  */
-export function getEffectiveDiceCount(skillLevel, totalDiceChange) {
+export function getTotalTestDice(skillLevel, diceDelta) {
   const min = skillLevel <= 0 ? 2 : 0;
-  return Math.max(min, getBaseDiceCount(skillLevel) + totalDiceChange);
+  return Math.max(min, checkUnskilledTest(skillLevel) + diceDelta);
 }
 
 /**
- * Calculates derived stats based on character attributes and skills.
- * Ported from DerivedStats.jsx
+ * Calculates all of the derived stats of a character using their attributes and skills.
+ * @param {*} character the character in question
+ * @returns {JSON} an object with a characters defense, combatSense, health, stamina, systemShock, fleshThreshold, deepThreshold, instantDeath, unarmedDamage, armedDamage, woundMod
  */
 export function calculateDerivedStats(character) {
   const attrs = character?.attributes ?? {};
@@ -103,13 +85,14 @@ export function calculateDerivedStats(character) {
     instantDeath,
     unarmedDamage,
     armedDamage,
-    woundMod,
+    woundMod
   };
 }
 
 /**
- * Computes the full XP breakdown for a character (total spent + sub-totals).
- * Ported from expAddedCalc.jsx
+ * Gets the XP breakdown for a character.
+ * @param {*} character the character in question
+ * @returns {JSON} an object with the total exp spent (totalSpent), skill xp (skillXp), attribute xp (attrXP), specialization xp (specXp), multiclass xp (multiclassXp), any purchased attribute points (purchasedAttrPoints), e-dice spent (emergencyDiceXPSpent), and the base class xp (baseClassXp)
  */
 export function getXPBreakdown(character) {
   const skills = character?.skills ?? {};
@@ -132,10 +115,7 @@ export function getXPBreakdown(character) {
 
   const totalSpent = totalSkillXP + attrXP + specXP + multiclassXP + emergencyDiceXPSpent;
 
-  // Matches expAddedCalc.jsx's original display math: the base class package
-  // is shown as its own line item, so it's carved back out of the raw
-  // skill-level XP total here.
-  const baseClassXP = getBaseClassXP(character?.class);
+  const baseClassXP = BASE_CLASS_EXP;
   const skillsXp = Math.max(
     0,
     totalSpent - baseClassXP - multiclassXP - specXP - attrXP - emergencyDiceXPSpent,
@@ -154,53 +134,49 @@ export function getXPBreakdown(character) {
 }
 
 /**
- * Calculates the total XP spent by a character.
- * Ported from expAddedCalc.jsx
+ * Gets the total amount of xp available to spend for that character.
+ * @param {*} character the character in question
+ * @returns {number} the available XP for that character.
  */
-export function calculateTotalSpentXP(character) {
-  return getXPBreakdown(character).totalSpent;
-}
-
-/**
- * The character's current spendable XP, derived rather than stored directly:
- * the base class package + the character's `XP` stat (a bonus/misc pool that
- * is only ever added to, never spent from directly) + all XP earned from
- * logged missions, minus everything actually spent building the character
- * (skills/attributes/specializations/multiclass/emergency dice, per
- * `getXPBreakdown`).
- */
-export function getAvailableXP(character, missionXPTotal = 0) {
+export function getAvailableXP(character) {
+  const missionXPTotal = getLogTotals(character?.logs).totalMissionXP || 0;
   const { totalSpent, baseClassXP } = getXPBreakdown(character);
   return baseClassXP + (character?.XP || 0) + missionXPTotal - totalSpent;
 }
 
 /**
- * Returns the cost to upgrade a skill to the next level.
+ * Gets the cost of upgrading to the next level
+ * @param {number} currentLevel 
+ * @returns {number} the cost needed to get to the next level of a skill.
  */
 export function getSkillUpgradeCost(currentLevel) {
-  if (currentLevel >= 4) return 0;
+  if (currentLevel >= 4) return 99; // To ensure a character cannot get past level 4 reasonably.
   const currentTotal = EXP_COST[currentLevel] || 0;
   const nextTotal = EXP_COST[currentLevel + 1] || 0;
   return nextTotal - currentTotal;
 }
 
 /**
- * Returns the total cumulative XP spent to reach a specific level.
+ * returns the total xp needed to get to a specific xp level.
+ * @param {number} level the level a character is at.
+ * @returns {number} the xp required to reach that level.
  */
-export function getTotalSkillXP(level) {
+export function getSkillXpInvestment(level) {
   return EXP_COST[Math.min(Math.max(level, 0), 4)] ?? 0;
 }
 
 /**
- * Initializes base skills for a character based on their class.
- * Ported from SkillCreator.jsx
+ * Initializes the base class skills of a character during character creation. Initially sets them all to zero, and then uses the classStartingSkills to assign which ones are level 1 and 2
+ * @param {number} characterClass the class of the character
+ * @param {JSON} classStartingSkills the starting skills for a character, defined as a JSON object with 'level1' and 'level2' arrays for each skill that starts at that level.
+ * @returns 
  */
-export function initializeCharacterSkills(characterClass, skillGroups, classStartingSkills) {
+export function initializeCharacterSkills(characterClass, classStartingSkills) {
   const base = {};
   const config = classStartingSkills[characterClass];
   if (!config) return base;
 
-  const allSkills = Object.values(skillGroups).flat();
+  const allSkills = Object.values(skills).flat();
   allSkills.forEach((skill) => {
     base[skill] = 0;
   });
@@ -212,98 +188,12 @@ export function initializeCharacterSkills(characterClass, skillGroups, classStar
 }
 
 /**
- * Returns the list of classes a character may multiclass into (every class
- * except their current primary class).
+ * Determines what classes someone can multiclass into. You cannot multiclass into your current main class.
+ * @param {*} currentClass the current class of the character.
+ * @returns {string[]} an array of available classes to spec into.
  */
-export function getAvailableMulticlassOptions(classData, currentClass) {
+export function getAvailableMulticlassOptions(currentClass) {
   return Object.keys(classData).filter((spec) => spec != currentClass);
-}
-
-/**
- * Pure function to upgrade a skill.
- */
-export function upgradeSkill(character, skill) {
-  const currentLevel = character.skills[skill] || 0;
-  if (currentLevel >= 4) return null;
-
-  const cost = getSkillUpgradeCost(currentLevel);
-  if (character.XP < cost) return null;
-
-  return {
-    newCharacter: {
-      ...character,
-      skills: { ...character.skills, [skill]: currentLevel + 1 },
-      XP: character.XP - cost,
-    },
-    cost,
-  };
-}
-
-/**
- * Pure function to downgrade a skill.
- */
-export function downgradeSkill(character, skill, classStartingSkills) {
-  const currentLevel = character.skills[skill] || 0;
-  const config = classStartingSkills[character.class];
-  if (!config) return null;
-
-  const min = config.level2.includes(skill)
-    ? 2
-    : config.level1.includes(skill)
-    ? 1
-    : 0;
-
-  if (currentLevel <= min) return null;
-
-  const refund = getSkillUpgradeCost(currentLevel - 1);
-
-  return {
-    newCharacter: {
-      ...character,
-      skills: { ...character.skills, [skill]: currentLevel - 1 },
-      XP: character.XP + refund,
-    },
-    refund,
-  };
-}
-
-/**
- * Pure function to upgrade an attribute.
- */
-export function upgradeAttribute(character, attribute) {
-  const currentVal = character.attributes[attribute] || 0;
-  if (currentVal >= 3) return null;
-
-  const cost = ATTR_EXP_COST;
-  if (character.XP < cost) return null;
-
-  return {
-    newCharacter: {
-      ...character,
-      attributes: { ...character.attributes, [attribute]: currentVal + 1 },
-      XP: character.XP - cost,
-    },
-    cost,
-  };
-}
-
-/**
- * Pure function to downgrade an attribute.
- */
-export function downgradeAttribute(character, attribute) {
-  const currentVal = character.attributes[attribute] || 0;
-  if (currentVal <= 0) return null;
-
-  const refund = ATTR_EXP_COST;
-
-  return {
-    newCharacter: {
-      ...character,
-      attributes: { ...character.attributes, [attribute]: currentVal - 1 },
-      XP: character.XP + refund,
-    },
-    refund,
-  };
 }
 
 /**
@@ -312,25 +202,34 @@ export function downgradeAttribute(character, attribute) {
  * (`getAvailableXP`) rather than a stored/mutable pool.
  * @returns {{skills: object}|null} null if blocked
  */
-export function applySkillIncrease(skills, availableXP, skill) {
-  const level = skills[skill] || 0;
+
+/**
+ * Upgrades a characters skill using their current skills, the available xp.
+ * @param {*} currSkills a character's current skills
+ * @param {*} availableXP the available xp for that character
+ * @param {*} skill 
+ * @returns {JSON | null} the character's skill block with the levels changed. Null if unavailable.
+ */
+export function upgradeSkill(currSkills, availableXP, skill) {
+  const level = currSkills[skill] || 0;
   if (level >= 4) return null;
 
   const cost = getSkillUpgradeCost(level);
   if (availableXP < cost) return null;
 
   return {
-    skills: { ...skills, [skill]: level + 1 },
+    skills: { ...currSkills, [skill]: level + 1 },
   };
 }
 
 /**
- * Pure variant of downgradeSkill for CharacterDetail.jsx's edited skills
- * draft. No XP bookkeeping needed here: reducing a skill level automatically
- * frees up available XP since it's derived from current levels.
- * @returns {{skills: object}|null} null if blocked
+ * Downgrades a characters skill using their current skills, the available xp.
+ * @param {*} currSkills a character's current skills
+ * @param {*} availableXP the available xp for that character
+ * @param {*} skill the specific skill being changed.
+ * @returns {JSON | null} the character's skill block with the levels changed. Null if unavailable.
  */
-export function applySkillDecrease(skills, skill, originalSkills) {
+export function downgradeSkill(skills, skill, originalSkills) {
   const current = skills[skill] || 0;
   const original = originalSkills?.[skill] || 0;
 
@@ -342,9 +241,11 @@ export function applySkillDecrease(skills, skill, originalSkills) {
 }
 
 /**
- * Pure variant of upgradeAttribute for CharacterDetail.jsx's attributes
- * draft, checked against derived available XP.
- * @returns {{attributes: object}|null} null if blocked
+ * Upgrades a characters attribute using their current skills and the available xp.
+ * @param {*} attributes a character's current attributes
+ * @param {*} availableXP the available xp for that character
+ * @param {*} attrKey the key of the attribute being changed. 
+ * @returns {JSON | null} the character's attribute block being changed, null if the adjustment cannot be done.
  */
 export function applyAttributeIncrease(attributes, availableXP, attrKey) {
   if (availableXP < ATTR_EXP_COST) return null;
@@ -358,12 +259,11 @@ export function applyAttributeIncrease(attributes, availableXP, attrKey) {
 }
 
 /**
- * Undoes an attribute increase made this editing session. Blocked at or
- * below the attribute's already-saved value — like skills, an attribute
- * can't be sold back below what was true before this edit session started.
- * No XP bookkeeping needed: reducing a point automatically frees up
- * available XP since it's derived from the current point total.
- * @returns {{attributes: object}|null} null if blocked
+ * downgrades a characters attribute using their current skills and the available xp. Cannot be reduced more than when the editing first started.
+ * @param {*} attributes a character's current attributes
+ * @param {*} availableXP the available xp for that character
+ * @param {*} attrKey the key of the attribute being changed. 
+ * @returns {JSON | null} the character's attribute block being changed, null if the adjustment cannot be done.
  */
 export function applyAttributeDecrease(attributes, attrKey, originalAttributes) {
   const current = attributes?.[attrKey] ?? 0;
@@ -377,18 +277,18 @@ export function applyAttributeDecrease(attributes, attrKey, originalAttributes) 
 }
 
 /**
- * Removes a specialization at `index`. Removal is blocked for a base
- * (already-saved) specialization unless currently editing. No XP bookkeeping
- * needed: removing a specialization automatically frees up available XP.
- * @returns {{specializations: array}|null} null if blocked
+ * Removes a specialization from the character.
+ * @param {string[]} specializations the specializations of the character
+ * @param {number} index the index of the specialization
+ * @param {*} isEditing determines if the UI is in editing mode.
+ * @returns {JSON} an array of updated specialiazations within the 'specializations' attribute.
  */
-export function applySpecializationRemoval(
+export function removeSpec(
   specializations,
   index,
-  baseSpecializationsLength,
   isEditing,
 ) {
-  if (index < baseSpecializationsLength && !isEditing) return null;
+  if (index < specializations.length && !isEditing) return null;
 
   const updated = [...specializations];
   updated.splice(index, 1);
@@ -399,11 +299,13 @@ export function applySpecializationRemoval(
 }
 
 /**
- * Applies a multiclass selection. Blocked if there's no selection, a
- * multiclass is already set, or there isn't enough available XP.
- * @returns {{multiClass: string}|null} null if blocked
+ * Adds a multiclass to the character.
+ * @param {*} availableXP the available xp the character has.
+ * @param {*} currentMultiClass if they have a multiclass currently.
+ * @param {*} secClass the chosen secondary class.
+ * @returns {JSON} the multiclass attribute assigned to the new secondary class.
  */
-export function applyMulticlassSelection(availableXP, currentMultiClass, secClass) {
+export function addMultiClass(availableXP, currentMultiClass, secClass) {
   if (!secClass || currentMultiClass) return null;
   if (availableXP < MULTICLASS_EXP_COST) return null;
 
@@ -413,12 +315,11 @@ export function applyMulticlassSelection(availableXP, currentMultiClass, secClas
 }
 
 /**
- * Adds an emergency die, permanently recording its 1 XP cost in
- * `emergencyDiceXPSpent` (a lifetime counter, separate from the `XP` bonus
- * stat, that never decreases from in-play die usage — only from undoing a
- * same-session purchase, see `applyEmergencyDiceDecrease`). Blocked at the
- * 4-die cap or with no available XP to spend.
- * @returns {{emergencyDice: number, emergencyDiceXPSpent: number}|null} null if blocked
+ * Adds an E-dice to the character, to a maximum of 4 while increasing the amount of E-diceXp spent in the JSON for that buy period.
+ * @param {*} emergencyDice a character's current listed E-dice
+ * @param {*} emergencyDiceXPSpent the tracked amount of E-dice spent.
+ * @param {*} availableXP the available xp of the character.
+ * @returns {JSON} the emergency dice and emergendyDiceXPSpent attributes increased by 1.
  */
 export function applyEmergencyDiceIncrease(emergencyDice, emergencyDiceXPSpent, availableXP) {
   if (emergencyDice >= 4 || availableXP < 1) return null;
@@ -430,13 +331,11 @@ export function applyEmergencyDiceIncrease(emergencyDice, emergencyDiceXPSpent, 
 }
 
 /**
- * Removes an emergency die. Refunds its 1 XP cost (decrementing
- * `emergencyDiceXPSpent`) only while editing — undoing a purchase made this
- * session. Removal during play instead just spends the die (the caller
- * patches that straight to storage) without touching XP, since dice used up
- * in a mission were already paid for. The "can't remove more than you
- * started with" guard/alert stays in the caller.
- * @returns {{emergencyDice: number, emergencyDiceXPSpent: number}|null} null if blocked
+ * reduces the amount of E-dice a character has by one, specific for editing mode where its not intended to be a permanent change if you're still deciding.
+ * @param {*} emergencyDice a character's current listed E-dice
+ * @param {*} emergencyDiceXPSpent the tracked amount of E-dice spent.
+ * @param {*} isEditing flag for if the UI is in edit mode.
+ * @returns {JSON} the emergency dice and emergendyDiceXPSpent attributes decreased by 1.
  */
 export function applyEmergencyDiceDecrease(emergencyDice, emergencyDiceXPSpent, isEditing) {
   if (emergencyDice <= 0) return null;

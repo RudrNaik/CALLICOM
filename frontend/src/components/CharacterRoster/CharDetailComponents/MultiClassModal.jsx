@@ -8,7 +8,7 @@ function MultiClassModal({
   charClass
 }) {
   const [multiClassSpec, setMulticlass] = useState("");
-  const filtered = getAvailableMulticlassOptions(classData, charClass.class);
+  const filtered = getAvailableMulticlassOptions(charClass.class);
 
 
   return (
