@@ -14,8 +14,8 @@ import ArmorMedicalPanel from "./ArmorMedicalPanel";
 import GadgetPanel from "./GadgetPanel";
 import GearsetsPanel from "./GearsetsPanel";
 import {
-  getGadgetAmmoConfig,
-  getItemByIdLookup,
+  getGadget,
+  makeIdLookup,
   getAvailableClassGadgets,
   getOwnedGrenades,
   getPurchasedGadgetIds,
@@ -62,7 +62,7 @@ function deriveEquipmentState(character, weaponCatsLookup) {
   return {
     //Gadgets are restricted to what's actually been bought in Logistics
     //(derived from the mission logs' receipts, nothing stored on equipment).
-    classGadgets: getAvailableClassGadgets(character.logs, equipmentData),
+    classGadgets: getAvailableClassGadgets(character.logs),
 
     //Grenades likewise: only types bought in Logistics are selectable.
     grenades: getOwnedGrenades(character.logs, equipmentData),
@@ -109,7 +109,7 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
   const characterId = character.uniqueId;
 
   //percolates items from the equipment data into an easy to use lookup table.
-  const itemById = useMemo(() => getItemByIdLookup(equipmentData), []);
+  const itemById = useMemo(() => makeIdLookup(equipmentData), []);
 
   // Ammo variants (submunitions) purchased in Logistics — narrows the ammo
   // picker in GadgetAmmo.jsx to only what's actually been bought (see
@@ -167,7 +167,7 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
       ? gear.medCounts
       : DEFAULT_MED_COUNTS;
   const activeGadgetConfig = useMemo(
-    () => getGadgetAmmoConfig(gear.gadget, equipmentData),
+    () => getGadget(gear.gadget),
     [gear.gadget],
   );
 

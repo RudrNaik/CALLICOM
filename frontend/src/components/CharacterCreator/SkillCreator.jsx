@@ -2,23 +2,14 @@ import { useState, useEffect } from "react";
 import skillGroups from "../../data/skills.json";
 import classStartingSkills from "../../data/classSkills.json";
 import SpecModal from "../CharacterRoster/CharDetailComponents/Skills/SpecModal";
-import {
-  initializeCharacterSkills,
-  upgradeSkill,
-  downgradeSkill,
-  upgradeAttribute,
-  downgradeAttribute,
-  getSkillUpgradeCost,
-  CREATION_XP_BUDGET,
-  BASELINE_EMERGENCY_DICE,
-} from "../../engine/characterManager/characterEngine";
+import * as charEngine from "../../engine/characterManager/characterEngine"
 
 const attributeList = ["Alertness", "Body", "Intelligence", "Spirit"];
 
 const SkillCreator = ({ formData, setFormData, onNext, onBack }) => {
   const [skills, setSkills] = useState({});
   const [specializations, setSpecializations] = useState([]);
-  const [emergencyDice, setEmergencyDice] = useState(BASELINE_EMERGENCY_DICE);
+  const [emergencyDice, setEmergencyDice] = useState(charEngine.BASELINE_EMERGENCY_DICE);
   const [showSpecModal, setShowSpecModal] = useState(false);
 
   const [attributes, setAttributes] = useState({
@@ -32,13 +23,13 @@ const SkillCreator = ({ formData, setFormData, onNext, onBack }) => {
   const [remainingAttrPoints, setRemainingAttrPoints] = useState(5);
 
   useEffect(() => {
-    const base = initializeCharacterSkills(formData.class, skillGroups, classStartingSkills);
+    const base = charEngine.initCharSkills(formData.class, skillGroups, classStartingSkills);
     setSkills(base);
   }, [formData.class]);
 
   const increaseSkill = (skill) => {
     const currentLevel = skills[skill] || 0;
-    const cost = getSkillUpgradeCost(currentLevel);
+    const cost = charEngine.getSkillUpgradeCost(currentLevel);
 
     if (currentLevel < 4 && remainingXP >= cost) {
       setSkills({ ...skills, [skill]: currentLevel + 1 });
@@ -91,11 +82,11 @@ const SkillCreator = ({ formData, setFormData, onNext, onBack }) => {
     // recorded as `emergencyDiceXPSpent` for the same reason.
     const emergencyDiceXPSpent = Math.max(
       0,
-      emergencyDice - BASELINE_EMERGENCY_DICE,
+      emergencyDice - charEngine.BASELINE_EMERGENCY_DICE,
     );
     const emergencyDiceXPFreed = Math.max(
       0,
-      BASELINE_EMERGENCY_DICE - emergencyDice,
+      charEngine.BASELINE_EMERGENCY_DICE - emergencyDice,
     );
 
     setFormData({
@@ -105,7 +96,7 @@ const SkillCreator = ({ formData, setFormData, onNext, onBack }) => {
       specializations,
       emergencyDice,
       emergencyDiceXPSpent,
-      XP: CREATION_XP_BUDGET + emergencyDiceXPFreed,
+      XP: charEngine.CREATION_XP_BUDGET + emergencyDiceXPFreed,
     });
     onNext();
   };
@@ -193,13 +184,13 @@ const SkillCreator = ({ formData, setFormData, onNext, onBack }) => {
               </span>
             </p>
             <p className="text-xs text-gray-500">
-              Max {BASELINE_EMERGENCY_DICE} | 1 XP = 1 Die
+              Max {charEngine.BASELINE_EMERGENCY_DICE} | 1 XP = 1 Die
             </p>
           </div>
           <div className="flex space-x-2">
             <button
               onClick={() => {
-                if (remainingXP > 0 && emergencyDice < BASELINE_EMERGENCY_DICE) {
+                if (remainingXP > 0 && emergencyDice < charEngine.BASELINE_EMERGENCY_DICE) {
                   setEmergencyDice(emergencyDice + 1);
                   setRemainingXP(remainingXP - 1);
                 }

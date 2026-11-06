@@ -6,7 +6,7 @@ export const EXP_COST = [0, 1, 5, 15, 30];
 export const ATTR_EXP_COST = 30;
 export const SPEC_EXP_COST = 5;
 export const MULTICLASS_EXP_COST = 20;
-export const BASE_CLASS_EXP
+export const BASE_CLASS_EXP = 40;
 export const BASE_ATTR_POINTS = 5;
 
 export const CREATION_XP_BUDGET = 15;
@@ -139,7 +139,7 @@ export function getXPBreakdown(character) {
  * @returns {number} the available XP for that character.
  */
 export function getAvailableXP(character) {
-  const missionXPTotal = getLogTotals(character?.logs).totalMissionXP || 0;
+  const missionXPTotal = logEngine.getLogTotals(character?.logs).totalMissionXP || 0;
   const { totalSpent, baseClassXP } = getXPBreakdown(character);
   return baseClassXP + (character?.XP || 0) + missionXPTotal - totalSpent;
 }
@@ -171,7 +171,7 @@ export function getSkillXpInvestment(level) {
  * @param {JSON} classStartingSkills the starting skills for a character, defined as a JSON object with 'level1' and 'level2' arrays for each skill that starts at that level.
  * @returns 
  */
-export function initializeCharacterSkills(characterClass, classStartingSkills) {
+export function initCharSkills(characterClass, classStartingSkills) {
   const base = {};
   const config = classStartingSkills[characterClass];
   if (!config) return base;
