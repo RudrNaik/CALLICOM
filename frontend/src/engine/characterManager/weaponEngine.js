@@ -396,7 +396,7 @@ export const getExcludedPrimaryCategories = (character) => {
     invalidPrimaries.push("Machine Guns");
   }
 
-  console.log(invalidPrimaries);
+  //console.log(invalidPrimaries);
   return invalidPrimaries
 };
 

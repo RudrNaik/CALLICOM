@@ -1,4 +1,5 @@
 import equipmentData from "../../data/Equipment.json"
+import classSkills from "../../data/classSkills.json"
 
 /**
  * Gets a specific gadget, including its ammo config from equipment.json.
@@ -70,17 +71,9 @@ export const getPurchasedGrenadeIds = (logs) => {
 };
 
 /**
- * Gadgets a character can currently select as their Class Gadget in the
- * Gameplay tab — restricted to what they've actually purchased in
- * Logistics, derived from `logs` (see getPurchasedGadgetIds). Excludes
- * SubMunition items (ammo variants like 40mm rounds): those are selected
- * via the gadget's own ammo UI (GadgetAmmo.jsx), not as a main gadget in
- * their own right. Availability used to be gated by a campaign-specific
- * equipment list (Siberia2022); that's been replaced entirely by this
- * purchase-based check, which applies uniformly regardless of campaign.
+ * Get the available class gadgets for a character, however- does not include subminutions purchased. These are derived from the logs a character has.
  * @param {Array} logs the character's logs.
- * @param {Array} equipmentData - full equipment data list
- * @returns {Array}
+ * @returns {Array<Object>} an array of class gadgets available to the character (have been purchased and arent submunitions)
  */
 export const getAvailableClassGadgets = (logs) => {
   const owned = getPurchasedGadgetIds(logs);
@@ -88,15 +81,12 @@ export const getAvailableClassGadgets = (logs) => {
 };
 
 /**
- * Gadgets a character is eligible to buy in Logistics: their class's (and
- * multiclass's, if set) catalog entries. Ownership isn't required here —
- * it's the outcome of buying, not a prerequisite. Excludes SubMunition
- * items (ammo variants like 40mm rounds), which aren't standalone gadgets.
+ * Gets all the eligible gadgets for a character's class.
  * @param {object} character
  * @param {Array} equipmentData - full equipment data list
  * @returns {Array}
  */
-export const getClassEligibleGadgets = (character, equipmentData) => {
+export const getClassEligibleGadgets = (character) => {
   return equipmentData.filter(
     (item) =>
       (item.class === character.class || item.class === character.multiClass) &&
@@ -105,13 +95,11 @@ export const getClassEligibleGadgets = (character, equipmentData) => {
 };
 
 /**
- * Grenade types a character can select in the Gameplay tab — restricted to
- * what they've actually purchased in Logistics, derived from `logs`.
- * @param {Array} logs - character.logs
- * @param {Array} equipmentData - full equipment data list
- * @returns {Array}
+ * Gets the available grenades for a character, derived from their logs and what have been purchased.
+ * @param {Array} logs character.logs
+ * @returns {Array<string>} A string array of all the grenade ID's purchased.
  */
-export const getOwnedGrenades = (logs, equipmentData) => {
+export const getOwnedGrenades = (logs) => {
   const owned = getPurchasedGrenadeIds(logs);
   return equipmentData.filter(
     (item) => item?.parentId === "grenades" && owned.includes(item.id),
@@ -119,14 +107,10 @@ export const getOwnedGrenades = (logs, equipmentData) => {
 };
 
 /**
- * Clears any currently-equipped gadget/weapon/grenade that no longer has a
- * matching purchase in `logs` (see getPurchasedGadgetIds/Weapons/
- * GrenadeIds) — e.g. after a purchase undo (see logisticsEngine.js) or on
- * legacy data predating purchase tracking. Ownership itself is never
- * stored, so this only ever touches the equip pointers, not `logs`.
+ * Checks items within a character's equipment and santizies it based off  of what the character has purchased. Essentially- its a blocker to ensure the frontend, when re-rendering or making changes will run this and ensure your gear is only what you have purchasedd.
  * @param {object} equipment
- * @param {Array} logs - character.logs
- * @returns {object} a new equipment object with dangling equip pointers cleared
+ * @param {Array} logs character.logs
+ * @returns {object} a new equipment object with any equipment slots with equipment that hasnt been purchased empty.
  */
 export const sanitizeEquipmentOwnership = (equipment, logs) => {
   const base = equipment ?? {};
@@ -177,10 +161,9 @@ export const sanitizeEquipmentOwnership = (equipment, logs) => {
 };
 
 /**
- * Returns the max armor class a character's class can equip.
- * Combat Engineer/Technical Engineer/Medic/Fire Support -> 2, else 1.
- * @param {object} character
- * @returns {number}
+ * returns the max armor class for a character. For Support and Engineer classes (T-Eng, C-Eng, F-Sup, Medic) they can go to a max of AC2.
+ * @param {object} character the character in question
+ * @returns {number} the max armor class a character can have.
  */
 export const getArmorClassCap = (character) => {
   if (
@@ -195,27 +178,23 @@ export const getArmorClassCap = (character) => {
 };
 
 /**
- * Looks up a class's secondary (innate) gadget from the classSkills map.
- * `source` picks which of the character's classes to look up — "main" (the
- * default) uses `character.class`, "multi" uses `character.multiClass` — so
- * a multiclassed character can equip either class's innate gadget.
- * @param {object} secondaryGadgetsMap - classSkills.json shape, keyed by class
- * @param {object} character
- * @param {"main"|"multi"} [source]
- * @returns {*} the classGadget entry, or null if that class has none
+ * finds the secondary/intrinsice/innate (We have too many words for this) gadget for a character based off their multiclass and class.
+ * @param {object} character le character.
+ * @param {"main"|"multi"} source either 'main' or 'multi' to determine wether to return the main class or the mutliclass's secondary gadget.
+ * @returns {null | object} the class gadget's JSON data, if there is no class gadget associated with the class, then null.
  */
-export const getSecondaryGadgetForClass = (secondaryGadgetsMap, character, source = "main") => {
+export const getSecondaryGadgetForClass = (character, source = "main") => {
   const className = source === "multi" ? character.multiClass : character.class;
-  if (className && secondaryGadgetsMap[className]) {
-    return secondaryGadgetsMap[className].classGadget;
+  if (className && classSkills[className]) {
+    return classSkills[className].classGadget;
   }
   return null;
 };
 
 /**
  * Returns the flavor-text description for a given armor class value.
- * @param {number} armorClass
- * @returns {string|null} null when armorClass is 1 (no bonuses) matches original blank-vs-text rendering? see below.
+ * @param {number} armorClass the character's armor class.
+ * @returns {string|null} return the flavor text associated with the AC.
  */
 export const getArmorClassDescription = (armorClass) => {
   if (armorClass == 0) {
@@ -227,10 +206,9 @@ export const getArmorClassDescription = (armorClass) => {
   if (armorClass == 2) {
     return "-1 to movement related checks [Acrobatics][Jump][Climb][Endurance]";
   }
-  if (armorClass >= 3) {
-    return "[N/A // Cannot have an AC past 2.]";
+  if (armorClass >= 3 || armorClass < 0) {
+    return "[N/A // Cannot have an AC past 2 or less than 0.]";
   }
-  return "";
 };
 
 // --- Gearsets ---

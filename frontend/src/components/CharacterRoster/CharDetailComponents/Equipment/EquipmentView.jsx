@@ -65,7 +65,7 @@ function deriveEquipmentState(character, weaponCatsLookup) {
     classGadgets: getAvailableClassGadgets(character.logs),
 
     //Grenades likewise: only types bought in Logistics are selectable.
-    grenades: getOwnedGrenades(character.logs, equipmentData),
+    grenades: getOwnedGrenades(character.logs),
 
     //Excludes primaries based on main and sub classes, then further
     //restricts to categories/families actually bought in Logistics.
@@ -151,7 +151,7 @@ const EquipmentSelection = forwardRef(function EquipmentSelection(
   const secondaryGadgetSource =
     character.multiClass && gear.secondaryGadgetSource === "multi" ? "multi" : "main";
   const secondaryGadget = useMemo(
-    () => getSecondaryGadgetForClass(secondaryGadgets, character, secondaryGadgetSource),
+    () => getSecondaryGadgetForClass(character, secondaryGadgetSource),
     [character.class, character.multiClass, secondaryGadgetSource],
   );
 

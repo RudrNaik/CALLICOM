@@ -105,7 +105,7 @@ export function getWeaponCost(categoryData, familyName) {
  * (see equipmentEngine.getAvailableClassGadgets, used by the Gameplay tab).
  */
 export function getGadgetOptions(character, equipmentData) {
-  return getClassEligibleGadgets(character, equipmentData);
+  return getClassEligibleGadgets(character);
 }
 
 /**
