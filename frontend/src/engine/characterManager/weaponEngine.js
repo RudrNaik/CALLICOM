@@ -385,25 +385,19 @@ export const SECONDARY_EXCLUDED_CATEGORIES = [
  * @returns {Array<string>}
  */
 export const getExcludedPrimaryCategories = (character) => {
-  if (
-    character.class === "Sharpshooter" ||
-    character.multiClass === "Sharpshooter"
-  ) {
-    return ["Machine Guns", "Light Pistols", "Heavy Pistols"];
+  let invalidPrimaries = ["Light Pistols", "Heavy Pistols"]
+  let isSharpshooter = (character.multiClass === "Sharpshooter" || character.class === "Sharpshooter");
+  let isSupport = (character.multiClass === "Sharpshooter" || character.class === "Sharpshooter");
+  
+  if (!isSharpshooter){
+    invalidPrimaries.push("Sniper Rifles");
   }
-  if (
-    character.class === "Fire Support" ||
-    character.multiClass === "Fire Support"
-  ) {
-    return ["Sniper Rifles", "Light Pistols", "Heavy Pistols"];
+  if(!isSupport){
+    invalidPrimaries.push("Machine Guns");
   }
-  return [
-    "Sniper Rifles",
-    "Machine Guns",
-    "Drum Shotguns",
-    "Light Pistols",
-    "Heavy Pistols",
-  ];
+
+  console.log(invalidPrimaries);
+  return invalidPrimaries
 };
 
 /**
