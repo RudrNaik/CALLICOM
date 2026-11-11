@@ -13,7 +13,7 @@
         "class": "L-Weapons",
         "cost": 1200,
         "description": "Light Pistols are handguns shooting conventional pistol calibers such as 9x19 Parabellum and below Though light on damage they make up for this with decent-sized magazines and general reliability at short to medium distances",
-        "rulesText": "[Light Weapons][CQC]\nRange modifier: +1 C | -2 L | -3 ELR\n PEN: 1 | DMG: 4 \n RSV: 6 | CAP: 3",
+        "rulesText": "[Light Weapons][CQC]\nRange modifier: +2 C | -2 L | -3 ELR\n PEN: 1 | DMG: 4 \n RSV: 6 | CAP: 3",
         "families": [
             {
                 "family": "Wonder-9",
@@ -40,7 +40,7 @@
         ],
         "damage": 4,
         "penetration": 1,
-        "range": "+1 C | -2 L | -3 ELR",
+        "range": "+2 C | -2 L | -3 ELR",
         "totalTurns": 6,
         "magazineSize": 3,
         "categoryName": "Light Pistols"
@@ -52,7 +52,7 @@
         "class": "L-Weapons",
         "cost": 1500,
         "description": "Heavy Pistols are handguns and revolvers shooting heavier calibers such as .44 Magnum, .357 Magnum, .50 AE as well as including .45 ACP and .40 S&W. These weapons trade large magazine sizes and accuracy at longer distances for heavy damage.",
-        "rulesText": "[Light Weapons][Precision]\nRange modifier: +1 M | -1 L | -2 ELR\n PEN: 1 | DMG: 5 \n RSV: 4 | CAP: 2",
+        "rulesText": "[Light Weapons][Precision]\nRange modifier: +1 C | +1 M | -1 L | -2 ELR\n PEN: 1 | DMG: 5 \n RSV: 4 | CAP: 2",
         "families": [
             {
                 "family": "Hand-cannons",
@@ -84,7 +84,7 @@
         ],
         "damage": 5,
         "penetration": 1,
-        "range": "+1 M | -1 L | -2 ELR",
+        "range": "+1 C | +1 M | -1 L | -2 ELR",
         "totalTurns": 4,
         "magazineSize": 2,
         "categoryName": "Heavy Pistols"
@@ -96,7 +96,7 @@
         "class": "L-Weapons",
         "cost": 2000,
         "description": "Submachine Guns are compact weapons shooting conventional pistol calibers such as 9x19, .45 ACP, and 10mm at high rates of fire. These weapons come with the ability to Spray which allows them to saturate targets in their cone of fire. Machine pistols can be used in the secondary slot, but the total ammo is halved.",
-        "rulesText": "[Light Weapons][Spray]\nRange modifier: +1 C | -1 L | -2 ELR\n PEN: 1 | DMG: 4 \n RSV: 9 | CAP: 3",
+        "rulesText": "[Light Weapons][Spray]\nRange modifier: +2 C | -1 L | -2 ELR\n PEN: 1 | DMG: 4 \n RSV: 9 | CAP: 3",
         "families": [
             {
                 "family": "Machine Pistols",
@@ -129,7 +129,7 @@
         ],
         "damage": 4,
         "penetration": 1,
-        "range": "+1 C | -1 L | -2 ELR",
+        "range": "+2 C | -1 L | -2 ELR",
         "totalTurns": 9,
         "magazineSize": 3,
         "categoryName": "SMGs"

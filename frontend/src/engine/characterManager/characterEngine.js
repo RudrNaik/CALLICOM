@@ -3,9 +3,9 @@ import skills from  "../../data/skills.json"
 import * as logEngine from "./logsEngine"
 
 export const EXP_COST = [0, 1, 5, 15, 30];
-export const ATTR_EXP_COST = 30;
+export const ATTR_EXP_COST = 25;
 export const SPEC_EXP_COST = 5;
-export const MULTICLASS_EXP_COST = 20;
+export const MULTICLASS_EXP_COST = 15;
 export const BASE_CLASS_EXP = 40;
 export const BASE_ATTR_POINTS = 5;
 
