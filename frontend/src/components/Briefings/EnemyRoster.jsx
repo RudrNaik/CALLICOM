@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import EnemyCard from "./EnemyCard";
 import equipmentData from "../../data/Equipment.json";
-import { applyModifiers, getWeaponCategoriesByIdLookup } from "../../engine/weaponEngine";
+import { applyModifiers, getWeaponCategoriesByIdLookup } from "../../engine/characterManager/weaponEngine";
 
 
 function EnemyView() {

@@ -16,7 +16,7 @@ import {
   generateRectGrid,
   nearestVertex,
   distanceToSegment,
-} from "../../utils/hexGrid";
+} from "../../engine/hexMap/hexGrid";
 import {
   GROUND_COLOR,
   WALL_FILL_COLOR,

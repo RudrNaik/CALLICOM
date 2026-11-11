@@ -5,14 +5,14 @@ import gearSetsData from "../../data/geasrSets.json";
 import {
   applyModifiers,
   getWeaponCategoriesByIdLookup,
-} from "../../engine/weaponEngine";
+} from "../../engine/characterManager/weaponEngine";
 import {
   getGearsetsForClass,
   getGearPiecesBySlot,
   getGearPieceById,
   getActiveGearsetPatch,
   GEAR_SLOT_KEYS,
-} from "../../engine/equipmentEngine";
+} from "../../engine/characterManager/equipmentEngine";
 import Collapsible from "../Collapsible";
 
 const GEAR_SLOT_LABELS = {

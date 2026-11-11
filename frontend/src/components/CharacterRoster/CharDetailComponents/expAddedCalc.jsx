@@ -1,8 +1,8 @@
 import {
   getXPBreakdown,
   getAvailableXP,
-} from "../../../engine/characterEngine";
-import { getLogTotals } from "../../../engine/logsEngine";
+} from "../../../engine/characterManager/characterEngine";
+import { getLogTotals } from "../../../engine/characterManager/logsEngine";
 
 function LedgerRow({ label, value, sub, total = false, indent = false }) {
   return (
@@ -61,7 +61,7 @@ function ExpBreakdown({ character }) {
 
   const bonusXP = character?.XP ?? 0;
   const missionXPTotal = getLogTotals(character?.logs).totalMissionXP;
-  const availableXP = getAvailableXP(character, missionXPTotal);
+  const availableXP = getAvailableXP(character);
 
   return (
     <div className="text-white font-geist">

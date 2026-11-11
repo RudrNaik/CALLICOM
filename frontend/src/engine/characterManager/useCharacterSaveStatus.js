@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import {
   getRemoteCharacterSaveStatus,
   subscribeToRemoteCharacterSaveStatus,
-} from "../engine/syncEngine";
+} from "./syncEngine";
 
 /**
  * Tracks a character's pending-backend-save status ("idle" | "pending" |

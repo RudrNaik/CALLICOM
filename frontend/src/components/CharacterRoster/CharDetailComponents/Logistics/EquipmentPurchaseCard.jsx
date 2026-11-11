@@ -12,13 +12,13 @@ import {
   createGrenadePurchase,
   createSubmunitionPurchase,
   applyPurchase,
-} from "../../../../engine/logisticsEngine";
-import { getFamilyOptions } from "../../../../engine/weaponEngine";
+} from "../../../../engine/characterManager/logisticsEngine";
+import { getFamilyOptions } from "../../../../engine/characterManager/weaponEngine";
 import {
   getPurchasedGadgetIds,
   getPurchasedGrenadeIds,
-} from "../../../../engine/equipmentEngine";
-import { getMoneyTotal } from "../../../../engine/logsEngine";
+} from "../../../../engine/characterManager/equipmentEngine";
+import { getMoneyTotal } from "../../../../engine/characterManager/logsEngine";
 import PurchasedList from "./PurchasedList";
 
 const buttonClass = (enabled) =>

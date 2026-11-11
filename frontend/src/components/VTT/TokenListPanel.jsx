@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { hexDistance, rangeBand, rangeBandLabel } from "../../utils/hexGrid";
+import { hexDistance, rangeBand, rangeBandLabel } from "../../engine/hexMap/hexGrid";
 import { FRIENDLY_COLOR_PRESETS, MODIFIER_ICONS, MODIFIER_KEYS, classLabel, resolveTokenColor } from "./tokenBadges";
 import ClassOptions from "./ClassOptions";
 import EffectControls from "./EffectControls";

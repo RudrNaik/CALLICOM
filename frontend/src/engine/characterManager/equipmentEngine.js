@@ -1,25 +1,20 @@
-/**
- * Equipment Engine
- * Centralizes gadget ammo logic and general equipment/gear rules.
- * Weapon-stat logic (category lookups, range/modifier math) lives in weaponEngine.js.
- */
+import equipmentData from "../../data/Equipment.json"
 
 /**
- * Retrieves gadget ammo configuration from the equipment list.
+ * Gets a specific gadget, including its ammo config from equipment.json.
  * @param {string} gadgetId - ID of the gadget
- * @param {Array} equipmentData - The equipment data array
- * @returns {object|null} Configuration object
+ * @returns {object|null} object with the equipment's items if it exists in the equipment.json. Otherwise- null.
  */
-export const getGadgetAmmoConfig = (gadgetId, equipmentData) => {
+export const getGadget = (gadgetId) => {
   return equipmentData.find(item => item.id === gadgetId) || null;
 };
 
 /**
- * Generic id-keyed lookup builder for an array of items with an `id` field.
+ * creates an Id lookup table using an array of items.
  * @param {Array} items
  * @returns {object} Mapping of item id to item
  */
-export const getItemByIdLookup = (items) => {
+export const makeIdLookup = (items) => {
   const lookup = {};
   (items || []).forEach((it) => {
     lookup[it.id] = it;
@@ -28,17 +23,9 @@ export const getItemByIdLookup = (items) => {
 };
 
 /**
- * Derives every gadget/submunition id a character has ever purchased by
- * scanning their mission logs' receipts (see logisticsEngine.js) — nothing
- * is stored on Equipment itself for this, so removing a mission or undoing
- * a purchase updates what's "owned" for free, just by re-deriving from the
- * (now shorter) `logs`. A gadget's submunitions are always their own
- * individual purchases (see logisticsEngine.createSubmunitionPurchase),
- * never bundled with buying the gadget itself, but both fold into this same
- * id set — there's no separate "unlocked submunitions" concept; a
- * submunition is just another item that either shows up here or doesn't.
- * @param {Array} logs - character.logs
- * @returns {Array<string>}
+ * Gets the character's gadgets based off of the information within their logs. Submunitions are separate from the gadgets despite being purchased the same way.
+ * @param {Array} logs the character's logs.
+ * @returns {Array<string>} a string array of gadgets that have been purchased.
  */
 export const getPurchasedGadgetIds = (logs) => {
   const ids = new Set();
@@ -53,10 +40,9 @@ export const getPurchasedGadgetIds = (logs) => {
 };
 
 /**
- * Derives every weapon a character has ever purchased (one entry per
- * purchase, name included) from their mission logs' receipts.
- * @param {Array} logs - character.logs
- * @returns {Array<{name: string, category: string, family: string}>}
+ * Gets the weapons a character has purchased based off of information within their logs.
+ * @param {Array} logs the character's logs.
+ * @returns {Array<{name: string, category: string, family: string}>} An array of weapons along with the selected category and family they belong to.
  */
 export const getPurchasedWeapons = (logs) => {
   const weapons = [];
@@ -69,10 +55,9 @@ export const getPurchasedWeapons = (logs) => {
 };
 
 /**
- * Derives every grenade type id a character has ever purchased from their
- * mission logs' receipts.
+ * Gets all of the grenades a character has purchased through their logs.
  * @param {Array} logs - character.logs
- * @returns {Array<string>}
+ * @returns {Array<string>} An array of grenade options that have been purchased.
  */
 export const getPurchasedGrenadeIds = (logs) => {
   const ids = new Set();
@@ -93,11 +78,11 @@ export const getPurchasedGrenadeIds = (logs) => {
  * their own right. Availability used to be gated by a campaign-specific
  * equipment list (Siberia2022); that's been replaced entirely by this
  * purchase-based check, which applies uniformly regardless of campaign.
- * @param {Array} logs - character.logs
+ * @param {Array} logs the character's logs.
  * @param {Array} equipmentData - full equipment data list
  * @returns {Array}
  */
-export const getAvailableClassGadgets = (logs, equipmentData) => {
+export const getAvailableClassGadgets = (logs) => {
   const owned = getPurchasedGadgetIds(logs);
   return equipmentData.filter((item) => owned.includes(item.id) && !item.SubMunition);
 };

@@ -1,4 +1,4 @@
-import { ATTR_EXP_COST } from "../../../../engine/characterEngine";
+import { ATTR_EXP_COST } from "../../../../engine/characterManager/characterEngine";
 
 function AttributeView({
   attributes,

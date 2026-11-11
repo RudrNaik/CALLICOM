@@ -1,4 +1,4 @@
-import { rosterEntryId } from "../../engine/syncEngine";
+import { rosterEntryId } from "../../engine/characterManager/syncEngine";
 
 import RiflemanIcon from "../../assets/classIcons/Rifleman.png";
 import RaiderIcon from "../../assets/classIcons/Raider.png";

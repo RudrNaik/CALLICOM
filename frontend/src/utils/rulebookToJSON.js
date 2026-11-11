@@ -29,6 +29,7 @@ const rulebookPath = path.resolve(
 const raw = fs.readFileSync(rulebookPath, "utf-8");
 const { content } = matter(raw);
 
+// Specifically replaces ﻿ due to it creating rectangles in the UI. No good.
 const lines = content.replace(/\v/g, "<br>").replace(/﻿/g, "").split("\n");
 
 /**

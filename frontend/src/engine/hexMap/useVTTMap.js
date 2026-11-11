@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { hexKey } from "../utils/hexGrid";
-import { normalizeHexState } from "../components/VTT/terrain";
-import { isDoorReplacedByStamp } from "../components/VTT/hexClipboard";
+import { hexKey } from "./hexGrid";
+import { normalizeHexState } from "../../components/VTT/terrain";
+import { isDoorReplacedByStamp } from "../../components/VTT/hexClipboard";
 
 const MAPS_KEY = "calamari_vtt_maps_v1";
 const ACTIVE_KEY = "calamari_vtt_active_map_v1";

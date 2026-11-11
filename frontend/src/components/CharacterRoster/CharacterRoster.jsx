@@ -7,12 +7,12 @@ import {
   normalizeCharacterData,
   readCharacterRosterCache,
   writeCharacterRosterCache,
-} from "../../engine/characterDataHandler";
+} from "../../engine/characterManager/characterDataHandler";
 import {
   getJsonMemory,
   getToken,
   addDeletedCharacterKey,
-} from "../../engine/memoryEngine";
+} from "../../engine/characterManager/memoryEngine";
 import {
   deleteRemoteCharacter,
   queueRemoteCharacterUpdate,
@@ -20,8 +20,8 @@ import {
   flushAllRemoteCharacterUpdates,
   characterKey,
   rosterEntryId,
-} from "../../engine/syncEngine";
-import { useCharacterRosterSync } from "../../hooks/useBackgroundCharacterSync";
+} from "../../engine/characterManager/syncEngine";
+import { useCharacterRosterSync } from "../../engine/characterManager/useBackgroundCharacterSync";
 
 import Collapsible from "../Collapsible";
 import { Collapse } from "react-bootstrap";

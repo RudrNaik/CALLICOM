@@ -5,12 +5,12 @@ import {
   getGearSlotBuyOptions,
   createGearSlotPurchase,
   applyPurchase,
-} from "../../../../engine/logisticsEngine";
+} from "../../../../engine/characterManager/logisticsEngine";
 import {
   getGearPieceCost,
   GEAR_SLOT_KEYS,
-} from "../../../../engine/equipmentEngine";
-import { getMoneyTotal } from "../../../../engine/logsEngine";
+} from "../../../../engine/characterManager/equipmentEngine";
+import { getMoneyTotal } from "../../../../engine/characterManager/logsEngine";
 import PurchasedList from "./PurchasedList";
 
 const buttonClass = (enabled) =>

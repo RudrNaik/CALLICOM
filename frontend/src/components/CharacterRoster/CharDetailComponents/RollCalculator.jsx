@@ -7,13 +7,13 @@ import {
   getNavigateModifier,
   totalModifierValue as computeTotalModifierValue,
   rollExpression as buildRollExpression,
-} from "../../../engine/weaponEngine";
+} from "../../../engine/characterManager/weaponEngine";
 import {
   getWoundPenalty,
-  getBaseDiceCount,
-  getEffectiveDiceCount,
-} from "../../../engine/characterEngine";
-import { rosterEntryId } from "../../../engine/syncEngine";
+  checkUnskilledTest,
+  getTotalTestDice,
+} from "../../../engine/characterManager/characterEngine";
+import { rosterEntryId } from "../../../engine/characterManager/syncEngine";
 
 function Calculator({
   characterData,
@@ -102,8 +102,8 @@ function Calculator({
   }, [diceModifiers]);
 
   const skillLevel = getSkillLevel();
-  const baseDiceCount = getBaseDiceCount(skillLevel);
-  const effectiveDiceCount = getEffectiveDiceCount(skillLevel, totalDiceChange);
+  const baseDiceCount = checkUnskilledTest(skillLevel);
+  const effectiveDiceCount = getTotalTestDice(skillLevel, totalDiceChange);
 
   const totalModValue = useMemo(() => {
     return computeTotalModifierValue({

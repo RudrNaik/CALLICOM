@@ -2,12 +2,12 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   normalizeCharacterData,
   writeCharacterRosterCache,
-} from "../engine/characterDataHandler";
+} from "./characterDataHandler";
 import {
   getToken,
   getDeletedCharacterKeys,
   removeDeletedCharacterKey,
-} from "../engine/memoryEngine";
+} from "./memoryEngine";
 import {
   fetchRemoteCharacters,
   createRemoteCharacter,
@@ -18,7 +18,7 @@ import {
   cancelRemoteCharacterUpdate,
   characterKey,
   waitForPendingCreates,
-} from "../engine/syncEngine";
+} from "./syncEngine";
 
 /**
  * Reconciles the character roster against the backend once, when the user
