@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import equipmentData from "../../data/Equipment.json";
 import classes from "../../data/classSkills.json";
-import gearSetsData from "../../data/geasrSets.json";
 import {
   applyModifiers,
   getWeaponCategoriesByIdLookup,
@@ -65,7 +64,6 @@ function EnemyCard({ id, onDelete }) {
   const [state, setState] = useState(DEFAULT_STATE);
   const [loaded, setLoaded] = useState(false);
   const [filteredGadgets, setFilteredGadgets] = useState([]);
-  const [secondaryGadgets, setSecondaryGadgets] = useState([]);
 
   const weaponCatsLookup = useMemo(
     () => getWeaponCategoriesByIdLookup(equipmentData),
@@ -103,9 +101,10 @@ function EnemyCard({ id, onDelete }) {
     );
   }, [state.identity.class]);
 
-  useEffect(() => {
-    setSecondaryGadgets(equipmentData.filter((g) => g.parentId === "passives"));
-  });
+  const secondaryGadgets = useMemo(
+    () => equipmentData.filter((g) => g.parentId === "passives"),
+    [],
+  );
 
   /* =======================
      UPDATE HELPER
@@ -133,7 +132,7 @@ function EnemyCard({ id, onDelete }) {
   const { identity, stats, loadout, wounds, gearSlots } = state;
 
   const gearsets = useMemo(
-    () => getGearsetsForClass({ class: identity.class }, gearSetsData),
+    () => getGearsetsForClass({ class: identity.class }),
     [identity.class],
   );
 

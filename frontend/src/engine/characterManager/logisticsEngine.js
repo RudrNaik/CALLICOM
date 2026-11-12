@@ -125,7 +125,7 @@ export function getGrenadeOptions(equipmentData) {
  * be bought once).
  */
 export function getGearSlotBuyOptions(character, gearSetsData, slotKey, logs) {
-  const gearsets = getGearsetsForClass(character, gearSetsData);
+  const gearsets = getGearsetsForClass(character);
   const owned = new Set(getPurchasedGearPieceIds(logs));
   return getGearPiecesBySlot(gearsets, slotKey).filter((piece) => !owned.has(piece.id));
 }

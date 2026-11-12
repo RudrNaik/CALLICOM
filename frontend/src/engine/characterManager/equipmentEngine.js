@@ -1,5 +1,36 @@
-import equipmentData from "../../data/Equipment.json"
-import classSkills from "../../data/classSkills.json"
+import equipmentData from "../../data/Equipment.json";
+import classSkills from "../../data/classSkills.json";
+import gearSetData from "../../data/geasrSets.json"
+
+/**
+ * geasrSets.json are in camelCase while the names in the character objects have proper titling- this serves to just map the two values together for ease of use.
+ */
+const CLASS_TO_GEARSET_KEY = {
+  Rifleman: "rifleman",
+  Raider: "raider",
+  "Technical Engineer": "technicalEngineer",
+  "Combat Engineer": "combatEngineer",
+  "Fire Support": "fireSupport",
+  Medic: "medic",
+  Sharpshooter: "sharpshooter",
+  Trapper: "trapper",
+};
+
+/**
+ * Price curve for gear pieces, keyed by tier (see the rules text: tier 1
+ * "niche use case" up to tier 4 "requires a specific gadget/equipment").
+ * A piece with a null tier (several unfinished entries in geasrSets.json
+ * never got one assigned) is treated as free until it's priced.
+ */
+export const GEAR_TIER_PRICES = {
+  1: 3000,
+  2: 5000,
+  3: 10000,
+  4: 14000,
+};
+
+/** The 4 selectable gear slots, keyed as stored on Equipment.gearSlots. */
+export const GEAR_SLOT_KEYS = ["headgear", "vest", "gloves", "equipment"];
 
 /**
  * Gets a specific gadget, including its ammo config from equipment.json.
@@ -7,7 +38,7 @@ import classSkills from "../../data/classSkills.json"
  * @returns {object|null} object with the equipment's items if it exists in the equipment.json. Otherwise- null.
  */
 export const getGadget = (gadgetId) => {
-  return equipmentData.find(item => item.id === gadgetId) || null;
+  return equipmentData.find((item) => item.id === gadgetId) || null;
 };
 
 /**
@@ -77,7 +108,9 @@ export const getPurchasedGrenadeIds = (logs) => {
  */
 export const getAvailableClassGadgets = (logs) => {
   const owned = getPurchasedGadgetIds(logs);
-  return equipmentData.filter((item) => owned.includes(item.id) && !item.SubMunition);
+  return equipmentData.filter(
+    (item) => owned.includes(item.id) && !item.SubMunition,
+  );
 };
 
 /**
@@ -150,7 +183,10 @@ export const sanitizeEquipmentOwnership = (equipment, logs) => {
     const ownedGearPieceIds = getPurchasedGearPieceIds(logs);
     const nextGearSlots = { ...sanitized.gearSlots };
     Object.keys(nextGearSlots).forEach((slotKey) => {
-      if (nextGearSlots[slotKey] && !ownedGearPieceIds.includes(nextGearSlots[slotKey])) {
+      if (
+        nextGearSlots[slotKey] &&
+        !ownedGearPieceIds.includes(nextGearSlots[slotKey])
+      ) {
         nextGearSlots[slotKey] = "";
       }
     });
@@ -178,7 +214,7 @@ export const getArmorClassCap = (character) => {
 };
 
 /**
- * finds the secondary/intrinsice/innate (We have too many words for this) gadget for a character based off their multiclass and class.
+ * Finds the secondary/intrinsice/innate (We have too many words for this) gadget for a character based off their multiclass and class.
  * @param {object} character le character.
  * @param {"main"|"multi"} source either 'main' or 'multi' to determine wether to return the main class or the mutliclass's secondary gadget.
  * @returns {null | object} the class gadget's JSON data, if there is no class gadget associated with the class, then null.
@@ -192,7 +228,7 @@ export const getSecondaryGadgetForClass = (character, source = "main") => {
 };
 
 /**
- * Returns the flavor-text description for a given armor class value.
+ * Returns the extra rules associated with a character's armor class.
  * @param {number} armorClass the character's armor class.
  * @returns {string|null} return the flavor text associated with the AC.
  */
@@ -211,45 +247,29 @@ export const getArmorClassDescription = (armorClass) => {
   }
 };
 
-// --- Gearsets ---
+/*
+--------------------- GEARSET STUFF ---------------------
+*/
 
 /**
- * geasrSets.json blocks are keyed by a camelCase class id that doesn't match
- * Character.class's Title Case ("Technical Engineer"). Maps the latter to
- * the former; classes with no entry here (e.g. Trapper) simply have no
- * class-specific gearsets, though universal ones are still available to them.
+ * Takes the gearset slot's key and converts it into a title.
  */
-const CLASS_TO_GEARSET_KEY = {
-  Rifleman: "rifleman",
-  Raider: "raider",
-  "Technical Engineer": "technicalEngineer",
-  "Combat Engineer": "combatEngineer",
-  "Fire Support": "fireSupport",
-  Medic: "medic",
-  Sharpshooter: "sharpshooter",
-  Trapper: "trapper"
-};
-
-/** The 4 selectable gear slots, keyed as stored on Equipment.gearSlots. */
-export const GEAR_SLOT_KEYS = ["headgear", "vest", "gloves", "equipment"];
-
 const gearSlotKeyToTitle = (slotKey) =>
   slotKey.charAt(0).toUpperCase() + slotKey.slice(1);
 
 /**
- * Every gearset (class-specific + multiclass-specific, if set + universal) a
- * character is eligible to equip pieces from, flattened out of geasrSets.
- * json's per-class blocks.
+ * Gets all of the gearsets a character has access to, derived from gearsets.json. If a gearset isnt within a character's multiclass or base class, it's blocked unless a part of the universal sets.
  * @param {object} character
- * @param {Array} gearSetsData - geasrSets.json
- * @returns {Array} gearset objects ({id, name, manufacturer, pieces})
+ * @returns {Array<object>} gearset pieces as objects ({id, name, manufacturer, pieces})
  */
-export const getGearsetsForClass = (character, gearSetsData) => {
+export const getGearsetsForClass = (character) => {
   const classKeys = [character?.class, character?.multiClass]
     .map((cls) => CLASS_TO_GEARSET_KEY[cls])
     .filter(Boolean);
-  return (gearSetsData ?? [])
-    .filter((block) => classKeys.includes(block.class) || block.class === "universal")
+  return (gearSetData ?? [])
+    .filter(
+      (block) => classKeys.includes(block.class) || block.class === "universal",
+    )
     .flatMap((block) => block.gearsets ?? []);
 };
 
@@ -330,19 +350,6 @@ export const getActiveGearsetPatch = (gearsets, gearSlots) => {
     };
   }
   return null;
-};
-
-/**
- * Price curve for gear pieces, keyed by tier (see the rules text: tier 1
- * "niche use case" up to tier 4 "requires a specific gadget/equipment").
- * A piece with a null tier (several unfinished entries in geasrSets.json
- * never got one assigned) is treated as free until it's priced.
- */
-export const GEAR_TIER_PRICES = {
-  1: 3000,
-  2: 5000,
-  3: 10000,
-  4: 14000,
 };
 
 /**
@@ -447,8 +454,11 @@ export const getGadgetAmmoMax = (config = {}) => {
     return Number(directMax);
   }
 
-  const rulesText = typeof config.rulesText === "string" ? config.rulesText : "";
-  const match = rulesText.match(/(?:Ammo|Charges|Rounds?|Uses|Capacity)\s*:?\s*(\d+)/i);
+  const rulesText =
+    typeof config.rulesText === "string" ? config.rulesText : "";
+  const match = rulesText.match(
+    /(?:Ammo|Charges|Rounds?|Uses|Capacity)\s*:?\s*(\d+)/i,
+  );
   return match ? Number(match[1]) : 0;
 };
 
@@ -472,7 +482,12 @@ export const getEffectiveMax = (gadgetId, classGadget, config) => {
 /**
  * Determines the title and max ammo for a gadget.
  */
-export const getGadgetAmmoHeader = (gadgetId, config, isExpendable, effectiveMax) => {
+export const getGadgetAmmoHeader = (
+  gadgetId,
+  config,
+  isExpendable,
+  effectiveMax,
+) => {
   if (gadgetId === "stim-pouch")
     return { title: "Stimulants", max: config?.maxStims ?? 0 };
   if (gadgetId === "ugl")
@@ -490,10 +505,15 @@ export const getGadgetAmmoHeader = (gadgetId, config, isExpendable, effectiveMax
   return { title: "", max: 0 };
 };
 
-/** 
+/**
  * Checks if a gadget explicitly has an ammo count. Some gadgets dont have ammo and are instead function outside of this.
  */
-export const hasExplicitGadgetAmmo = (gadgetId, config, isMixed, isExpendable) => {
+export const hasExplicitGadgetAmmo = (
+  gadgetId,
+  config,
+  isMixed,
+  isExpendable,
+) => {
   if (!config || typeof config !== "object") return false;
   if (isMixed || isExpendable) return true;
 
@@ -501,7 +521,10 @@ export const hasExplicitGadgetAmmo = (gadgetId, config, isMixed, isExpendable) =
     return true;
   }
 
-  if (Number.isFinite(getGadgetAmmoMax(config)) && getGadgetAmmoMax(config) > 0) {
+  if (
+    Number.isFinite(getGadgetAmmoMax(config)) &&
+    getGadgetAmmoMax(config) > 0
+  ) {
     return true;
   }
 
@@ -511,7 +534,12 @@ export const hasExplicitGadgetAmmo = (gadgetId, config, isMixed, isExpendable) =
 /**
  * Generates the header text description for a gadget.
  */
-export const getGadgetAmmoText = (gadgetId, config, isExpendable, effectiveMax) => {
+export const getGadgetAmmoText = (
+  gadgetId,
+  config,
+  isExpendable,
+  effectiveMax,
+) => {
   if (!config) return null;
   if (gadgetId === "ugl" && config.maxGrenades != null)
     return `Max ${config.maxGrenades} rounds.`;
@@ -532,7 +560,13 @@ export const getGadgetAmmoText = (gadgetId, config, isExpendable, effectiveMax) 
 /**
  * Sanitizes gadget ammo data for storage and state.
  */
-export const sanitizeGadgetAmmo = (obj, isMixed, isExpendable, optionIds, effectiveMax) => {
+export const sanitizeGadgetAmmo = (
+  obj,
+  isMixed,
+  isExpendable,
+  optionIds,
+  effectiveMax,
+) => {
   const out = {};
   if (!obj || typeof obj !== "object") return out;
 
@@ -548,9 +582,7 @@ export const sanitizeGadgetAmmo = (obj, isMixed, isExpendable, optionIds, effect
   if (isExpendable) {
     if (Object.prototype.hasOwnProperty.call(obj, EX_KEY)) {
       const n = Number(obj[EX_KEY]);
-      out[EX_KEY] = Number.isFinite(n)
-        ? clamp0(Math.min(n, effectiveMax))
-        : 0;
+      out[EX_KEY] = Number.isFinite(n) ? clamp0(Math.min(n, effectiveMax)) : 0;
       return out;
     }
 
@@ -580,10 +612,7 @@ export const sanitizeGadgetAmmo = (obj, isMixed, isExpendable, optionIds, effect
  * Sums non-negative values in an object.
  */
 export const sumNonNeg = (obj) =>
-  Object.values(obj || {}).reduce(
-    (a, n) => a + Math.max(0, Number(n || 0)),
-    0,
-  );
+  Object.values(obj || {}).reduce((a, n) => a + Math.max(0, Number(n || 0)), 0);
 
 /**
  * Determines the initial ammo state for a gadget, sanitized from whatever is
@@ -594,7 +623,12 @@ export const sumNonNeg = (obj) =>
  * @param {object} currentAmmo - Ammo state currently stored on the character
  * @returns {object} The initial ammo object
  */
-export const getInitialGadgetAmmo = (gadgetId, classGadget, config, currentAmmo = {}) => {
+export const getInitialGadgetAmmo = (
+  gadgetId,
+  classGadget,
+  config,
+  currentAmmo = {},
+) => {
   const isMixed = isMixedGadget(gadgetId);
   const isExpendable = isExpendableGadget(gadgetId, config);
   const effectiveMax = getEffectiveMax(gadgetId, classGadget, config);
@@ -602,7 +636,13 @@ export const getInitialGadgetAmmo = (gadgetId, classGadget, config, currentAmmo 
   const optionIds = new Set(options.map((o) => o.id));
 
   if (isMixed || isExpendable) {
-    return sanitizeGadgetAmmo(currentAmmo, isMixed, isExpendable, optionIds, effectiveMax);
+    return sanitizeGadgetAmmo(
+      currentAmmo,
+      isMixed,
+      isExpendable,
+      optionIds,
+      effectiveMax,
+    );
   }
   return {};
 };

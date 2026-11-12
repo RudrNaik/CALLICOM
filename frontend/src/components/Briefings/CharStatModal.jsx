@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import equipmentData from "../../data/Equipment.json";
-import gearSetsData from "../../data/geasrSets.json";
 import SkillsView from "../CharacterRoster/CharDetailComponents/Skills/SkillsView";
 import skillGroups from "../../data/skills.json";
 import SpecView from "../CharacterRoster/CharDetailComponents/Skills/SpecView";
@@ -389,7 +388,7 @@ function BioSection({ char }) {
 }
 
 function GearSlotsSection({ char }) {
-  const gearsets = getGearsetsForClass(char, gearSetsData);
+  const gearsets = getGearsetsForClass(char);
   if (gearsets.length === 0) return null;
 
   const gearSlots = char?.equipment?.gearSlots || {};

@@ -7,7 +7,6 @@ import {
 } from "react";
 import equipmentData from "../../../../data/Equipment.json";
 import secondaryGadgets from "../../../../data/classSkills.json";
-import gearSetsData from "../../../../data/geasrSets.json";
 import WeaponSlot from "./WeaponCards";
 import GrenadesPanel from "./GrenadesPanel";
 import ArmorMedicalPanel from "./ArmorMedicalPanel";
@@ -91,7 +90,7 @@ function deriveEquipmentState(character, weaponCatsLookup) {
     maxArmor: getArmorClassCap(character),
 
     //Gearsets available to this character's class, plus any universal ones.
-    gearsets: getGearsetsForClass(character, gearSetsData),
+    gearsets: getGearsetsForClass(character),
   };
 }
 
