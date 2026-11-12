@@ -6,11 +6,13 @@ export const EXP_COST = [0, 1, 5, 15, 30];
 export const ATTR_EXP_COST = 25;
 export const SPEC_EXP_COST = 5;
 export const MULTICLASS_EXP_COST = 15;
-export const BASE_CLASS_EXP = 40;
+export const BASE_CLASS_EXP = 25;
 export const BASE_ATTR_POINTS = 5;
 
 export const CREATION_XP_BUDGET = 15;
 export const BASELINE_EMERGENCY_DICE = 4;
+
+export const BASE_STARTING_XP = (BASE_ATTR_POINTS*ATTR_EXP_COST)+(BASE_CLASS_EXP)+(CREATION_XP_BUDGET);
 
 /**
  * Gets the total wound penalty (2*DW + FW)
@@ -166,14 +168,13 @@ export function getSkillXpInvestment(level) {
 }
 
 /**
- * Initializes the base class skills of a character during character creation. Initially sets them all to zero, and then uses the classStartingSkills to assign which ones are level 1 and 2
- * @param {number} characterClass the class of the character
- * @param {JSON} classStartingSkills the starting skills for a character, defined as a JSON object with 'level1' and 'level2' arrays for each skill that starts at that level.
+ * Initializes the base class skills of a character during character creation. Initially sets them all to zero, and then uses the class data to assign which ones are level 1 and 2
+ * @param {string} characterClass the class of the character
  * @returns 
  */
-export function initCharSkills(characterClass, classStartingSkills) {
+export function initCharSkills(characterClass) {
   const base = {};
-  const config = classStartingSkills[characterClass];
+  const config = classData[characterClass];
   if (!config) return base;
 
   const allSkills = Object.values(skills).flat();
@@ -230,6 +231,51 @@ export function downgradeSkill(skills, skill, originalSkills) {
 
   return {
     skills: { ...skills, [skill]: current - 1 },
+  };
+}
+
+/**
+ * Upgrades an attribute
+ * @param {string} character le character
+ * @param {string} attribute the attribute
+ * @returns 
+ */
+export function upgradeAttribute(character, attribute) {
+  const currentVal = character.attributes[attribute] || 0;
+  if (currentVal >= 3) return null;
+
+  const cost = ATTR_EXP_COST;
+  if (character.XP < cost) return null;
+
+  return {
+    newCharacter: {
+      ...character,
+      attributes: { ...character.attributes, [attribute]: currentVal + 1 },
+      XP: character.XP - cost,
+    },
+    cost,
+  };
+}
+
+/**
+ * Downgrades an attribute
+ * @param {string} character le character
+ * @param {string} attribute the attribute
+ * @returns 
+ */
+export function downgradeAttribute(character, attribute) {
+  const currentVal = character.attributes[attribute] || 0;
+  if (currentVal <= 0) return null;
+
+  const refund = ATTR_EXP_COST;
+
+  return {
+    newCharacter: {
+      ...character,
+      attributes: { ...character.attributes, [attribute]: currentVal - 1 },
+      XP: character.XP + refund,
+    },
+    refund,
   };
 }
 

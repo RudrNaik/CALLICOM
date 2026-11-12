@@ -1,6 +1,7 @@
 import {
   getXPBreakdown,
   getAvailableXP,
+  ATTR_EXP_COST
 } from "../../../engine/characterManager/characterEngine";
 import { getLogTotals } from "../../../engine/characterManager/logsEngine";
 
@@ -82,7 +83,7 @@ function ExpBreakdown({ character }) {
         <LedgerRow
           label="Attribute improvement"
           value={attrXP}
-          sub={purchasedAttrPoints > 0 ? `${purchasedAttrPoints} × 40` : undefined}
+          sub={purchasedAttrPoints > 0 ? `${purchasedAttrPoints} × ${ATTR_EXP_COST}` : undefined}
         />
 
         <LedgerRow label="Skill Improvement" value={skillsXp} />
