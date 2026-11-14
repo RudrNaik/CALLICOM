@@ -140,14 +140,14 @@ const GadgetPanel = ({
           {secondaryGadget ? (
             <p className="text-xs text-gray-200 whitespace-pre-line border-orange-400/30 border bg-orange-900/20 px-2 py-1 mt-2 rounded-xs">
               <span className="text-orange-300 text-sm font-semibold">
-                Secondary Gadget: {secondaryGadget.id} {"\n"}
+                Secondary Gadget: {secondaryGadget.title} {"\n"}
               </span>
               <p className="text-[0.625rem] text-gray-400 tracking-wide italic">
                 Source:{" "}
                 {secondaryGadgetSource === "multi" ? multiClass : charClass}
               </p>
               <span className="text-xs">
-                {secondaryGadget.gameplay}
+                {secondaryGadget.rulesText}
                 {"\n"}
               </span>
               <span className="text-[0.625rem] text-gray-400 italic">

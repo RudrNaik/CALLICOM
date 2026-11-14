@@ -1,6 +1,8 @@
 import React from "react";
+import * as equipmentEngine from "../../engine/characterManager/equipmentEngine"
 
 const ClassCard = ({ classData, selectedClass, onSelect, touched }) => {
+
   return (
     <div className="grid grid-cols-1 gap-4">
       {Object.entries(classData).map(([className, classInfo]) => {
@@ -61,10 +63,10 @@ const ClassCard = ({ classData, selectedClass, onSelect, touched }) => {
 
               <p className="text-xs text-gray-200 whitespace-pre-line bg-orange-900/20 px-2 py-1 mt-2 rounded">
                 <span className="text-orange-300 text-sm font-semibold">
-                  Class Gadget: {classInfo.classGadget.id} {"\n"}
+                  Class Gadget: {equipmentEngine.getGadget(classInfo.classGadget.id).title} {"\n"}
                 </span>
-                <span className="text-xs">{classInfo.classGadget.gameplay}{"\n"}</span>
-                <span className="text-[0.625rem] text-gray-400">{classInfo.classGadget.description}</span>
+                <span className="text-xs">{equipmentEngine.getGadget(classInfo.classGadget.id).rulesText}{"\n"}</span>
+                <span className="text-[0.625rem] text-gray-400">{equipmentEngine.getGadget(classInfo.classGadget.id).description}</span>
               </p>
             </div>
           </button>

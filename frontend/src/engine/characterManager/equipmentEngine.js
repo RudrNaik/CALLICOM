@@ -17,10 +17,7 @@ const CLASS_TO_GEARSET_KEY = {
 };
 
 /**
- * Price curve for gear pieces, keyed by tier (see the rules text: tier 1
- * "niche use case" up to tier 4 "requires a specific gadget/equipment").
- * A piece with a null tier (several unfinished entries in geasrSets.json
- * never got one assigned) is treated as free until it's priced.
+ * Simple key map for the pricing for gearsets based off of their tier.
  */
 export const GEAR_TIER_PRICES = {
   1: 3000,
@@ -214,15 +211,16 @@ export const getArmorClassCap = (character) => {
 };
 
 /**
- * Finds the secondary/intrinsice/innate (We have too many words for this) gadget for a character based off their multiclass and class.
+ * Finds the secondary/intrinsic/innate (We have too many words for this) gadget for a character based off their multiclass and class.
  * @param {object} character le character.
  * @param {"main"|"multi"} source either 'main' or 'multi' to determine wether to return the main class or the mutliclass's secondary gadget.
  * @returns {null | object} the class gadget's JSON data, if there is no class gadget associated with the class, then null.
  */
 export const getSecondaryGadgetForClass = (character, source = "main") => {
   const className = source === "multi" ? character.multiClass : character.class;
+  const classGadget = classSkills[className].classGadget.id;
   if (className && classSkills[className]) {
-    return classSkills[className].classGadget;
+    return getGadget(classGadget);    
   }
   return null;
 };
@@ -274,11 +272,9 @@ export const getGearsetsForClass = (character) => {
 };
 
 /**
- * Pieces available for one gear slot across a set of gearsets, each
- * annotated with which gearset it belongs to (for grouping/labeling in a
- * selector).
- * @param {Array} gearsets - as returned by getGearsetsForClass
- * @param {string} slotKey - one of GEAR_SLOT_KEYS
+ * Gets the pieces available for a class based off of the return value of getGearsetsForClass (Which gets the available gearsets).
+ * @param {Array} gearsets Available gearsets per getGearsetsForClass.
+ * @param {string} slotKey the slot chosen.
  * @returns {Array}
  */
 export const getGearPiecesBySlot = (gearsets, slotKey) => {
@@ -296,9 +292,9 @@ export const getGearPiecesBySlot = (gearsets, slotKey) => {
 };
 
 /**
- * Looks up a single equipped piece by id across a set of gearsets.
- * @param {Array} gearsets - as returned by getGearsetsForClass
- * @param {string} pieceId
+ * gets a single piece of gear based off of the ID.
+ * @param {Array} gearsets the available gearsets
+ * @param {string} pieceId the Id of the piece.
  * @returns {object|null}
  */
 export const getGearPieceById = (gearsets, pieceId) => {
@@ -318,14 +314,10 @@ export const getGearPieceById = (gearsets, pieceId) => {
 };
 
 /**
- * Determines whether all 4 gear slots are filled with pieces belonging to
- * the same complete gearset, and if so returns that gearset's Patch piece —
- * the loyalty bonus, only active while the full set (Headgear/Vest/Gloves/
- * Equipment) is equipped. Gearsets missing one of the 4 slots (unfinished
- * entries in geasrSets.json) can never activate their patch this way.
- * @param {Array} gearsets - as returned by getGearsetsForClass
- * @param {object} gearSlots - character.equipment.gearSlots
- * @returns {object|null} the Patch piece (annotated with gearset info), or null
+ * Checks if a character has all of their gear slots filled with gear from the same gearset. If all the sets match- it procs the Patch bonus.
+ * @param {Array} gearsets gearsets available.
+ * @param {object} gearSlots the character's gearslot object.
+ * @returns {object|null} the Patch bonus as an object.
  */
 export const getActiveGearsetPatch = (gearsets, gearSlots) => {
   for (const gearset of gearsets ?? []) {
@@ -353,26 +345,21 @@ export const getActiveGearsetPatch = (gearsets, gearSlots) => {
 };
 
 /**
- * A gear piece's price, from its tier. Patches are never sold on their own
- * (they're the loyalty bonus for owning the full set), but this doesn't
- * special-case that — callers simply never list Patch pieces for purchase.
- * @param {object} piece - a piece as returned by getGearPiecesBySlot/getGearPieceById
- * @returns {number}
+ * Gets a gear pieces price based off of their tier.
+ * @param {object} piece the piece in question, as an object with a tier attribute.
+ * @returns {number} the price, if there is no tier assigned, it returns a large number.
  */
 export const getGearPieceCost = (piece) =>
   piece?.tier == null ? 9999999999999 : (GEAR_TIER_PRICES[piece.tier] ?? 0);
 
 /**
- * Looks up a gear piece by id across every class's gearsets (not just one
- * character's eligible ones) — used when re-pricing a purchase record
- * live, which has no character context of its own.
- * @param {Array} gearSetsData - geasrSets.json
+ * Gets a gear piece based off of ID from all classes.
  * @param {string} pieceId
  * @returns {object|null}
  */
-export const getGearPieceByIdAnyClass = (gearSetsData, pieceId) => {
+export const getGearPieceByIdAnyClass = (pieceId) => {
   if (!pieceId) return null;
-  for (const block of gearSetsData ?? []) {
+  for (const block of gearSetData ?? []) {
     const found = getGearPieceById(block.gearsets ?? [], pieceId);
     if (found) return found;
   }
@@ -380,11 +367,7 @@ export const getGearPieceByIdAnyClass = (gearSetsData, pieceId) => {
 };
 
 /**
- * Derives every gear piece id a character has ever purchased from their
- * mission logs' receipts — mirrors getPurchasedGadgetIds/GrenadeIds. Nothing
- * about ownership is stored on Equipment itself; what's currently equipped
- * (Equipment.gearSlots) and what's owned are two different things, same as
- * gadgets/weapons/grenades.
+ * Gets every piece of gear from a character's logs that they have purchased.
  * @param {Array} logs - character.logs
  * @returns {Array<string>}
  */
