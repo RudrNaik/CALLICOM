@@ -170,7 +170,7 @@ export function getPurchaseCost(purchase, equipmentData, gearSetsData) {
       return item?.cost || 0;
     }
     case "gearSlot": {
-      const piece = getGearPieceByIdAnyClass(gearSetsData, purchase.value);
+      const piece = getGearPieceByIdAnyClass(purchase.value);
       return piece ? getGearPieceCost(piece) : 9999999999;
     }
     default:
