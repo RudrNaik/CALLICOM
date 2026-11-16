@@ -40,6 +40,7 @@
 import { getAvailableXP } from "./characterEngine";
 import { sanitizeEquipmentOwnership } from "./equipmentEngine";
 import { getPurchaseCost, rebuildEquipmentFromLogs } from "./logisticsEngine";
+import gearSetsData from "../../data/geasrSets.json"
 
 /** Reads a mission's bonus achievements, tolerating the briefly-used `logEntries` field name from an in-between rename. */
 function getAchievements(log) {
@@ -73,7 +74,7 @@ function emptyReceipt(character) {
  * catalog changes this immediately for every character who ever bought it.
  * Falls back to starting cash alone if no missions have been logged yet.
  */
-export function getMoneyTotal(character, equipmentData, gearSetsData) {
+export function getMoneyTotal(character, equipmentData) {
   const logs = character?.logs ?? [];
   if (logs.length === 0) return character?.metadata?.starting_cash ?? 0;
 
@@ -291,7 +292,7 @@ export function recordPurchaseOnLatestMission(logs, purchase) {
  * logistics purchases) for the Logs tab. Returns an empty summary for a
  * mission with no receipt (e.g. legacy data).
  */
-export function describeReceipt(receipt, equipmentData, gearSetsData) {
+export function describeReceipt(receipt, equipmentData) {
   const skills = Object.entries(receipt?.skills ?? {})
     .filter(([, delta]) => delta !== 0)
     .map(([skill, delta]) => `${skill} ${delta > 0 ? "+" : ""}${delta}`);

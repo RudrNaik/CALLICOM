@@ -355,7 +355,7 @@ export const getGearPieceCost = (piece) =>
 /**
  * Gets a gear piece based off of ID from all classes.
  * @param {string} pieceId
- * @returns {object|null}
+ * @returns {object|null} the JSON object of the gearpiece.
  */
 export const getGearPieceByIdAnyClass = (pieceId) => {
   if (!pieceId) return null;
@@ -368,8 +368,8 @@ export const getGearPieceByIdAnyClass = (pieceId) => {
 
 /**
  * Gets every piece of gear from a character's logs that they have purchased.
- * @param {Array} logs - character.logs
- * @returns {Array<string>}
+ * @param {Array} logs character.logs object
+ * @returns {Array<string>} an array of every gear piece the character has purchased.
  */
 export const getPurchasedGearPieceIds = (logs) => {
   const ids = new Set();
@@ -382,12 +382,10 @@ export const getPurchasedGearPieceIds = (logs) => {
 };
 
 /**
- * Gear pieces a character can currently select per slot in the Gameplay
- * tab — restricted to what they've actually purchased in Logistics, same
- * pattern as getAvailableClassGadgets/getOwnedGrenades.
- * @param {Array} gearsets - as returned by getGearsetsForClass
- * @param {string} slotKey - one of GEAR_SLOT_KEYS
- * @param {Array} logs - character.logs
+ * Gets the gear pieces available to a character in a specific slot using their logs.
+ * @param {Array} gearsets the gearsets available to a character.
+ * @param {string} slotKey one of GEAR_SLOT_KEYS
+ * @param {Array} logs character.logs object.
  * @returns {Array}
  */
 export const getOwnedGearPiecesBySlot = (gearsets, slotKey, logs) => {
@@ -412,7 +410,19 @@ export const EX_KEY = "__uses";
 export const MAG_KEY = "__mag";
 export const RES_KEY = "__res";
 
+/**
+ * checks if a gadget uses mixed munitions
+ * @param {*} gadgetId a gadget's ID
+ * @returns {boolean} wether or not is is a mixed munition gadget (True if yes, false if no)
+ */
 export const isMixedGadget = (gadgetId) => MIXED_GADGETS.includes(gadgetId);
+
+/**
+ * Checks if a gadget uses expendable munitions (IE: most gadgets.)
+ * @param {*} gadgetId the gadget id
+ * @param {*} config the config data for that gadget
+ * @returns {number} the maximum amount of ammo for that gadget
+ */
 export const isExpendableGadget = (gadgetId, config = null) => {
   if (!config || typeof config !== "object") return false;
   if (isMixedGadget(gadgetId)) return false;
@@ -420,8 +430,18 @@ export const isExpendableGadget = (gadgetId, config = null) => {
   return Number.isFinite(max) && max > 0;
 };
 
+/**
+ * clamps a number between n and 0.
+ * @param {*} n an number 
+ * @returns {number} the number, clamped between 0 and inifnity.
+ */
 export const clamp0 = (n) => (Number.isFinite(n) ? Math.max(0, n) : 0);
 
+/**
+ * Gets a gadget's maximum ammo, wether that be grenades, rounds, stims, or more.
+ * @param {*} config the config object for the gadget
+ * @returns {number} the amount of ammo for that gadget.
+ */
 export const getGadgetAmmoMax = (config = {}) => {
   const directMax = [
     config.max,
@@ -446,7 +466,11 @@ export const getGadgetAmmoMax = (config = {}) => {
 };
 
 /**
- * Calculates effective ammo pool, accounts for Combat Engineers having 2x ammo.
+ * Extra check for rocket launchers to have their ammo be doubled when a combat engineer uses them.
+ * @param {*} gadgetId the gadget id
+ * @param {*} classGadget a character's class gadget
+ * @param {*} config the config for that gadget
+ * @returns 
  */
 export const getEffectiveMax = (gadgetId, classGadget, config) => {
   let base = getGadgetAmmoMax(config) || config?.max || 0;
@@ -463,7 +487,12 @@ export const getEffectiveMax = (gadgetId, classGadget, config) => {
 };
 
 /**
- * Determines the title and max ammo for a gadget.
+ * Gets the gadget's header for the ammo. Essentiaally goes "What fluff text fits this gadget"
+ * @param {*} gadgetId the gadget id
+ * @param {*} config the ammo config
+ * @param {*} isExpendable if the gadget is expendable
+ * @param {*} effectiveMax what is the max for the gadget
+ * @returns {{title: string, max: number}} JSON object with the title for the fluff, and the max for the gadget.
  */
 export const getGadgetAmmoHeader = (
   gadgetId,
@@ -489,7 +518,12 @@ export const getGadgetAmmoHeader = (
 };
 
 /**
- * Checks if a gadget explicitly has an ammo count. Some gadgets dont have ammo and are instead function outside of this.
+ * Checks if a weapon has gadget ammo listed. Some gadgets dont have ammo.
+ * @param {*} gadgetId the gadget's id
+ * @param {*} config the ammo config, if any
+ * @param {*} isMixed whether it counts as mixed ammo
+ * @param {*} isExpendable if the gadget is expednable
+ * @returns {boolean} determines if a gadget uses ammo or not.
  */
 export const hasExplicitGadgetAmmo = (
   gadgetId,
@@ -515,7 +549,12 @@ export const hasExplicitGadgetAmmo = (
 };
 
 /**
- * Generates the header text description for a gadget.
+ * Determines the fluff text for instructions in the mixed munition UI.
+ * @param {*} gadgetId the gadget id
+ * @param {*} config the config for the gadget
+ * @param {*} isExpendable if it is expendable
+ * @param {*} effectiveMax the max for the gadget.
+ * @returns 
  */
 export const getGadgetAmmoText = (
   gadgetId,
@@ -541,7 +580,13 @@ export const getGadgetAmmoText = (
 };
 
 /**
- * Sanitizes gadget ammo data for storage and state.
+ * Sanitizes the gadget ammo before storage.
+ * @param {*} obj 
+ * @param {*} isMixed 
+ * @param {*} isExpendable 
+ * @param {*} optionIds 
+ * @param {*} effectiveMax 
+ * @returns {object}
  */
 export const sanitizeGadgetAmmo = (
   obj,
@@ -573,10 +618,6 @@ export const sanitizeGadgetAmmo = (
       Object.prototype.hasOwnProperty.call(obj, MAG_KEY) ||
       Object.prototype.hasOwnProperty.call(obj, RES_KEY);
     if (!hasLegacyMagRes) {
-      // No ammo state recorded at all — a gadget just selected, not one
-      // that's been fired down — so it starts full. A real 0 is only ever
-      // reached afterward, by using ammo down (see useExpendableGadget),
-      // which always leaves EX_KEY set and is caught by the branch above.
       out[EX_KEY] = effectiveMax;
       return out;
     }
@@ -592,7 +633,9 @@ export const sanitizeGadgetAmmo = (
 };
 
 /**
- * Sums non-negative values in an object.
+ * Summs all of the non negative values in an object. Used to determine ammo counts.
+ * @param {object} obj object in question
+ * @returns {number} the amount of non-zero values in an object.
  */
 export const sumNonNeg = (obj) =>
   Object.values(obj || {}).reduce((a, n) => a + Math.max(0, Number(n || 0)), 0);
@@ -631,7 +674,7 @@ export const getInitialGadgetAmmo = (
 };
 
 /**
- * Updates the ammo value for a mixed gadget and enforces the pool cap.
+ * Updates the ammo value for a mixed gadget, wont go above the pool/total capacity allowed.
  * @param {object} currentAmmo - Current ammo state
  * @param {string} id - Ammo type ID
  * @param {number} nextVal - New ammo count

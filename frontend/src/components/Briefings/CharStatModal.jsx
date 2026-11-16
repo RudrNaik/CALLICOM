@@ -470,7 +470,7 @@ function StatTile({ label, value, color }) {
 function LogsSection({ char }) {
   const logs = getSafeLogs(char);
   const totals = getLogTotals(logs);
-  const money = getMoneyTotal(char, equipmentData, gearSetsData);
+  const money = getMoneyTotal(char, equipmentData);
 
   if (logs.length === 0) {
     return (
@@ -500,7 +500,7 @@ function LogsSection({ char }) {
       <div className="space-y-3">
         {logs.map((log, index) => {
           const earnings = getMissionEarnings(log);
-          const receipt = describeReceipt(log.receipt, equipmentData, gearSetsData);
+          const receipt = describeReceipt(log.receipt, equipmentData);
           return (
             <div
               key={log.id || index}
