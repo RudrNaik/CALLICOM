@@ -959,7 +959,7 @@
                         "slot": "Vest",
                         "tier": 1,
                         "flavor": "Using an FPV drone controller attached to your ATAK, you now have improved control over the SUAV along with fine control over its optics.",
-                        "effect": "While your SUAV is in the air, you can now manually ping a target during its uptime. Make an opposed notice test using your skill against the defender's stealth or disguise. This counts as a bonus action."
+                        "effect": "While your SUAV or MUAV is in the air, you can now manually ping a target during its uptime. Make an opposed notice test using your skill against the defender's stealth or disguise. This counts as a bonus action."
                     },
                     {
                         "id": "futureFalconer_glideCaptureGloves",
@@ -967,7 +967,7 @@
                         "slot": "Gloves",
                         "tier": 3,
                         "flavor": "Specialised high-traction gloves with paired millimetre-wave location emitters that allow your SUAV to lock onto your hand automatically as it glides back into you. Also comes with a handy patch and repair kit for any field damage.",
-                        "effect": "As a bonus action, you may recall your SUAV early. When recalling your drone early, you now make an athletics test and record the result. On a result of 5+, you catch the drone and reduce the downtime by 1 turn."
+                        "effect": "As a bonus action, you may recall your SUAV or MUAV early. When recalling your drone early, you now make an athletics test and record the result. On a result of 5+, you catch the drone and reduce the downtime by 1 turn."
                     },
                     {
                         "id": "futureFalconer_autoNuisanceSystem",
@@ -975,15 +975,15 @@
                         "slot": "Equipment",
                         "tier": 4,
                         "flavor": "Implements a nuisance system that can be used by the drone alongside improved motors for control surfaces. Your SUAV can now make low, sweeping passes on targets to be, as it says on the tin, a 'nuisance'.",
-                        "effect": "At the cost of 1 turn of uptime and as a [Deploy], your SUAV may make a diving low pass over a single target; make an opposed acrobatics test for the SUAV against the defender's acrobatics or spirit. Upon attacker success, the target is Suppressed for the turn."
+                        "effect": "At the cost of 1 turn of uptime and as a [Deploy], your SUAV may make a diving low pass over a single target or your MUAV can buzz around them; make an opposed acrobatics test for the drone against the defender's acrobatics or spirit. Upon attacker success, the target is Suppressed for the turn."
                     },
                     {
                         "id": "futureFalconer_falconersConnection",
                         "name": "Falconer's Connection",
                         "slot": "Patch",
                         "tier": 0,
-                        "flavor": "A patch of a falcon with a SUAV's optical gimbal for a head, includes a hardened downlink module for your SUAV.",
-                        "effect": "You retain connection with your SUAV even while Severed. Pings generated from your SUAVs are now Marks."
+                        "flavor": "A patch of a falcon with an optical gimbal for a head, includes a hardened downlink module for your SUAV and MUAV.",
+                        "effect": "You retain connection with your SUAV even while Severed, Pings generated from your SUAVs are now Marks"
                     }
                 ]
             },
@@ -1282,7 +1282,7 @@
                         "slot": "Headgear",
                         "tier": 2,
                         "flavor": "Advanced threat recognition and discrimination information overlaid on a slide-down half-height visor attached to the front of the tactical helmet. Also provides sunglasses-level UV protection.",
-                        "effect": "Gain a +1 bonus against enemies within line of sight and Close Range."
+                        "effect": "Gain a +1 bonus when shooting at enemies within line of sight and Close Range that are not in cover."
                     },
                     {
                         "id": "jazzHandsTranceGuns_gungHoSpeedTapeGloves",

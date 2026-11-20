@@ -1264,7 +1264,7 @@
     },
     {
         "id": "hummingbird-drone",
-        "title": "Hummingbird Reconnaissance Drone",
+        "title": "Hummingbird Reconnaissance Drone (MUAV)",
         "parentId": "Recon",
         "class": "Sharpshooter",
         "cost": 6000,
@@ -1282,7 +1282,7 @@
     },
     {
         "id": "bumblebee-echolocator",
-        "title": "Bumblebee Echolocator MAV",
+        "title": "Bumblebee Echolocator MAV (EMAV)",
         "parentId": "Recon",
         "class": "Sharpshooter",
         "cost": 13000,
