@@ -129,6 +129,8 @@ export const FRIENDLY_COLOR_PRESETS = [
   "#f97316", // orange
   "#14b8a6", // teal
   "#f8fafc", // white
+  "#73182C", // Queensland Mauve
+  "#FCB007" // Amber
 ];
 
 const imageCache = new Map();
