@@ -605,7 +605,7 @@ function PurchasesSection({ char }) {
 
   const gearSlotEntries = getPurchaseEntries(logs, "gearSlot")
     .map(({ purchase }) => {
-      const piece = getGearPieceByIdAnyClass(gearSetsData, purchase.value);
+      const piece = getGearPieceByIdAnyClass(purchase.value);
       const slotLabel = GEAR_SLOT_LABELS[purchase.slot] || purchase.slot;
       const lootTag = purchase.source === "looted" ? " | [Loot]" : "";
       return {
